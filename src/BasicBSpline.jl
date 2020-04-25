@@ -9,8 +9,11 @@ export BSplineSupport, BSplineCoefficient
 export BSplineManifold, Refinement, Mapping, BSplineSvg
 
 # Knots
-"""
+@doc raw"""
 Construct knot vector from given array.
+```math
+k=(k_1,\dots,k_l)
+```
 """
 struct Knots
     vector :: Array{Float64,1}
@@ -55,8 +58,11 @@ end
 
 
 # B-Spline Space
-"""
+@doc raw"""
 Construct B-spline space from given polynominal degree and knot vector.
+```math
+\mathcal{P}[p,k]
+```
 """
 struct BSplineSpace
     degree::Int
@@ -69,13 +75,20 @@ struct BSplineSpace
     end
 end
 
-"""
+@doc raw"""
 Same as BSplineSpace.
+```math
+\mathcal{P}[p,k]
+```
 """
 const 𝒫 = BSplineSpace
 
-"""
+@doc raw"""
 Return dimention of a B-spline space.
+```math
+\dim(\mathcal{P}[p,k])
+=\sharp k - p -1
+```
 """
 function dim(bsplinespace::BSplineSpace)
     p=bsplinespace.degree
@@ -104,9 +117,21 @@ function Base.iszero(P::BSplineSpace)
 end
 
 # B-Spline functions
-"""
+@doc raw"""
 B-spline basis function.
 Right-sided limit version.
+```math
+{B}_{(i,p,k)}(t)
+=
+\frac{t-k_{i}}{k_{i+p}-k_{i}}{B}_{(i,p-1,k)}(t)
++\frac{k_{i+p+1}-t}{k_{i+p+1}-k_{i+1}}{B}_{(i+1,p-1,k)}(t) \\
+{B}_{(i,0,k)}(t)
+=
+\begin{cases}
+    &1\quad (k_{i}\le t< k_{i+1})\\
+    &0\quad (\text{otherwise})
+\end{cases}
+```
 """
 function BSplineBasis₊₀(P::BSplineSpace, t)::Array{Float64,1}
     p = P.degree
@@ -121,9 +146,21 @@ function BSplineBasis₊₀(P::BSplineSpace, t)::Array{Float64,1}
     return [K[i]*B[i]+(1-K[i+1])*B[i+1] for i ∈ 1:n]
 end
 
-"""
+@doc raw"""
 B-spline basis function.
 Left-sided limit version.
+```math
+{B}_{(i,p,k)}(t)
+=
+\frac{t-k_{i}}{k_{i+p}-k_{i}}{B}_{(i,p-1,k)}(t)
++\frac{k_{i+p+1}-t}{k_{i+p+1}-k_{i+1}}{B}_{(i+1,p-1,k)}(t) \\
+{B}_{(i,0,k)}(t)
+=
+\begin{cases}
+    &1\quad (k_{i}< t\le k_{i+1})\\
+    &0\quad (\text{otherwise})
+\end{cases}
+```
 """
 function BSplineBasis₋₀(P::BSplineSpace, t)::Array{Float64,1}
     p = P.degree
@@ -138,9 +175,22 @@ function BSplineBasis₋₀(P::BSplineSpace, t)::Array{Float64,1}
     return [K[i]*B[i]+(1-K[i+1])*B[i+1] for i ∈ 1:n]
 end
 
-"""
+@doc raw"""
 B-spline basis function.
 Modified version.
+```math
+{B}_{(i,p,k)}(t)
+=
+\frac{t-k_{i}}{k_{i+p}-k_{i}}{B}_{(i,p-1,k)}(t)
++\frac{k_{i+p+1}-t}{k_{i+p+1}-k_{i+1}}{B}_{(i+1,p-1,k)}(t) \\
+{B}_{(i,0,k)}(t)
+=
+\begin{cases}
+    &1\quad (k_{i}\le t<k_{i+1}<k_{l})\\
+    &1\quad (k_{i}\le t\le k_{i+1}=k_{l})\\
+    &0\quad (\text{otherwise})
+\end{cases}
+```
 """
 function BSplineBasis(P::BSplineSpace, t)::Array{Float64,1}
     p = P.degree
@@ -171,9 +221,13 @@ function BSplineBasis(i::Int64, P::BSplineSpace, t)::Float64
     end
 end
 
-"""
+@doc raw"""
 1st derivative of B-spline basis function.
 Right-sided limit version.
+```math
+\dot{B}_{(i,p,k)}(t)
+=p\left(\frac{1}{k_{i+p}-k_{i}}B_{(i,p-1,k)}(t)-\frac{1}{k_{i+p+1}-k_{i+1}}B_{(i+1,p-1,k)}(t)\right)
+```
 """
 function BSplineBasis′₊₀(P::BSplineSpace, t)::Array{Float64,1}
     p = P.degree
@@ -188,9 +242,13 @@ function BSplineBasis′₊₀(P::BSplineSpace, t)::Array{Float64,1}
     return [K[i]*B[i]-K[i+1]*B[i+1] for i ∈ 1:n]
 end
 
-"""
+@doc raw"""
 1st derivative of B-spline basis function.
 Left-sided limit version.
+```math
+\dot{B}_{(i,p,k)}(t)
+=p\left(\frac{1}{k_{i+p}-k_{i}}B_{(i,p-1,k)}(t)-\frac{1}{k_{i+p+1}-k_{i+1}}B_{(i+1,p-1,k)}(t)\right)
+```
 """
 function BSplineBasis′₋₀(P::BSplineSpace, t)::Array{Float64,1}
     p = P.degree
@@ -205,9 +263,13 @@ function BSplineBasis′₋₀(P::BSplineSpace, t)::Array{Float64,1}
     return [K[i]*B[i]-K[i+1]*B[i+1] for i ∈ 1:n]
 end
 
-"""
+@doc raw"""
 1st derivative of B-spline basis function.
 Modified version.
+```math
+\dot{B}_{(i,p,k)}(t)
+=p\left(\frac{1}{k_{i+p}-k_{i}}B_{(i,p-1,k)}(t)-\frac{1}{k_{i+p+1}-k_{i+1}}B_{(i+1,p-1,k)}(t)\right)
+```
 """
 function BSplineBasis′(P::BSplineSpace, t)::Array{Float64,1}
     p = P.degree
@@ -230,7 +292,7 @@ function BSplineBasis′(i::Int64, P::BSplineSpace, t)::Float64
     -((k[i+p+1]-k[i+1]≠0) ? BSplineBasis(i+1,𝒫(p-1,k),t)/(k[i+p+1]-k[i+1]) : 0))
 end
 
-"""
+@doc raw"""
 Return support of i-th B-spline basis function.
 """
 function BSplineSupport(i::Int64, P::BSplineSpace)::ClosedInterval
@@ -339,7 +401,7 @@ struct BSplineManifold
     end
 end
 
-"""
+@doc raw"""
 Refunement of B-spline manifold.
 """
 function Refinement(M::BSplineManifold, Ps′::Array{BSplineSpace,1})
@@ -357,7 +419,7 @@ function Refinement(M::BSplineManifold, Ps′::Array{BSplineSpace,1})
     end
 end
 
-"""
+@doc raw"""
 Refunement of B-spline manifold.
 """
 function Refinement(M::BSplineManifold; p₊::Union{Nothing,Array{Int,1}}=nothing, k₊::Union{Nothing,Array{Knots,1}}=nothing)
@@ -398,8 +460,12 @@ end
 #     end
 # end
 
-"""
+@doc raw"""
 Multi-dimentional B-spline basis function.
+```math
+B_{i^1,\dots,i^d}(t^1,\dots,t^d)
+=B_{(i^1,p^1,k^1)}(t^1)\cdots B_{(i^d,p^d,k^d)}(t^d)
+```
 """
 function BSplineBasis(𝒫s::Array{BSplineSpace,1},t)
     d = length(t)
@@ -415,8 +481,12 @@ end
 #     return [sum(BSplineBasis(𝒫s,t).*𝒂[:,:,i]) for i ∈ 1:d̂]
 # end
 
-"""
+@doc raw"""
 Calculate the mapping of B-spline manifold for given parameter.
+```math
+\bm{p}(t^1,\dots,t^d)
+=\sum_{i^1,\dots,i^d}B_{i^1,\dots,i^d}(t^1,\dots,t^d) \bm{a}_{i^1,\dots,i^d}
+```
 """
 function Mapping(M::BSplineManifold, t::Array{Float64,1})
     Ps = M.bsplinespaces
