@@ -3,6 +3,9 @@ uuid = "4c5d9882-2acf-4ea4-9e48-968fd4518195"
 authors = ["hyrodium <hyrodium@gmail.com>"]
 version = "0.1.0"
 
+[deps]
+IntervalSets = "8197267c-284f-5f27-9208-e0e47529a953"
+
 [compat]
 julia = "1"
 
