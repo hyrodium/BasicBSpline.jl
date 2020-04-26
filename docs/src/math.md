@@ -10,6 +10,7 @@ Before running the following code, do not forget importing the package:
 using BasicBSpline
 ```
 
+Notice: **Some of notations of B-spline are my original**, but these are well-considered results.
 
 ## Knot vector
 A finite sequence
@@ -132,6 +133,18 @@ B-spline basis function is defined by Cox–de Boor recursion formula.
 \end{cases}
 \end{aligned}
 ```
+The set of functions ``\{B_{(i,p,k)}\}_i`` is a basis of B-spline space ``\mathcal{P}[p,k]``.
+
+
+```julia
+using Plots
+gr()
+p=2
+k=Knots(1:8)
+P=BSplineSpace(p,k)
+plot([t->BSplineBasis(i,P,t) for i in 1:dim(P)], 1,8)
+```
+
 
 You can choose the first terms in different ways.
 
@@ -158,11 +171,6 @@ You can choose the first terms in different ways.
 \end{aligned}
 ```
 
-```julia
-using Plots
-gr()
-...
-```
 
 
 ## Support of B-spline basis function
@@ -189,8 +197,16 @@ BSplineSupport(i,P) # 12..14
 &=p\left(\frac{1}{k_{i+p}-k_{i}}B_{(i,p-1,k)}(t)-\frac{1}{k_{i+p+1}-k_{i+1}}B_{(i+1,p-1,k)}(t)\right)
 \end{aligned}
 ```
-
 Note that``\dot{B}_{(i,p,k)}\in\mathcal{P}[p-1,k]``.
+
+```julia
+using Plots
+gr()
+p=2
+k=Knots(1:8)
+P=BSplineSpace(p,k)
+plot([t->BSplineBasis(i,P,t) for i in 1:dim(P)], 1,8)
+```
 
 ## Partition of unity
 
