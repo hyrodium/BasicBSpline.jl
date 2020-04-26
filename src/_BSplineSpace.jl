@@ -56,3 +56,17 @@ function iszeros(P::BSplineSpace)
     n = dim(P)
     return [k[i] == k[i+p+1] for i ∈ 1:n]
 end
+
+function isproper(P::BSplineSpace)
+    return !|(iszeros(P)...)
+end
+
+function BSplineSupport(P::BSplineSpace)::Array{ClosedInterval,1}
+    p = P.degree
+    k = P.knots
+    return [k[i]..k[i+p+1] for i ∈ 1:dim(P)]
+end
+
+function properdim(P::BSplineSpace)
+    return dim(P) - sum(iszeros(P))
+end
