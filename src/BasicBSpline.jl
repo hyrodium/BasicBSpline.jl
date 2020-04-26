@@ -128,16 +128,18 @@ end
 B-spline basis function.
 Right-sided limit version.
 ```math
+\begin{aligned}
 {B}_{(i,p,k)}(t)
-=
+&=
 \frac{t-k_{i}}{k_{i+p}-k_{i}}{B}_{(i,p-1,k)}(t)
 +\frac{k_{i+p+1}-t}{k_{i+p+1}-k_{i+1}}{B}_{(i+1,p-1,k)}(t) \\
 {B}_{(i,0,k)}(t)
-=
+&=
 \begin{cases}
     &1\quad (k_{i}\le t< k_{i+1})\\
     &0\quad (\text{otherwise})
 \end{cases}
+\end{aligned}
 ```
 """
 function BSplineBasis₊₀(P::BSplineSpace, t)::Array{Float64,1}
@@ -157,16 +159,18 @@ end
 B-spline basis function.
 Left-sided limit version.
 ```math
+\begin{aligned}
 {B}_{(i,p,k)}(t)
-=
+&=
 \frac{t-k_{i}}{k_{i+p}-k_{i}}{B}_{(i,p-1,k)}(t)
 +\frac{k_{i+p+1}-t}{k_{i+p+1}-k_{i+1}}{B}_{(i+1,p-1,k)}(t) \\
 {B}_{(i,0,k)}(t)
-=
+&=
 \begin{cases}
     &1\quad (k_{i}< t\le k_{i+1})\\
     &0\quad (\text{otherwise})
 \end{cases}
+\end{aligned}
 ```
 """
 function BSplineBasis₋₀(P::BSplineSpace, t)::Array{Float64,1}
@@ -186,17 +190,19 @@ end
 B-spline basis function.
 Modified version.
 ```math
+\begin{aligned}
 {B}_{(i,p,k)}(t)
-=
+&=
 \frac{t-k_{i}}{k_{i+p}-k_{i}}{B}_{(i,p-1,k)}(t)
 +\frac{k_{i+p+1}-t}{k_{i+p+1}-k_{i+1}}{B}_{(i+1,p-1,k)}(t) \\
 {B}_{(i,0,k)}(t)
-=
+&=
 \begin{cases}
     &1\quad (k_{i}\le t<k_{i+1}<k_{l})\\
     &1\quad (k_{i}\le t\le k_{i+1}=k_{l})\\
     &0\quad (\text{otherwise})
 \end{cases}
+\end{aligned}
 ```
 """
 function BSplineBasis(P::BSplineSpace, t)::Array{Float64,1}
@@ -409,7 +415,7 @@ struct BSplineManifold
 end
 
 @doc raw"""
-Refunement of B-spline manifold.
+Refinement of B-spline manifold.
 """
 function Refinement(M::BSplineManifold, Ps′::Array{BSplineSpace,1})
     Ps = M.bsplinespaces
@@ -427,7 +433,7 @@ function Refinement(M::BSplineManifold, Ps′::Array{BSplineSpace,1})
 end
 
 @doc raw"""
-Refunement of B-spline manifold.
+Refinement of B-spline manifold.
 """
 function Refinement(M::BSplineManifold; p₊::Union{Nothing,Array{Int,1}}=nothing, k₊::Union{Nothing,Array{Knots,1}}=nothing)
     Ps = M.bsplinespaces

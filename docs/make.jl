@@ -5,6 +5,9 @@ makedocs(;
     format=Documenter.HTML(),
     pages=[
         "Home" => "index.md",
+        "Mathematical properties of B-spline" => "math.md",
+        "Future work" => "future.md",
+        "Contributing" => "contributing.md",
     ],
     repo="https://github.com/hyrodium/BasicBSpline.jl/blob/{commit}{path}#L{line}",
     sitename="BasicBSpline.jl",
