@@ -17,8 +17,15 @@ k=(k_1,\dots,k_l)
 """
 struct Knots
     vector :: Array{Float64,1}
-    function Knots(vector)
-        new(sort(vector))
+    function Knots(vector::AbstractArray{T,1} where T<:Real)
+        return new(sort(convert(Array{Float64,1},vector)))
+    end
+    function Knots(vector::Array{Any,1})
+        if isempty(vector)
+            return new(Float64[])
+        else
+            error("The elements of given vector must be real number.")
+        end
     end
 end
 
@@ -31,7 +38,7 @@ Base.:*(p₊::Int, k::Knots) = (
         elseif p₊ > 0
             sum(k for _ ∈ 1:p₊)
         else
-            error("p₊ must be non-negative")
+            error("Polynominal degree p₊ must be non-negative.")
         end
     )
 
