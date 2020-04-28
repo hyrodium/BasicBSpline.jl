@@ -156,7 +156,6 @@ dim(𝒫(2,Knots([1,3,5,6,8,9]))) # 3
 ```
 
 
-
 ## B-spline basis function
 !!! tip "Def.  B-spline space"
     B-spline basis function is defined by [Cox–de Boor recursion formula](https://en.wikipedia.org/wiki/De_Boor%27s_algorithm).
@@ -304,6 +303,7 @@ P3 = 𝒫(2,Knots([1,1,3,3,5,5,8,8])
 P1 ⊆ P2 # true
 P1 ⊆ P3 # true
 P2 ⊆ P3 # false
+P2 ⊈ P3 # true
 ```
 
 This means, there exists a ``n \times n'`` matrix ``A`` which holds:
