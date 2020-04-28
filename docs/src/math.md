@@ -186,7 +186,7 @@ gr()
 p = 2
 k = Knots(1:8)
 P = BSplineSpace(p,k)
-plot([t->BSplineBasis₊₀(i,P,t) for i in 1:dim(P)], 1,8)
+plot([t->BSplineBasis₊₀(i,P,t) for i in 1:dim(P)], 1, 8, ylims=(0,1.05))
 ```
 
 ![](img/bsplinebasisplot.png)
@@ -198,7 +198,7 @@ You can choose the first terms in different ways.
 {B}_{(i,0,k)}(t)
 &=
 \begin{cases}
-    &1\quad (k_{i} < t \le k_{i+1}\\
+    &1\quad (k_{i} < t \le k_{i+1}) \\
     &0\quad (\text{otherwise})
 \end{cases}
 \end{aligned}
@@ -235,7 +235,7 @@ BSplineSupport(i,P) # 12..14
     &=p\left(\frac{1}{k_{i+p}-k_{i}}B_{(i,p-1,k)}(t)-\frac{1}{k_{i+p+1}-k_{i+1}}B_{(i+1,p-1,k)}(t)\right)
     \end{aligned}
     ```
-    Note that``\dot{B}_{(i,p,k)}\in\mathcal{P}[p-1,k]``.
+    Note that ``\dot{B}_{(i,p,k)}\in\mathcal{P}[p-1,k]``.
 
 ```julia
 using Plots
@@ -243,7 +243,7 @@ gr()
 p = 2
 k = Knots(1:8)
 P = BSplineSpace(p,k)
-plot([t->BSplineBasis₊₀(i,P,t) for i in 1:dim(P)], 1,8)
+plot([t->BSplineBasis′₊₀(i,P,t) for i in 1:dim(P)], 1, 8, ylims=(0,1.05))
 ```
 
 ![](img/bsplinebasisderivativeplot.png)
@@ -257,20 +257,32 @@ plot([t->BSplineBasis₊₀(i,P,t) for i in 1:dim(P)], 1,8)
     \end{aligned}
     ```
 
-To satisfy partition of unity on closed interval ``[k_{p+1}, k_{l-p}]``, the definition of first terms of B-spline basis functions are sometimes replaced:
-
 ```julia
 using Plots
 gr()
 p = 2
 k = Knots(1:8)
 P = BSplineSpace(p,k)
-plot(t->sum(BSplineBasis₊₀(i,P,t) for i in 1:dim(P)), 1,8)
+plot(t->sum(BSplineBasis₊₀(i,P,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.05))
 ```
 
 ![](img/sumofbsplineplot.png)
 
+To satisfy the partition of unity on whole interval, sometimes more knots will be inserted.
 
+```julia
+using Plots
+gr()
+p = 2
+k = Knots(1:8) + p * Knots([1,8])
+P = BSplineSpace(p,k)
+plot(t->sum(BSplineBasis₊₀(i,P,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.05))
+```
+
+![](img/sumofbsplineplot2.png)
+
+But, the sum ``\sum_{i} B_{(i,p,k)}(t)`` is not equal to ``1`` if ``t=8``.
+Therefore, to satisfy partition of unity on closed interval ``[k_{p+1}, k_{l-p}]``, the definition of first terms of B-spline basis functions are sometimes replaced:
 
 ```math
 \begin{aligned}
@@ -283,6 +295,17 @@ plot(t->sum(BSplineBasis₊₀(i,P,t) for i in 1:dim(P)), 1,8)
 \end{cases}
 \end{aligned}
 ```
+
+```julia
+using Plots
+gr()
+p = 2
+k = Knots(1:8) + p * Knots([1,8])
+P = BSplineSpace(p,k)
+plot(t->sum(BSplineBasis(i,P,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.05))
+```
+
+![](img/sumofbsplineplot3.png)
 
 
 ## Inclusion relation between B-spline spaces
@@ -297,14 +320,31 @@ plot(t->sum(BSplineBasis₊₀(i,P,t) for i in 1:dim(P)), 1,8)
 (as linear subspace..)
 
 ```julia
-P1 = 𝒫(1,Knots([1,3,5,8])
-P2 = 𝒫(1,Knots([1,3,5,6,8,9])
-P3 = 𝒫(2,Knots([1,1,3,3,5,5,8,8])
+P1 = 𝒫(1,Knots([1,3,5,8]))
+P2 = 𝒫(1,Knots([1,3,5,6,8,9]))
+P3 = 𝒫(2,Knots([1,1,3,3,5,5,8,8]))
 P1 ⊆ P2 # true
 P1 ⊆ P3 # true
 P2 ⊆ P3 # false
 P2 ⊈ P3 # true
 ```
+
+```julia
+using Plots
+gr()
+P1 = 𝒫(1,Knots([1,3,5,8]))
+P2 = 𝒫(1,Knots([1,3,5,6,8,9]))
+P3 = 𝒫(2,Knots([1,1,3,3,5,5,8,8]))
+plot(
+    plot([t->BSplineBasis₊₀(i,P1,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
+    plot([t->BSplineBasis₊₀(i,P2,t) for i in 1:dim(P2)], 1, 9, ylims=(0,1.05), legend=false),
+    plot([t->BSplineBasis₊₀(i,P3,t) for i in 1:dim(P3)], 1, 9, ylims=(0,1.05), legend=false),
+    layout=(3,1),  # 3行1列
+    link=:x  # x軸を共有
+)
+```
+
+![](img/subbsplineplot.png)
 
 This means, there exists a ``n \times n'`` matrix ``A`` which holds:
 
@@ -324,7 +364,19 @@ A12 = BasicBSpline.ChangeOfBasis(P1,P2)
 A13 = BasicBSpline.ChangeOfBasis(P1,P3)
 ```
 
+```julia
+using Plots
+gr()
+plot(
+    plot([t->BSplineBasis₊₀(i,P1,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
+    plot([t->sum(A12[i,j]*BSplineBasis₊₀(j,P2,t) for j in 1:dim(P2)) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
+    plot([t->sum(A13[i,j]BSplineBasis₊₀(j,P3,t) for j in 1:dim(P3)) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
+    layout=(3,1),  # 3行1列
+    link=:x  # x軸を共有
+)
+```
 
+![](img/subbsplineplot2.png)
 
 ## Multi-dimensional B-spline
 tensor product
