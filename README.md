@@ -18,9 +18,9 @@ As mentioned before, this package treats mathematical aspect of B-spline, so the
     * NURBS (Non-Uniform Rational B-Spline)
     * IGA (Isogeometric Analysis)
 
-![](docs/src/img/bsplinebasis.png)
-
 ## Installation
 ```
 (pkg) > add https://github.com/hyrodium/BasicBSpline.jl
 ```
+
+![](docs/src/img/bsplinebasis.png)

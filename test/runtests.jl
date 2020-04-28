@@ -6,6 +6,7 @@ using Test
     # Write your own tests here.
 
     @testset "Knots" begin
+        @test Knots(2,4,5) == Knots([2,4,5])
         @test zero(Knots) == Knots([])
         @test Knots(1:3) == Knots([3,2,1])
         @test Knots([-1,2,3]) + 2Knots([2,5]) == Knots([-1,2,2,2,3,5,5])

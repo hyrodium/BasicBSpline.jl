@@ -1,5 +1,5 @@
 # Refinement
-function BSplineCoefficient(P::BSplineSpace, P′::BSplineSpace)::Array{Float64,2}
+function ChangeOfBasis(P::BSplineSpace, P′::BSplineSpace)::Array{Float64,2}
     p = P.degree
     k = P.knots
     p′ = P′.degree
@@ -17,7 +17,7 @@ function BSplineCoefficient(P::BSplineSpace, P′::BSplineSpace)::Array{Float64,
         return A⁰
     end
 
-    Aᵖ⁻¹=BSplineCoefficient(𝒫(p-1, k), 𝒫(p′-1, k′))
+    Aᵖ⁻¹=ChangeOfBasis(𝒫(p-1, k), 𝒫(p′-1, k′))
     n = dim(P)
     n′=dim(P′)
     Z = iszeros(𝒫(p′-1,k′))
@@ -82,7 +82,7 @@ function Refinement(M::BSplineManifold, Ps′::Array{BSplineSpace,1})
     n = dim.(Ps)
     n′ = dim.(Ps′)
     if prod(Ps .⊆ Ps′)
-        A = BSplineCoefficient.(Ps,Ps′)
+        A = ChangeOfBasis.(Ps,Ps′)
         𝒂′ = [sum(A[1][I₁,J₁]*A[2][I₂,J₂]*𝒂[I₁,I₂,i] for I₁ ∈ 1:n[1], I₂ ∈ 1:n[2]) for J₁ ∈ 1:n′[1], J₂ ∈ 1:n′[2], i ∈ 1:d̂]
         return BSplineManifold(Ps′, 𝒂′)
     else

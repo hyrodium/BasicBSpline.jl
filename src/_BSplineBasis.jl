@@ -96,6 +96,38 @@ end
 
 """
 i-th B-spline basis function.
+Right-sided limit version.
+"""
+function BSplineBasis₊₀(i::Int64, P::BSplineSpace, t)::Float64
+    p = P.degree
+    k = P.knots
+
+    if p == 0
+        return k[i] ≤ t < k[i+1]
+    else
+        return (((k[i+p]-k[i]≠0) ? BSplineBasis₊₀(i,𝒫(p-1,k),t)*(t-k[i])/(k[i+p]-k[i]) : 0)
+        +((k[i+p+1]-k[i+1]≠0) ? BSplineBasis₊₀(i+1,𝒫(p-1,k),t)*(k[i+p+1]-t)/(k[i+p+1]-k[i+1]) : 0))
+    end
+end
+
+"""
+i-th B-spline basis function.
+Left-sided limit version.
+"""
+function BSplineBasis₋₀(i::Int64, P::BSplineSpace, t)::Float64
+    p = P.degree
+    k = P.knots
+
+    if p == 0
+        return k[i] < t ≤ k[i+1]
+    else
+        return (((k[i+p]-k[i]≠0) ? BSplineBasis₋₀(i,𝒫(p-1,k),t)*(t-k[i])/(k[i+p]-k[i]) : 0)
+        +((k[i+p+1]-k[i+1]≠0) ? BSplineBasis₋₀(i+1,𝒫(p-1,k),t)*(k[i+p+1]-t)/(k[i+p+1]-k[i+1]) : 0))
+    end
+end
+
+"""
+i-th B-spline basis function.
 Modified version.
 """
 function BSplineBasis(i::Int64, P::BSplineSpace, t)::Float64
@@ -171,6 +203,22 @@ function BSplineBasis′(P::BSplineSpace, t)::Array{Float64,1}
     K = [ifelse(k[i+p]==k[i],0,p/(k[i+p]-k[i])) for i ∈ 1:n+1]
     B = BSplineBasis(𝒫(p-1,k),t)
     return [K[i]*B[i]-K[i+1]*B[i+1] for i ∈ 1:n]
+end
+
+function BSplineBasis′₊₀(i::Int64, P::BSplineSpace, t)::Float64
+    p = P.degree
+    k = P.knots
+
+    return p*(((k[i+p]-k[i]≠0) ? BSplineBasis₊₀(i,𝒫(p-1,k),t)/(k[i+p]-k[i]) : 0)
+    -((k[i+p+1]-k[i+1]≠0) ? BSplineBasis₊₀(i+1,𝒫(p-1,k),t)/(k[i+p+1]-k[i+1]) : 0))
+end
+
+function BSplineBasis′₋₀(i::Int64, P::BSplineSpace, t)::Float64
+    p = P.degree
+    k = P.knots
+
+    return p*(((k[i+p]-k[i]≠0) ? BSplineBasis₋₀(i,𝒫(p-1,k),t)/(k[i+p]-k[i]) : 0)
+    -((k[i+p+1]-k[i+1]≠0) ? BSplineBasis₋₀(i+1,𝒫(p-1,k),t)/(k[i+p+1]-k[i+1]) : 0))
 end
 
 function BSplineBasis′(i::Int64, P::BSplineSpace, t)::Float64

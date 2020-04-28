@@ -8,6 +8,7 @@ export BSplineBasis′₊₀, BSplineBasis′₋₀, BSplineBasis′
 export BSplineSupport, BSplineCoefficient
 export BSplineManifold, Refinement, Mapping, BSplineSvg
 export isproper, properdim
+export 𝔫
 
 include("_Knots.jl")
 include("_BSplineSpace.jl")

@@ -17,6 +17,9 @@ struct Knots
             error("The elements of given vector must be real number.")
         end
     end
+    function Knots(knot::Real...)
+        return Knots(collect(knot))
+    end
 end
 
 Base.zero(::Type{Knots}) = Knots([])
@@ -52,3 +55,5 @@ function Base.:⊆(k::Knots, k′::Knots)
     end
     return true
 end
+
+𝔫(k::Knots, t::Real) = count(s -> (t == s), k.vector)

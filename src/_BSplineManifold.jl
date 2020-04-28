@@ -72,3 +72,11 @@ function Mapping(M::BSplineManifold, t::Array{Float64,1})
     d̂ = size(𝒂)[end]
     return [sum(BSplineBasis(Ps,t).*𝒂[:,:,i]) for i ∈ 1:d̂]
 end
+
+@doc raw"""
+Calculate the dimention of B-spline manifold.
+"""
+function dim(bsplinemanifold::BSplineManifold)
+    cp = bsplinemanifold.controlpoints
+    return size(cp)-1
+end
