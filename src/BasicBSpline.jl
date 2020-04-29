@@ -2,7 +2,7 @@ module BasicBSpline
 
 using IntervalSets
 
-export Knots, BSplineSpace, 𝒫, dim
+export Knots, ♯, BSplineSpace, 𝒫, dim
 export BSplineBasis₊₀, BSplineBasis₋₀, BSplineBasis
 export BSplineBasis′₊₀, BSplineBasis′₋₀, BSplineBasis′
 export BSplineSupport, BSplineCoefficient

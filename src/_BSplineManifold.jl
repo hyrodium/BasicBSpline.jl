@@ -52,7 +52,7 @@ B_{i^1,\dots,i^d}(t^1,\dots,t^d)
 =B_{(i^1,p^1,k^1)}(t^1)\cdots B_{(i^d,p^d,k^d)}(t^d)
 ```
 """
-function BSplineBasis(𝒫s::Array{BSplineSpace,1},t)
+function BSplineBasis(𝒫s::Array{BSplineSpace,1},t::Array{T,1} where T <: Real)
     d = length(t)
     Bs = [BSplineBasis(𝒫s[i],t[i]) for i ∈ 1:d]
     return tensorprod(Bs)
@@ -73,7 +73,7 @@ Calculate the mapping of B-spline manifold for given parameter.
 =\sum_{i^1,\dots,i^d}B_{i^1,\dots,i^d}(t^1,\dots,t^d) \bm{a}_{i^1,\dots,i^d}
 ```
 """
-function Mapping(M::BSplineManifold, t::Array{Float64,1})
+function Mapping(M::BSplineManifold, t::Array{T,1} where T <: Real)
     Ps = M.bsplinespaces
     𝒂 = M.controlpoints
     d = length(Ps)

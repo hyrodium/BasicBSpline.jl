@@ -21,15 +21,8 @@ using BasicBSpline
     ```math
     k = (k_1, \dots, k_l)
     ```
-    is called **knot vector** if the sequence is broad monotonic increase, i.e. (``k_{i} \le k_{i+1}``).
+    is called **knot vector** if the sequence is broad monotonic increase, i.e. ``k_{i} \le k_{i+1}``.
 
-
-A finite sequence
-```math
-k = (k_1, \dots, k_l)
-```
-is called **knot vector** if the sequence is
-broad monotonic increase, i.e. (``k_{i} \le k_{i+1}``)
 
 [fig]
 
@@ -62,7 +55,7 @@ m\cdot k&=\underbrace{k+\cdots+k}_{m}
 For example, ``(1,2,3)+(2,4,5)=(1,2,2,3,5)``, ``2\cdot (2,3)=(2,2,3,3)``
 
 ```julia
-k = Knots([1,2,3]) + Knots([2,4,5]) # Knots([1,2,2,3,5])
+Knots([1,2,3]) + Knots([2,4,5]) # Knots([1,2,2,3,5])
 2 * Knots([2,3]) # Knots([2,2,3,3])
 ```
 
@@ -108,7 +101,7 @@ Before defining B-spline space, we'll define polynomial space with degree ``p``.
     ```
     This space ``\mathcal{P}[p]`` is a ``p+1``-dimensional linear space.
 
-Note that ``\{t\mapsto t^i\}_{0 \le i \le p}`` is a basis of ``\mathcal{P}[p]``, and also the set of Bernstein polynomial ``\{B_{(i,p)}\}_i`` is a basis of ``\mathcal{P}[p]``.
+Note that ``\{t\mapsto t^i\}_{0 \le i \le p}`` is a basis of ``\mathcal{P}[p]``, and also the set of [Bernstein polynomial](https://en.wikipedia.org/wiki/Bernstein_polynomial) ``\{B_{(i,p)}\}_i`` is a basis of ``\mathcal{P}[p]``.
 
 ```math
 \begin{aligned}
@@ -121,7 +114,7 @@ B_{(i,p)}(t)
 Where ``\binom{p}{i-1}`` is a binomial coefficient.
 
 !!! tip "Def.  B-spline space"
-    Space of Piecewise polynomial.
+    For given polynomial degree ``p\le 0`` and knot vector ``k=(k_1,\dots,k_l)``, B-spline space ``\mathcal{P}[p,k]`` is defined as follows:
     ```math
     \mathcal{P}[p,k]
     =\left\{f:\mathbb{R}\to\mathbb{R} \  \left| \ %
@@ -132,13 +125,14 @@ Where ``\binom{p}{i-1}`` is a binomial coefficient.
         \end{gathered} \right.
     \right\}
     ```
-    where ``p\ge 0`` is called polynomial degree of space, and ``k`` is a knot vector.
+
+Note that a element of the space ``\mathcal{P}[p,k]`` is piecewise polynomial.
 
 [fig]
 
 ```julia
 p = 2
-k = [1,3,5,6,8,9]
+k = Knots([1,3,5,6,8,9])
 BSplineSpace(p,k)
 𝒫(p,k) # same as above, for legibility
 ```
@@ -426,6 +420,8 @@ M = BSplineManifold([P1, P2], 𝒂)
 
 
 ### B-spline surface
+
+
 
 ## Affine commutativity
 !!! info "Thm.  Affine commutativity"
