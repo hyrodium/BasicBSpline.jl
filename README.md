@@ -23,4 +23,7 @@ As mentioned before, this package treats mathematical aspect of B-spline, so the
 (pkg) > add https://github.com/hyrodium/BasicBSpline.jl
 ```
 
+## Example Images
+###  Example of B-spline function
+Note that this package do not support image export.
 ![](docs/src/img/bsplinebasis.png)

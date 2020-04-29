@@ -10,8 +10,9 @@ Before running the following code, do not forget importing the package:
 using BasicBSpline
 ```
 
-Notice
-* **Some of notations in this page are my original**, but these are well-considered results.
+### Notice
+* A book ["Geometric Modeling with Splines"](https://www.routledge.com/p/book/9780367447243) by Elaine Cohen, Richard F. Riesenfeld, Gershon Elber is really recommended.
+* But, **some of notations in this page are my original**, but these are well-considered results.
 
 ## Knot vector
 
@@ -105,11 +106,19 @@ Before defining B-spline space, we'll define polynomial space with degree ``p``.
         \right.
     \right\}
     ```
-    This space ``\mathcal{P}[p]`` is a ``p``-dimensional linear space.
+    This space ``\mathcal{P}[p]`` is a ``p+1``-dimensional linear space.
 
-``\{t\mapsto t^i\}_{0 \le i \le p}`` is a basis of ``\mathcal{P}[p]``
+Note that ``\{t\mapsto t^i\}_{0 \le i \le p}`` is a basis of ``\mathcal{P}[p]``, and also the set of Bernstein polynomial ``\{B_{(i,p)}\}_i`` is a basis of ``\mathcal{P}[p]``.
 
+```math
+\begin{aligned}
+B_{(i,p)}(t)
+&=\binom{p}{i-1}t^{i-1}(1-t)^{p-i+1}
+&(i=1, \dots, p+1)
+\end{aligned}
+```
 
+Where ``\binom{p}{i-1}`` is a binomial coefficient.
 
 !!! tip "Def.  B-spline space"
     Space of Piecewise polynomial.
@@ -268,7 +277,7 @@ plot(t->sum(BSplineBasis₊₀(i,P,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.05))
 
 ![](img/sumofbsplineplot.png)
 
-To satisfy the partition of unity on whole interval, sometimes more knots will be inserted.
+To satisfy the partition of unity on whole interval ``[1,8]``, sometimes more knots will be inserted to the endpoints of the interval.
 
 ```julia
 using Plots
@@ -329,6 +338,8 @@ P2 ⊆ P3 # false
 P2 ⊈ P3 # true
 ```
 
+Here are plots of the B-spline basis functions of the spaces `P1`, `P2`, `P3`.
+
 ```julia
 using Plots
 gr()
@@ -339,8 +350,8 @@ plot(
     plot([t->BSplineBasis₊₀(i,P1,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
     plot([t->BSplineBasis₊₀(i,P2,t) for i in 1:dim(P2)], 1, 9, ylims=(0,1.05), legend=false),
     plot([t->BSplineBasis₊₀(i,P3,t) for i in 1:dim(P3)], 1, 9, ylims=(0,1.05), legend=false),
-    layout=(3,1),  # 3行1列
-    link=:x  # x軸を共有
+    layout=(3,1),
+    link=:x
 )
 ```
 
@@ -370,9 +381,9 @@ gr()
 plot(
     plot([t->BSplineBasis₊₀(i,P1,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
     plot([t->sum(A12[i,j]*BSplineBasis₊₀(j,P2,t) for j in 1:dim(P2)) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
-    plot([t->sum(A13[i,j]BSplineBasis₊₀(j,P3,t) for j in 1:dim(P3)) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
-    layout=(3,1),  # 3行1列
-    link=:x  # x軸を共有
+    plot([t->sum(A13[i,j]*BSplineBasis₊₀(j,P3,t) for j in 1:dim(P3)) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
+    layout=(3,1),
+    link=:x
 )
 ```
 
@@ -388,24 +399,41 @@ B_{i^1,\dots,i^d}(t^1,\dots,t^d)
 
 
 ## B-spline manifold
-```math
-\bm{p}(t^1,\dots,t^d;\bm{a}_{i^1,\dots,i^d})
-=\sum_{i^1,\dots,i^d}B_{i^1,\dots,i^d}(t^1,\dots,t^d) \bm{a}_{i^1,\dots,i^d}
-```
-where ``\bm{a}_{i^1,\dots,i^d}`` are called **control points**
+B-spline manifold is a parametric representation of a shape.
+
+!!! tip "Def.  B-spline manifold"
+    For given ``d``-dimensional B-spline basis functions ``B_{i^1,\dots,i^d}`` and given points ``\bm{a}_{i^1,\dots,i^d} \in \mathbb{R}^\hat{d}``, B-spline manifold is defined by following equality:
+    ```math
+    \bm{p}(t^1,\dots,t^d;\bm{a}_{i^1,\dots,i^d})
+    =\sum_{i^1,\dots,i^d}B_{i^1,\dots,i^d}(t^1,\dots,t^d) \bm{a}_{i^1,\dots,i^d}
+    ```
+    Where ``\bm{a}_{i^1,\dots,i^d}`` are called **control points**.
 
 We will also write ``\bm{p}(t^1,\dots,t^d; \bm{a})``, ``\bm{p}(t^1,\dots,t^d)``, ``\bm{p}(t; \bm{a})`` or ``\bm{p}(t)`` for simplicity.
 
+```julia
+P1 = 𝒫(1,Knots([0,0,1,1]))
+P2 = 𝒫(1,Knots([1,1,2,3,3]))
+n1 = dim(P1) # 2
+n2 = dim(P2) # 3
+𝒂 = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.
+M = BSplineManifold([P1, P2], 𝒂)
+```
+
+
 ### B-spline curve
+
+
 
 ### B-spline surface
 
 ## Affine commutativity
-If ``T`` is a affine transform ``\mathbb{R}^d\to\mathbb{R}^d``, then ..
-```math
-T(\bm{p}(t; \bm{a}))
-=\bm{p}(t; T(\bm{a}))
-```
+!!! info "Thm.  Affine commutativity"
+    If ``T`` is a affine transform ``\mathbb{R}^d\to\mathbb{R}^d``, then the following equality holds.
+    ```math
+    T(\bm{p}(t; \bm{a}))
+    =\bm{p}(t; T(\bm{a}))
+    ```
 
 ## Refinement
 

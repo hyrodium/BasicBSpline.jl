@@ -8,9 +8,9 @@ end
 function tensorprod(X::Array{T,1}) where T <: Array{Float64}
     n=length(X)
     # X[1] ⊗ … ⊗ X[n]
-    @inbounds Y = X[1]
+    Y = X[1]
     for i ∈ 2:n
-        @inbounds Y = Y ⊗ X[i]
+        Y = Y ⊗ X[i]
     end
     return Y
 end
@@ -18,12 +18,20 @@ end
 struct BSplineManifold
     bsplinespaces::Array{BSplineSpace,1}
     controlpoints::Array{Float64}
-    function BSplineManifold(bsplinespaces::Array{BSplineSpace,1}, controlpoints::Array{Float64})
+    function BSplineManifold(bsplinespaces::AbstractArray{BSplineSpace,1}, controlpoints::AbstractArray{T} where T<: Real)
         if collect(size(controlpoints)[1:end-1]) ≠ dim.(bsplinespaces)
             error("dimension does not match")
         else
-            new(bsplinespaces, controlpoints)
+            P = convert(Array{BSplineSpace,1}, bsplinespaces)
+            a = convert(Array{Float64}, controlpoints)
+            new(P, controlpoints)
         end
+    end
+    function BSplineManifold(bsplinespaces::AbstractArray{BSplineSpace,1}, controlpoints::Array{Array{T,1}} where T <: Real)
+        a = controlpoints
+        d̂ = length(a[1])
+        A = reshape(transpose(hcat(reshape(a,prod(size(a)))...)), size(a)..., d̂)
+        return BSplineManifold(bsplinespaces, A)
     end
 end
 
