@@ -52,14 +52,14 @@ k^{(1)}+k^{(2)}
 m\cdot k&=\underbrace{k+\cdots+k}_{m}
 \end{aligned}
 ```
-For example, ``(1,2,3)+(2,4,5)=(1,2,2,3,5)``, ``2\cdot (2,3)=(2,2,3,3)``
+For example, ``(1,2,3)+(2,4,5)=(1,2,2,3,5)``, ``2\cdot (2,3)=(2,2,3,3)``.
 
 ```julia
 Knots([1,2,3]) + Knots([2,4,5]) # Knots([1,2,2,3,5])
 2 * Knots([2,3]) # Knots([2,2,3,3])
 ```
 
-Unique operator
+Deleting duplicates operator
 ```math
 \begin{aligned}
 \widehat{k}

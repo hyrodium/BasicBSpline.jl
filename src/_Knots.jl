@@ -14,7 +14,7 @@ struct Knots
         if isempty(vector)
             return new(Float64[])
         else
-            error("The elements of given vector must be real number.")
+            return Knots(convert(Array{Float64,1},vector))
         end
     end
     function Knots(knot::Real...)
@@ -22,7 +22,7 @@ struct Knots
     end
 end
 
-Base.zero(::Type{Knots}) = Knots([])
+Base.zero(::Type{Knots}) = Knots(Float64[])
 Base. ==(k₁::Knots, k₂::Knots) = (k₁.vector==k₂.vector)
 Base.:+(k₁::Knots, k₂::Knots) = Knots(sort([k₁.vector...,k₂.vector...]))
 Base.:*(p₊::Int, k::Knots) = (
