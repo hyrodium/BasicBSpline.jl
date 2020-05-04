@@ -189,7 +189,7 @@ gr()
 p = 2
 k = Knots(1:8)
 P = BSplineSpace(p,k)
-plot([t->BSplineBasis₊₀(i,P,t) for i in 1:dim(P)], 1, 8, ylims=(0,1.05))
+plot([t->bsplinebasis₊₀(i,P,t) for i in 1:dim(P)], 1, 8, ylims=(0,1.05))
 ```
 
 ![](img/bsplinebasisplot.png)
@@ -224,8 +224,8 @@ i = 2
 k = Knots([5,12,13,13,14])
 p = 2
 P = 𝒫(p,k)
-BSplineSupport(P) # [5..13, 12..14]
-BSplineSupport(i,P) # 12..14
+bsplinesupport(P) # [5..13, 12..14]
+bsplinesupport(i,P) # 12..14
 ```
 
 ## Derivative of B-spline basis function
@@ -246,7 +246,7 @@ gr()
 p = 2
 k = Knots(1:8)
 P = BSplineSpace(p,k)
-plot([t->BSplineBasis′₊₀(i,P,t) for i in 1:dim(P)], 1, 8, ylims=(0,1.05))
+plot([t->bsplinebasis′₊₀(i,P,t) for i in 1:dim(P)], 1, 8, ylims=(0,1.05))
 ```
 
 ![](img/bsplinebasisderivativeplot.png)
@@ -266,7 +266,7 @@ gr()
 p = 2
 k = Knots(1:8)
 P = BSplineSpace(p,k)
-plot(t->sum(BSplineBasis₊₀(i,P,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.05))
+plot(t->sum(bsplinebasis₊₀(i,P,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.05))
 ```
 
 ![](img/sumofbsplineplot.png)
@@ -279,7 +279,7 @@ gr()
 p = 2
 k = Knots(1:8) + p * Knots([1,8])
 P = BSplineSpace(p,k)
-plot(t->sum(BSplineBasis₊₀(i,P,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.05))
+plot(t->sum(bsplinebasis₊₀(i,P,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.05))
 ```
 
 ![](img/sumofbsplineplot2.png)
@@ -305,7 +305,7 @@ gr()
 p = 2
 k = Knots(1:8) + p * Knots([1,8])
 P = BSplineSpace(p,k)
-plot(t->sum(BSplineBasis(i,P,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.05))
+plot(t->sum(bsplinebasis(i,P,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.05))
 ```
 
 ![](img/sumofbsplineplot3.png)
@@ -341,9 +341,9 @@ P1 = 𝒫(1,Knots([1,3,5,8]))
 P2 = 𝒫(1,Knots([1,3,5,6,8,9]))
 P3 = 𝒫(2,Knots([1,1,3,3,5,5,8,8]))
 plot(
-    plot([t->BSplineBasis₊₀(i,P1,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
-    plot([t->BSplineBasis₊₀(i,P2,t) for i in 1:dim(P2)], 1, 9, ylims=(0,1.05), legend=false),
-    plot([t->BSplineBasis₊₀(i,P3,t) for i in 1:dim(P3)], 1, 9, ylims=(0,1.05), legend=false),
+    plot([t->bsplinebasis₊₀(i,P1,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
+    plot([t->bsplinebasis₊₀(i,P2,t) for i in 1:dim(P2)], 1, 9, ylims=(0,1.05), legend=false),
+    plot([t->bsplinebasis₊₀(i,P3,t) for i in 1:dim(P3)], 1, 9, ylims=(0,1.05), legend=false),
     layout=(3,1),
     link=:x
 )
@@ -362,20 +362,20 @@ n'&=\dim(\mathcal{P}[p',k'])
 \end{aligned}
 ```
 
-You can calculate the change of basis matrix ``A`` with `BasicBSpline.ChangeOfBasis`.
+You can calculate the change of basis matrix ``A`` with `changebasis`.
 
 ```julia
-A12 = BasicBSpline.ChangeOfBasis(P1,P2)
-A13 = BasicBSpline.ChangeOfBasis(P1,P3)
+A12 = changebasis(P1,P2)
+A13 = changebasis(P1,P3)
 ```
 
 ```julia
 using Plots
 gr()
 plot(
-    plot([t->BSplineBasis₊₀(i,P1,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
-    plot([t->sum(A12[i,j]*BSplineBasis₊₀(j,P2,t) for j in 1:dim(P2)) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
-    plot([t->sum(A13[i,j]*BSplineBasis₊₀(j,P3,t) for j in 1:dim(P3)) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
+    plot([t->bsplinebasis₊₀(i,P1,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
+    plot([t->sum(A12[i,j]*bsplinebasis₊₀(j,P2,t) for j in 1:dim(P2)) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
+    plot([t->sum(A13[i,j]*bsplinebasis₊₀(j,P3,t) for j in 1:dim(P3)) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
     layout=(3,1),
     link=:x
 )

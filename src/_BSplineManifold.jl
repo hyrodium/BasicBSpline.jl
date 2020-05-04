@@ -35,11 +35,11 @@ struct BSplineManifold
     end
 end
 
-# function BSplineBasis(𝒫s::Array{BSplineSpace,1},t)
+# function bsplinebasis(𝒫s::Array{BSplineSpace,1},t)
 #     if length(𝒫s)==length(t)==1
-#         return BSplineBasis(𝒫s[1],t[1])
+#         return bsplinebasis(𝒫s[1],t[1])
 #     elseif length(𝒫s)==length(t)==2
-#         return BSplineBasis(𝒫s[1],t[1])*BSplineBasis(𝒫s[2],t[2])'
+#         return bsplinebasis(𝒫s[1],t[1])*bsplinebasis(𝒫s[2],t[2])'
 #     else
 #         error("dimension does not match")
 #     end
@@ -52,18 +52,18 @@ B_{i^1,\dots,i^d}(t^1,\dots,t^d)
 =B_{(i^1,p^1,k^1)}(t^1)\cdots B_{(i^d,p^d,k^d)}(t^d)
 ```
 """
-function BSplineBasis(𝒫s::Array{BSplineSpace,1},t::Array{T,1} where T <: Real)
+function bsplinebasis(𝒫s::Array{BSplineSpace,1},t::Array{T,1} where T <: Real)
     d = length(t)
-    Bs = [BSplineBasis(𝒫s[i],t[i]) for i ∈ 1:d]
+    Bs = [bsplinebasis(𝒫s[i],t[i]) for i ∈ 1:d]
     return tensorprod(Bs)
 end
 
-# function Mapping(M::BSplineManifold, t::Array{Float64,1})
+# function mapping(M::BSplineManifold, t::Array{Float64,1})
 #     𝒫s = M.bsplinespaces
 #     𝒂 = M.controlpoints
 #     d=length(𝒫s)
 #     d̂=size(𝒂)[end]
-#     return [sum(BSplineBasis(𝒫s,t).*𝒂[:,:,i]) for i ∈ 1:d̂]
+#     return [sum(bsplinebasis(𝒫s,t).*𝒂[:,:,i]) for i ∈ 1:d̂]
 # end
 
 @doc raw"""
@@ -73,12 +73,12 @@ Calculate the mapping of B-spline manifold for given parameter.
 =\sum_{i^1,\dots,i^d}B_{i^1,\dots,i^d}(t^1,\dots,t^d) \bm{a}_{i^1,\dots,i^d}
 ```
 """
-function Mapping(M::BSplineManifold, t::Array{T,1} where T <: Real)
+function mapping(M::BSplineManifold, t::Array{T,1} where T <: Real)
     Ps = M.bsplinespaces
     𝒂 = M.controlpoints
     d = length(Ps)
     d̂ = size(𝒂)[end]
-    return [sum(BSplineBasis(Ps,t).*𝒂[:,:,i]) for i ∈ 1:d̂]
+    return [sum(bsplinebasis(Ps,t).*𝒂[:,:,i]) for i ∈ 1:d̂]
 end
 
 @doc raw"""

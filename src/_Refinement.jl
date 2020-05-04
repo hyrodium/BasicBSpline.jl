@@ -1,5 +1,5 @@
 # Refinement
-function ChangeOfBasis(P::BSplineSpace, P′::BSplineSpace)::Array{Float64,2}
+function changebasis(P::BSplineSpace, P′::BSplineSpace)::Array{Float64,2}
     p = P.degree
     k = P.knots
     p′ = P′.degree
@@ -12,14 +12,14 @@ function ChangeOfBasis(P::BSplineSpace, P′::BSplineSpace)::Array{Float64,2}
     if p == 0
         n=length(k)-1
         n′=length(k′)-p₊-1
-        A⁰=Float64[BSplineSupport(j,𝒫(p₊,k′)) ⊆ BSplineSupport(i,𝒫(0,k)) for i ∈ 1:n, j ∈ 1:n′]
+        A⁰=Float64[bsplinesupport(j,𝒫(p₊,k′)) ⊆ bsplinesupport(i,𝒫(0,k)) for i ∈ 1:n, j ∈ 1:n′]
         A⁰[:,findall(iszeros(P′))].=NaN
         return A⁰
     end
 
-    Aᵖ⁻¹=ChangeOfBasis(𝒫(p-1, k), 𝒫(p′-1, k′))
+    Aᵖ⁻¹=changebasis(𝒫(p-1, k), 𝒫(p′-1, k′))
     n = dim(P)
-    n′=dim(P′)
+    n′ = dim(P′)
     Z = iszeros(𝒫(p′-1,k′))
     W = findall(Z)
     K′ = [k′[i+p′]-k′[i] for i ∈ 1:n′+1]
@@ -46,13 +46,13 @@ function ChangeOfBasis(P::BSplineSpace, P′::BSplineSpace)::Array{Float64,2}
     for ȷ ∈ 1:l-1
         if L[ȷ] ≥ 2
             t = k′[W[ȷ]]
-            Ãᵖ[ȷ][:,end] = BSplineBasis₋₀(𝒫(p,k),t)
+            Ãᵖ[ȷ][:,end] = bsplinebasis₋₀(𝒫(p,k),t)
         end
     end
     for ȷ ∈ 2:l
         if L[ȷ] ≥ 2
             t = k′[W[ȷ-1]+p]
-            Ãᵖ[ȷ][:,1] = BSplineBasis₊₀(𝒫(p,k),t)
+            Ãᵖ[ȷ][:,1] = bsplinebasis₊₀(𝒫(p,k),t)
         end
     end
     for ȷ ∈ 1:l
@@ -68,21 +68,21 @@ function ChangeOfBasis(P::BSplineSpace, P′::BSplineSpace)::Array{Float64,2}
         end
     end
     Aᵖ = hcat(Ãᵖ...)
-    return Aᵖ .* Float64[BSplineSupport(j,P′) ⊆ BSplineSupport(i,P) for i ∈ 1:n, j ∈ 1:n′]
+    return Aᵖ .* Float64[bsplinesupport(j,P′) ⊆ bsplinesupport(i,P) for i ∈ 1:n, j ∈ 1:n′]
 end
 
 
 @doc raw"""
 Refinement of B-spline manifold.
 """
-function Refinement(M::BSplineManifold, Ps′::Array{BSplineSpace,1})
+function refinement(M::BSplineManifold, Ps′::Array{BSplineSpace,1})
     Ps = M.bsplinespaces
     𝒂 = M.controlpoints
     d̂ = size(𝒂)[end]
     n = dim.(Ps)
     n′ = dim.(Ps′)
     if prod(Ps .⊆ Ps′)
-        A = ChangeOfBasis.(Ps,Ps′)
+        A = changebasis.(Ps,Ps′)
         𝒂′ = [sum(A[1][I₁,J₁]*A[2][I₂,J₂]*𝒂[I₁,I₂,i] for I₁ ∈ 1:n[1], I₂ ∈ 1:n[2]) for J₁ ∈ 1:n′[1], J₂ ∈ 1:n′[2], i ∈ 1:d̂]
         return BSplineManifold(Ps′, 𝒂′)
     else
@@ -93,19 +93,19 @@ end
 @doc raw"""
 Refinement of B-spline manifold.
 """
-function Refinement(M::BSplineManifold; p₊::Union{Nothing,Array{Int,1}}=nothing, k₊::Union{Nothing,Array{Knots,1}}=nothing)
+function refinement(M::BSplineManifold; p₊::Union{Nothing,Array{Int,1}}=nothing, k₊::Union{Nothing,Array{Knots,1}}=nothing)
     Ps = M.bsplinespaces
     𝒂 = M.controlpoints
     d = length(Ps)
     d̂ = size(𝒂)[end]
     n = dim.(Ps)
     if p₊ == nothing
-        p₊=zeros(Int,d)
+        p₊ = zeros(Int,d)
     elseif length(Ps) ≠ length(p₊)
         error("dimension does not match")
     end
     if k₊ == nothing
-        k₊=zeros(Knots,d)
+        k₊ = zeros(Knots,d)
     elseif length(Ps) ≠ length(k₊)
         error("dimension does not match")
     end
@@ -115,8 +115,8 @@ function Refinement(M::BSplineManifold; p₊::Union{Nothing,Array{Int,1}}=nothin
         P = Ps[i]
         p = P.degree
         k = P.knots
-        push!(Ps′,𝒫(p+p₊[i], k+p₊[i]*unique(k)+k₊[i]))
+        push!(Ps′, 𝒫(p+p₊[i], k+p₊[i]*unique(k)+k₊[i]))
     end
 
-    return Refinement(M, Ps′)
+    return refinement(M, Ps′)
 end

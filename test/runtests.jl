@@ -28,7 +28,7 @@ using Test
 
     @testset "BSplineSpace" begin
         P1 = BSplineSpace(2,Knots([1,3,5,6,8,9]))
-        @test BSplineSupport(2,P1) == 3..8
+        @test bsplinesupport(2,P1) == 3..8
         @test dim(P1) == 3
         @test properdim(P1) == 3
         @test isproper(P1) == true
@@ -41,8 +41,8 @@ using Test
         k = Knots([5,12,13,13,14])
         p = 2
         P = 𝒫(p,k)
-        @test BSplineSupport(P) == [5..13, 12..14]
-        @test BSplineSupport(i,P) == 12..14
+        @test bsplinesupport(P) == [5..13, 12..14]
+        @test bsplinesupport(i,P) == 12..14
 
         @test isproper(𝒫(2,Knots([1,3,5,6,8,9])))
         @test !isproper(𝒫(1,Knots([1,3,3,3,8,9])))
@@ -57,7 +57,7 @@ using Test
         @test P2 ⊈ P3
     end
 
-    @testset "Refinement" begin
+    @testset "refinement" begin
         P1 = 𝒫(1,Knots([0,0,1,1]))
         P2 = 𝒫(1,Knots([1,1,2,3,3]))
         n1 = dim(P1) # 2
@@ -71,8 +71,8 @@ using Test
         @test P1 ⊆ P1′
         @test P2 ⊆ P2′
 
-        M′ = Refinement(M, [P1′, P2′])
+        M′ = refinement(M, [P1′, P2′])
         t = [0.82,1.8]
-        @test Mapping(M, t) ≈ Mapping(M′, t)
+        @test mapping(M, t) ≈ mapping(M′, t)
     end
 end

@@ -3,10 +3,10 @@ module BasicBSpline
 using IntervalSets
 
 export Knots, ♯, BSplineSpace, 𝒫, dim
-export BSplineBasis₊₀, BSplineBasis₋₀, BSplineBasis
-export BSplineBasis′₊₀, BSplineBasis′₋₀, BSplineBasis′
-export BSplineSupport, BSplineCoefficient
-export BSplineManifold, Refinement, Mapping, BSplineSvg
+export bsplinebasis₊₀, bsplinebasis₋₀, bsplinebasis
+export bsplinebasis′₊₀, bsplinebasis′₋₀, bsplinebasis′
+export bsplinesupport, changebasis
+export BSplineManifold, refinement, mapping
 export isproper, properdim
 export 𝔫
 
