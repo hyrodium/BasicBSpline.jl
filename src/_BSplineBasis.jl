@@ -81,7 +81,7 @@ Modified version.
 \end{aligned}
 ```
 """
-function bsplinebasis(P::BSplineSpace, t)::Array{Float64,1}
+function bsplinebasis(P::BSplineSpace, t::Real)::Array{Float64,1}
     p = P.degree
     k = P.knots
 
@@ -98,7 +98,7 @@ end
 i-th B-spline basis function.
 Right-sided limit version.
 """
-function bsplinebasis₊₀(i::Int64, P::BSplineSpace, t)::Float64
+function bsplinebasis₊₀(i::Int64, P::BSplineSpace, t::Real)::Float64
     p = P.degree
     k = P.knots
 
@@ -232,7 +232,7 @@ end
 @doc raw"""
 Return support of i-th B-spline basis function.
 """
-function bsplinesupport(i::Int64, P::BSplineSpace)::ClosedInterval
+function bsplinesupport(i::Int64, P::BSplineSpace)
     p = P.degree
     k = P.knots
     return k[i]..k[i+p+1]

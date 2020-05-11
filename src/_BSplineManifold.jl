@@ -35,11 +35,11 @@ struct BSplineManifold
     end
 end
 
-# function bsplinebasis(𝒫s::Array{BSplineSpace,1},t)
-#     if length(𝒫s)==length(t)==1
-#         return bsplinebasis(𝒫s[1],t[1])
-#     elseif length(𝒫s)==length(t)==2
-#         return bsplinebasis(𝒫s[1],t[1])*bsplinebasis(𝒫s[2],t[2])'
+# function bsplinebasis(Ps::Array{BSplineSpace,1},t)
+#     if length(Ps)==length(t)==1
+#         return bsplinebasis(Ps[1],t[1])
+#     elseif length(Ps)==length(t)==2
+#         return bsplinebasis(Ps[1],t[1])*bsplinebasis(Ps[2],t[2])'
 #     else
 #         error("dimension does not match")
 #     end
@@ -52,18 +52,36 @@ B_{i^1,\dots,i^d}(t^1,\dots,t^d)
 =B_{(i^1,p^1,k^1)}(t^1)\cdots B_{(i^d,p^d,k^d)}(t^d)
 ```
 """
-function bsplinebasis(𝒫s::Array{BSplineSpace,1},t::Array{T,1} where T <: Real)
+function bsplinebasis(Ps::Array{BSplineSpace,1},t::Array{T,1} where T <: Real)
     d = length(t)
-    Bs = [bsplinebasis(𝒫s[i],t[i]) for i ∈ 1:d]
+    Bs = [bsplinebasis(Ps[i],t[i]) for i ∈ 1:d]
     return tensorprod(Bs)
 end
 
+@doc raw"""
+Multi-dimentional B-spline basis function.
+```math
+B_{i^1,\dots,i^d}(t^1,\dots,t^d)
+=B_{(i^1,p^1,k^1)}(t^1)\cdots B_{(i^d,p^d,k^d)}(t^d)
+```
+"""
+function bsplinebasis(I::CartesianIndex, Ps::Array{BSplineSpace,1},t::Array{T,1} where T <: Real)
+    d = length(Ps)
+    Bs = prod(bsplinebasis(I[i],Ps[i],t[i]) for i ∈ 1:d)
+    return tensorprod(Bs)
+end
+
+function bsplinesupport(I::CartesianIndex, Ps::Array{BSplineSpace,1})
+    d = length(Ps)
+    return [bsplinesupport(I[i],Ps[i]) for i ∈ 1:d]
+end
+
 # function mapping(M::BSplineManifold, t::Array{Float64,1})
-#     𝒫s = M.bsplinespaces
+#     Ps = M.bsplinespaces
 #     𝒂 = M.controlpoints
-#     d=length(𝒫s)
+#     d=length(Ps)
 #     d̂=size(𝒂)[end]
-#     return [sum(bsplinebasis(𝒫s,t).*𝒂[:,:,i]) for i ∈ 1:d̂]
+#     return [sum(bsplinebasis(Ps,t).*𝒂[:,:,i]) for i ∈ 1:d̂]
 # end
 
 @doc raw"""
