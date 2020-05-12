@@ -237,3 +237,9 @@ function bsplinesupport(i::Int64, P::BSplineSpace)
     k = P.knots
     return k[i]..k[i+p+1]
 end
+
+function bsplinesupport(P::BSplineSpace)
+    p = P.degree
+    k = P.knots
+    return [k[i]..k[i+p+1] for i ∈ 1:dim(P)]
+end

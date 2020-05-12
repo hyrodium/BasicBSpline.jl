@@ -17,7 +17,7 @@ function changebasis(P::BSplineSpace, P′::BSplineSpace)::Array{Float64,2}
         return A⁰
     end
 
-    Aᵖ⁻¹=changebasis(𝒫(p-1, k), 𝒫(p′-1, k′))
+    Aᵖ⁻¹ = changebasis(𝒫(p-1, k), 𝒫(p′-1, k′))
     n = dim(P)
     n′ = dim(P′)
     Z = iszeros(𝒫(p′-1,k′))
@@ -89,6 +89,7 @@ function refinement(M::BSplineManifold, Ps′::Array{BSplineSpace,1})
         error("𝒫[p,k] ⊄ 𝒫[p′,k′]")
     end
 end
+
 
 @doc raw"""
 Refinement of B-spline manifold.
