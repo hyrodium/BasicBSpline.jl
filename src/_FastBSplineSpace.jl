@@ -4,40 +4,53 @@ struct FastBSplineSpace{T}
     function FastBSplineSpace(p::Int, knots::Knots)
         if p < 0
             error("degree of polynominal must be non-negative")
+        elseif p > MAX_DEGREE
+            error("FastBSpline supports only degree 0 , ... , 3")
         end
         new{p}(knots.vector)
     end
 end
-
-const f𝒫 = FastBSplineSpace
 
 function Knots(P::FastBSplineSpace)
     return Knots(P.vector)
 end
 
 
-# @doc raw"""
-# Return dimention of a B-spline space.
-# ```math
-# \dim(\mathcal{P}[p,k])
-# =\sharp k - p -1
-# ```
-# """
 for p in 0:MAX_DEGREE
     @eval begin
-        function dim(bsplinespace::FastBSplineSpace{$p})
-            k=bsplinespace.vector
+        @doc raw"""
+        Return dimention of a B-spline space.
+        ```math
+        \dim(\mathcal{P}[p,k])
+        =\sharp k - p -1
+        ```
+        """
+        function dim(P::FastBSplineSpace{$p})
+            k=P.vector
             return length(k)-$p-1
+        end
+    end
+
+    @eval begin
+        @doc raw"""
+        Return dimention of a B-spline space.
+        ```math
+        \dim(\mathcal{P}[p,k])
+        =\sharp k - p -1
+        ```
+        """
+        function BSplineSpace(P::FastBSplineSpace{$p})
+            BSplineSpace($p, Knots(P.vector))
         end
     end
 end
 
 
-# """
-# Check inclusive relationship between B-spline spaces.
-# """
 for p in 0:MAX_DEGREE, p′ in 0:MAX_DEGREE
     @eval begin
+        """
+        Check inclusive relationship between B-spline spaces.
+        """
         function Base.:⊆(P::FastBSplineSpace{$p}, P′::FastBSplineSpace{$p′})
             k = Knots(P)
             k′ = Knots(P′)

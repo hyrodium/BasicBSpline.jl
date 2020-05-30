@@ -38,9 +38,9 @@ plot(t->sum(bsplinebasis(i,P,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.05))
 savefig("docs/src/img/sumofbsplineplot3.png")
 
 ##
-P1 = 𝒫(1,Knots([1,3,5,8]))
-P2 = 𝒫(1,Knots([1,3,5,6,8,9]))
-P3 = 𝒫(2,Knots([1,1,3,3,5,5,8,8]))
+P1 = BSplineSpace(1,Knots([1,3,5,8]))
+P2 = BSplineSpace(1,Knots([1,3,5,6,8,9]))
+P3 = BSplineSpace(2,Knots([1,1,3,3,5,5,8,8]))
 plot([t->bsplinebasis₊₀(i,P1,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05))
 savefig("docs/src/img/bsplineplotP1.png")
 plot([t->bsplinebasis₊₀(i,P2,t) for i in 1:dim(P2)], 1, 9, ylims=(0,1.05))

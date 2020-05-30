@@ -12,7 +12,7 @@ struct BSplineSpace
         if degree < 0
             error("degree of polynominal must be non-negative")
         end
-        new(degree,knots)
+        new(degree, knots)
     end
 end
 
@@ -22,7 +22,13 @@ Same as BSplineSpace.
 \mathcal{P}[p,k]
 ```
 """
-const 𝒫 = BSplineSpace
+function 𝒫(p::Int,k::Knots)
+    if p ≤ MAX_DEGREE
+        FastBSplineSpace(p,k)
+    else
+        BSplineSpace(p,k)
+    end
+end
 
 @doc raw"""
 Return dimention of a B-spline space.

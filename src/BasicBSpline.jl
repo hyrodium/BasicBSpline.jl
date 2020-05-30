@@ -9,7 +9,7 @@ export bsplinesupport, changebasis
 export BSplineManifold, refinement, mapping
 export isproper, properdim
 export 𝔫
-export FastBSplineSpace, f𝒫
+export FastBSplineSpace, FastBSplineManifold
 
 const MAX_DEGREE = 3
 

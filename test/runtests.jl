@@ -40,18 +40,18 @@ using Test
         i = 2
         k = Knots([5,12,13,13,14])
         p = 2
-        P = 𝒫(p,k)
+        P = BSplineSpace(p,k)
         @test bsplinesupport(P) == [5..13, 12..14]
         @test bsplinesupport(i,P) == 12..14
 
-        @test isproper(𝒫(2,Knots([1,3,5,6,8,9])))
-        @test !isproper(𝒫(1,Knots([1,3,3,3,8,9])))
+        @test isproper(BSplineSpace(2,Knots([1,3,5,6,8,9])))
+        @test !isproper(BSplineSpace(1,Knots([1,3,3,3,8,9])))
 
-        @test dim(𝒫(2,Knots([1,3,5,6,8,9]))) == 3
+        @test dim(BSplineSpace(2,Knots([1,3,5,6,8,9]))) == 3
 
-        P1 = 𝒫(1,Knots([1,3,5,8]))
-        P2 = 𝒫(1,Knots([1,3,5,6,8,9]))
-        P3 = 𝒫(2,Knots([1,1,3,3,5,5,8,8]))
+        P1 = BSplineSpace(1,Knots([1,3,5,8]))
+        P2 = BSplineSpace(1,Knots([1,3,5,6,8,9]))
+        P3 = BSplineSpace(2,Knots([1,1,3,3,5,5,8,8]))
         @test P1 ⊆ P2
         @test P1 ⊆ P3
         @test P2 ⊈ P3
@@ -71,33 +71,33 @@ using Test
         i = 2
         k = Knots([5,12,13,13,14])
         p = 2
-        P = f𝒫(p,k)
+        P = FastBSplineSpace(p,k)
         @test bsplinesupport(P) == [5..13, 12..14]
         @test bsplinesupport(i,P) == 12..14
 
-        @test isproper(f𝒫(2,Knots([1,3,5,6,8,9])))
-        @test !isproper(f𝒫(1,Knots([1,3,3,3,8,9])))
+        @test isproper(FastBSplineSpace(2,Knots([1,3,5,6,8,9])))
+        @test !isproper(FastBSplineSpace(1,Knots([1,3,3,3,8,9])))
 
-        @test dim(f𝒫(2,Knots([1,3,5,6,8,9]))) == 3
+        @test dim(FastBSplineSpace(2,Knots([1,3,5,6,8,9]))) == 3
 
-        P1 = 𝒫(1,Knots([1,3,5,8]))
-        P2 = 𝒫(1,Knots([1,3,5,6,8,9]))
-        P3 = 𝒫(2,Knots([1,1,3,3,5,5,8,8]))
+        P1 = FastBSplineSpace(1,Knots([1,3,5,8]))
+        P2 = FastBSplineSpace(1,Knots([1,3,5,6,8,9]))
+        P3 = FastBSplineSpace(2,Knots([1,1,3,3,5,5,8,8]))
         @test P1 ⊆ P2
         @test P1 ⊆ P3
         @test P2 ⊈ P3
     end
 
     @testset "refinement" begin
-        P1 = 𝒫(1,Knots([0,0,1,1]))
-        P2 = 𝒫(1,Knots([1,1,2,3,3]))
+        P1 = BSplineSpace(1,Knots([0,0,1,1]))
+        P2 = BSplineSpace(1,Knots([1,1,2,3,3]))
         n1 = dim(P1) # 2
         n2 = dim(P2) # 3
         𝒂 = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.
         M = BSplineManifold([P1, P2], 𝒂)
 
-        P1′ = 𝒫(2,Knots([0,0,0,1,1,1]))
-        P2′ = 𝒫(1,Knots([1,1,2,1.45,3,3]))
+        P1′ = BSplineSpace(2,Knots([0,0,0,1,1,1]))
+        P2′ = BSplineSpace(1,Knots([1,1,2,1.45,3,3]))
 
         @test P1 ⊆ P1′
         @test P2 ⊆ P2′
@@ -107,16 +107,16 @@ using Test
         @test mapping(M, t) ≈ mapping(M′, t)
     end
 
-    @testset "refinement" begin
-        P1 = f𝒫(1,Knots([0,0,1,1]))
-        P2 = f𝒫(1,Knots([1,1,2,3,3]))
+    @testset "fast refinement" begin
+        P1 = FastBSplineSpace(1,Knots([0,0,1,1]))
+        P2 = FastBSplineSpace(1,Knots([1,1,2,3,3]))
         n1 = dim(P1) # 2
         n2 = dim(P2) # 3
         𝒂 = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.
-        M = BSplineManifold([P1, P2], 𝒂)
+        M = FastBSplineManifold([P1, P2], 𝒂)
 
-        P1′ = 𝒫(2,Knots([0,0,0,1,1,1]))
-        P2′ = 𝒫(1,Knots([1,1,2,1.45,3,3]))
+        P1′ = FastBSplineSpace(2,Knots([0,0,0,1,1,1]))
+        P2′ = FastBSplineSpace(1,Knots([1,1,2,1.45,3,3]))
 
         @test P1 ⊆ P1′
         @test P2 ⊆ P2′
@@ -125,4 +125,5 @@ using Test
         t = [0.82,1.8]
         @test mapping(M, t) ≈ mapping(M′, t)
     end
+
 end
