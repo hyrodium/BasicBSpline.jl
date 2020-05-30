@@ -1,4 +1,6 @@
 # B-spline manifold
+abstract type AbstractBSplineManifold end
+
 function ⊗(X::Array{Float64},Y::Array{Float64})::Array{Float64}
     m = size(X)
     n = size(Y)
@@ -15,7 +17,7 @@ function tensorprod(X::Array{T,1}) where T <: Array{Float64}
     return Y
 end
 
-struct BSplineManifold
+struct BSplineManifold <: AbstractBSplineManifold
     bsplinespaces::Array{BSplineSpace,1}
     controlpoints::Array{Float64}
     function BSplineManifold(bsplinespaces::AbstractArray{BSplineSpace,1}, controlpoints::AbstractArray{T} where T<: Real)
@@ -35,7 +37,7 @@ struct BSplineManifold
     end
 end
 
-struct FastBSplineManifold
+struct FastBSplineManifold <: AbstractBSplineManifold
     bsplinespaces::Array{T,1} where T <: FastBSplineSpace
     controlpoints::Array{Float64}
     function FastBSplineManifold(bsplinespaces::AbstractArray{T,1} where T <: FastBSplineSpace, controlpoints::AbstractArray{T} where T<: Real)
