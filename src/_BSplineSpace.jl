@@ -1,11 +1,13 @@
 # B-spline space
+abstract type AbstractBSplineSpace end
+
 @doc raw"""
 Construct B-spline space from given polynominal degree and knot vector.
 ```math
 \mathcal{P}[p,k]
 ```
 """
-struct BSplineSpace
+struct BSplineSpace <: AbstractBSplineSpace
     degree::Int
     knots::Knots
     function BSplineSpace(degree::Int, knots::Knots)
@@ -69,4 +71,12 @@ end
 
 function properdim(P::BSplineSpace)
     return dim(P) - sum(iszeros(P))
+end
+
+function degree(P::BSplineSpace)
+    return P.degree
+end
+
+function knots(P::BSplineSpace)
+    return P.knots
 end

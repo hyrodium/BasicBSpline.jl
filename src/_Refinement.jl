@@ -168,8 +168,8 @@ function refinement(M::FastBSplineManifold; p₊::Union{Nothing,Array{Int,1}}=no
     Ps′ = FastBSplineSpace[]
     for i ∈ 1:length(Ps)
         P = Ps[i]
-        p = P.degree
-        k = P.knots
+        p = degree(P)
+        k = knots(P)
         push!(Ps′, 𝒫(p+p₊[i], k+p₊[i]*unique(k)+k₊[i]))
     end
 

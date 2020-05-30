@@ -8,6 +8,7 @@ export bsplinebasis′₊₀, bsplinebasis′₋₀, bsplinebasis′
 export bsplinesupport, changebasis
 export BSplineManifold, refinement, mapping
 export isproper, properdim
+export degree, knots
 export 𝔫
 export FastBSplineSpace, FastBSplineManifold
 

@@ -94,18 +94,12 @@ function bsplinebasis′(i::Int,P::FastBSplineSpace{3},t::Real)
 end
 
 
-for p in 0:MAX_DEGREE
-    @eval begin
+function bsplinesupport(i::Int64, P::FastBSplineSpace{p}) where p
+    k = P.vector
+    return k[i]..k[i+p+1]
+end
 
-        function bsplinesupport(i::Int64, P::FastBSplineSpace{$p})
-            k = P.vector
-            return k[i]..k[i+$p+1]
-        end
-
-        function bsplinesupport(P::FastBSplineSpace{$p})
-            k = P.vector
-            return [k[i]..k[i+$p+1] for i ∈ 1:dim(P)]
-        end
-
-    end
+function bsplinesupport(P::FastBSplineSpace{p}) where p
+    k = P.vector
+    return [k[i]..k[i+p+1] for i ∈ 1:dim(P)]
 end
