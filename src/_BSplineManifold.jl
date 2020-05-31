@@ -17,6 +17,9 @@ function tensorprod(X::Array{T,1}) where T <: Array{Float64}
     return Y
 end
 
+"""
+B-spline manifold for general polynomial degree
+"""
 struct BSplineManifold <: AbstractBSplineManifold
     bsplinespaces::Array{BSplineSpace,1}
     controlpoints::Array{Float64}
@@ -37,6 +40,11 @@ struct BSplineManifold <: AbstractBSplineManifold
     end
 end
 
+
+"""
+B-spline manifold for lower polynomial degree
+TODO: make the field `bsplinespaces` to be conposite type, not abstract type, for performance
+"""
 struct FastBSplineManifold <: AbstractBSplineManifold
     bsplinespaces::Array{T,1} where T <: FastBSplineSpace
     controlpoints::Array{Float64}
@@ -57,6 +65,9 @@ struct FastBSplineManifold <: AbstractBSplineManifold
     end
 end
 
+"""
+convert FastBSplineManifold to BSplineManifold
+"""
 function BSplineManifold(M::FastBSplineManifold)
     BSplineManifold(BSplineSpace.(M.bsplinespaces), M.controlpoints)
 end
