@@ -12,15 +12,15 @@ function changebasis(P::BSplineSpace, P′::BSplineSpace)::Array{Float64,2}
     if p == 0
         n=length(k)-1
         n′=length(k′)-p₊-1
-        A⁰=Float64[bsplinesupport(j,𝒫(p₊,k′)) ⊆ bsplinesupport(i,𝒫(0,k)) for i ∈ 1:n, j ∈ 1:n′]
+        A⁰=Float64[bsplinesupport(j,BSplineSpace(p₊,k′)) ⊆ bsplinesupport(i,BSplineSpace(0,k)) for i ∈ 1:n, j ∈ 1:n′]
         A⁰[:,findall(iszeros(P′))].=NaN
         return A⁰
     end
 
-    Aᵖ⁻¹=changebasis(𝒫(p-1, k), 𝒫(p′-1, k′))
+    Aᵖ⁻¹ = changebasis(BSplineSpace(p-1, k), BSplineSpace(p′-1, k′))
     n = dim(P)
     n′ = dim(P′)
-    Z = iszeros(𝒫(p′-1,k′))
+    Z = iszeros(BSplineSpace(p′-1,k′))
     W = findall(Z)
     K′ = [k′[i+p′]-k′[i] for i ∈ 1:n′+1]
     K = [ifelse(k[i+p]≠k[i], 1/(k[i+p]-k[i]), 0.0) for i ∈ 1:n+1]
@@ -46,13 +46,13 @@ function changebasis(P::BSplineSpace, P′::BSplineSpace)::Array{Float64,2}
     for ȷ ∈ 1:l-1
         if L[ȷ] ≥ 2
             t = k′[W[ȷ]]
-            Ãᵖ[ȷ][:,end] = bsplinebasis₋₀(𝒫(p,k),t)
+            Ãᵖ[ȷ][:,end] = bsplinebasis₋₀(BSplineSpace(p,k),t)
         end
     end
     for ȷ ∈ 2:l
         if L[ȷ] ≥ 2
             t = k′[W[ȷ-1]+p]
-            Ãᵖ[ȷ][:,1] = bsplinebasis₊₀(𝒫(p,k),t)
+            Ãᵖ[ȷ][:,1] = bsplinebasis₊₀(BSplineSpace(p,k),t)
         end
     end
     for ȷ ∈ 1:l
@@ -69,6 +69,10 @@ function changebasis(P::BSplineSpace, P′::BSplineSpace)::Array{Float64,2}
     end
     Aᵖ = hcat(Ãᵖ...)
     return Aᵖ .* Float64[bsplinesupport(j,P′) ⊆ bsplinesupport(i,P) for i ∈ 1:n, j ∈ 1:n′]
+end
+
+function changebasis(P::FastBSplineSpace, P′::FastBSplineSpace)
+    changebasis(BSplineSpace(P), BSplineSpace(P′))
 end
 
 
@@ -89,6 +93,7 @@ function refinement(M::BSplineManifold, Ps′::Array{BSplineSpace,1})
         error("𝒫[p,k] ⊄ 𝒫[p′,k′]")
     end
 end
+
 
 @doc raw"""
 Refinement of B-spline manifold.
@@ -115,6 +120,56 @@ function refinement(M::BSplineManifold; p₊::Union{Nothing,Array{Int,1}}=nothin
         P = Ps[i]
         p = P.degree
         k = P.knots
+        push!(Ps′, 𝒫(p+p₊[i], k+p₊[i]*unique(k)+k₊[i]))
+    end
+
+    return refinement(M, Ps′)
+end
+
+@doc raw"""
+Refinement of B-spline manifold.
+"""
+function refinement(M::FastBSplineManifold, Ps′::Array{T,1} where T <: FastBSplineSpace)
+    Ps = M.bsplinespaces
+    𝒂 = M.controlpoints
+    d̂ = size(𝒂)[end]
+    n = dim.(Ps)
+    n′ = dim.(Ps′)
+    if prod(Ps .⊆ Ps′)
+        A = changebasis.(Ps,Ps′)
+        𝒂′ = [sum(A[1][I₁,J₁]*A[2][I₂,J₂]*𝒂[I₁,I₂,i] for I₁ ∈ 1:n[1], I₂ ∈ 1:n[2]) for J₁ ∈ 1:n′[1], J₂ ∈ 1:n′[2], i ∈ 1:d̂]
+        return FastBSplineManifold(Ps′, 𝒂′)
+    else
+        error("𝒫[p,k] ⊄ 𝒫[p′,k′]")
+    end
+end
+
+
+@doc raw"""
+Refinement of B-spline manifold.
+"""
+function refinement(M::FastBSplineManifold; p₊::Union{Nothing,Array{Int,1}}=nothing, k₊::Union{Nothing,Array{Knots,1}}=nothing)
+    Ps = M.bsplinespaces
+    𝒂 = M.controlpoints
+    d = length(Ps)
+    d̂ = size(𝒂)[end]
+    n = dim.(Ps)
+    if p₊ == nothing
+        p₊ = zeros(Int,d)
+    elseif length(Ps) ≠ length(p₊)
+        error("dimension does not match")
+    end
+    if k₊ == nothing
+        k₊ = zeros(Knots,d)
+    elseif length(Ps) ≠ length(k₊)
+        error("dimension does not match")
+    end
+
+    Ps′ = FastBSplineSpace[]
+    for i ∈ 1:length(Ps)
+        P = Ps[i]
+        p = degree(P)
+        k = knots(P)
         push!(Ps′, 𝒫(p+p₊[i], k+p₊[i]*unique(k)+k₊[i]))
     end
 

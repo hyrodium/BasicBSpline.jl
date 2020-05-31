@@ -18,7 +18,7 @@ Right-sided limit version.
 \end{aligned}
 ```
 """
-function bsplinebasis₊₀(P::BSplineSpace, t)::Array{Float64,1}
+function bsplinebasis₊₀(P::BSplineSpace, t::Real)::Array{Float64,1}
     p = P.degree
     k = P.knots
 
@@ -27,7 +27,7 @@ function bsplinebasis₊₀(P::BSplineSpace, t)::Array{Float64,1}
         return [k[i] ≤ t < k[i+1] for i ∈ 1:n]
     end
     K = [ifelse(k[i+p]==k[i],0,(t-k[i])/(k[i+p]-k[i])) for i ∈ 1:n+1]
-    B = bsplinebasis₊₀(𝒫(p-1,k),t)
+    B = bsplinebasis₊₀(BSplineSpace(p-1,k),t)
     return [K[i]*B[i]+(1-K[i+1])*B[i+1] for i ∈ 1:n]
 end
 
@@ -49,7 +49,7 @@ Left-sided limit version.
 \end{aligned}
 ```
 """
-function bsplinebasis₋₀(P::BSplineSpace, t)::Array{Float64,1}
+function bsplinebasis₋₀(P::BSplineSpace, t::Real)::Array{Float64,1}
     p = P.degree
     k = P.knots
 
@@ -58,7 +58,7 @@ function bsplinebasis₋₀(P::BSplineSpace, t)::Array{Float64,1}
         return [k[i] < t ≤ k[i+1] for i ∈ 1:n]
     end
     K = [ifelse(k[i+p]==k[i],0,(t-k[i])/(k[i+p]-k[i])) for i ∈ 1:n+1]
-    B = bsplinebasis₋₀(𝒫(p-1,k),t)
+    B = bsplinebasis₋₀(BSplineSpace(p-1,k),t)
     return [K[i]*B[i]+(1-K[i+1])*B[i+1] for i ∈ 1:n]
 end
 
@@ -90,7 +90,7 @@ function bsplinebasis(P::BSplineSpace, t::Real)::Array{Float64,1}
         return [k[i] ≤ t < k[i+1] || (k[i] ≠ k[i+1] == k[end] == t) for i ∈ 1:n]
     end
     K = [ifelse(k[i+p]==k[i],0,(t-k[i])/(k[i+p]-k[i])) for i ∈ 1:n+1]
-    B = bsplinebasis(𝒫(p-1,k),t)
+    B = bsplinebasis(BSplineSpace(p-1,k),t)
     return [K[i]*B[i]+(1-K[i+1])*B[i+1] for i ∈ 1:n]
 end
 
@@ -105,8 +105,8 @@ function bsplinebasis₊₀(i::Int64, P::BSplineSpace, t::Real)::Float64
     if p == 0
         return k[i] ≤ t < k[i+1]
     else
-        return (((k[i+p]-k[i]≠0) ? bsplinebasis₊₀(i,𝒫(p-1,k),t)*(t-k[i])/(k[i+p]-k[i]) : 0)
-        +((k[i+p+1]-k[i+1]≠0) ? bsplinebasis₊₀(i+1,𝒫(p-1,k),t)*(k[i+p+1]-t)/(k[i+p+1]-k[i+1]) : 0))
+        return (((k[i+p]-k[i]≠0) ? bsplinebasis₊₀(i,BSplineSpace(p-1,k),t)*(t-k[i])/(k[i+p]-k[i]) : 0)
+        +((k[i+p+1]-k[i+1]≠0) ? bsplinebasis₊₀(i+1,BSplineSpace(p-1,k),t)*(k[i+p+1]-t)/(k[i+p+1]-k[i+1]) : 0))
     end
 end
 
@@ -121,8 +121,8 @@ function bsplinebasis₋₀(i::Int64, P::BSplineSpace, t)::Float64
     if p == 0
         return k[i] < t ≤ k[i+1]
     else
-        return (((k[i+p]-k[i]≠0) ? bsplinebasis₋₀(i,𝒫(p-1,k),t)*(t-k[i])/(k[i+p]-k[i]) : 0)
-        +((k[i+p+1]-k[i+1]≠0) ? bsplinebasis₋₀(i+1,𝒫(p-1,k),t)*(k[i+p+1]-t)/(k[i+p+1]-k[i+1]) : 0))
+        return (((k[i+p]-k[i]≠0) ? bsplinebasis₋₀(i,BSplineSpace(p-1,k),t)*(t-k[i])/(k[i+p]-k[i]) : 0)
+        +((k[i+p+1]-k[i+1]≠0) ? bsplinebasis₋₀(i+1,BSplineSpace(p-1,k),t)*(k[i+p+1]-t)/(k[i+p+1]-k[i+1]) : 0))
     end
 end
 
@@ -137,8 +137,8 @@ function bsplinebasis(i::Int64, P::BSplineSpace, t)::Float64
     if p == 0
         return k[i]≤t<k[i+1] || (k[i]≠k[i+1]==k[end]==t)
     else
-        return (((k[i+p]-k[i]≠0) ? bsplinebasis(i,𝒫(p-1,k),t)*(t-k[i])/(k[i+p]-k[i]) : 0)
-        +((k[i+p+1]-k[i+1]≠0) ? bsplinebasis(i+1,𝒫(p-1,k),t)*(k[i+p+1]-t)/(k[i+p+1]-k[i+1]) : 0))
+        return (((k[i+p]-k[i]≠0) ? bsplinebasis(i,BSplineSpace(p-1,k),t)*(t-k[i])/(k[i+p]-k[i]) : 0)
+        +((k[i+p+1]-k[i+1]≠0) ? bsplinebasis(i+1,BSplineSpace(p-1,k),t)*(k[i+p+1]-t)/(k[i+p+1]-k[i+1]) : 0))
     end
 end
 
@@ -159,7 +159,7 @@ function bsplinebasis′₊₀(P::BSplineSpace, t)::Array{Float64,1}
         return zeros(n)
     end
     K = [ifelse(k[i+p]==k[i],0,p/(k[i+p]-k[i])) for i ∈ 1:n+1]
-    B = bsplinebasis₊₀(𝒫(p-1,k),t)
+    B = bsplinebasis₊₀(BSplineSpace(p-1,k),t)
     return [K[i]*B[i]-K[i+1]*B[i+1] for i ∈ 1:n]
 end
 
@@ -180,7 +180,7 @@ function bsplinebasis′₋₀(P::BSplineSpace, t)::Array{Float64,1}
         return zeros(n)
     end
     K = [ifelse(k[i+p]==k[i],0,p/(k[i+p]-k[i])) for i ∈ 1:n+1]
-    B = bsplinebasis₋₀(𝒫(p-1,k),t)
+    B = bsplinebasis₋₀(BSplineSpace(p-1,k),t)
     return [K[i]*B[i]-K[i+1]*B[i+1] for i ∈ 1:n]
 end
 
@@ -201,7 +201,7 @@ function bsplinebasis′(P::BSplineSpace, t)::Array{Float64,1}
         return zeros(n)
     end
     K = [ifelse(k[i+p]==k[i],0,p/(k[i+p]-k[i])) for i ∈ 1:n+1]
-    B = bsplinebasis(𝒫(p-1,k),t)
+    B = bsplinebasis(BSplineSpace(p-1,k),t)
     return [K[i]*B[i]-K[i+1]*B[i+1] for i ∈ 1:n]
 end
 
@@ -209,24 +209,24 @@ function bsplinebasis′₊₀(i::Int64, P::BSplineSpace, t)::Float64
     p = P.degree
     k = P.knots
 
-    return p*(((k[i+p]-k[i]≠0) ? bsplinebasis₊₀(i,𝒫(p-1,k),t)/(k[i+p]-k[i]) : 0)
-    -((k[i+p+1]-k[i+1]≠0) ? bsplinebasis₊₀(i+1,𝒫(p-1,k),t)/(k[i+p+1]-k[i+1]) : 0))
+    return p*(((k[i+p]-k[i]≠0) ? bsplinebasis₊₀(i,BSplineSpace(p-1,k),t)/(k[i+p]-k[i]) : 0)
+    -((k[i+p+1]-k[i+1]≠0) ? bsplinebasis₊₀(i+1,BSplineSpace(p-1,k),t)/(k[i+p+1]-k[i+1]) : 0))
 end
 
 function bsplinebasis′₋₀(i::Int64, P::BSplineSpace, t)::Float64
     p = P.degree
     k = P.knots
 
-    return p*(((k[i+p]-k[i]≠0) ? bsplinebasis₋₀(i,𝒫(p-1,k),t)/(k[i+p]-k[i]) : 0)
-    -((k[i+p+1]-k[i+1]≠0) ? bsplinebasis₋₀(i+1,𝒫(p-1,k),t)/(k[i+p+1]-k[i+1]) : 0))
+    return p*(((k[i+p]-k[i]≠0) ? bsplinebasis₋₀(i,BSplineSpace(p-1,k),t)/(k[i+p]-k[i]) : 0)
+    -((k[i+p+1]-k[i+1]≠0) ? bsplinebasis₋₀(i+1,BSplineSpace(p-1,k),t)/(k[i+p+1]-k[i+1]) : 0))
 end
 
 function bsplinebasis′(i::Int64, P::BSplineSpace, t)::Float64
     p = P.degree
     k = P.knots
 
-    return p*(((k[i+p]-k[i]≠0) ? bsplinebasis(i,𝒫(p-1,k),t)/(k[i+p]-k[i]) : 0)
-    -((k[i+p+1]-k[i+1]≠0) ? bsplinebasis(i+1,𝒫(p-1,k),t)/(k[i+p+1]-k[i+1]) : 0))
+    return p*(((k[i+p]-k[i]≠0) ? bsplinebasis(i,BSplineSpace(p-1,k),t)/(k[i+p]-k[i]) : 0)
+    -((k[i+p+1]-k[i+1]≠0) ? bsplinebasis(i+1,BSplineSpace(p-1,k),t)/(k[i+p+1]-k[i+1]) : 0))
 end
 
 @doc raw"""
@@ -236,4 +236,10 @@ function bsplinesupport(i::Int64, P::BSplineSpace)
     p = P.degree
     k = P.knots
     return k[i]..k[i+p+1]
+end
+
+function bsplinesupport(P::BSplineSpace)
+    p = P.degree
+    k = P.knots
+    return [k[i]..k[i+p+1] for i ∈ 1:dim(P)]
 end

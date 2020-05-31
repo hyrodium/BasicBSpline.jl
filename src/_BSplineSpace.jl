@@ -1,18 +1,20 @@
 # B-spline space
+abstract type AbstractBSplineSpace end
+
 @doc raw"""
 Construct B-spline space from given polynominal degree and knot vector.
 ```math
 \mathcal{P}[p,k]
 ```
 """
-struct BSplineSpace
+struct BSplineSpace <: AbstractBSplineSpace
     degree::Int
     knots::Knots
     function BSplineSpace(degree::Int, knots::Knots)
         if degree < 0
             error("degree of polynominal must be non-negative")
         end
-        new(degree,knots)
+        new(degree, knots)
     end
 end
 
@@ -22,7 +24,13 @@ Same as BSplineSpace.
 \mathcal{P}[p,k]
 ```
 """
-const 𝒫 = BSplineSpace
+function 𝒫(p::Int,k::Knots)
+    if p ≤ MAX_DEGREE
+        FastBSplineSpace(p,k)
+    else
+        BSplineSpace(p,k)
+    end
+end
 
 @doc raw"""
 Return dimention of a B-spline space.
@@ -61,12 +69,14 @@ function isproper(P::BSplineSpace)
     return !|(iszeros(P)...)
 end
 
-function bsplinesupport(P::BSplineSpace)
-    p = P.degree
-    k = P.knots
-    return [k[i]..k[i+p+1] for i ∈ 1:dim(P)]
-end
-
 function properdim(P::BSplineSpace)
     return dim(P) - sum(iszeros(P))
+end
+
+function degree(P::BSplineSpace)
+    return P.degree
+end
+
+function knots(P::BSplineSpace)
+    return P.knots
 end
