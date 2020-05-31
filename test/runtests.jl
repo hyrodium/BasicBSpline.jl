@@ -88,13 +88,14 @@ using Test
         @test P2 ⊈ P3
     end
 
-    @testset "refinement" begin
+    @testset "BSplineManifold" begin
         P1 = BSplineSpace(1,Knots([0,0,1,1]))
         P2 = BSplineSpace(1,Knots([1,1,2,3,3]))
         n1 = dim(P1) # 2
         n2 = dim(P2) # 3
         𝒂 = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.
         M = BSplineManifold([P1, P2], 𝒂)
+        @test dim(M) == 2
 
         P1′ = BSplineSpace(2,Knots([0,0,0,1,1,1]))
         P2′ = BSplineSpace(1,Knots([1,1,2,1.45,3,3]))
@@ -107,13 +108,14 @@ using Test
         @test mapping(M, t) ≈ mapping(M′, t)
     end
 
-    @testset "fast refinement" begin
+    @testset "FastBSplineManifold" begin
         P1 = FastBSplineSpace(1,Knots([0,0,1,1]))
         P2 = FastBSplineSpace(1,Knots([1,1,2,3,3]))
         n1 = dim(P1) # 2
         n2 = dim(P2) # 3
         𝒂 = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.
         M = FastBSplineManifold([P1, P2], 𝒂)
+        @test dim(M) == 2
 
         P1′ = FastBSplineSpace(2,Knots([0,0,0,1,1,1]))
         P2′ = FastBSplineSpace(1,Knots([1,1,2,1.45,3,3]))
