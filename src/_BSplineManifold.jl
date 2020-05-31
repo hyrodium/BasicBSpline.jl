@@ -115,7 +115,7 @@ function mapping(M::BSplineManifold, t::Array{T,1} where T <: Real)
     𝒂 = M.controlpoints
     d = length(Ps)
     d̂ = size(𝒂)[end]
-    return [sum(bsplinebasis(Ps,t).*𝒂[:,:,i]) for i ∈ 1:d̂]
+    return [sum(bsplinebasis(Ps,t).*𝒂[..,i]) for i ∈ 1:d̂]
 end
 
 function mapping(M::FastBSplineManifold, t::Array{T,1} where T <: Real)
@@ -126,7 +126,15 @@ end
 @doc raw"""
 Calculate the dimention of B-spline manifold.
 """
-function dim(bsplinemanifold::BSplineManifold)
-    cp = bsplinemanifold.controlpoints
-    return size(cp)-1
+function dim(M::BSplineManifold)
+    Ps = M.bsplinespaces
+    return length(Ps)
+end
+
+@doc raw"""
+Calculate the dimention of B-spline manifold.
+"""
+function dim(M::FastBSplineManifold)
+    Ps = M.bsplinespaces
+    return length(Ps)
 end

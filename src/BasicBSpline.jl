@@ -1,6 +1,7 @@
 module BasicBSpline
 
 using IntervalSets
+using EllipsisNotation
 
 export Knots, ♯, BSplineSpace, 𝒫, dim
 export bsplinebasis₊₀, bsplinebasis₋₀, bsplinebasis
