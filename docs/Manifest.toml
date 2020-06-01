@@ -4,7 +4,7 @@
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
 [[BasicBSpline]]
-deps = ["IntervalSets"]
+deps = ["EllipsisNotation", "IntervalSets"]
 path = "/home/hyrodium/.julia/dev/BasicBSpline"
 uuid = "4c5d9882-2acf-4ea4-9e48-968fd4518195"
 version = "0.1.0"
