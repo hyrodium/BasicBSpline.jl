@@ -18,6 +18,10 @@ struct BSplineSpace <: AbstractBSplineSpace
     end
 end
 
+function BSplineSpace(P::AbstractBSplineSpace)
+    BSplineSpace(degree(P),knots(P))
+end
+
 @doc raw"""
 Same as BSplineSpace.
 ```math
@@ -40,8 +44,8 @@ Return dimention of a B-spline space.
 ```
 """
 function dim(bsplinespace::BSplineSpace)
-    p=bsplinespace.degree
-    k=bsplinespace.knots
+    p = bsplinespace.degree
+    k = bsplinespace.knots
     return ♯(k)-p-1
 end
 
