@@ -134,7 +134,6 @@ Note that a element of the space ``\mathcal{P}[p,k]`` is piecewise polynomial.
 p = 2
 k = Knots([1,3,5,6,8,9])
 BSplineSpace(p,k)
-𝒫(p,k) # same as above, for legibility
 ```
 
 A B-spline space is said to be **proper** if its degree and knots satisfies following property:

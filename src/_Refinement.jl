@@ -120,7 +120,7 @@ function refinement(M::BSplineManifold; p₊::Union{Nothing,Array{Int,1}}=nothin
         P = Ps[i]
         p = P.degree
         k = P.knots
-        push!(Ps′, 𝒫(p+p₊[i], k+p₊[i]*unique(k)+k₊[i]))
+        push!(Ps′, BSplineSpace(p+p₊[i], k+p₊[i]*unique(k)+k₊[i]))
     end
 
     return refinement(M, Ps′)
@@ -170,7 +170,7 @@ function refinement(M::FastBSplineManifold; p₊::Union{Nothing,Array{Int,1}}=no
         P = Ps[i]
         p = degree(P)
         k = knots(P)
-        push!(Ps′, 𝒫(p+p₊[i], k+p₊[i]*unique(k)+k₊[i]))
+        push!(Ps′, FastBSplineSpace(p+p₊[i], k+p₊[i]*unique(k)+k₊[i]))
     end
 
     return refinement(M, Ps′)
