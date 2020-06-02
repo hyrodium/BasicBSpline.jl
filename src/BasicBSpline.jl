@@ -12,6 +12,7 @@ export isproper, properdim
 export degree, knots
 export 𝔫
 export FastBSplineSpace, FastBSplineManifold
+export AbstractBSplineManifold, AbstractBSplineSpace
 
 const MAX_DEGREE = 3
 

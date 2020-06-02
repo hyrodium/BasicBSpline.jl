@@ -6,7 +6,7 @@ k=(k_1,\dots,k_l)
 ```
 """
 struct Knots
-    vector :: Array{Float64,1}
+    vector::Array{Float64,1}
     function Knots(vector::AbstractArray{T,1} where T<:Real)
         return new(sort(convert(Array{Float64,1},vector)))
     end

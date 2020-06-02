@@ -1,4 +1,8 @@
 # B-spline space
+
+@doc raw"""
+B-spline space for lower polynomial degree
+"""
 struct FastBSplineSpace{T} <: AbstractBSplineSpace
     vector::Array{Float64,1}
     function FastBSplineSpace(p::Int, knots::Knots)
@@ -11,10 +15,9 @@ struct FastBSplineSpace{T} <: AbstractBSplineSpace
     end
 end
 
-# function knots(P::FastBSplineSpace)
-#     return Knots(P.vector)
-# end
-
+function FastBSplineSpace(P::AbstractBSplineSpace)
+    FastBSplineSpace(degree(P),knots(P))
+end
 
 @doc raw"""
 Return dimention of a B-spline space.
