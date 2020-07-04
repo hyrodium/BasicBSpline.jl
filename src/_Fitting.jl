@@ -57,7 +57,7 @@ function FittingControlPoints_1dim(func::Function, Ps::Array{T,1} where T<:Abstr
         if prod(length.(rng)) == 0
             return 0.0
         else
-            S = zero(func([0,0.0]))
+            S = zero(func([0.0]))
             for i1 in rng[1]
                 S += GaussianQuadrature_1dim(t->(bsplinebasis(I[1],Ps[1],t[1]) * func(t)), [k[1][i1]..k[1][i1+1]], nodes, weights)
             end
@@ -121,6 +121,7 @@ end
 """
 Approximate given function by linear combination of B-spline functions.
 This function returns its control points.
+TODO: currently, this function only supports for 1-dim and 2-dim B-spline manifold.
 """
 function FittingControlPoints(func::Function, Ps::Array{T,1} where T<:AbstractBSplineSpace)
     d = length(Ps)

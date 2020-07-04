@@ -83,7 +83,7 @@ function FastBSplineManifold(M::AbstractBSplineManifold)
 end
 
 @doc raw"""
-Multi-dimentional B-spline basis function.
+Multi-dimensional B-spline basis function.
 ```math
 B_{i^1,\dots,i^d}(t^1,\dots,t^d)
 =B_{(i^1,p^1,k^1)}(t^1)\cdots B_{(i^d,p^d,k^d)}(t^d)
@@ -96,7 +96,7 @@ function bsplinebasis(Ps::Array{BSplineSpace,1},t::Array{<:Real,1})
 end
 
 @doc raw"""
-Multi-dimentional B-spline basis function.
+Multi-dimensional B-spline basis function.
 ```math
 B_{i^1,\dots,i^d}(t^1,\dots,t^d)
 =B_{(i^1,p^1,k^1)}(t^1)\cdots B_{(i^d,p^d,k^d)}(t^d)
@@ -134,7 +134,7 @@ end
 
 
 @doc raw"""
-Calculate the dimention of B-spline manifold.
+Calculate the dimension of B-spline manifold.
 """
 function dim(M::AbstractBSplineManifold)
     length(M.bsplinespaces)
