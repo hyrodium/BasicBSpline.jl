@@ -133,11 +133,17 @@ function refinement(M::FastBSplineManifold, Ps′::Array{T,1} where T <: FastBSp
     Ps = M.bsplinespaces
     𝒂 = M.controlpoints
     d̂ = size(𝒂)[end]
+    d = length(Ps)
     n = dim.(Ps)
     n′ = dim.(Ps′)
     if prod(Ps .⊆ Ps′)
         A = changebasis.(Ps,Ps′)
-        𝒂′ = [sum(A[1][I₁,J₁]*A[2][I₂,J₂]*𝒂[I₁,I₂,i] for I₁ ∈ 1:n[1], I₂ ∈ 1:n[2]) for J₁ ∈ 1:n′[1], J₂ ∈ 1:n′[2], i ∈ 1:d̂]
+        # TODO: general dimension
+        if d == 1
+            𝒂′ = [sum(A[1][I₁,J₁]*𝒂[I₁,i] for I₁ ∈ 1:n[1]) for J₁ ∈ 1:n′[1], i ∈ 1:d̂]
+        elseif d == 2
+            𝒂′ = [sum(A[1][I₁,J₁]*A[2][I₂,J₂]*𝒂[I₁,I₂,i] for I₁ ∈ 1:n[1], I₂ ∈ 1:n[2]) for J₁ ∈ 1:n′[1], J₂ ∈ 1:n′[2], i ∈ 1:d̂]
+        end
         return FastBSplineManifold(Ps′, 𝒂′)
     else
         error("𝒫[p,k] ⊄ 𝒫[p′,k′]")
