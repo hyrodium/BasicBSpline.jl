@@ -43,10 +43,10 @@ Return dimention of a B-spline space.
 =\sharp k - p -1
 ```
 """
-function dim(bsplinespace::BSplineSpace)
-    p = bsplinespace.degree
-    k = bsplinespace.knots
-    return ♯(k)-p-1
+function dim(bsplinespace::AbstractBSplineSpace)
+    p = degree(bsplinespace)
+    k = knots(bsplinespace)
+    return length(k)-p-1
 end
 
 """
