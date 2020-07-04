@@ -15,32 +15,8 @@ struct FastBSplineSpace{T} <: AbstractBSplineSpace
     end
 end
 
-function FastBSplineSpace(P::AbstractBSplineSpace)
-    FastBSplineSpace(degree(P),knots(P))
-end
-
-@doc raw"""
-Return dimention of a B-spline space.
-```math
-\dim(\mathcal{P}[p,k])
-=\sharp k - p -1
-```
-"""
-function dim(P::FastBSplineSpace{p}) where p
-    k=P.vector
-    return length(k)-p-1
-end
-
-@doc raw"""
-Return dimention of a B-spline space.
-```math
-\dim(\mathcal{P}[p,k])
-=\sharp k - p -1
-```
-"""
-function BSplineSpace(P::FastBSplineSpace{p}) where p
-    BSplineSpace(p, Knots(P.vector))
-end
+FastBSplineSpace(P::FastBSplineSpace) = FastBSplineSpace(degree(P), knots(P))
+BSplineSpace(P::FastBSplineSpace) = BSplineSpace(degree(P), knots(P))
 
 
 """
