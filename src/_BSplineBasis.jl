@@ -232,14 +232,14 @@ end
 @doc raw"""
 Return support of i-th B-spline basis function.
 """
-function bsplinesupport(i::Int64, P::BSplineSpace)
-    p = P.degree
-    k = P.knots
+function bsplinesupport(i::Int64, P::AbstractBSplineSpace)
+    p = degree(P)
+    k = knots(P)
     return k[i]..k[i+p+1]
 end
 
-function bsplinesupport(P::BSplineSpace)
-    p = P.degree
-    k = P.knots
+function bsplinesupport(P::AbstractBSplineSpace)
+    p = degree(P)
+    k = knots(P)
     return [k[i]..k[i+p+1] for i ∈ 1:dim(P)]
 end
