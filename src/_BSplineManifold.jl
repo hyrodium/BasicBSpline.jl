@@ -69,14 +69,14 @@ end
 
 
 """
-convert FastBSplineManifold to BSplineManifold
+convert AbstractBSplineManifold to BSplineManifold
 """
 function BSplineManifold(M::AbstractBSplineManifold)
     BSplineManifold(BSplineSpace.(M.bsplinespaces), M.controlpoints)
 end
 
 """
-convert BSplineManifold to FastBSplineManifold
+convert AbstractBSplineManifold to FastBSplineManifold
 """
 function FastBSplineManifold(M::AbstractBSplineManifold)
     FastBSplineManifold(BSplineSpace.(M.bsplinespaces), M.controlpoints)
@@ -131,7 +131,6 @@ end
 function mapping(M::FastBSplineManifold, t::Array{<:Real,1})
     return mapping(BSplineManifold(M),t)
 end
-
 
 @doc raw"""
 Calculate the dimension of B-spline manifold.

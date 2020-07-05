@@ -18,22 +18,19 @@ struct BSplineSpace <: AbstractBSplineSpace
     end
 end
 
+"""
+convert AbstractBSplineSpace to BSplineSpace
+"""
 function BSplineSpace(P::AbstractBSplineSpace)
-    BSplineSpace(degree(P),knots(P))
+    return BSplineSpace(degree(P), knots(P))
 end
 
-@doc raw"""
-Same as BSplineSpace.
-```math
-\mathcal{P}[p,k]
-```
-"""
-function 𝒫(p::Int,k::Knots)
-    if p ≤ MAX_DEGREE
-        FastBSplineSpace(p,k)
-    else
-        BSplineSpace(p,k)
-    end
+function degree(P::BSplineSpace)
+    return P.degree
+end
+
+function knots(P::BSplineSpace)
+    return P.knots
 end
 
 @doc raw"""
@@ -52,35 +49,27 @@ end
 """
 Check inclusive relationship between B-spline spaces.
 """
-function Base.:⊆(P::BSplineSpace, P′::BSplineSpace)
-    p = P.degree
-    k = P.knots
-    p′ = P′.degree
-    k′ = P′.knots
+function Base.:⊆(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
+    p = degree(P)
+    k = knots(P)
+    p′ = degree(P′)
+    k′ = knots(P′)
     p₊ = p′-p
 
     return (k+p₊*unique(k) ⊆ k′) && p₊ ≥ 0
 end
 
-function iszeros(P::BSplineSpace)
-    p = P.degree
-    k = P.knots
+function iszeros(P::AbstractBSplineSpace)
+    p = degree(P)
+    k = knots(P)
     n = dim(P)
     return [k[i] == k[i+p+1] for i ∈ 1:n]
 end
 
-function isproper(P::BSplineSpace)
+function isproper(P::AbstractBSplineSpace)
     return !|(iszeros(P)...)
 end
 
-function properdim(P::BSplineSpace)
+function properdim(P::AbstractBSplineSpace)
     return dim(P) - sum(iszeros(P))
-end
-
-function degree(P::BSplineSpace)
-    return P.degree
-end
-
-function knots(P::BSplineSpace)
-    return P.knots
 end

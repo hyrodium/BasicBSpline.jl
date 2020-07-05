@@ -10,10 +10,10 @@ function changebasis(P::BSplineSpace, P′::BSplineSpace)::Array{Float64,2}
     end
 
     if p == 0
-        n=length(k)-1
-        n′=length(k′)-p₊-1
-        A⁰=Float64[bsplinesupport(j,BSplineSpace(p₊,k′)) ⊆ bsplinesupport(i,BSplineSpace(0,k)) for i ∈ 1:n, j ∈ 1:n′]
-        A⁰[:,findall(iszeros(P′))].=NaN
+        n = length(k)-1
+        n′ = length(k′)-p₊-1
+        A⁰ = Float64[bsplinesupport(j,BSplineSpace(p₊,k′)) ⊆ bsplinesupport(i,BSplineSpace(0,k)) for i ∈ 1:n, j ∈ 1:n′]
+        A⁰[:,findall(iszeros(P′))] .= NaN
         return A⁰
     end
 
@@ -72,7 +72,7 @@ function changebasis(P::BSplineSpace, P′::BSplineSpace)::Array{Float64,2}
 end
 
 function changebasis(P::FastBSplineSpace, P′::FastBSplineSpace)
-    changebasis(BSplineSpace(P), BSplineSpace(P′))
+    return changebasis(BSplineSpace(P), BSplineSpace(P′))
 end
 
 
