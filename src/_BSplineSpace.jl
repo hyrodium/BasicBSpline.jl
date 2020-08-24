@@ -10,7 +10,7 @@ Construct B-spline space from given polynominal degree and knot vector.
 struct BSplineSpace <: AbstractBSplineSpace
     degree::Int
     knots::Knots
-    function BSplineSpace(degree::Int, knots::Knots)
+    function BSplineSpace(degree::Integer, knots::Knots)
         if degree < 0
             error("degree of polynominal must be non-negative")
         end

@@ -2,6 +2,7 @@
 abstract type AbstractBSplineManifold end
 
 function ⊗(X::Array{Float64},Y::Array{Float64})::Array{Float64}
+    # TODO: remove this function
     m = size(X)
     n = size(Y)
     reshape(reshape(X,length(X)) * reshape(Y,length(Y))', m..., n...)

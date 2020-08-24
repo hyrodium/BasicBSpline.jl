@@ -98,7 +98,7 @@ end
 i-th B-spline basis function.
 Right-sided limit version.
 """
-function bsplinebasis₊₀(i::Int64, P::BSplineSpace, t::Real)::Float64
+function bsplinebasis₊₀(i::Integer, P::BSplineSpace, t::Real)::Float64
     p = P.degree
     k = P.knots
 
@@ -114,7 +114,7 @@ end
 i-th B-spline basis function.
 Left-sided limit version.
 """
-function bsplinebasis₋₀(i::Int64, P::BSplineSpace, t)::Float64
+function bsplinebasis₋₀(i::Integer, P::BSplineSpace, t)::Float64
     p = P.degree
     k = P.knots
 
@@ -130,7 +130,7 @@ end
 i-th B-spline basis function.
 Modified version.
 """
-function bsplinebasis(i::Int64, P::BSplineSpace, t)::Float64
+function bsplinebasis(i::Integer, P::BSplineSpace, t)::Float64
     p = P.degree
     k = P.knots
 
@@ -205,7 +205,7 @@ function bsplinebasis′(P::BSplineSpace, t)::Array{Float64,1}
     return [K[i]*B[i]-K[i+1]*B[i+1] for i ∈ 1:n]
 end
 
-function bsplinebasis′₊₀(i::Int64, P::BSplineSpace, t)::Float64
+function bsplinebasis′₊₀(i::Integer, P::BSplineSpace, t)::Float64
     p = P.degree
     k = P.knots
 
@@ -213,7 +213,7 @@ function bsplinebasis′₊₀(i::Int64, P::BSplineSpace, t)::Float64
     -((k[i+p+1]-k[i+1]≠0) ? bsplinebasis₊₀(i+1,BSplineSpace(p-1,k),t)/(k[i+p+1]-k[i+1]) : 0))
 end
 
-function bsplinebasis′₋₀(i::Int64, P::BSplineSpace, t)::Float64
+function bsplinebasis′₋₀(i::Integer, P::BSplineSpace, t)::Float64
     p = P.degree
     k = P.knots
 
@@ -221,7 +221,7 @@ function bsplinebasis′₋₀(i::Int64, P::BSplineSpace, t)::Float64
     -((k[i+p+1]-k[i+1]≠0) ? bsplinebasis₋₀(i+1,BSplineSpace(p-1,k),t)/(k[i+p+1]-k[i+1]) : 0))
 end
 
-function bsplinebasis′(i::Int64, P::BSplineSpace, t)::Float64
+function bsplinebasis′(i::Integer, P::BSplineSpace, t)::Float64
     p = P.degree
     k = P.knots
 
@@ -232,7 +232,7 @@ end
 @doc raw"""
 Return support of i-th B-spline basis function.
 """
-function bsplinesupport(i::Int64, P::AbstractBSplineSpace)
+function bsplinesupport(i::Integer, P::AbstractBSplineSpace)
     p = degree(P)
     k = knots(P)
     return k[i]..k[i+p+1]
