@@ -98,7 +98,7 @@ end
 @doc raw"""
 Refinement of B-spline manifold.
 """
-function refinement(M::BSplineManifold; p₊::Union{Nothing,Array{Int,1}}=nothing, k₊::Union{Nothing,Array{Knots,1}}=nothing)
+function refinement(M::BSplineManifold; p₊::Union{Nothing,AbstractArray{<:Integer,1}}=nothing, k₊::Union{Nothing,Array{Knots,1}}=nothing)
     Ps = M.bsplinespaces
     𝒂 = M.controlpoints
     d = length(Ps)
@@ -154,7 +154,7 @@ end
 @doc raw"""
 Refinement of B-spline manifold.
 """
-function refinement(M::FastBSplineManifold; p₊::Union{Nothing,Array{Int,1}}=nothing, k₊::Union{Nothing,Array{Knots,1}}=nothing)
+function refinement(M::FastBSplineManifold; p₊::Union{Nothing,AbstractArray{<:Integer,1}}=nothing, k₊::Union{Nothing,Array{Knots,1}}=nothing)
     Ps = M.bsplinespaces
     𝒂 = M.controlpoints
     d = length(Ps)

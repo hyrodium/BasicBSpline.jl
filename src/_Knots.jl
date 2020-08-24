@@ -25,7 +25,7 @@ end
 Base.zero(::Type{Knots}) = Knots(Float64[])
 Base. ==(k₁::Knots, k₂::Knots) = (k₁.vector==k₂.vector)
 Base.:+(k₁::Knots, k₂::Knots) = Knots(sort([k₁.vector...,k₂.vector...]))
-Base.:*(p₊::Int, k::Knots) = (
+Base.:*(p₊::Integer, k::Knots) = (
         if p₊ == 0
             zero(Knots)
         elseif p₊ > 0
@@ -36,8 +36,8 @@ Base.:*(p₊::Int, k::Knots) = (
     )
 
 Base.in(r::Real, k::Knots) = in(r,k.vector)
-Base.getindex(k::Knots, i::Int) = k.vector[i]
-Base.getindex(k::Knots, v::AbstractArray{Int64,1}) = Knots(k.vector[v])
+Base.getindex(k::Knots, i::Integer) = k.vector[i]
+Base.getindex(k::Knots, v::AbstractArray{<:Integer,1}) = Knots(k.vector[v])
 Base.length(k::Knots) = length(k.vector)
 ♯(k::Knots) = length(k::Knots)
 Base.firstindex(k) = 1
