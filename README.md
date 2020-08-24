@@ -25,5 +25,30 @@ As mentioned before, this package treats mathematical aspect of B-spline, so the
 
 ## Example Images
 ###  Example of B-spline function
-Note that this package do not support image export.
+
+
+```julia
+using BasicBSpline
+using Plots
+gr()
+
+p = 3
+k = Knots([0.00,1.50,2.50,5.50,8.00,9.00,9.50,10.0])
+P0 = 𝒫(0,k)
+P1 = 𝒫(1,k)
+P2 = 𝒫(2,k)
+P3 = 𝒫(3,k)
+plot(
+    plot([t->bsplinebasis(i,P0,t) for i in 1:dim(P0)], 0, 10, ylims=(0,1), legend=false),
+    plot([t->bsplinebasis(i,P1,t) for i in 1:dim(P1)], 0, 10, ylims=(0,1), legend=false),
+    plot([t->bsplinebasis(i,P2,t) for i in 1:dim(P2)], 0, 10, ylims=(0,1), legend=false),
+    plot([t->bsplinebasis(i,P3,t) for i in 1:dim(P3)], 0, 10, ylims=(0,1), legend=false),
+    layout=(2,2),
+)
+```
+
+![](docs/src/img/cover.png)
+
+Try [interactive graph with desmos graphing calculator](https://www.desmos.com/calculator/ql6jqgdabs)!
+
 ![](docs/src/img/bsplinebasis.png)
