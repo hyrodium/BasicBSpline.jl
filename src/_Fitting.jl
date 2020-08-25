@@ -125,12 +125,9 @@ TODO: currently, this function only supports for 1-dim and 2-dim B-spline manifo
 """
 function fittingcontrolpoints(func::Function, Ps::Array{T,1} where T<:AbstractBSplineSpace)
     d = length(Ps)
-
     if d == 1
-        a = fittingcontrolpoints_1dim(func, Ps)
+        return fittingcontrolpoints_1dim(func, Ps)
     elseif d == 2
-        a = fittingcontrolpoints_2dim(func, Ps)
+        return fittingcontrolpoints_2dim(func, Ps)
     end
-
-    return a
 end

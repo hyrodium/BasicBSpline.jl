@@ -99,6 +99,19 @@ function ⊑(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
     return inner_knots+p₊*unique(inner_knots) ⊆ inner_knots′
 end
 
+function ⊒(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
+    return ⊑(P′, P)
+end
+
+function ⋢(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
+    return !⊑(P, P′)
+end
+
+function ⋣(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
+    return !⊒(P, P′)
+end
+
+
 function iszeros(P::AbstractBSplineSpace)
     p = degree(P)
     k = knots(P)
