@@ -148,7 +148,6 @@ using Test
         𝒂′′ = transpose(hcat(𝒂′′...))
 
         @test norm(𝒂′′ - 𝒂′) ≤ 1e-13
-
     end
 
 end

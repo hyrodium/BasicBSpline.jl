@@ -22,10 +22,11 @@ const MAX_DEGREE = 3
 
 include("_Knots.jl")
 include("_BSplineSpace.jl")
-include("_BSplineBasis.jl")
 include("_FastBSplineSpace.jl")
+include("_BSplineBasis.jl")
 include("_FastBSplineBasis.jl")
 include("_BSplineManifold.jl")
+include("_FastBSplineManifold.jl")
 include("_Refinement.jl")
 include("_Fitting.jl")
 
