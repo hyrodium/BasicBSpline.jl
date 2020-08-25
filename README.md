@@ -18,26 +18,33 @@ As mentioned before, this package treats mathematical aspect of B-spline, so the
     * NURBS (Non-Uniform Rational B-Spline)
     * IGA (Isogeometric Analysis)
 
+
 ## Installation
-```
-(pkg) > add https://github.com/hyrodium/BasicBSpline.jl
+Install this package
+
+```julia
+(pkg)> add https://github.com/hyrodium/BasicBSpline.jl
 ```
 
-## Example Images
-###  Example of B-spline function
+To export graphics, use [ExportNURBS.jl](https://github.com/hyrodium/ExportNURBS.jl).
 
+```julia
+(pkg)> add https://github.com/hyrodium/ExportNURBS.jl
+```
+
+## Example
+### B-spline function
 
 ```julia
 using BasicBSpline
 using Plots
 gr()
 
-p = 3
 k = Knots([0.00,1.50,2.50,5.50,8.00,9.00,9.50,10.0])
-P0 = 𝒫(0,k)
-P1 = 𝒫(1,k)
-P2 = 𝒫(2,k)
-P3 = 𝒫(3,k)
+P0 = BSplineSpace(0,k) # 0th degree piecewise polynomial space
+P1 = BSplineSpace(1,k) # 1st degree piecewise polynomial space
+P2 = BSplineSpace(2,k) # 2nd degree piecewise polynomial space
+P3 = BSplineSpace(3,k) # 3rd degree piecewise polynomial space
 plot(
     plot([t->bsplinebasis(i,P0,t) for i in 1:dim(P0)], 0, 10, ylims=(0,1), legend=false),
     plot([t->bsplinebasis(i,P1,t) for i in 1:dim(P1)], 0, 10, ylims=(0,1), legend=false),
@@ -49,6 +56,48 @@ plot(
 
 ![](docs/src/img/cover.png)
 
-Try [interactive graph with desmos graphing calculator](https://www.desmos.com/calculator/ql6jqgdabs)!
+To learn B-spline functions, try [an interactive graph with desmos graphing calculator](https://www.desmos.com/calculator/ql6jqgdabs)!
 
-![](docs/src/img/bsplinebasis.png)
+### B-spline manifold
+```julia
+using BasicBSpline
+using ExportNURBS
+
+p = 2 # degree of polynomial
+k = Knots(1:8) # knot vector
+P = BSplineSpace(p,k) # B-spline space
+rand_a = [rand(2) for i in 1:dim(P), j in 1:dim(P)]
+a = [[2*i-6.5,2*j-6.5] for i in 1:dim(P), j in 1:dim(P)] + rand_a # random generated control points
+M = BSplineManifold([P,P],a) # Define B-spline manifold
+save_png("docs/src/img/2dim.png", M) # save image
+```
+![](docs/src/img/2dim.png)
+
+### Refinement
+```julia
+k₊=[Knots(3.3,4.2),Knots(3.8,3.2,5.3)] # additional knots
+M′ = refinement(M,k₊=k₊) # refinement of B-spline manifold
+save_png("docs/src/img/2dim_refinement.png", M′) # save image
+```
+![](docs/src/img/2dim_refinement.png)
+
+Note that this shape and the last shape are identical.
+
+### Fitting B-spline manifold
+[Try on Desmos graphing graphing calculator!](https://www.desmos.com/calculator/2hm3b1fbdf)
+```julia
+p1 = 2
+p2 = 2
+k1 = Knots(-10:10)+p1*Knots(-10,10)
+k2 = Knots(-10:10)+p2*Knots(-10,10)
+P1 = FastBSplineSpace(p1, k1)
+P2 = FastBSplineSpace(p2, k2)
+
+f(u) = [2u[1]+sin(u[1])+cos(u[2])+u[2]/2, 3u[2]+sin(u[2])+sin(u[1])/2+u[1]^2/6]/5
+
+a = FittingControlPoints(f, [P1,P2])
+M = BSplineManifold([P1,P2],a)
+save_png("docs/src/img/fitting.png", M, unitlength=50, up=10, down=-10, left=-10, right=10)
+```
+![](docs/src/img/fitting_desmos.png)
+![](docs/src/img/fitting.png)

@@ -2,7 +2,7 @@
 abstract type AbstractBSplineManifold end
 
 function ⊗(X::Array{Float64},Y::Array{Float64})::Array{Float64}
-    # TODO: remove this function
+    # TODO: remove this function and use Tensor.jl
     m = size(X)
     n = size(Y)
     reshape(reshape(X,length(X)) * reshape(Y,length(Y))', m..., n...)
@@ -42,45 +42,11 @@ function BSplineManifold(Ps::AbstractArray{<:AbstractBSplineSpace,1}, a::Array{A
     return BSplineManifold(Ps, A)
 end
 
-
-"""
-B-spline manifold for lower polynomial degree
-TODO: make the field `bsplinespaces` to be conposite type, not abstract type, for performance
-"""
-struct FastBSplineManifold <: AbstractBSplineManifold
-    bsplinespaces::Array{T,1} where T <: FastBSplineSpace
-    controlpoints::Array{Float64}
-    function FastBSplineManifold(Ps::AbstractArray{<:AbstractBSplineSpace,1}, a::AbstractArray{<:Real})
-        Ps = FastBSplineSpace.(Ps)
-        if collect(size(a)[1:end-1]) ≠ dim.(Ps)
-            error("dimension does not match")
-        else
-            P = convert(Array{FastBSplineSpace,1}, Ps)
-            a = convert(Array{Float64}, a)
-            new(P, a)
-        end
-    end
-end
-
-function FastBSplineManifold(Ps::AbstractArray{<:AbstractBSplineSpace,1}, a::Array{Array{T,1}} where T<:Real)
-    d̂ = length(a[1])
-    A = reshape(transpose(hcat(reshape(a,prod(size(a)))...)), size(a)..., d̂)
-    return FastBSplineManifold(Ps, A)
-end
-
-
 """
 convert AbstractBSplineManifold to BSplineManifold
 """
 function BSplineManifold(M::AbstractBSplineManifold)
     BSplineManifold(BSplineSpace.(M.bsplinespaces), M.controlpoints)
-end
-
-"""
-convert AbstractBSplineManifold to FastBSplineManifold
-"""
-function FastBSplineManifold(M::AbstractBSplineManifold)
-    FastBSplineManifold(BSplineSpace.(M.bsplinespaces), M.controlpoints)
 end
 
 @doc raw"""
@@ -127,10 +93,6 @@ function mapping(M::BSplineManifold, t::Array{<:Real,1})
     d = length(Ps)
     d̂ = size(𝒂)[end]
     return [sum(bsplinebasis(Ps,t).*𝒂[..,i]) for i ∈ 1:d̂]
-end
-
-function mapping(M::FastBSplineManifold, t::Array{<:Real,1})
-    return mapping(BSplineManifold(M),t)
 end
 
 @doc raw"""

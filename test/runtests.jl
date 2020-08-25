@@ -147,8 +147,7 @@ using Test
         𝒂′′ = FittingControlPoints(u -> mapping(M, u), [P1′])
         𝒂′′ = transpose(hcat(𝒂′′...))
 
-        @test norm(𝒂′′ - 𝒂′) ≤ 1e-13
-
+        @test norm(𝒂′′ - 𝒂′) ≤ 1e-12
     end
 
 end

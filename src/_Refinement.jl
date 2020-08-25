@@ -2,8 +2,8 @@
 function changebasis(P::BSplineSpace, P′::BSplineSpace)::Array{Float64,2}
     p = degree(P)
     k = knots(P)
-    p′ = P′.degree
-    k′ = P′.knots
+    p′ = degree(P′)
+    k′ = knots(P′)
     p₊ = p′-p
     if P ⊈ P′
         error("𝒫[p,k] ⊄ 𝒫[p′,k′]")
@@ -12,15 +12,15 @@ function changebasis(P::BSplineSpace, P′::BSplineSpace)::Array{Float64,2}
     if p == 0
         n = length(k)-1
         n′ = length(k′)-p₊-1
-        A⁰ = Float64[bsplinesupport(j,BSplineSpace(p₊,k′)) ⊆ bsplinesupport(i,BSplineSpace(0,k)) for i ∈ 1:n, j ∈ 1:n′]
+        A⁰ = Float64[bsplinesupport(j,typeof(P′)(p₊,k′)) ⊆ bsplinesupport(i,typeof(P)(0,k)) for i ∈ 1:n, j ∈ 1:n′]
         A⁰[:,findall(iszeros(P′))] .= NaN
         return A⁰
     end
 
-    Aᵖ⁻¹ = changebasis(BSplineSpace(p-1, k), BSplineSpace(p′-1, k′))
+    Aᵖ⁻¹ = changebasis(typeof(P)(p-1, k), typeof(P′)(p′-1, k′))
     n = dim(P)
     n′ = dim(P′)
-    Z = iszeros(BSplineSpace(p′-1,k′))
+    Z = iszeros(typeof(P′)(p′-1,k′))
     W = findall(Z)
     K′ = [k′[i+p′]-k′[i] for i ∈ 1:n′+1]
     K = [ifelse(k[i+p]≠k[i], 1/(k[i+p]-k[i]), 0.0) for i ∈ 1:n+1]
@@ -46,12 +46,14 @@ function changebasis(P::BSplineSpace, P′::BSplineSpace)::Array{Float64,2}
     for ȷ ∈ 1:l-1
         if L[ȷ] ≥ 2
             t = k′[W[ȷ]]
+            # TODO: define for FastBSplineSpace
             Ãᵖ[ȷ][:,end] = bsplinebasis₋₀(BSplineSpace(p,k),t)
         end
     end
     for ȷ ∈ 2:l
         if L[ȷ] ≥ 2
             t = k′[W[ȷ-1]+p]
+            # TODO: define for FastBSplineSpace
             Ãᵖ[ȷ][:,1] = bsplinebasis₊₀(BSplineSpace(p,k),t)
         end
     end
@@ -125,7 +127,7 @@ function refinement(M::AbstractBSplineManifold; p₊::Union{Nothing,AbstractArra
         P = Ps[i]
         p = degree(P)
         k = knots(P)
-        Ps′[i] = FastBSplineSpace(p+p₊[i], k+p₊[i]*unique(k)+k₊[i])
+        Ps′[i] = typeof(Ps[i])(p+p₊[i], k+p₊[i]*unique(k)+k₊[i])
     end
 
     return refinement(M, Ps′)

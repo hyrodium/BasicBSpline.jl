@@ -1,7 +1,5 @@
 # Future work
-* Add support for Drawing function
-    * This may be in other repository.
 * Add support for NURBS
-    * This may be in other repository.
+    * This may be in other Julia package.
 * Add example for IGA
 * ...

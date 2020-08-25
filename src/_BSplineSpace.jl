@@ -33,6 +33,13 @@ function knots(P::BSplineSpace)
     return P.knots
 end
 
+function bsplineunity(P::AbstractBSplineSpace)
+    p = degree(P)
+    k = knots(P)
+    return k[1+p]..k[end-p]
+end
+
+
 @doc raw"""
 Return dimention of a B-spline space.
 ```math
@@ -46,8 +53,12 @@ function dim(bsplinespace::AbstractBSplineSpace)
     return length(k)-p-1
 end
 
-"""
+@doc raw"""
 Check inclusive relationship between B-spline spaces.
+```math
+\mathcal{P}[p,k]
+\subseteq\mathcal{P}[p',k']
+```
 """
 function Base.:⊆(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
     p = degree(P)
@@ -56,7 +67,36 @@ function Base.:⊆(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
     k′ = knots(P′)
     p₊ = p′-p
 
-    return (k+p₊*unique(k) ⊆ k′) && p₊ ≥ 0
+    return p₊ ≥ 0 && (k+p₊*unique(k) ⊆ k′)
+end
+
+@doc raw"""
+Check inclusive relationship between B-spline spaces.
+```math
+\mathcal{P}[p,k]
+\sqsubseteq\mathcal{P}[p',k']
+\Leftrightarrow
+\mathcal{P}[p,k]|_{[k_{p+1},k_{l-p}]}
+\subseteq\mathcal{P}[p',k']|_{[\sharp k'_{p'+1},k'_{\sharp k'-p'}]}
+```
+"""
+function ⊑(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
+    p = degree(P)
+    k = knots(P)
+    p′ = degree(P′)
+    k′ = knots(P′)
+    p₊ = p′-p
+
+    if p₊ < 0
+        return false
+    elseif bsplineunity(P) ≠ bsplineunity(P′)
+        return false
+    end
+
+    inner_knots = k[p+2:end-p-1]
+    inner_knots′ = k′[p′+2:end-p′-1]
+
+    return inner_knots+p₊*unique(inner_knots) ⊆ inner_knots′
 end
 
 function iszeros(P::AbstractBSplineSpace)
