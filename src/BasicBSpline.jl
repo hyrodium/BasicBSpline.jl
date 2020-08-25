@@ -16,7 +16,7 @@ export degree, knots
 export 𝔫
 export FastBSplineSpace, FastBSplineManifold
 export AbstractBSplineManifold, AbstractBSplineSpace
-export FittingControlPoints
+export fittingcontrolpoints
 
 const MAX_DEGREE = 3
 
