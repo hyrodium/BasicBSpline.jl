@@ -51,7 +51,7 @@ plot(
 
 ![](img/cover.png)
 
-Try [interactive graph with desmos graphing calculator](https://www.desmos.com/calculator/ql6jqgdabs)!
+Try [interactive graph with Desmos graphing calculator](https://www.desmos.com/calculator/ql6jqgdabs)!
 
 ### B-spline manifold
 ```julia
@@ -79,4 +79,20 @@ save_png("docs/src/img/2dim_refinement.png", M′) # save image
 Note that this shape and the last shape are identical.
 
 ### Fitting B-spline manifold
-(TBW)
+[Try on Desmos graphing graphing calculator!](https://www.desmos.com/calculator/2hm3b1fbdf)
+```julia
+p1 = 2
+p2 = 2
+k1 = Knots(-10:10)+p1*Knots(-10,10)
+k2 = Knots(-10:10)+p2*Knots(-10,10)
+P1 = FastBSplineSpace(p1, k1)
+P2 = FastBSplineSpace(p2, k2)
+
+f(u) = [2u[1]+sin(u[1])+cos(u[2])+u[2]/2, 3u[2]+sin(u[2])+sin(u[1])/2+u[1]^2/6]/5
+
+a = FittingControlPoints(f, [P1,P2])
+M = BSplineManifold([P1,P2],a)
+save_png("docs/src/img/fitting.png", M, unitlength=50, up=10, down=-10, left=-10, right=10)
+```
+![](img/fitting_desmos.png)
+![](img/fitting.png)
