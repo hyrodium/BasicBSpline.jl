@@ -6,10 +6,10 @@ using FastGaussQuadrature
 using Statistics
 using LinearAlgebra
 
-export Knots, ♯, BSplineSpace, 𝒫, dim
+export Knots, ♯, BSplineSpace, 𝒫, dim, ⊑
 export bsplinebasis₊₀, bsplinebasis₋₀, bsplinebasis
 export bsplinebasis′₊₀, bsplinebasis′₋₀, bsplinebasis′
-export bsplinesupport, changebasis
+export bsplinesupport, bsplineunity, changebasis
 export BSplineManifold, refinement, mapping
 export isproper, properdim
 export degree, knots
