@@ -13,6 +13,14 @@ struct FastBSplineSpace{p} <: AbstractBSplineSpace
         end
         new{p}(knots.vector)
     end
+    function FastBSplineSpace{q}(p::Integer, knots::Knots) where q
+        if p < 0
+            error("degree of polynominal must be non-negative")
+        elseif p > MAX_DEGREE
+            error("FastBSpline supports only degree 0 , ... , $(MAX_DEGREE)")
+        end
+        new{p}(knots.vector)
+    end
 end
 
 """
