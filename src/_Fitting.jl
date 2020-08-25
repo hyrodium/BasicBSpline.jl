@@ -30,7 +30,7 @@ function GaussianQuadrature_2dim(func::Function, D::Array{ClosedInterval{T},1} w
     return S*prod(widths)/2^d
 end
 
-function FittingControlPoints_1dim(func::Function, Ps::Array{T,1} where T<:AbstractBSplineSpace)
+function fittingcontrolpoints_1dim(func::Function, Ps::Array{T,1} where T<:AbstractBSplineSpace)
     d = 1 # length(Ps)
     k = knots.(Ps)
     p = degree.(Ps)
@@ -74,7 +74,7 @@ function FittingControlPoints_1dim(func::Function, Ps::Array{T,1} where T<:Abstr
 end
 
 
-function FittingControlPoints_2dim(func::Function, Ps::Array{T,1} where T<:AbstractBSplineSpace)
+function fittingcontrolpoints_2dim(func::Function, Ps::Array{T,1} where T<:AbstractBSplineSpace)
     d = 2 # length(Ps)
     k = knots.(Ps)
     p = degree.(Ps)
@@ -123,13 +123,13 @@ Approximate given function by linear combination of B-spline functions.
 This function returns its control points.
 TODO: currently, this function only supports for 1-dim and 2-dim B-spline manifold.
 """
-function FittingControlPoints(func::Function, Ps::Array{T,1} where T<:AbstractBSplineSpace)
+function fittingcontrolpoints(func::Function, Ps::Array{T,1} where T<:AbstractBSplineSpace)
     d = length(Ps)
 
     if d == 1
-        a = FittingControlPoints_1dim(func, Ps)
+        a = fittingcontrolpoints_1dim(func, Ps)
     elseif d == 2
-        a = FittingControlPoints_2dim(func, Ps)
+        a = fittingcontrolpoints_2dim(func, Ps)
     end
 
     return a

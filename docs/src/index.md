@@ -90,7 +90,7 @@ P2 = FastBSplineSpace(p2, k2)
 
 f(u) = [2u[1]+sin(u[1])+cos(u[2])+u[2]/2, 3u[2]+sin(u[2])+sin(u[1])/2+u[1]^2/6]/5
 
-a = FittingControlPoints(f, [P1,P2])
+a = fittingcontrolpoints(f, [P1,P2])
 M = BSplineManifold([P1,P2],a)
 save_png("docs/src/img/fitting.png", M, unitlength=50, up=10, down=-10, left=-10, right=10)
 ```
