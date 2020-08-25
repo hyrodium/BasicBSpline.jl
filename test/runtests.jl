@@ -144,7 +144,7 @@ using Test
         M′ = refinement(M, [P1′])
         𝒂′ = M′.controlpoints
 
-        𝒂′′ = FittingControlPoints(u -> mapping(M, u), [P1′])
+        𝒂′′ = fittingcontrolpoints(u -> mapping(M, u), [P1′])
         𝒂′′ = transpose(hcat(𝒂′′...))
 
         @test norm(𝒂′′ - 𝒂′) ≤ 1e-12
