@@ -96,3 +96,36 @@ save_png("docs/src/img/fitting.png", M, unitlength=50, up=10, down=-10, left=-10
 ```
 ![](img/fitting_desmos.png)
 ![](img/fitting.png)
+
+If the knots span is too coarse, the approximation will be coarse.
+```julia
+p1 = 2
+p2 = 2
+k1 = Knots(-10:5:10)+p1*Knots(-10,10)
+k2 = Knots(-10:5:10)+p2*Knots(-10,10)
+P1 = FastBSplineSpace(p1, k1)
+P2 = FastBSplineSpace(p2, k2)
+
+f(u) = [2u[1]+sin(u[1])+cos(u[2])+u[2]/2, 3u[2]+sin(u[2])+sin(u[1])/2+u[1]^2/6]/5
+
+a = fittingcontrolpoints(f, [P1,P2])
+M = BSplineManifold([P1,P2],a)
+save_png("docs/src/img/fitting_coarse.png", M, unitlength=50, up=10, down=-10, left=-10, right=10)
+```
+![](img/fitting_coarse.png)
+
+### Draw smooth vector graphics
+```julia
+p = 3
+k = Knots(range(-2π,2π,length=8))+p*Knots(-2π,2π)
+P = FastBSplineSpace(p, k)
+
+f(u) = [u[1],sin(u[1])]
+
+a = fittingcontrolpoints(f, [P])
+M = BSplineManifold([P],a)
+save_svg("docs/src/img/sine_curve.svg", M, unitlength=50, up=2, down=-2, left=-8, right=8)
+```
+![](img/sine_curve.svg)
+
+This feature is useful when you use vector graphics editor.
