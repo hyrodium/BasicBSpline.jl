@@ -56,6 +56,14 @@ using Test
         @test P1 ⊆ P2
         @test P1 ⊆ P3
         @test P2 ⊈ P3
+
+        P4 = BSplineSpace(1, Knots([1,2,3,4,5]))
+        P5 = BSplineSpace(2, Knots([-1,0.3,2,3,3,4,5.2,6]))
+        @test P4 ⊑ P4
+        @test P4 ⊑ P5
+        @test P5 ⊒ P4
+        @test P5 ⋢ P4
+        @test P4 ⋣ P5
     end
 
     @testset "FastBSplineSpace" begin
