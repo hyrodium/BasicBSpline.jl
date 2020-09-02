@@ -97,7 +97,7 @@ using Test
         @test P2 ⊈ P3
     end
 
-    @testset "BSplineManifold" begin
+    @testset "BSplineManifold-2dim" begin
         P1 = BSplineSpace(1, Knots([0, 0, 1, 1]))
         P2 = BSplineSpace(1, Knots([1, 1, 2, 3, 3]))
         n1 = dim(P1) # 2
@@ -117,7 +117,7 @@ using Test
         @test mapping(M, t) ≈ mapping(M′, t)
     end
 
-    @testset "FastBSplineManifold" begin
+    @testset "FastBSplineManifold-2dim" begin
         P1 = FastBSplineSpace(1, Knots([0, 0, 1, 1]))
         P2 = FastBSplineSpace(1, Knots([1, 1, 2, 3, 3]))
         n1 = dim(P1) # 2
@@ -135,6 +135,26 @@ using Test
         M′ = refinement(M, [P1′, P2′])
         t = [0.82, 1.8]
         @test mapping(M, t) ≈ mapping(M′, t)
+    end
+
+    @testset "BSplineSurface" begin
+        P1 = FastBSplineSpace(1, Knots([0, 0, 1, 1]))
+        P2 = FastBSplineSpace(1, Knots([1, 1, 2, 3, 3]))
+        n1 = dim(P1) # 2
+        n2 = dim(P2) # 3
+        𝒂 = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.
+        M = BSplineSurface([P1, P2], 𝒂)
+        @test dim(M) == 2
+
+        P1′ = FastBSplineSpace(2, Knots([0, 0, 0, 1, 1, 1]))
+        P2′ = FastBSplineSpace(1, Knots([1, 1, 2, 1.45, 3, 3]))
+
+        @test P1 ⊆ P1′
+        @test P2 ⊆ P2′
+
+        # M′ = refinement(M, [P1′, P2′])
+        # t = [0.82, 1.8]
+        # @test mapping(M, t) ≈ mapping(M′, t)
     end
 
     @testset "Fitting" begin

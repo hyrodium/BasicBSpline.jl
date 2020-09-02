@@ -20,17 +20,73 @@ struct FastBSplineManifold <: AbstractBSplineManifold
     end
 end
 
-function FastBSplineManifold(Ps::AbstractArray{<:AbstractBSplineSpace,1}, a::Array{Array{T,1}} where T<:Real)
-    d̂ = length(a[1])
-    A = reshape(transpose(hcat(reshape(a,prod(size(a)))...)), size(a)..., d̂)
-    return FastBSplineManifold(Ps, A)
+struct BSplineCurve{p1} <: AbstractBSplineManifold
+    knotvector1::Array{Float64,1}
+    controlpoints::Array{Float64,2}
+    function BSplineCurve(Ps::AbstractArray{<:AbstractBSplineSpace,1}, a::AbstractArray{<:Real})
+        p1, k1 = degree(Ps[1]), knots(Ps[1]).vector
+        if collect(size(a)[1:end-1]) ≠ dim.(Ps)
+            error("dimension does not match")
+        elseif p1 > MAX_DEGREE
+            return BSplineManifold(Ps, a)
+        else
+            a = convert(Array{Float64}, a)
+            new{p1}(k1,a)
+        end
+    end
+end
+
+struct BSplineSurface{p1,p2} <: AbstractBSplineManifold
+    knotvector1::Array{Float64,1}
+    knotvector2::Array{Float64,1}
+    controlpoints::Array{Float64,3}
+    function BSplineSurface(Ps::AbstractArray{<:AbstractBSplineSpace,1}, a::AbstractArray{<:Real})
+        p1, k1 = degree(Ps[1]), knots(Ps[1]).vector
+        p2, k2 = degree(Ps[2]), knots(Ps[2]).vector
+        if collect(size(a)[1:end-1]) ≠ dim.(Ps)
+            error("dimension does not match")
+        elseif p1 > MAX_DEGREE || p2 > MAX_DEGREE
+            return BSplineManifold(Ps, a)
+        else
+            a = convert(Array{Float64}, a)
+            new{p1,p2}(k1,k2,a)
+        end
+    end
+end
+
+struct BSplineSolid{p1,p2,p3} <: AbstractBSplineManifold
+    knotvector1::Array{Float64,1}
+    knotvector2::Array{Float64,1}
+    knotvector3::Array{Float64,1}
+    controlpoints::Array{Float64,4}
+    function BSplineSolid(Ps::AbstractArray{<:AbstractBSplineSpace,1}, a::AbstractArray{<:Real})
+        p1, k1 = degree(Ps[1]), knots(Ps[1]).vector
+        p2, k2 = degree(Ps[2]), knots(Ps[2]).vector
+        p3, k3 = degree(Ps[3]), knots(Ps[3]).vector
+        if collect(size(a)[1:end-1]) ≠ dim.(Ps)
+            error("dimension does not match")
+        elseif p1 > MAX_DEGREE || p2 > MAX_DEGREE || p3 > MAX_DEGREE
+            return BSplineManifold(Ps, a)
+        else
+            a = convert(Array{Float64}, a)
+            new{p1,p2,p3}(k1,k2,k3,a)
+        end
+    end
+end
+
+for fname in (:BSplineCurve, :BSplineSurface, :BSplineSolid, :FastBSplineManifold)
+    @eval function $fname(Ps::AbstractArray{<:AbstractBSplineSpace,1}, a::Array{Array{T,1}} where T<:Real)
+        d̂ = length(a[1])
+        A = reshape(transpose(hcat(reshape(a,prod(size(a)))...)), size(a)..., d̂)
+        return $fname(Ps, A)
+    end
 end
 
 """
 convert AbstractBSplineManifold to FastBSplineManifold
 """
 function FastBSplineManifold(M::AbstractBSplineManifold)
-    FastBSplineManifold(BSplineSpace.(M.bsplinespaces), M.controlpoints)
+    return FastBSplineManifold(BSplineSpace.(M.bsplinespaces), M.controlpoints)
 end
 
 @doc raw"""
@@ -49,5 +105,9 @@ end
 Calculate the dimension of B-spline manifold.
 """
 function dim(M::FastBSplineManifold)
-    length(M.bsplinespaces)
+    return length(M.bsplinespaces)
 end
+
+dim(M::BSplineCurve) = 1
+dim(M::BSplineSurface) = 2
+dim(M::BSplineSolid) = 3
