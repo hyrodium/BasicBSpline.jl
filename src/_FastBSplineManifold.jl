@@ -74,12 +74,39 @@ struct BSplineSolid{p1,p2,p3} <: AbstractBSplineManifold
     end
 end
 
-for fname in (:BSplineCurve, :BSplineSurface, :BSplineSolid, :FastBSplineManifold)
+for fname in (:BSplineCurve, :BSplineSurface, :BSplineSolid, :FastBSplineManifold, :BSplineManifold)
     @eval function $fname(Ps::AbstractArray{<:AbstractBSplineSpace,1}, a::Array{Array{T,1}} where T<:Real)
         d̂ = length(a[1])
         A = reshape(transpose(hcat(reshape(a,prod(size(a)))...)), size(a)..., d̂)
         return $fname(Ps, A)
     end
+end
+
+function BSplineManifold(M::BSplineCurve{p1}) where p1
+    k1 = Knots(M.knotvector1)
+    P1 = BSplineSpace(p1, k1)
+    a = M.controlpoints
+    return BSplineManifold([P1], a)
+end
+
+function BSplineManifold(M::BSplineSurface{p1, p2}) where p1 where p2
+    k1 = Knots(M.knotvector1)
+    P1 = BSplineSpace(p1, k1)
+    k2 = Knots(M.knotvector2)
+    P2 = BSplineSpace(p2, k2)
+    a = M.controlpoints
+    return BSplineManifold([P1, P2], a)
+end
+
+function BSplineManifold(M::BSplineSolid{p1, p2, p3}) where p1 where p2 where p3
+    k1 = Knots(M.knotvector1)
+    P1 = BSplineSpace(p1, k1)
+    k2 = Knots(M.knotvector2)
+    P2 = BSplineSpace(p2, k2)
+    k3 = Knots(M.knotvector3)
+    P3 = BSplineSpace(p3, k3)
+    a = M.controlpoints
+    return BSplineManifold([P1, P2, P3], a)
 end
 
 """
@@ -97,6 +124,21 @@ Calculate the mapping of B-spline manifold for given parameter.
 ```
 """
 function mapping(M::FastBSplineManifold, t::Array{<:Real,1})
+    # TODO: faster
+    return mapping(BSplineManifold(M),t)
+end
+
+function mapping(M::BSplineCurve, t::Array{<:Real,1})
+    # TODO: faster
+    return mapping(BSplineManifold(M),t)
+end
+
+function mapping(M::BSplineSurface, t::Array{<:Real,1})
+    # TODO: faster
+    return mapping(BSplineManifold(M),t)
+end
+
+function mapping(M::BSplineSolid, t::Array{<:Real,1})
     # TODO: faster
     return mapping(BSplineManifold(M),t)
 end
