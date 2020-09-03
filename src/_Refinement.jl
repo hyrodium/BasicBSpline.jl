@@ -86,6 +86,7 @@ B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p,k)}
 ```
 """
 function changebasis_I(P::BSplineSpace, P′::BSplineSpace)::Array{Float64,2}
+    I = bsplineunity(P)
     p = degree(P)
     k = knots(P)
     p′ = degree(P′)
@@ -95,7 +96,7 @@ function changebasis_I(P::BSplineSpace, P′::BSplineSpace)::Array{Float64,2}
     if p == 0
         n = length(k)-1
         n′ = length(k′)-p₊-1
-        A⁰ = Float64[bsplinesupport(j,typeof(P′)(p₊,k′)) ⊆ bsplinesupport(i,typeof(P)(0,k)) for i ∈ 1:n, j ∈ 1:n′]
+        A⁰ = Float64[bsplinesupport(j,typeof(P′)(p₊,k′))∩I ⊆ bsplinesupport(i,typeof(P)(0,k))∩I for i ∈ 1:n, j ∈ 1:n′]
         A⁰[:,findall(iszeros(P′))] .= NaN
         return A⁰
     end
