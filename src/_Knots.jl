@@ -43,6 +43,8 @@ Base.length(k::Knots) = length(k.vector)
 Base.firstindex(k) = 1
 Base.lastindex(k) = length(k)
 Base.unique(k::Knots) = Knots(unique(k.vector))
+Base.iterate(k::Knots) = iterate(k.vector)
+Base.iterate(k::Knots, i::Integer) = iterate(k.vector, i)
 
 function Base.:⊆(k::Knots, k′::Knots)
     K′ = copy(k′.vector)
