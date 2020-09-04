@@ -5,7 +5,6 @@ B-spline manifold for lower polynomial degree
 TODO: make the field `bsplinespaces` to be conposite type, not abstract type, for performance
 """
 struct FastBSplineManifold <: AbstractBSplineManifold
-    # TODO: avoid abstract type FastBSplineSpace
     bsplinespaces::Array{T,1} where T <: FastBSplineSpace
     controlpoints::Array{Float64}
     function FastBSplineManifold(Ps::AbstractArray{<:AbstractBSplineSpace,1}, a::AbstractArray{<:Real})
