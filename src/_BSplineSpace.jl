@@ -80,7 +80,7 @@ Check inclusive relationship between B-spline spaces.
 \subseteq\mathcal{P}[p',k']|_{[\sharp k'_{p'+1},k'_{\sharp k'-p'}]}
 ```
 """
-function ⊑(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
+function issqsubset(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
     p = degree(P)
     k = knots(P)
     p′ = degree(P′)
@@ -99,18 +99,10 @@ function ⊑(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
     return inner_knots+p₊*unique(inner_knots) ⊆ inner_knots′
 end
 
-function ⊒(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
-    return ⊑(P′, P)
-end
-
-function ⋢(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
-    return !⊑(P, P′)
-end
-
-function ⋣(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
-    return !⊒(P, P′)
-end
-
+const ⊑ = issqsubset
+⊒(l, r) = r ⊑ l
+⋢(l, r) = !⊑(l, r)
+⋣(l, r) = r ⋢ l
 
 function iszeros(P::AbstractBSplineSpace)
     p = degree(P)

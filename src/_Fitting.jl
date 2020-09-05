@@ -89,6 +89,7 @@ function fittingcontrolpoints_2dim(func::Function, Ps::Array{T,1} where T<:Abstr
         else
             S = 0.0
             for i1 in rng[1], i2 in rng[2]
+                # TODO: faster
                 S += GaussianQuadrature_2dim(t->(bsplinebasis(I[1],Ps[1],t[1]) * bsplinebasis(I[2],Ps[2],t[2]) * bsplinebasis(J[1],Ps[1],t[1]) * bsplinebasis(J[2],Ps[2],t[2])), [k[1][i1]..k[1][i1+1], k[2][i2]..k[2][i2+1]], nodes, weights)
             end
             return S

@@ -1,99 +1,80 @@
-# TODO: use macro for bsplienbasis(::FastBSplineSpace)
-function bsplinebasis(i::Integer,P::FastBSplineSpace{0},t::Real)
-    k_1, k_2, k_end = P.vector[i], P.vector[i+1], P.vector[end]
-    B_1 = Float64((k_1 ≤ t < k_2) | (k_1 ≤ t ≤ k_2 == k_end))
-
-    return B_1
+function _s(c::Char, i::Int)
+    string(c)*"_"*string(i)
 end
 
-function bsplinebasis(i::Integer,P::FastBSplineSpace{1},t::Real)
-    ÷(a,b) = ifelse(b == 0.0, 0.0, a/b)
-    k_1, k_2, k_3, k_end = P.vector[i], P.vector[i+1], P.vector[i+2], P.vector[end]
-    B_1, B_2 = Float64(k_1 ≤ t < k_2), Float64((k_2 ≤ t < k_3) | (k_2 ≤ t ≤ k_3 == k_end))
-
-    K_1, K_2 = (t-k_1)÷(k_2-k_1), (t-k_2)÷(k_3-k_2)
-    B_1 = K_1*B_1+(1-K_2)*B_2
-
-    return B_1
+function _code_K(p,q)
+    join([_s('K',j) for j in 1:p-q+2],',')*" = "*join(["(t-"*_s('k',j)*")÷("*_s('k',j+q)*"-"*_s('k',j)*")" for j in 1:p-q+2],',')
 end
 
-function bsplinebasis(i::Integer,P::FastBSplineSpace{2},t::Real)
-    ÷(a,b) = ifelse(b == 0.0, 0.0, a/b)
-    k_1, k_2, k_3, k_4, k_end = P.vector[i], P.vector[i+1], P.vector[i+2], P.vector[i+3], P.vector[end]
-    B_1, B_2, B_3 = Float64(k_1 ≤ t < k_2), Float64(k_2 ≤ t < k_3), Float64((k_3 ≤ t < k_4) | (k_3 ≤ t ≤ k_4 == k_end))
-
-    K_1, K_2, K_3 = (t-k_1)÷(k_2-k_1), (t-k_2)÷(k_3-k_2), (t-k_3)÷(k_4-k_3)
-    B_1, B_2 = K_1*B_1+(1-K_2)*B_2, K_2*B_2+(1-K_3)*B_3
-
-    K_1, K_2 = (t-k_1)÷(k_3-k_1), (t-k_2)÷(k_4-k_2)
-    B_1 = K_1*B_1+(1-K_2)*B_2
-
-    return B_1
+function _code_K′(p)
+    join([_s('K',j) for j in 1:2],',')*" = "*join(["1÷("*_s('k',j+p)*"-"*_s('k',j)*")" for j in 1:2],',')
 end
 
-function bsplinebasis(i::Integer,P::FastBSplineSpace{3},t::Real)
-    ÷(a,b) = ifelse(b == 0.0, 0.0, a/b)
-    k_1, k_2, k_3, k_4, k_5, k_end = P.vector[i], P.vector[i+1], P.vector[i+2], P.vector[i+3], P.vector[i+4], P.vector[end]
-    B_1, B_2, B_3, B_4 = Float64(k_1 ≤ t < k_2), Float64(k_2 ≤ t < k_3), Float64(k_3 ≤ t < k_4), Float64((k_4 ≤ t < k_5) | (k_4 ≤ t ≤ k_5 == k_end))
-
-    K_1, K_2, K_3, K_4 = (t-k_1)÷(k_2-k_1), (t-k_2)÷(k_3-k_2), (t-k_3)÷(k_4-k_3), (t-k_4)÷(k_5-k_4)
-    B_1, B_2, B_3 = K_1*B_1+(1-K_2)*B_2, K_2*B_2+(1-K_3)*B_3, K_3*B_3+(1-K_4)*B_4
-
-    K_1, K_2, K_3 = (t-k_1)÷(k_3-k_1), (t-k_2)÷(k_4-k_2), (t-k_3)÷(k_5-k_3)
-    B_1, B_2 = K_1*B_1+(1-K_2)*B_2, K_2*B_2+(1-K_3)*B_3
-
-    K_1, K_2 = (t-k_1)÷(k_4-k_1), (t-k_2)÷(k_5-k_2)
-    B_1 = K_1*B_1+(1-K_2)*B_2
-
-    return B_1
+function _code_B(p,q)
+    join([_s('B',j) for j in 1:p-q+1],',')*" = "*join([_s('K',j)*"*"*_s('B',j)*"+(1-"*_s('K',j+1)*")*"*_s('B',j+1) for j in 1:p-q+1],',')
 end
 
-function bsplinebasis′₊₀(i::Integer,P::FastBSplineSpace{0},t::Real)
-    return 0.0
+for p in 0:MAX_DEGREE
+    @eval function bsplinebasis₊₀(i::Integer, P::FastBSplineSpace{$p}, t::Real)
+        ÷(a,b) = ifelse(b == 0.0, 0.0, a/b)
+        $(Meta.parse(join([_s('k',j) for j in 1:p+2],',')*" = "*join(["P.knotvector[i+"*string(j)*"]" for j in 0:p+1],',')))
+        $(Meta.parse(join([_s('B',j) for j in 1:p+1],',')*" = "*join(["Float64("*_s('k',j)*" ≤ t < "*_s('k',j+1)*")" for j in 1:p+1],',')))
+        $(Meta.parse("begin "*join([_code_K(p,q)*"\n"*_code_B(p,q) for q in 1:p],'\n')*" end"))
+        return B_1
+    end
+    @eval function bsplinebasis₋₀(i::Integer, P::FastBSplineSpace{$p}, t::Real)
+        ÷(a,b) = ifelse(b == 0.0, 0.0, a/b)
+        $(Meta.parse(join([_s('k',j) for j in 1:p+2],',')*" = "*join(["P.knotvector[i+"*string(j)*"]" for j in 0:p+1],',')))
+        $(Meta.parse(join([_s('B',j) for j in 1:p+1],',')*" = "*join(["Float64("*_s('k',j)*" < t ≤ "*_s('k',j+1)*")" for j in 1:p+1],',')))
+        $(Meta.parse("begin "*join([_code_K(p,q)*"\n"*_code_B(p,q) for q in 1:p],'\n')*" end"))
+        return B_1
+    end
+    @eval function bsplinebasis(i::Integer, P::FastBSplineSpace{$p}, t::Real)
+        ÷(a,b) = ifelse(b == 0.0, 0.0, a/b)
+        k_end = P.knotvector[end]
+        $(Meta.parse(join([_s('k',j) for j in 1:p+2],',')*" = "*join(["P.knotvector[i+"*string(j)*"]" for j in 0:p+1],',')))
+        $(Meta.parse(join([_s('B',j) for j in 1:p+1],',')*" = "*join(["Float64("*_s('k',j)*" ≤ t < "*_s('k',j+1)*")" for j in 1:p+1],',')))
+        $(Meta.parse(_s('B',p+1)*" += Float64(t == "*_s('k',p+2)*" == k_end)"))
+        $(Meta.parse("begin "*join([_code_K(p,q)*"\n"*_code_B(p,q) for q in 1:p],'\n')*" end"))
+        return B_1
+    end
 end
 
-function bsplinebasis′₊₀(i::Integer,P::FastBSplineSpace{1},t::Real)
-    ÷(a,b) = ifelse(b == 0.0, 0.0, a/b)
-    k_1, k_2, k_3, k_end = P.vector[i], P.vector[i+1], P.vector[i+2], P.vector[end]
-    B_1, B_2 = Float64(k_1 ≤ t < k_2), Float64(k_2 ≤ t < k_3)
+bsplinebasis′₊₀(i::Integer,P::FastBSplineSpace{0},t::Real) = 0.0
+bsplinebasis′₋₀(i::Integer,P::FastBSplineSpace{0},t::Real) = 0.0
+bsplinebasis′(i::Integer,P::FastBSplineSpace{0},t::Real) = 0.0
 
-    K_1, K_2 = 1÷(k_2-k_1), 1÷(k_3-k_2)
-    B_1 = K_1*B_1-K_2*B_2
-
-    return B_1
+for p in 1:MAX_DEGREE
+    @eval function bsplinebasis′₊₀(i::Integer, P::FastBSplineSpace{$p}, t::Real)
+        ÷(a,b) = ifelse(b == 0.0, 0.0, a/b)
+        $(Meta.parse(join([_s('k',j) for j in 1:p+2],',')*" = "*join(["P.knotvector[i+"*string(j)*"]" for j in 0:p+1],',')))
+        $(Meta.parse(join([_s('B',j) for j in 1:p+1],',')*" = "*join(["Float64("*_s('k',j)*" ≤ t < "*_s('k',j+1)*")" for j in 1:p+1],',')))
+        $(Meta.parse("begin "*join([_code_K(p,q)*"\n"*_code_B(p,q) for q in 1:p-1],'\n')*" end"))
+        $(Meta.parse(_code_K′(p)))
+        B_1 = $p*(K_1*B_1-K_2*B_2)
+        return B_1
+    end
+    @eval function bsplinebasis′₋₀(i::Integer, P::FastBSplineSpace{$p}, t::Real)
+        ÷(a,b) = ifelse(b == 0.0, 0.0, a/b)
+        $(Meta.parse(join([_s('k',j) for j in 1:p+2],',')*" = "*join(["P.knotvector[i+"*string(j)*"]" for j in 0:p+1],',')))
+        $(Meta.parse(join([_s('B',j) for j in 1:p+1],',')*" = "*join(["Float64("*_s('k',j)*" < t ≤ "*_s('k',j+1)*")" for j in 1:p+1],',')))
+        $(Meta.parse("begin "*join([_code_K(p,q)*"\n"*_code_B(p,q) for q in 1:p-1],'\n')*" end"))
+        $(Meta.parse(_code_K′(p)))
+        B_1 = $p*(K_1*B_1-K_2*B_2)
+        return B_1
+    end
+    # @eval function bsplinebasis′(i::Integer, P::FastBSplineSpace{$p}, t::Real)
+    #     ÷(a,b) = ifelse(b == 0.0, 0.0, a/b)
+    #     k_end = P.knotvector[end]
+    #     $(Meta.parse(join([_s('k',j) for j in 1:p+2],',')*" = "*join(["P.knotvector[i+"*string(j)*"]" for j in 0:p+1],',')))
+    #     $(Meta.parse(join([_s('B',j) for j in 1:p+1],',')*" = "*join(["Float64("*_s('k',j)*" ≤ t < "*_s('k',j+1)*")" for j in 1:p+1],',')))
+    #     $(Meta.parse(_s('B',p+1)*" += Float64(t == "*_s('k',p+2)*" == k_end)"))
+    #     $(Meta.parse("begin "*join([_code_K(p,q)*"\n"*_code_B(p,q) for q in 1:p-1],'\n')*" end"))
+    #     $(Meta.parse(_code_K′(p)))
+    #     B_1 = $p*(K_1*B_1-K_2*B_2)
+    #     return B_1
+    # end
 end
-
-function bsplinebasis′₊₀(i::Integer,P::FastBSplineSpace{2},t::Real)
-    ÷(a,b) = ifelse(b == 0.0, 0.0, a/b)
-    k_1, k_2, k_3, k_4, k_end = P.vector[i], P.vector[i+1], P.vector[i+2], P.vector[i+3], P.vector[end]
-    B_1, B_2, B_3 = Float64(k_1 ≤ t < k_2), Float64(k_2 ≤ t < k_3), Float64(k_3 ≤ t < k_4)
-
-    K_1, K_2, K_3 = (t-k_1)÷(k_2-k_1), (t-k_2)÷(k_3-k_2), (t-k_3)÷(k_4-k_3)
-    B_1, B_2 = K_1*B_1+(1-K_2)*B_2, K_2*B_2+(1-K_3)*B_3
-
-    K_1, K_2 = 1÷(k_3-k_1), 1÷(k_4-k_2)
-    B_1 = 2*(K_1*B_1-K_2*B_2)
-
-    return B_1
-end
-
-function bsplinebasis′₊₀(i::Integer,P::FastBSplineSpace{3},t::Real)
-    ÷(a,b) = ifelse(b == 0.0, 0.0, a/b)
-    k_1, k_2, k_3, k_4, k_5, k_end = P.vector[i], P.vector[i+1], P.vector[i+2], P.vector[i+3], P.vector[i+4], P.vector[end]
-    B_1, B_2, B_3, B_4 = Float64(k_1 ≤ t < k_2), Float64(k_2 ≤ t < k_3), Float64(k_3 ≤ t < k_4), Float64(k_4 ≤ t < k_5)
-
-    K_1, K_2, K_3, K_4 = (t-k_1)÷(k_2-k_1), (t-k_2)÷(k_3-k_2), (t-k_3)÷(k_4-k_3), (t-k_4)÷(k_5-k_4)
-    B_1, B_2, B_3 = K_1*B_1+(1-K_2)*B_2, K_2*B_2+(1-K_3)*B_3, K_3*B_3+(1-K_4)*B_4
-
-    K_1, K_2, K_3 = (t-k_1)÷(k_3-k_1), (t-k_2)÷(k_4-k_2), (t-k_3)÷(k_5-k_3)
-    B_1, B_2 = K_1*B_1+(1-K_2)*B_2, K_2*B_2+(1-K_3)*B_3
-
-    K_1, K_2 = 1÷(k_4-k_1), 1÷(k_5-k_2)
-    B_1 = 3*(K_1*B_1-K_2*B_2)
-
-    return B_1
-end
-
 
 """
 TODO: faster.....
