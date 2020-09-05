@@ -237,7 +237,6 @@ using Test
         @test P1 ⊆ P1′
         @test P2 ⊆ P2′
 
-        M = BSplineManifold(M)
         M′ = refinement(M, [P1′, P2′])
         t = [0.82, 1.8]
         @test mapping(M, t) ≈ mapping(M′, t)

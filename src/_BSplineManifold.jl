@@ -92,6 +92,14 @@ end
 @doc raw"""
 Calculate the dimension of B-spline manifold.
 """
-function dim(M::AbstractBSplineManifold)
-    length(M.bsplinespaces)
+dim
+
+dim(M::AbstractBSplineManifold) = length(M.bsplinespaces)
+
+function bsplinespaces(M::BSplineManifold)
+    return M.bsplinespaces
+end
+
+function controlpoints(M::BSplineManifold)
+    return M.controlpoints
 end

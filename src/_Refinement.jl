@@ -79,8 +79,8 @@ end
 Refinement of B-spline manifold with given B-spline spaces.
 """
 function refinement(M::AbstractBSplineManifold, Ps′::Array{T,1} where T <: AbstractBSplineSpace)
-    Ps = M.bsplinespaces
-    𝒂 = M.controlpoints
+    Ps = bsplinespaces(M)
+    𝒂 = controlpoints(M)
     d̂ = size(𝒂)[end]
     d = length(Ps)
     n = dim.(Ps)
@@ -103,8 +103,8 @@ end
 Refinement of B-spline manifold with additional degree and knots.
 """
 function refinement(M::AbstractBSplineManifold; p₊::Union{Nothing,AbstractArray{<:Integer,1}}=nothing, k₊::Union{Nothing,Array{Knots,1}}=nothing)
-    Ps = M.bsplinespaces
-    𝒂 = M.controlpoints
+    Ps = bsplinespaces(M)
+    𝒂 = controlpoints(M)
     d = length(Ps)
     d̂ = size(𝒂)[end]
     n = dim.(Ps)
