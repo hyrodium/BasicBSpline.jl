@@ -1,5 +1,5 @@
 # Refinement
-function changebasis(P::BSplineSpace, P′::BSplineSpace)::Array{Float64,2}
+function changebasis(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)::Array{Float64,2}
     p = degree(P)
     k = knots(P)
     p′ = degree(P′)
@@ -34,37 +34,39 @@ function changebasis(P::BSplineSpace, P′::BSplineSpace)::Array{Float64,2}
     else
         Q = [1:W[1]-1,[W[i]:W[i+1]-1 for i ∈ 1:length(W)-1]...,W[end]:n′]
     end
-    l = length(Q)
-    L = length.(Q)
+    λ = length(Q)
+    Λ = length.(Q)
     Ãᵖ = [Aᵖ[:,q] for q ∈ Q]
 
-    for ȷ ∈ 2:l-1
-        if L[ȷ] == 1
+    for ȷ ∈ 2:λ-1
+        if Λ[ȷ] == 1
             Ãᵖ[ȷ] .= NaN
         end
     end
-    for ȷ ∈ 1:l-1
-        if L[ȷ] ≥ 2
+    for ȷ ∈ 1:λ-1
+        if Λ[ȷ] ≥ 2
             t = k′[W[ȷ]]
-            # TODO: define for FastBSplineSpace
-            Ãᵖ[ȷ][:,end] = bsplinebasis₋₀(BSplineSpace(p,k),t)
+            for i in 1:n
+                Ãᵖ[ȷ][i,end] = bsplinebasis₋₀(i,P,t)
+            end
         end
     end
-    for ȷ ∈ 2:l
-        if L[ȷ] ≥ 2
+    for ȷ ∈ 2:λ
+        if Λ[ȷ] ≥ 2
             t = k′[W[ȷ-1]+p]
-            # TODO: define for FastBSplineSpace
-            Ãᵖ[ȷ][:,1] = bsplinebasis₊₀(BSplineSpace(p,k),t)
+            for i in 1:n
+                Ãᵖ[ȷ][i,1] = bsplinebasis₊₀(i,P,t)
+            end
         end
     end
-    for ȷ ∈ 1:l
-        if L[ȷ] ≥ 3
+    for ȷ ∈ 1:λ
+        if Λ[ȷ] ≥ 3
             r = Q[ȷ]
             A₊ = copy(Ãᵖ[ȷ])
             A₋ = copy(Ãᵖ[ȷ])
-            for j ∈ 1:L[ȷ]-2
+            for j ∈ 1:Λ[ȷ]-2
                 A₊[:,j+1] = A₊[:,j]+Δ[:,j+r[1]]
-                A₋[:,L[ȷ]-j] = A₋[:,L[ȷ]-j+1]-Δ[:,L[ȷ]-j+r[1]]
+                A₋[:,Λ[ȷ]-j] = A₋[:,Λ[ȷ]-j+1]-Δ[:,Λ[ȷ]-j+r[1]]
             end
             Ãᵖ[ȷ] = (A₊+A₋)/2
         end
@@ -72,11 +74,6 @@ function changebasis(P::BSplineSpace, P′::BSplineSpace)::Array{Float64,2}
     Aᵖ = hcat(Ãᵖ...)
     return Aᵖ .* Float64[bsplinesupport(j,P′) ⊆ bsplinesupport(i,P) for i ∈ 1:n, j ∈ 1:n′]
 end
-
-function changebasis(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
-    return changebasis(BSplineSpace(P), BSplineSpace(P′))
-end
-
 
 @doc raw"""
 Refinement of B-spline manifold with given B-spline spaces.
