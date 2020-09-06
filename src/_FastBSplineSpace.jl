@@ -4,7 +4,7 @@
 B-spline space for lower polynomial degree
 """
 struct FastBSplineSpace{p} <: AbstractBSplineSpace
-    vector::Array{Float64,1}
+    knotvector::Array{Float64,1}
     function FastBSplineSpace(p::Integer, knots::Knots)
         if p < 0
             error("degree of polynominal must be non-negative")
@@ -35,7 +35,7 @@ function degree(P::FastBSplineSpace{p}) where p
 end
 
 function knots(P::FastBSplineSpace)
-    return Knots(P.vector)
+    return Knots(P.knotvector)
 end
 
 @doc raw"""

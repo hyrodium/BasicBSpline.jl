@@ -114,7 +114,92 @@ using Test
         @test P2 ⊈ P3
     end
 
-    @testset "BSplineManifold" begin
+    @testset "0th degree basis" begin
+        p = 0
+        k = Knots(rand(10))+Knots(0,1)
+        P = BSplineSpace(p,k)
+        fP = FastBSplineSpace(p,k)
+        n = dim(P)
+
+        @test prod([bsplinebasis₊₀(i,P,t) ≈ bsplinebasis₊₀(i,fP,t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis₊₀(i,P,t) ≈ bsplinebasis₊₀(i,fP,t) for i in 1:n, t in k])
+        @test prod([bsplinebasis₋₀(i,P,t) ≈ bsplinebasis₋₀(i,fP,t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis₋₀(i,P,t) ≈ bsplinebasis₋₀(i,fP,t) for i in 1:n, t in k])
+        @test prod([bsplinebasis(i,P,t) ≈ bsplinebasis(i,fP,t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis(i,P,t) ≈ bsplinebasis(i,fP,t) for i in 1:n, t in k])
+
+        @test prod([bsplinebasis′₊₀(i,P,t) ≈ bsplinebasis′₊₀(i,fP,t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis′₊₀(i,P,t) ≈ bsplinebasis′₊₀(i,fP,t) for i in 1:n, t in k])
+        @test prod([bsplinebasis′₋₀(i,P,t) ≈ bsplinebasis′₋₀(i,fP,t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis′₋₀(i,P,t) ≈ bsplinebasis′₋₀(i,fP,t) for i in 1:n, t in k])
+        @test prod([bsplinebasis′(i,P,t) ≈ bsplinebasis′(i,fP,t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis′(i,P,t) ≈ bsplinebasis′(i,fP,t) for i in 1:n, t in k])
+    end
+
+    @testset "1st degree basis" begin
+        p = 1
+        k = Knots(rand(10))+2*Knots(0,1)
+        P = BSplineSpace(p,k)
+        fP = FastBSplineSpace(p,k)
+        n = dim(P)
+        @test prod([bsplinebasis₊₀(i,P,t) ≈ bsplinebasis₊₀(i,fP,t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis₊₀(i,P,t) ≈ bsplinebasis₊₀(i,fP,t) for i in 1:n, t in k])
+        @test prod([bsplinebasis₋₀(i,P,t) ≈ bsplinebasis₋₀(i,fP,t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis₋₀(i,P,t) ≈ bsplinebasis₋₀(i,fP,t) for i in 1:n, t in k])
+        @test prod([bsplinebasis(i,P,t) ≈ bsplinebasis(i,fP,t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis(i,P,t) ≈ bsplinebasis(i,fP,t) for i in 1:n, t in k])
+
+        @test prod([bsplinebasis′₊₀(i,P,t) ≈ bsplinebasis′₊₀(i,fP,t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis′₊₀(i,P,t) ≈ bsplinebasis′₊₀(i,fP,t) for i in 1:n, t in k])
+        @test prod([bsplinebasis′₋₀(i,P,t) ≈ bsplinebasis′₋₀(i,fP,t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis′₋₀(i,P,t) ≈ bsplinebasis′₋₀(i,fP,t) for i in 1:n, t in k])
+        @test prod([bsplinebasis′(i,P,t) ≈ bsplinebasis′(i,fP,t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis′(i,P,t) ≈ bsplinebasis′(i,fP,t) for i in 1:n, t in k])
+    end
+
+    @testset "2nd degree basis" begin
+        p = 2
+        k = Knots(rand(10))+3*Knots(0,1)
+        P = BSplineSpace(p,k)
+        fP = FastBSplineSpace(p,k)
+        n = dim(P)
+        @test prod([bsplinebasis₊₀(i,P,t) ≈ bsplinebasis₊₀(i,fP,t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis₊₀(i,P,t) ≈ bsplinebasis₊₀(i,fP,t) for i in 1:n, t in k])
+        @test prod([bsplinebasis₋₀(i,P,t) ≈ bsplinebasis₋₀(i,fP,t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis₋₀(i,P,t) ≈ bsplinebasis₋₀(i,fP,t) for i in 1:n, t in k])
+        @test prod([bsplinebasis(i,P,t) ≈ bsplinebasis(i,fP,t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis(i,P,t) ≈ bsplinebasis(i,fP,t) for i in 1:n, t in k])
+
+        @test prod([bsplinebasis′₊₀(i,P,t) ≈ bsplinebasis′₊₀(i,fP,t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis′₊₀(i,P,t) ≈ bsplinebasis′₊₀(i,fP,t) for i in 1:n, t in k])
+        @test prod([bsplinebasis′₋₀(i,P,t) ≈ bsplinebasis′₋₀(i,fP,t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis′₋₀(i,P,t) ≈ bsplinebasis′₋₀(i,fP,t) for i in 1:n, t in k])
+        @test prod([bsplinebasis′(i,P,t) ≈ bsplinebasis′(i,fP,t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis′(i,P,t) ≈ bsplinebasis′(i,fP,t) for i in 1:n, t in k])
+    end
+
+    @testset "3rd degree basis" begin
+        p = 3
+        k = Knots(rand(10))+4*Knots(0,1)
+        P = BSplineSpace(p,k)
+        fP = FastBSplineSpace(p,k)
+        n = dim(P)
+        @test prod([bsplinebasis₊₀(i,P,t) ≈ bsplinebasis₊₀(i,fP,t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis₊₀(i,P,t) ≈ bsplinebasis₊₀(i,fP,t) for i in 1:n, t in k])
+        @test prod([bsplinebasis₋₀(i,P,t) ≈ bsplinebasis₋₀(i,fP,t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis₋₀(i,P,t) ≈ bsplinebasis₋₀(i,fP,t) for i in 1:n, t in k])
+        @test prod([bsplinebasis(i,P,t) ≈ bsplinebasis(i,fP,t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis(i,P,t) ≈ bsplinebasis(i,fP,t) for i in 1:n, t in k])
+
+        @test prod([bsplinebasis′₊₀(i,P,t) ≈ bsplinebasis′₊₀(i,fP,t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis′₊₀(i,P,t) ≈ bsplinebasis′₊₀(i,fP,t) for i in 1:n, t in k])
+        @test prod([bsplinebasis′₋₀(i,P,t) ≈ bsplinebasis′₋₀(i,fP,t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis′₋₀(i,P,t) ≈ bsplinebasis′₋₀(i,fP,t) for i in 1:n, t in k])
+        @test prod([bsplinebasis′(i,P,t) ≈ bsplinebasis′(i,fP,t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis′(i,P,t) ≈ bsplinebasis′(i,fP,t) for i in 1:n, t in k])
+    end
+
+    @testset "BSplineManifold-2dim" begin
         P1 = BSplineSpace(1, Knots([0, 0, 1, 1]))
         P2 = BSplineSpace(1, Knots([1, 1, 2, 3, 3]))
         n1 = dim(P1) # 2
@@ -134,13 +219,33 @@ using Test
         @test mapping(M, t) ≈ mapping(M′, t)
     end
 
-    @testset "FastBSplineManifold" begin
+    @testset "FastBSplineManifold-2dim" begin
         P1 = FastBSplineSpace(1, Knots([0, 0, 1, 1]))
         P2 = FastBSplineSpace(1, Knots([1, 1, 2, 3, 3]))
         n1 = dim(P1) # 2
         n2 = dim(P2) # 3
         𝒂 = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.
         M = FastBSplineManifold([P1, P2], 𝒂)
+        @test dim(M) == 2
+
+        P1′ = FastBSplineSpace(2, Knots([0, 0, 0, 1, 1, 1]))
+        P2′ = FastBSplineSpace(1, Knots([1, 1, 2, 1.45, 3, 3]))
+
+        @test P1 ⊆ P1′
+        @test P2 ⊆ P2′
+
+        M′ = refinement(M, [P1′, P2′])
+        t = [0.82, 1.8]
+        @test mapping(M, t) ≈ mapping(M′, t)
+    end
+
+    @testset "BSplineSurface" begin
+        P1 = FastBSplineSpace(1, Knots([0, 0, 1, 1]))
+        P2 = FastBSplineSpace(1, Knots([1, 1, 2, 3, 3]))
+        n1 = dim(P1) # 2
+        n2 = dim(P2) # 3
+        𝒂 = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.
+        M = BSplineSurface([P1, P2], 𝒂)
         @test dim(M) == 2
 
         P1′ = FastBSplineSpace(2, Knots([0, 0, 0, 1, 1, 1]))

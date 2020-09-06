@@ -192,6 +192,8 @@ Modified version.
 =p\left(\frac{1}{k_{i+p}-k_{i}}B_{(i,p-1,k)}(t)-\frac{1}{k_{i+p+1}-k_{i+1}}B_{(i+1,p-1,k)}(t)\right)
 ```
 """
+bsplinebasis′
+
 function bsplinebasis′(P::BSplineSpace, t)::Array{Float64,1}
     p = P.degree
     k = P.knots

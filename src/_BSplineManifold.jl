@@ -36,12 +36,6 @@ struct BSplineManifold <: AbstractBSplineManifold
     end
 end
 
-function BSplineManifold(Ps::AbstractArray{<:AbstractBSplineSpace,1}, a::Array{Array{T,1}} where T<:Real)
-    d̂ = length(a[1])
-    A = reshape(transpose(hcat(reshape(a,prod(size(a)))...)), size(a)..., d̂)
-    return BSplineManifold(Ps, A)
-end
-
 """
 convert AbstractBSplineManifold to BSplineManifold
 """
@@ -98,6 +92,14 @@ end
 @doc raw"""
 Calculate the dimension of B-spline manifold.
 """
-function dim(M::AbstractBSplineManifold)
-    length(M.bsplinespaces)
+dim
+
+dim(M::AbstractBSplineManifold) = length(M.bsplinespaces)
+
+function bsplinespaces(M::BSplineManifold)
+    return M.bsplinespaces
+end
+
+function controlpoints(M::BSplineManifold)
+    return M.controlpoints
 end
