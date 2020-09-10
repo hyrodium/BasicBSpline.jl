@@ -145,7 +145,7 @@ function fittingcontrolpoints_2dim(func::Function, Ps::Array{<:AbstractBSplineSp
     b = [β(I) for I in CartesianIndices(X)]
     n1, n2 = dim.(Ps)
     A1, A2 = innerproduct.(Ps)
-    A = [A1[i1,j1]*A2[i2,j2] for i1 in 1:n1, i2 in 1:n2, j1 in 1:n1, j2 in 1:n2]
+    A = [A1[i1, j1] * A2[i2, j2] for i1 in 1:n1, i2 in 1:n2, j1 in 1:n1, j2 in 1:n2]
     A = reshape(A, prod(n), prod(n))
     b = reshape(b, prod(n))
     return reshape(inv(A) * b, n...)

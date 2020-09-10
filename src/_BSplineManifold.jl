@@ -1,18 +1,18 @@
 # B-spline manifold
 abstract type AbstractBSplineManifold end
 
-function ⊗(X::Array{Float64},Y::Array{Float64})::Array{Float64}
+function ⊗(X::Array{Float64}, Y::Array{Float64})::Array{Float64}
     # TODO: remove this function and use Tensor.jl
     m = size(X)
     n = size(Y)
-    reshape(reshape(X,length(X)) * reshape(Y,length(Y))', m..., n...)
+    reshape(reshape(X, length(X)) * reshape(Y, length(Y))', m..., n...)
 end
 
-function tensorprod(X::Array{T,1}) where T <: Array{Float64}
-    n=length(X)
+function tensorprod(X::Array{T,1}) where {T<:Array{Float64}}
+    n = length(X)
     # X[1] ⊗ … ⊗ X[n]
     Y = X[1]
-    for i ∈ 2:n
+    for i in 2:n
         Y = Y ⊗ X[i]
     end
     return Y
@@ -50,9 +50,9 @@ B_{i^1,\dots,i^d}(t^1,\dots,t^d)
 =B_{(i^1,p^1,k^1)}(t^1)\cdots B_{(i^d,p^d,k^d)}(t^d)
 ```
 """
-function bsplinebasis(Ps::Array{BSplineSpace,1},t::Array{<:Real,1})
+function bsplinebasis(Ps::Array{BSplineSpace,1}, t::Array{<:Real,1})
     d = length(t)
-    Bs = [bsplinebasis(Ps[i],t[i]) for i ∈ 1:d]
+    Bs = [bsplinebasis(Ps[i], t[i]) for i in 1:d]
     return tensorprod(Bs)
 end
 
@@ -63,15 +63,15 @@ B_{i^1,\dots,i^d}(t^1,\dots,t^d)
 =B_{(i^1,p^1,k^1)}(t^1)\cdots B_{(i^d,p^d,k^d)}(t^d)
 ```
 """
-function bsplinebasis(I::CartesianIndex, Ps::Array{BSplineSpace,1},t::Array{<:Real,1})
+function bsplinebasis(I::CartesianIndex, Ps::Array{BSplineSpace,1}, t::Array{<:Real,1})
     d = length(Ps)
-    Bs = prod(bsplinebasis(I[i],Ps[i],t[i]) for i ∈ 1:d)
+    Bs = prod(bsplinebasis(I[i], Ps[i], t[i]) for i in 1:d)
     return tensorprod(Bs)
 end
 
 function bsplinesupport(I::CartesianIndex, Ps::Array{BSplineSpace,1})
     d = length(Ps)
-    return [bsplinesupport(I[i],Ps[i]) for i ∈ 1:d]
+    return [bsplinesupport(I[i], Ps[i]) for i in 1:d]
 end
 
 @doc raw"""
@@ -86,7 +86,7 @@ function mapping(M::BSplineManifold, t::Array{<:Real,1})
     𝒂 = M.controlpoints
     d = length(Ps)
     d̂ = size(𝒂)[end]
-    return [sum(bsplinebasis(Ps,t).*𝒂[..,i]) for i ∈ 1:d̂]
+    return [sum(bsplinebasis(Ps, t) .* 𝒂[.., i]) for i in 1:d̂]
 end
 
 @doc raw"""

@@ -60,21 +60,21 @@ using Test
         n1, n2, n3 = dim(P1), dim(P2), dim(P3)
         A12 = changebasis(P1, P2)
         A13 = changebasis(P1, P3)
-        Δ12 = [bsplinebasis(i,P1,t) - sum(A12[i,j]*bsplinebasis(j,P2,t) for j in 1:n2) for i in 1:n1, t in 8*rand(10)]
-        Δ13 = [bsplinebasis(i,P1,t) - sum(A13[i,j]*bsplinebasis(j,P3,t) for j in 1:n3) for i in 1:n1, t in 8*rand(10)]
+        Δ12 = [bsplinebasis(i, P1, t) - sum(A12[i, j] * bsplinebasis(j, P2, t) for j in 1:n2) for i in 1:n1, t in 8 * rand(10)]
+        Δ13 = [bsplinebasis(i, P1, t) - sum(A13[i, j] * bsplinebasis(j, P3, t) for j in 1:n3) for i in 1:n1, t in 8 * rand(10)]
         @test norm(Δ12) < 1e-14
         @test norm(Δ13) < 1e-14
 
-        P4 = BSplineSpace(1, Knots([1,2,3,4,5]))
-        P5 = BSplineSpace(2, Knots([-1,0.3,2,3,3,4,5.2,6]))
+        P4 = BSplineSpace(1, Knots([1, 2, 3, 4, 5]))
+        P5 = BSplineSpace(2, Knots([-1, 0.3, 2, 3, 3, 4, 5.2, 6]))
         @test P4 ⊑ P4
         @test P4 ⊑ P5
         @test P5 ⊒ P4
         @test P5 ⋢ P4
         @test P4 ⋣ P5
 
-        P4_ = BSplineSpace(degree(P4)-1, knots(P4)[2:end-1])
-        P5_ = BSplineSpace(degree(P5)-1, knots(P5)[2:end-1])
+        P4_ = BSplineSpace(degree(P4) - 1, knots(P4)[2:end-1])
+        P5_ = BSplineSpace(degree(P5) - 1, knots(P5)[2:end-1])
         @test P4_ ⊑ P5_
 
         n4, n5 = dim(P4), dim(P5)
@@ -116,87 +116,87 @@ using Test
 
     @testset "0th degree basis" begin
         p = 0
-        k = Knots(rand(10))+Knots(0,1)
-        P = BSplineSpace(p,k)
-        fP = FastBSplineSpace(p,k)
+        k = Knots(rand(10)) + Knots(0, 1)
+        P = BSplineSpace(p, k)
+        fP = FastBSplineSpace(p, k)
         n = dim(P)
 
-        @test prod([bsplinebasis₊₀(i,P,t) ≈ bsplinebasis₊₀(i,fP,t) for i in 1:n, t in rand(5)])
-        @test prod([bsplinebasis₊₀(i,P,t) ≈ bsplinebasis₊₀(i,fP,t) for i in 1:n, t in k])
-        @test prod([bsplinebasis₋₀(i,P,t) ≈ bsplinebasis₋₀(i,fP,t) for i in 1:n, t in rand(5)])
-        @test prod([bsplinebasis₋₀(i,P,t) ≈ bsplinebasis₋₀(i,fP,t) for i in 1:n, t in k])
-        @test prod([bsplinebasis(i,P,t) ≈ bsplinebasis(i,fP,t) for i in 1:n, t in rand(5)])
-        @test prod([bsplinebasis(i,P,t) ≈ bsplinebasis(i,fP,t) for i in 1:n, t in k])
+        @test prod([bsplinebasis₊₀(i, P, t) ≈ bsplinebasis₊₀(i, fP, t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis₊₀(i, P, t) ≈ bsplinebasis₊₀(i, fP, t) for i in 1:n, t in k])
+        @test prod([bsplinebasis₋₀(i, P, t) ≈ bsplinebasis₋₀(i, fP, t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis₋₀(i, P, t) ≈ bsplinebasis₋₀(i, fP, t) for i in 1:n, t in k])
+        @test prod([bsplinebasis(i, P, t) ≈ bsplinebasis(i, fP, t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis(i, P, t) ≈ bsplinebasis(i, fP, t) for i in 1:n, t in k])
 
-        @test prod([bsplinebasis′₊₀(i,P,t) ≈ bsplinebasis′₊₀(i,fP,t) for i in 1:n, t in rand(5)])
-        @test prod([bsplinebasis′₊₀(i,P,t) ≈ bsplinebasis′₊₀(i,fP,t) for i in 1:n, t in k])
-        @test prod([bsplinebasis′₋₀(i,P,t) ≈ bsplinebasis′₋₀(i,fP,t) for i in 1:n, t in rand(5)])
-        @test prod([bsplinebasis′₋₀(i,P,t) ≈ bsplinebasis′₋₀(i,fP,t) for i in 1:n, t in k])
-        @test prod([bsplinebasis′(i,P,t) ≈ bsplinebasis′(i,fP,t) for i in 1:n, t in rand(5)])
-        @test prod([bsplinebasis′(i,P,t) ≈ bsplinebasis′(i,fP,t) for i in 1:n, t in k])
+        @test prod([bsplinebasis′₊₀(i, P, t) ≈ bsplinebasis′₊₀(i, fP, t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis′₊₀(i, P, t) ≈ bsplinebasis′₊₀(i, fP, t) for i in 1:n, t in k])
+        @test prod([bsplinebasis′₋₀(i, P, t) ≈ bsplinebasis′₋₀(i, fP, t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis′₋₀(i, P, t) ≈ bsplinebasis′₋₀(i, fP, t) for i in 1:n, t in k])
+        @test prod([bsplinebasis′(i, P, t) ≈ bsplinebasis′(i, fP, t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis′(i, P, t) ≈ bsplinebasis′(i, fP, t) for i in 1:n, t in k])
     end
 
     @testset "1st degree basis" begin
         p = 1
-        k = Knots(rand(10))+2*Knots(0,1)
-        P = BSplineSpace(p,k)
-        fP = FastBSplineSpace(p,k)
+        k = Knots(rand(10)) + 2 * Knots(0, 1)
+        P = BSplineSpace(p, k)
+        fP = FastBSplineSpace(p, k)
         n = dim(P)
-        @test prod([bsplinebasis₊₀(i,P,t) ≈ bsplinebasis₊₀(i,fP,t) for i in 1:n, t in rand(5)])
-        @test prod([bsplinebasis₊₀(i,P,t) ≈ bsplinebasis₊₀(i,fP,t) for i in 1:n, t in k])
-        @test prod([bsplinebasis₋₀(i,P,t) ≈ bsplinebasis₋₀(i,fP,t) for i in 1:n, t in rand(5)])
-        @test prod([bsplinebasis₋₀(i,P,t) ≈ bsplinebasis₋₀(i,fP,t) for i in 1:n, t in k])
-        @test prod([bsplinebasis(i,P,t) ≈ bsplinebasis(i,fP,t) for i in 1:n, t in rand(5)])
-        @test prod([bsplinebasis(i,P,t) ≈ bsplinebasis(i,fP,t) for i in 1:n, t in k])
+        @test prod([bsplinebasis₊₀(i, P, t) ≈ bsplinebasis₊₀(i, fP, t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis₊₀(i, P, t) ≈ bsplinebasis₊₀(i, fP, t) for i in 1:n, t in k])
+        @test prod([bsplinebasis₋₀(i, P, t) ≈ bsplinebasis₋₀(i, fP, t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis₋₀(i, P, t) ≈ bsplinebasis₋₀(i, fP, t) for i in 1:n, t in k])
+        @test prod([bsplinebasis(i, P, t) ≈ bsplinebasis(i, fP, t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis(i, P, t) ≈ bsplinebasis(i, fP, t) for i in 1:n, t in k])
 
-        @test prod([bsplinebasis′₊₀(i,P,t) ≈ bsplinebasis′₊₀(i,fP,t) for i in 1:n, t in rand(5)])
-        @test prod([bsplinebasis′₊₀(i,P,t) ≈ bsplinebasis′₊₀(i,fP,t) for i in 1:n, t in k])
-        @test prod([bsplinebasis′₋₀(i,P,t) ≈ bsplinebasis′₋₀(i,fP,t) for i in 1:n, t in rand(5)])
-        @test prod([bsplinebasis′₋₀(i,P,t) ≈ bsplinebasis′₋₀(i,fP,t) for i in 1:n, t in k])
-        @test prod([bsplinebasis′(i,P,t) ≈ bsplinebasis′(i,fP,t) for i in 1:n, t in rand(5)])
-        @test prod([bsplinebasis′(i,P,t) ≈ bsplinebasis′(i,fP,t) for i in 1:n, t in k])
+        @test prod([bsplinebasis′₊₀(i, P, t) ≈ bsplinebasis′₊₀(i, fP, t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis′₊₀(i, P, t) ≈ bsplinebasis′₊₀(i, fP, t) for i in 1:n, t in k])
+        @test prod([bsplinebasis′₋₀(i, P, t) ≈ bsplinebasis′₋₀(i, fP, t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis′₋₀(i, P, t) ≈ bsplinebasis′₋₀(i, fP, t) for i in 1:n, t in k])
+        @test prod([bsplinebasis′(i, P, t) ≈ bsplinebasis′(i, fP, t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis′(i, P, t) ≈ bsplinebasis′(i, fP, t) for i in 1:n, t in k])
     end
 
     @testset "2nd degree basis" begin
         p = 2
-        k = Knots(rand(10))+3*Knots(0,1)
-        P = BSplineSpace(p,k)
-        fP = FastBSplineSpace(p,k)
+        k = Knots(rand(10)) + 3 * Knots(0, 1)
+        P = BSplineSpace(p, k)
+        fP = FastBSplineSpace(p, k)
         n = dim(P)
-        @test prod([bsplinebasis₊₀(i,P,t) ≈ bsplinebasis₊₀(i,fP,t) for i in 1:n, t in rand(5)])
-        @test prod([bsplinebasis₊₀(i,P,t) ≈ bsplinebasis₊₀(i,fP,t) for i in 1:n, t in k])
-        @test prod([bsplinebasis₋₀(i,P,t) ≈ bsplinebasis₋₀(i,fP,t) for i in 1:n, t in rand(5)])
-        @test prod([bsplinebasis₋₀(i,P,t) ≈ bsplinebasis₋₀(i,fP,t) for i in 1:n, t in k])
-        @test prod([bsplinebasis(i,P,t) ≈ bsplinebasis(i,fP,t) for i in 1:n, t in rand(5)])
-        @test prod([bsplinebasis(i,P,t) ≈ bsplinebasis(i,fP,t) for i in 1:n, t in k])
+        @test prod([bsplinebasis₊₀(i, P, t) ≈ bsplinebasis₊₀(i, fP, t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis₊₀(i, P, t) ≈ bsplinebasis₊₀(i, fP, t) for i in 1:n, t in k])
+        @test prod([bsplinebasis₋₀(i, P, t) ≈ bsplinebasis₋₀(i, fP, t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis₋₀(i, P, t) ≈ bsplinebasis₋₀(i, fP, t) for i in 1:n, t in k])
+        @test prod([bsplinebasis(i, P, t) ≈ bsplinebasis(i, fP, t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis(i, P, t) ≈ bsplinebasis(i, fP, t) for i in 1:n, t in k])
 
-        @test prod([bsplinebasis′₊₀(i,P,t) ≈ bsplinebasis′₊₀(i,fP,t) for i in 1:n, t in rand(5)])
-        @test prod([bsplinebasis′₊₀(i,P,t) ≈ bsplinebasis′₊₀(i,fP,t) for i in 1:n, t in k])
-        @test prod([bsplinebasis′₋₀(i,P,t) ≈ bsplinebasis′₋₀(i,fP,t) for i in 1:n, t in rand(5)])
-        @test prod([bsplinebasis′₋₀(i,P,t) ≈ bsplinebasis′₋₀(i,fP,t) for i in 1:n, t in k])
-        @test prod([bsplinebasis′(i,P,t) ≈ bsplinebasis′(i,fP,t) for i in 1:n, t in rand(5)])
-        @test prod([bsplinebasis′(i,P,t) ≈ bsplinebasis′(i,fP,t) for i in 1:n, t in k])
+        @test prod([bsplinebasis′₊₀(i, P, t) ≈ bsplinebasis′₊₀(i, fP, t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis′₊₀(i, P, t) ≈ bsplinebasis′₊₀(i, fP, t) for i in 1:n, t in k])
+        @test prod([bsplinebasis′₋₀(i, P, t) ≈ bsplinebasis′₋₀(i, fP, t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis′₋₀(i, P, t) ≈ bsplinebasis′₋₀(i, fP, t) for i in 1:n, t in k])
+        @test prod([bsplinebasis′(i, P, t) ≈ bsplinebasis′(i, fP, t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis′(i, P, t) ≈ bsplinebasis′(i, fP, t) for i in 1:n, t in k])
     end
 
     @testset "3rd degree basis" begin
         p = 3
-        k = Knots(rand(10))+4*Knots(0,1)
-        P = BSplineSpace(p,k)
-        fP = FastBSplineSpace(p,k)
+        k = Knots(rand(10)) + 4 * Knots(0, 1)
+        P = BSplineSpace(p, k)
+        fP = FastBSplineSpace(p, k)
         n = dim(P)
-        @test prod([bsplinebasis₊₀(i,P,t) ≈ bsplinebasis₊₀(i,fP,t) for i in 1:n, t in rand(5)])
-        @test prod([bsplinebasis₊₀(i,P,t) ≈ bsplinebasis₊₀(i,fP,t) for i in 1:n, t in k])
-        @test prod([bsplinebasis₋₀(i,P,t) ≈ bsplinebasis₋₀(i,fP,t) for i in 1:n, t in rand(5)])
-        @test prod([bsplinebasis₋₀(i,P,t) ≈ bsplinebasis₋₀(i,fP,t) for i in 1:n, t in k])
-        @test prod([bsplinebasis(i,P,t) ≈ bsplinebasis(i,fP,t) for i in 1:n, t in rand(5)])
-        @test prod([bsplinebasis(i,P,t) ≈ bsplinebasis(i,fP,t) for i in 1:n, t in k])
+        @test prod([bsplinebasis₊₀(i, P, t) ≈ bsplinebasis₊₀(i, fP, t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis₊₀(i, P, t) ≈ bsplinebasis₊₀(i, fP, t) for i in 1:n, t in k])
+        @test prod([bsplinebasis₋₀(i, P, t) ≈ bsplinebasis₋₀(i, fP, t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis₋₀(i, P, t) ≈ bsplinebasis₋₀(i, fP, t) for i in 1:n, t in k])
+        @test prod([bsplinebasis(i, P, t) ≈ bsplinebasis(i, fP, t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis(i, P, t) ≈ bsplinebasis(i, fP, t) for i in 1:n, t in k])
 
-        @test prod([bsplinebasis′₊₀(i,P,t) ≈ bsplinebasis′₊₀(i,fP,t) for i in 1:n, t in rand(5)])
-        @test prod([bsplinebasis′₊₀(i,P,t) ≈ bsplinebasis′₊₀(i,fP,t) for i in 1:n, t in k])
-        @test prod([bsplinebasis′₋₀(i,P,t) ≈ bsplinebasis′₋₀(i,fP,t) for i in 1:n, t in rand(5)])
-        @test prod([bsplinebasis′₋₀(i,P,t) ≈ bsplinebasis′₋₀(i,fP,t) for i in 1:n, t in k])
-        @test prod([bsplinebasis′(i,P,t) ≈ bsplinebasis′(i,fP,t) for i in 1:n, t in rand(5)])
-        @test prod([bsplinebasis′(i,P,t) ≈ bsplinebasis′(i,fP,t) for i in 1:n, t in k])
+        @test prod([bsplinebasis′₊₀(i, P, t) ≈ bsplinebasis′₊₀(i, fP, t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis′₊₀(i, P, t) ≈ bsplinebasis′₊₀(i, fP, t) for i in 1:n, t in k])
+        @test prod([bsplinebasis′₋₀(i, P, t) ≈ bsplinebasis′₋₀(i, fP, t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis′₋₀(i, P, t) ≈ bsplinebasis′₋₀(i, fP, t) for i in 1:n, t in k])
+        @test prod([bsplinebasis′(i, P, t) ≈ bsplinebasis′(i, fP, t) for i in 1:n, t in rand(5)])
+        @test prod([bsplinebasis′(i, P, t) ≈ bsplinebasis′(i, fP, t) for i in 1:n, t in k])
     end
 
     @testset "BSplineManifold-2dim" begin
@@ -290,7 +290,7 @@ using Test
         P2 = FastBSplineSpace(p2, k2)
         n2 = dim(P2)
         𝒂 = [[i1, i2, rand()] for i1 in 1:n1, i2 in 1:n2]
-        M = FastBSplineManifold([P1,P2], 𝒂)
+        M = FastBSplineManifold([P1, P2], 𝒂)
 
         p1′ = p1 + 1
         k1′ = k1 + unique(k1) + Knots(rand(2))
@@ -303,7 +303,7 @@ using Test
         𝒂′ = M′.controlpoints
 
         𝒂′′ = fittingcontrolpoints(u -> mapping(M, u), [P1′, P2′])
-        𝒂′′ = reshape(transpose(hcat(reshape(𝒂′′,prod(size(𝒂′′)))...)), size(𝒂′′)..., 3)
+        𝒂′′ = reshape(transpose(hcat(reshape(𝒂′′, prod(size(𝒂′′)))...)), size(𝒂′′)..., 3)
 
         @test norm(𝒂′′ - 𝒂′) < 1e-10
     end
