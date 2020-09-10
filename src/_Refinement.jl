@@ -5,7 +5,7 @@ Return a coefficient matrix A which satisfy
 B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p,k)}
 ```
 """
-function changebasis_R(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)::Array{Float64,2}
+function _changebasis_R(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)::Array{Float64,2}
     p = degree(P)
     k = knots(P)
     p′ = degree(P′)
@@ -20,7 +20,7 @@ function changebasis_R(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)::Arr
         return A⁰
     end
 
-    Aᵖ⁻¹ = changebasis_R(typeof(P)(p-1, k), typeof(P′)(p′-1, k′)) # (n+1) × (n′+1) matrix
+    Aᵖ⁻¹ = _changebasis_R(typeof(P)(p-1, k), typeof(P′)(p′-1, k′)) # (n+1) × (n′+1) matrix
     n = dim(P)
     n′ = dim(P′)
     Z = iszeros(typeof(P′)(p′-1,k′))
@@ -86,7 +86,7 @@ Return a coefficient matrix A which satisfy
 B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p,k)}
 ```
 """
-function changebasis_I(P::BSplineSpace, P′::BSplineSpace)::Array{Float64,2}
+function _changebasis_I(P::BSplineSpace, P′::BSplineSpace)::Array{Float64,2}
     I = bsplineunity(P)
     p = degree(P)
     k = knots(P)
@@ -102,7 +102,7 @@ function changebasis_I(P::BSplineSpace, P′::BSplineSpace)::Array{Float64,2}
         return A⁰
     end
 
-    Aᵖ⁻¹ = changebasis_I(typeof(P)(p-1, k[2:end-1]), typeof(P′)(p′-1, k′[2,end-1])) # (n-1) × (n′-1) matrix
+    Aᵖ⁻¹ = _changebasis_I(typeof(P)(p-1, k[2:end-1]), typeof(P′)(p′-1, k′[2,end-1])) # (n-1) × (n′-1) matrix
     n = dim(P)
     n′ = dim(P′)
     # TODO: fix below
@@ -161,9 +161,9 @@ end
 
 function changebasis(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
     if P ⊆ P′
-        return changebasis_R(P, P′)
+        return _changebasis_R(P, P′)
     elseif P ⊑ P′
-        return changebasis_I(P, P′)
+        return _changebasis_I(P, P′)
     else
         error("𝒫[p,k] ⊄ 𝒫[p′,k′] and 𝒫[p,k] ⋢ 𝒫[p′,k′]")
     end
