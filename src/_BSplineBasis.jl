@@ -1,4 +1,4 @@
-# B-spline basis
+# B-spline basis function
 
 @doc raw"""
 B-spline basis function.

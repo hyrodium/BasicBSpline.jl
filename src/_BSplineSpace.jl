@@ -1,4 +1,5 @@
 # B-spline space
+
 abstract type AbstractBSplineSpace end
 
 @doc raw"""

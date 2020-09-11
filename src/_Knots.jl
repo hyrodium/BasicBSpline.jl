@@ -1,4 +1,5 @@
 # Knots
+
 @doc raw"""
 Construct knot vector from given array.
 ```math
@@ -23,7 +24,7 @@ struct Knots
 end
 
 Base.zero(::Type{Knots}) = Knots(Float64[])
-Base.==(k₁::Knots, k₂::Knots) = (k₁.vector == k₂.vector)
+Base.:(==)(k₁::Knots, k₂::Knots) = (k₁.vector == k₂.vector)
 Base.:+(k₁::Knots, k₂::Knots) = Knots(sort([k₁.vector..., k₂.vector...]))
 Base.:*(p₊::Integer, k::Knots) = (
     if p₊ == 0
@@ -58,4 +59,4 @@ function Base.:⊆(k::Knots, k′::Knots)
     return true
 end
 
-𝔫(k::Knots, t::Real) = count(s -> (t == s), k.vector)
+𝔫(k::Knots, t::Real) = count(==(t), k.vector)

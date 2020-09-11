@@ -1,62 +1,19 @@
-# Numerical Integration
-
-"""
-fast, but only for 1-dim
-"""
-function GaussianQuadrature_1dim(func::Function, D, nodes, weights)
-    d = length(D) # d must be equal to 2
-    nip = length(nodes)
-    dnodes = [(width(I1) * nodes .+ sum(extrema(I1))) / 2 for I1 in D]
-    widths = width.(D)
-    S = zero(func(mean.(D)))
-    for i1 in 1:nip
-        S += weights[i1] * func([dnodes[1][i1]])
-    end
-    return S * prod(widths) / 2^d
-end
-
-"""
-fast, but only for 2-dim
-"""
-function GaussianQuadrature_2dim(func::Function, D, nodes, weights)
-    d = length(D) # d must be equal to 2
-    nip = length(nodes)
-    dnodes = [(width(I1) * nodes .+ sum(extrema(I1))) / 2 for I1 in D]
-    widths = width.(D)
-    S = zero(func(mean.(D)))
-    for i1 in 1:nip, i2 in 1:nip
-        S += weights[i1] * weights[i2] * func([dnodes[1][i1], dnodes[2][i2]])
-    end
-    return S * prod(widths) / 2^d
-end
-
-"""
-Integrate on interval
-"""
-function integrate(func::Function, I::ClosedInterval{<:Real}, nip, nodes, weights)
-    dnodes = (width(I) * nodes .+ sum(extrema(I))) / 2
-    widths = width(I)
-
-    S = weights[1] * func(dnodes[1])
-    for i in 2:nip
-        S += weights[i] * func(dnodes[i])
-    end
-    return S * prod(widths) / 2
-end
+# Fitting
 
 """
 Assumption:
 * i ≤ j
 * 1 ≤ n ≤ p-j+i+1
 """
-function _bsplineintegrate(P, i, j, n, nip, nodes, weights)
+function _bsplineintegrate(P::AbstractBSplineSpace, i, j, n, nip, nodes, weights)
     p = degree(P)
     I = knots(P)[j+n-1]..knots(P)[j+n]
 
     f(t) = bsplinebasis(i, P, t) * bsplinebasis(j, P, t)
     return integrate(f, I, nip, nodes, weights)
 end
-function _bsplineintegrate(P, i, j, nip, nodes, weights)
+
+function _bsplineintegrate(P::AbstractBSplineSpace, i, j, nip, nodes, weights)
     p = degree(P)
     k = knots(P)
     Δ = j - i
@@ -78,7 +35,8 @@ function _bsplineintegrate(P, i, j, nip, nodes, weights)
         return s
     end
 end
-function innerproduct(P)
+
+function innerproduct(P::AbstractBSplineSpace)
     p = degree(P)
     n = dim(P)
     nip = p + 1

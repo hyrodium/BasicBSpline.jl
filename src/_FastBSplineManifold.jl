@@ -1,4 +1,4 @@
-# B-spline manifold
+# Faster B-spline manifold
 
 """
 B-spline manifold for lower polynomial degree

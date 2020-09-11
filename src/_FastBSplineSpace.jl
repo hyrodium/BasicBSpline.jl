@@ -1,4 +1,4 @@
-# B-spline space
+# Faster B-spline space
 
 @doc raw"""
 B-spline space for lower polynomial degree

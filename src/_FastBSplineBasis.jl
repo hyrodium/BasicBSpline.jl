@@ -1,3 +1,5 @@
+# Faster B-spline basis function
+
 function _s(c::Char, i::Int)
     string(c) * "_" * string(i)
 end

@@ -1,4 +1,5 @@
 # B-spline manifold
+
 abstract type AbstractBSplineManifold end
 
 function ⊗(X::Array{Float64}, Y::Array{Float64})::Array{Float64}
