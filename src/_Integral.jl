@@ -15,10 +15,10 @@ end
 """
 fast, but only for 1-dim
 """
-function GaussianQuadrature_1dim(func::Function, D, nodes, weights)
+function gaussianquadrature_1dim(func::Function, D, nodes, weights)
     d = length(D) # d must be equal to 2
     nip = length(nodes)
-    dnodes = [(width(I1) * nodes .+ sum(extrema(I1))) / 2 for I1 in D]
+    dnodes = [(width(I) * nodes .+ sum(extrema(I))) / 2 for I in D]
     widths = width.(D)
     S = zero(func(mean.(D)))
     for i1 in 1:nip
@@ -30,10 +30,10 @@ end
 """
 fast, but only for 2-dim
 """
-function GaussianQuadrature_2dim(func::Function, D, nodes, weights)
+function gaussianquadrature_2dim(func::Function, D, nodes, weights)
     d = length(D) # d must be equal to 2
     nip = length(nodes)
-    dnodes = [(width(I1) * nodes .+ sum(extrema(I1))) / 2 for I1 in D]
+    dnodes = [(width(I) * nodes .+ sum(extrema(I))) / 2 for I in D]
     widths = width.(D)
     S = zero(func(mean.(D)))
     for i1 in 1:nip, i2 in 1:nip

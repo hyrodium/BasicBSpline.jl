@@ -1,6 +1,9 @@
 # Fitting
 
-"""
+@doc raw"""
+```math
+\int_{[k_{j+n-1}, k_{j+n}]} B_{(i,p,k)}(t) B_{(j,p,k)}(t) dt
+```
 Assumption:
 * i ≤ j
 * 1 ≤ n ≤ p-j+i+1
@@ -13,6 +16,18 @@ function _bsplineintegrate(P::AbstractBSplineSpace, i, j, n, nip, nodes, weights
     return integrate(f, I, nip, nodes, weights)
 end
 
+@doc raw"""
+```math
+\begin{align}
+&\int_{\mathbb{R}} B_{(i,p,k)}(t) B_{(j,p,k)}(t) dt \\
+={}&
+\begin{cases}
+\displaystyle \int_{[k_{j}, k_{i+p+1}]} B_{(i,p,k)}(t)  B_{(j,p,k)}(t) dt & (i \le j) \\
+\displaystyle \int_{[k_{j}, k_{i+p+1}]} B_{(i,p,k)}(t)  B_{(j,p,k)}(t) dt & (j \le i)
+\end{cases}
+\end{align}
+```
+"""
 function _bsplineintegrate(P::AbstractBSplineSpace, i, j, nip, nodes, weights)
     p = degree(P)
     k = knots(P)
@@ -44,69 +59,52 @@ function innerproduct(P::AbstractBSplineSpace)
     return [_bsplineintegrate(P, i, j, nip, nodes, weights) for i in 1:n, j in 1:n]
 end
 
-function fittingcontrolpoints_1dim(func::Function, Ps::Array{<:AbstractBSplineSpace,1})
+"""
+* func: Array{Real,1} -> ℝ-linear space
+"""
+function fittingcontrolpoints_1dim(func::Function, P1::AbstractBSplineSpace)
     d = 1 # length(Ps)
-    k = knots.(Ps)
-    p = degree.(Ps)
-    nip = maximum(p) + 1
+    k = knots(P1)
+    p = degree(P1)
+    nip = p + 1
     nodes, weights = gausslegendre(nip)
-    function β(I)
-        min = [I[i] for i in 1:d]
-        max = [I[i] + degree(Ps[i]) for i in 1:d]
-        rng = [min[i]:max[i] for i in 1:d]
-        if prod(length.(rng)) == 0
-            return 0.0
-        else
-            S = zero(func([0.0]))
-            for i1 in rng[1]
-                S += GaussianQuadrature_1dim(t -> (bsplinebasis(I[1], Ps[1], t[1]) * func(t)), [k[1][i1]..k[1][i1+1]], nodes, weights)
-            end
-            return S
+    function β(i)
+        S = gaussianquadrature_1dim(t -> (bsplinebasis(i, P1, t[1]) * func(t)), [k[i]..k[i+1]], nodes, weights)
+        for j in i+1:i+p
+            S += gaussianquadrature_1dim(t -> (bsplinebasis(i, P1, t[1]) * func(t)), [k[j]..k[j+1]], nodes, weights)
         end
+        return S
     end
-    n = dim.(Ps)
-    X = Array{Float64}(undef, n...)
-    b = [β(I) for I in CartesianIndices(X)]
-    A = innerproduct(Ps[1])
-    b = reshape(b, prod(n))
-    return reshape(inv(A) * b, n...)
+    n = dim(P1)
+    b = [β(i) for i in 1:n]
+    A = innerproduct(P1)
+    return inv(A) * b
 end
 
-
-function fittingcontrolpoints_2dim(func::Function, Ps::Array{<:AbstractBSplineSpace,1})
-    d = 2 # length(Ps)
-    k = knots.(Ps)
-    p = degree.(Ps)
-    nip = maximum(p) + 1
+function fittingcontrolpoints_2dim(func::Function, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace)
+    p1, p2 = degree(P1), degree(P2)
+    k1, k2 = knots(P1), knots(P2)
+    nip = max(p1, p2) + 1
     nodes, weights = gausslegendre(nip)
-    function β(I)
-        min = [I[i] for i in 1:d]
-        max = [I[i] + degree(Ps[i]) for i in 1:d]
-        rng = [min[i]:max[i] for i in 1:d]
-        if prod(length.(rng)) == 0
-            return 0.0
-        else
-            S = zero(func([0, 0.0]))
-            for i1 in rng[1], i2 in rng[2]
-                S += GaussianQuadrature_2dim(
-                    t -> (bsplinebasis(I[1], Ps[1], t[1]) * bsplinebasis(I[2], Ps[2], t[2]) * func(t)),
-                    [k[1][i1]..k[1][i1+1], k[2][i2]..k[2][i2+1]],
-                    nodes,
-                    weights,
-                )
-            end
-            return S
+    function β(i1, i2)
+        S = zero(func([0.0, 0.0]))
+        for j1 in i1:i1+p1, j2 in i2:i2+p2
+            S += gaussianquadrature_2dim(
+                t -> (bsplinebasis(i1, P1, t[1]) * bsplinebasis(i2, P2, t[2]) * func(t)),
+                [k1[j1]..k1[j1+1], k2[j2]..k2[j2+1]],
+                nodes,
+                weights,
+            )
         end
+        return S
     end
-    n = dim.(Ps)
-    X = Array{Float64}(undef, n...)
-    b = [β(I) for I in CartesianIndices(X)]
-    n1, n2 = dim.(Ps)
-    A1, A2 = innerproduct.(Ps)
+    n1, n2 = dim(P1), dim(P2)
+    A1, A2 = innerproduct(P1), innerproduct(P2)
     A = [A1[i1, j1] * A2[i2, j2] for i1 in 1:n1, i2 in 1:n2, j1 in 1:n1, j2 in 1:n2]
-    A = reshape(A, prod(n), prod(n))
-    b = reshape(b, prod(n))
-    return reshape(inv(A) * b, n...)
+    b = [β(i1, i2) for i1 in 1:n1, i2 in 1:n2]
+    _A = reshape(A, n1 * n2, n1 * n2)
+    _b = reshape(b, n1 * n2)
+    return reshape(inv(_A) * _b, n1, n2)
 end
 
 
@@ -118,8 +116,8 @@ function fittingcontrolpoints(func::Function, Ps::Array{<:AbstractBSplineSpace,1
     # TODO: currently, this function only supports for 1-dim and 2-dim B-spline manifold.
     d = length(Ps)
     if d == 1
-        return fittingcontrolpoints_1dim(func, Ps)
+        return fittingcontrolpoints_1dim(func, Ps[1])
     elseif d == 2
-        return fittingcontrolpoints_2dim(func, Ps)
+        return fittingcontrolpoints_2dim(func, Ps[1], Ps[2])
     end
 end
