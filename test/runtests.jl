@@ -208,15 +208,15 @@ using Test
         M = BSplineManifold([P1, P2], 𝒂)
         @test dim(M) == 2
 
-        P1′ = BSplineSpace(2, Knots([0, 0, 0, 1, 1, 1]))
-        P2′ = BSplineSpace(1, Knots([1, 1, 2, 1.45, 3, 3]))
+        P1′ = BSplineSpace(2, Knots([-2, 0, 0, 1, 1, 2]))
+        P2′ = BSplineSpace(1, Knots([-3, 1, 2, 1.45, 3, 4]))
 
-        @test P1 ⊆ P1′
-        @test P2 ⊆ P2′
+        @test P1 ⊑ P1′
+        @test P2 ⊑ P2′
 
         M′ = refinement(M, [P1′, P2′])
-        t = [0.82, 1.8]
-        @test mapping(M, t) ≈ mapping(M′, t)
+        ts = [[rand(),1+2*rand()] for _ in 1:10]
+        @test prod([mapping(M, t) ≈ mapping(M′, t) for t in ts])
     end
 
     @testset "FastBSplineManifold-2dim" begin
@@ -235,8 +235,8 @@ using Test
         @test P2 ⊆ P2′
 
         M′ = refinement(M, [P1′, P2′])
-        t = [0.82, 1.8]
-        @test mapping(M, t) ≈ mapping(M′, t)
+        ts = [[rand(),1+2*rand()] for _ in 1:10]
+        @test prod([mapping(M, t) ≈ mapping(M′, t) for t in ts])
     end
 
     @testset "BSplineSurface" begin
@@ -255,8 +255,8 @@ using Test
         @test P2 ⊆ P2′
 
         M′ = refinement(M, [P1′, P2′])
-        t = [0.82, 1.8]
-        @test mapping(M, t) ≈ mapping(M′, t)
+        ts = [[rand(),1+2*rand()] for _ in 1:10]
+        @test prod([mapping(M, t) ≈ mapping(M′, t) for t in ts])
     end
 
     @testset "Fitting-1dim" begin
