@@ -1,4 +1,5 @@
 # B-spline space
+
 abstract type AbstractBSplineSpace end
 
 @doc raw"""
@@ -50,7 +51,7 @@ Return dimention of a B-spline space.
 function dim(bsplinespace::AbstractBSplineSpace)
     p = degree(bsplinespace)
     k = knots(bsplinespace)
-    return length(k)-p-1
+    return length(k) - p - 1
 end
 
 @doc raw"""
@@ -65,9 +66,9 @@ function Base.:⊆(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
     k = knots(P)
     p′ = degree(P′)
     k′ = knots(P′)
-    p₊ = p′-p
+    p₊ = p′ - p
 
-    return p₊ ≥ 0 && (k+p₊*unique(k) ⊆ k′)
+    return p₊ ≥ 0 && (k + p₊ * unique(k) ⊆ k′)
 end
 
 @doc raw"""
@@ -85,7 +86,7 @@ function issqsubset(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
     k = knots(P)
     p′ = degree(P′)
     k′ = knots(P′)
-    p₊ = p′-p
+    p₊ = p′ - p
 
     if p₊ < 0
         return false
@@ -96,7 +97,7 @@ function issqsubset(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
     inner_knots = k[p+2:end-p-1]
     inner_knots′ = k′[p′+2:end-p′-1]
 
-    return inner_knots+p₊*unique(inner_knots) ⊆ inner_knots′
+    return inner_knots + p₊ * unique(inner_knots) ⊆ inner_knots′
 end
 
 const ⊑ = issqsubset
@@ -104,11 +105,13 @@ const ⊑ = issqsubset
 ⋢(l, r) = !⊑(l, r)
 ⋣(l, r) = r ⋢ l
 
+≃(P1, P2) = (P1 ⊑ P2)&(P2 ⊑ P1)
+
 function iszeros(P::AbstractBSplineSpace)
     p = degree(P)
     k = knots(P)
     n = dim(P)
-    return [k[i] == k[i+p+1] for i ∈ 1:n]
+    return [k[i] == k[i+p+1] for i in 1:n]
 end
 
 function isproper(P::AbstractBSplineSpace)

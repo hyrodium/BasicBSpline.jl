@@ -1,4 +1,4 @@
-# B-spline space
+# Faster B-spline space
 
 @doc raw"""
 B-spline space for lower polynomial degree
@@ -13,7 +13,7 @@ struct FastBSplineSpace{p} <: AbstractBSplineSpace
         end
         new{p}(knots.vector)
     end
-    function FastBSplineSpace{q}(p::Integer, knots::Knots) where q
+    function FastBSplineSpace{q}(p::Integer, knots::Knots) where {q}
         if p < 0
             error("degree of polynominal must be non-negative")
         elseif p > MAX_DEGREE
@@ -30,7 +30,7 @@ function FastBSplineSpace(P::AbstractBSplineSpace)
     return FastBSplineSpace(degree(P), knots(P))
 end
 
-function degree(P::FastBSplineSpace{p}) where p
+function degree(P::FastBSplineSpace{p}) where {p}
     return p
 end
 
@@ -44,10 +44,10 @@ Retrun FastBSplineSpace if ≤ MAX_DEGREE, or BSplineSpace if not.
 \mathcal{P}[p,k]
 ```
 """
-function 𝒫(p::Int,k::Knots)
+function 𝒫(p::Int, k::Knots)
     if p ≤ MAX_DEGREE
-        FastBSplineSpace(p,k)
+        FastBSplineSpace(p, k)
     else
-        BSplineSpace(p,k)
+        BSplineSpace(p, k)
     end
 end

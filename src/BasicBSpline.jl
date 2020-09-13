@@ -6,7 +6,7 @@ using FastGaussQuadrature
 using Statistics
 using LinearAlgebra
 
-export Knots, ♯, BSplineSpace, 𝒫, dim, ⊑, ⊒, ⋢, ⋣
+export Knots, ♯, BSplineSpace, 𝒫, dim, ⊑, ⊒, ⋢, ⋣, ≃
 export bsplinebasis₊₀, bsplinebasis₋₀, bsplinebasis
 export bsplinebasis′₊₀, bsplinebasis′₋₀, bsplinebasis′
 export bsplinesupport, bsplineunity, changebasis
@@ -29,6 +29,7 @@ include("_FastBSplineBasis.jl")
 include("_BSplineManifold.jl")
 include("_FastBSplineManifold.jl")
 include("_Refinement.jl")
+include("_Integral.jl")
 include("_Fitting.jl")
 
 end # module
