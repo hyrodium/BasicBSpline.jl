@@ -6,7 +6,7 @@ using FastGaussQuadrature
 using Statistics
 using LinearAlgebra
 
-export Knots, ♯, BSplineSpace, 𝒫, dim, ⊑, ⊒, ⋢, ⋣
+export Knots, ♯, BSplineSpace, 𝒫, dim, ⊑, ⊒, ⋢, ⋣, ≃
 export bsplinebasis₊₀, bsplinebasis₋₀, bsplinebasis
 export bsplinebasis′₊₀, bsplinebasis′₋₀, bsplinebasis′
 export bsplinesupport, bsplineunity, changebasis

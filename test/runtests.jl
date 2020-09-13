@@ -78,9 +78,9 @@ using Test
         @test P4_ ⊑ P5_
 
         n4, n5 = dim(P4), dim(P5)
-        # A45 = changebasis(P4, P5)
-        # Δ45 = [bsplinebasis(i,P4,t) - sum(A45[i,j]*bsplinebasis(j,P5,t) for j in 1:n5) for i in 1:n1, t in 5*rand(10)]
-        # @test norm(Δ45) < 1e-14
+        A45 = changebasis(P4, P5)
+        Δ45 = [bsplinebasis(i,P4,t) - sum(A45[i,j]*bsplinebasis(j,P5,t) for j in 1:n5) for i in 1:n1, t in 2*rand(10).+2]
+        @test norm(Δ45) < 1e-14
     end
 
     @testset "FastBSplineSpace" begin
