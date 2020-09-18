@@ -63,17 +63,17 @@ end
 * func: Array{Real,1} -> ℝ-linear space
 """
 function fittingcontrolpoints_1dim(func::Function, P1::AbstractBSplineSpace)
-    d = 1 # length(Ps)
-    k = knots(P1)
-    p = degree(P1)
-    nip = p + 1
-    nodes, weights = gausslegendre(nip)
-    function β(i)
-        S = gaussianquadrature_1dim(t -> (bsplinebasis(i, P1, t[1]) * func(t)), [k[i]..k[i+1]], nodes, weights)
-        for j in i+1:i+p
-            S += gaussianquadrature_1dim(t -> (bsplinebasis(i, P1, t[1]) * func(t)), [k[j]..k[j+1]], nodes, weights)
+    p1 = degree(P1)
+    k1 = knots(P1)
+    nip1 = p1 + 1
+    nodes1, weights1 = gausslegendre(nip1)
+    function β(i1)
+        F(t1) = bsplinebasis(i1, P1, t1) * func([t1])
+        S1 = integrate(F, k1[i1]..k1[i1+1], nip1, nodes1, weights1)
+        for j1 in i1+1:i1+p1
+            S1 += integrate(F, k1[j1]..k1[j1+1], nip1, nodes1, weights1)
         end
-        return S
+        return S1
     end
     n = dim(P1)
     b = [β(i) for i in 1:n]
@@ -84,19 +84,25 @@ end
 function fittingcontrolpoints_2dim(func::Function, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace)
     p1, p2 = degree(P1), degree(P2)
     k1, k2 = knots(P1), knots(P2)
-    nip = max(p1, p2) + 1
-    nodes, weights = gausslegendre(nip)
+    nip1 = p1 + 1
+    nip2 = p2 + 1
+    nodes1, weights1 = gausslegendre(nip1)
+    nodes2, weights2 = gausslegendre(nip2)
     function β(i1, i2)
-        S = zero(func([0.0, 0.0]))
-        for j1 in i1:i1+p1, j2 in i2:i2+p2
-            S += gaussianquadrature_2dim(
-                t -> (bsplinebasis(i1, P1, t[1]) * bsplinebasis(i2, P2, t[2]) * func(t)),
-                [k1[j1]..k1[j1+1], k2[j2]..k2[j2+1]],
-                nodes,
-                weights,
-            )
+        F(t1, t2) = bsplinebasis(i1, P1, t1) * bsplinebasis(i2, P2, t2) * func([t1, t2])
+        S2 = integrate(F, k1[i1]..k1[i1+1], k2[i2]..k2[i2+1], nip1, nip2, nodes1, nodes2, weights1, weights2)
+        for j2 in i2+1:i2+p2
+            S2 += integrate(F, k1[i1]..k1[i1+1], k2[j2]..k2[j2+1], nip1, nip2, nodes1, nodes2, weights1, weights2)
         end
-        return S
+        S1 = S2
+        for j1 in i1+1:i1+p1
+            S2 = integrate(F, k1[j1]..k1[j1+1], k2[i2]..k2[i2+1], nip1, nip2, nodes1, nodes2, weights1, weights2)
+            for j2 in i2+1:i2+p2
+                S2 += integrate(F, k1[j1]..k1[j1+1], k2[j2]..k2[j2+1], nip1, nip2, nodes1, nodes2, weights1, weights2)
+            end
+            S1 += S2
+        end
+        return S1
     end
     n1, n2 = dim(P1), dim(P2)
     A1, A2 = innerproduct(P1), innerproduct(P2)

@@ -3,41 +3,30 @@
 """
 Integrate on interval
 """
-function integrate(func::Function, I::ClosedInterval{<:Real}, nip, nodes, weights)
-    dnodes = (width(I) * nodes .+ sum(extrema(I))) / 2
-    S = weights[1] * func(dnodes[1])
+function integrate(func::Function, I1::ClosedInterval{<:Real}, nip, nodes1, weights1)
+    dnodes1 = (width(I1) * nodes1 .+ sum(extrema(I1))) / 2
+    S = weights1[1] * func(dnodes1[1])
     for i in 2:nip
-        S += weights[i] * func(dnodes[i])
+        S += weights1[i] * func(dnodes1[i])
     end
-    return S * width(I) / 2
+    return S * width(I1) / 2
 end
 
-"""
-fast, but only for 1-dim
-"""
-function gaussianquadrature_1dim(func::Function, D, nodes, weights)
-    d = length(D) # d must be equal to 2
-    nip = length(nodes)
-    dnodes = [(width(I) * nodes .+ sum(extrema(I))) / 2 for I in D]
-    widths = width.(D)
-    S = zero(func(mean.(D)))
-    for i1 in 1:nip
-        S += weights[i1] * func([dnodes[1][i1]])
-    end
-    return S * prod(widths) / 2^d
-end
+function integrate(func::Function, I1::ClosedInterval{<:Real}, I2::ClosedInterval{<:Real}, nip1, nip2, nodes1, nodes2, weights1, weights2)
+    dnodes1 = (width(I1) * nodes1 .+ sum(extrema(I1))) / 2
+    dnodes2 = (width(I2) * nodes2 .+ sum(extrema(I2))) / 2
 
-"""
-fast, but only for 2-dim
-"""
-function gaussianquadrature_2dim(func::Function, D, nodes, weights)
-    d = length(D) # d must be equal to 2
-    nip = length(nodes)
-    dnodes = [(width(I) * nodes .+ sum(extrema(I))) / 2 for I in D]
-    widths = width.(D)
-    S = zero(func(mean.(D)))
-    for i1 in 1:nip, i2 in 1:nip
-        S += weights[i1] * weights[i2] * func([dnodes[1][i1], dnodes[2][i2]])
+    S2 = weights2[1] * func(dnodes1[1], dnodes2[1])
+    for i2 in 2:nip2
+        S2 += weights2[i2] * func(dnodes1[1], dnodes2[i2])
     end
-    return S * prod(widths) / 2^d
+    S1 = weights1[1] * S2
+    for i1 in 2:nip1
+        S2 = weights2[1] * func(dnodes1[i1], dnodes2[1])
+        for i2 in 2:nip2
+            S2 += weights2[i2] * func(dnodes1[i1], dnodes2[i2])
+        end
+        S1 += weights1[i1] * S2
+    end
+    return S1 * width(I1) * width(I2) / 4
 end
