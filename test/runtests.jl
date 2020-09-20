@@ -79,7 +79,7 @@ using Test
 
         n4, n5 = dim(P4), dim(P5)
         A45 = changebasis(P4, P5)
-        Δ45 = [bsplinebasis(i,P4,t) - sum(A45[i,j]*bsplinebasis(j,P5,t) for j in 1:n5) for i in 1:n1, t in 2*rand(10).+2]
+        Δ45 = [bsplinebasis(i, P4, t) - sum(A45[i, j] * bsplinebasis(j, P5, t) for j in 1:n5) for i in 1:n1, t in 2 * rand(10) .+ 2]
         @test norm(Δ45) < 1e-14
     end
 
@@ -204,8 +204,8 @@ using Test
         P2 = BSplineSpace(1, Knots([1, 1, 2, 3, 3]))
         n1 = dim(P1) # 2
         n2 = dim(P2) # 3
-        𝒂 = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.
-        M = BSplineManifold([P1, P2], 𝒂)
+        a = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.
+        M = BSplineManifold([P1, P2], a)
         @test dim(M) == 2
 
         P1′ = BSplineSpace(2, Knots([-2, 0, 0, 1, 1, 2]))
@@ -215,7 +215,7 @@ using Test
         @test P2 ⊑ P2′
 
         M′ = refinement(M, [P1′, P2′])
-        ts = [[rand(),1+2*rand()] for _ in 1:10]
+        ts = [[rand(), 1 + 2 * rand()] for _ in 1:10]
         @test prod([mapping(M, t) ≈ mapping(M′, t) for t in ts])
     end
 
@@ -224,8 +224,8 @@ using Test
         P2 = FastBSplineSpace(1, Knots([1, 1, 2, 3, 3]))
         n1 = dim(P1) # 2
         n2 = dim(P2) # 3
-        𝒂 = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.
-        M = FastBSplineManifold([P1, P2], 𝒂)
+        a = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.
+        M = FastBSplineManifold([P1, P2], a)
         @test dim(M) == 2
 
         P1′ = FastBSplineSpace(2, Knots([0, 0, 0, 1, 1, 1]))
@@ -235,7 +235,7 @@ using Test
         @test P2 ⊆ P2′
 
         M′ = refinement(M, [P1′, P2′])
-        ts = [[rand(),1+2*rand()] for _ in 1:10]
+        ts = [[rand(), 1 + 2 * rand()] for _ in 1:10]
         @test prod([mapping(M, t) ≈ mapping(M′, t) for t in ts])
     end
 
@@ -244,8 +244,8 @@ using Test
         P2 = FastBSplineSpace(1, Knots([1, 1, 2, 3, 3]))
         n1 = dim(P1) # 2
         n2 = dim(P2) # 3
-        𝒂 = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.
-        M = BSplineSurface([P1, P2], 𝒂)
+        a = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.
+        M = BSplineSurface([P1, P2], a)
         @test dim(M) == 2
 
         P1′ = FastBSplineSpace(2, Knots([0, 0, 0, 1, 1, 1]))
@@ -255,32 +255,32 @@ using Test
         @test P2 ⊆ P2′
 
         M′ = refinement(M, [P1′, P2′])
-        ts = [[rand(),1+2*rand()] for _ in 1:10]
+        ts = [[rand(), 1 + 2 * rand()] for _ in 1:10]
         @test prod([mapping(M, t) ≈ mapping(M′, t) for t in ts])
     end
 
-    @testset "Fitting-1dim" begin
+    @testset "Fitting-curve" begin
         p1 = 2
         k1 = Knots(rand(5)) + p1 * Knots([0, 1])
         P1 = FastBSplineSpace(p1, k1)
         n1 = dim(P1)
-        𝒂 = [[i, rand()] for i in 1:n1]
-        M = FastBSplineManifold([P1], 𝒂)
+        a_org = [[i1, rand()] for i1 in 1:n1]
+        M = BSplineCurve([P1], a_org)
 
         p1′ = p1 + 1
         k1′ = k1 + unique(k1) + Knots(rand(2))
         P1′ = FastBSplineSpace(p1′, k1′)
 
         M′ = refinement(M, [P1′])
-        𝒂′ = M′.controlpoints
+        a_ref = M′.controlpoints
 
-        𝒂′′ = fittingcontrolpoints(u -> mapping(M, u), [P1′])
-        𝒂′′ = transpose(hcat(𝒂′′...))
+        a_tmp = fittingcontrolpoints(mapping(M), [P1′])
+        a_fit = transpose(hcat(a_tmp...))
 
-        @test norm(𝒂′′ - 𝒂′) < 1e-10
+        @test norm(a_fit - a_ref) < 1e-9
     end
 
-    @testset "Fitting-2dim" begin
+    @testset "Fitting-surface" begin
         p1 = 2
         k1 = Knots(rand(5)) + p1 * Knots([0, 1])
         P1 = FastBSplineSpace(p1, k1)
@@ -289,8 +289,8 @@ using Test
         k2 = Knots(rand(5)) + p2 * Knots([0, 1])
         P2 = FastBSplineSpace(p2, k2)
         n2 = dim(P2)
-        𝒂 = [[i1, i2, rand()] for i1 in 1:n1, i2 in 1:n2]
-        M = FastBSplineManifold([P1, P2], 𝒂)
+        a_org = [[i1, i2, rand()] for i1 in 1:n1, i2 in 1:n2]
+        M = BSplineSurface([P1, P2], a_org)
 
         p1′ = p1 + 1
         k1′ = k1 + unique(k1) + Knots(rand(2))
@@ -300,12 +300,47 @@ using Test
         P2′ = FastBSplineSpace(p2′, k2′)
 
         M′ = refinement(M, [P1′, P2′])
-        𝒂′ = M′.controlpoints
+        a_ref = M′.controlpoints
 
-        𝒂′′ = fittingcontrolpoints(u -> mapping(M, u), [P1′, P2′])
-        𝒂′′ = reshape(transpose(hcat(reshape(𝒂′′, prod(size(𝒂′′)))...)), size(𝒂′′)..., 3)
+        a_tmp = fittingcontrolpoints(mapping(M), [P1′, P2′])
+        a_fit = reshape(transpose(hcat(reshape(a_tmp, prod(size(a_tmp)))...)), size(a_tmp)..., 3)
 
-        @test norm(𝒂′′ - 𝒂′) < 1e-10
+        @test norm(a_fit - a_ref) < 1e-9
+    end
+
+    @testset "Fitting-solid" begin
+        p1 = 2
+        k1 = Knots(rand(5)) + p1 * Knots([0, 1])
+        P1 = FastBSplineSpace(p1, k1)
+        n1 = dim(P1)
+        p2 = 2
+        k2 = Knots(rand(5)) + p2 * Knots([0, 1])
+        P2 = FastBSplineSpace(p2, k2)
+        n2 = dim(P2)
+        p3 = 2
+        k3 = Knots(rand(5)) + p3 * Knots([0, 1])
+        P3 = FastBSplineSpace(p3, k3)
+        n3 = dim(P3)
+        a_org = [[i1, i2, i3, rand()] for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3]
+        M = BSplineSolid([P1, P2, P3], a_org)
+
+        p1′ = p1 + 1
+        k1′ = k1 + unique(k1) + Knots(rand(2))
+        P1′ = FastBSplineSpace(p1′, k1′)
+        p2′ = p2 + 1
+        k2′ = k2 + unique(k2) + Knots(rand(2))
+        P2′ = FastBSplineSpace(p2′, k2′)
+        p3′ = p3 + 1
+        k3′ = k3 + unique(k3) + Knots(rand(2))
+        P3′ = FastBSplineSpace(p3′, k3′)
+
+        M′ = refinement(M, [P1′, P2′, P3′])
+        a_ref = M′.controlpoints
+
+        a_tmp = fittingcontrolpoints(mapping(M), [P1′, P2′, P3′])
+        a_fit = reshape(transpose(hcat(reshape(a_tmp, prod(size(a_tmp)))...)), size(a_tmp)..., 4)
+
+        @test norm(a_fit - a_ref) < 1e-9
     end
 
 end

@@ -90,6 +90,14 @@ function mapping(M::BSplineManifold, t::Array{<:Real,1})
     return [sum(bsplinebasis(Ps, t) .* 𝒂[.., i]) for i in 1:d̂]
 end
 
+function mapping(M::AbstractBSplineManifold, t::Array{<:Real,1})
+    return mapping(BSplineManifold(M), t)
+end
+
+function mapping(M::AbstractBSplineManifold)
+    return Base.Fix1(mapping, M)
+end
+
 @doc raw"""
 Calculate the dimension of B-spline manifold.
 """

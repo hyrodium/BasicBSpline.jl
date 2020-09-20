@@ -4,7 +4,6 @@ os:
   - linux
   - osx
 julia:
-  - 1.0
   - nightly
 notifications:
   email: false
@@ -14,7 +13,7 @@ jobs:
   fast_finish: true
   include:
     - stage: Documentation
-      julia: 1.0
+      julia: nightly
       script: julia --project=docs -e '
           using Pkg;
           Pkg.develop(PackageSpec(path=pwd()));
