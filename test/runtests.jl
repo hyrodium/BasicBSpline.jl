@@ -277,7 +277,7 @@ using Test
         a_tmp = fittingcontrolpoints(mapping(M), [P1′])
         a_fit = transpose(hcat(a_tmp...))
 
-        @test norm(a_fit - a_ref) < 1e-10
+        @test norm(a_fit - a_ref) < 1e-9
     end
 
     @testset "Fitting-surface" begin
@@ -305,7 +305,7 @@ using Test
         a_tmp = fittingcontrolpoints(mapping(M), [P1′, P2′])
         a_fit = reshape(transpose(hcat(reshape(a_tmp, prod(size(a_tmp)))...)), size(a_tmp)..., 3)
 
-        @test norm(a_fit - a_ref) < 1e-10
+        @test norm(a_fit - a_ref) < 1e-9
     end
 
     @testset "Fitting-solid" begin
@@ -340,7 +340,7 @@ using Test
         a_tmp = fittingcontrolpoints(mapping(M), [P1′, P2′, P3′])
         a_fit = reshape(transpose(hcat(reshape(a_tmp, prod(size(a_tmp)))...)), size(a_tmp)..., 4)
 
-        @test norm(a_fit - a_ref) < 1e-10
+        @test norm(a_fit - a_ref) < 1e-9
     end
 
 end
