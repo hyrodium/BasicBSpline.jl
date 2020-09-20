@@ -261,7 +261,7 @@ using Test
 
     @testset "Fitting-curve" begin
         p1 = 2
-        k1 = Knots(rand(5)) + p1 * Knots([0, 1])
+        k1 = Knots(rand(3)) + p1 * Knots([0, 1])
         P1 = FastBSplineSpace(p1, k1)
         n1 = dim(P1)
         a_org = [[i1, rand()] for i1 in 1:n1]
@@ -282,11 +282,11 @@ using Test
 
     @testset "Fitting-surface" begin
         p1 = 2
-        k1 = Knots(rand(5)) + p1 * Knots([0, 1])
+        k1 = Knots(rand(3)) + p1 * Knots([0, 1])
         P1 = FastBSplineSpace(p1, k1)
         n1 = dim(P1)
-        p2 = 2
-        k2 = Knots(rand(5)) + p2 * Knots([0, 1])
+        p2 = 1
+        k2 = Knots(rand(4)) + p2 * Knots([0, 1])
         P2 = FastBSplineSpace(p2, k2)
         n2 = dim(P2)
         a_org = [[i1, i2, rand()] for i1 in 1:n1, i2 in 1:n2]
@@ -310,11 +310,11 @@ using Test
 
     @testset "Fitting-solid" begin
         p1 = 2
-        k1 = Knots(rand(5)) + p1 * Knots([0, 1])
+        k1 = Knots(rand(3)) + p1 * Knots([0, 1])
         P1 = FastBSplineSpace(p1, k1)
         n1 = dim(P1)
-        p2 = 2
-        k2 = Knots(rand(5)) + p2 * Knots([0, 1])
+        p2 = 1
+        k2 = Knots(rand(4)) + p2 * Knots([0, 1])
         P2 = FastBSplineSpace(p2, k2)
         n2 = dim(P2)
         p3 = 2

@@ -211,12 +211,12 @@ function refinement(M::AbstractBSplineManifold; p₊::Union{Nothing,AbstractArra
     d = length(Ps)
     d̂ = size(𝒂)[end]
     n = dim.(Ps)
-    if p₊ == nothing
+    if isnothing(p₊)
         p₊ = zeros(Int, d)
     elseif length(Ps) ≠ length(p₊)
         error("dimension does not match")
     end
-    if k₊ == nothing
+    if isnothing(k₊)
         k₊ = zeros(Knots, d)
     elseif length(Ps) ≠ length(k₊)
         error("dimension does not match")
