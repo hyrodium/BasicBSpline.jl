@@ -108,3 +108,47 @@ function bsplinebasis′(i::Integer, P::FastBSplineSpace, t::Real)::Float64
 
     return B_1
 end
+
+"""
+Assumption: k[i] ≤ t < k[i+1]
+"""
+function _bsb0(k, t::Real, i::Integer)
+    return 1.0
+end
+
+"""
+Assumption: k[i] ≤ t < k[i+1]
+"""
+function _bsb1(k, t::Real, i::Integer)
+    B1 = (k[i+1]-t)/(k[i+1]-k[i])
+    B2 = (t-k[i])/(k[i+1]-k[i])
+    return B1, B2
+end
+
+"""
+Assumption: k[i] ≤ t < k[i+1]
+"""
+@inline function _bsb2(k, t::Real, i::Integer)
+    B = _bsb1(k, t, i)
+    
+    B1 = (k[i+1]-t)/(k[i+1]-k[i-1]) * B[1]
+    B2 = (t-k[i-1])/(k[i+1]-k[i-1]) * B[1] +
+         (k[i+2]-t)/(k[i+2]-k[i]) * B[2]
+    B3 = (t-k[i])/(k[i+2]-k[i]) * B[2]
+    return B1, B2, B3
+end
+
+"""
+Assumption: k[i] ≤ t < k[i+1]
+"""
+@inline function _bsb3(k, t::Real, i::Integer)
+    B = _bsb2(k, t, i)
+
+    B1 = (k[i+1]-t)/(k[i+1]-k[i-2]) * B[1]
+    B2 = (t-k[i-2])/(k[i+1]-k[i-2]) * B[1] +
+         (k[i+2]-t)/(k[i+2]-k[i-1]) * B[2]
+    B3 = (t-k[i-1])/(k[i+2]-k[i-1]) * B[2] +
+         (k[i+3]-t)/(k[i+3]-k[i]) * B[3]
+    B4 = (t-k[i])/(k[i+3]-k[i]) * B[3]
+    return B1, B2, B3, B4
+end
