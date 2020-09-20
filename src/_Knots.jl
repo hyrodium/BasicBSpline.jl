@@ -26,15 +26,15 @@ end
 Base.zero(::Type{Knots}) = Knots(Float64[])
 Base.:(==)(k₁::Knots, k₂::Knots) = (k₁.vector == k₂.vector)
 Base.:+(k₁::Knots, k₂::Knots) = Knots(sort([k₁.vector..., k₂.vector...]))
-Base.:*(p₊::Integer, k::Knots) = (
+function Base.:*(p₊::Integer, k::Knots)
     if p₊ == 0
-        zero(Knots)
+        return zero(Knots)
     elseif p₊ > 0
-        sum(k for _ in 1:p₊)
+        return sum(k for _ in 1:p₊)
     else
         error("Polynominal degree p₊ must be non-negative.")
     end
-)
+end
 
 Base.in(r::Real, k::Knots) = in(r, k.vector)
 Base.getindex(k::Knots, i::Integer) = k.vector[i]
