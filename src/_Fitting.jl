@@ -23,12 +23,12 @@ end
 ={}&
 \begin{cases}
 \displaystyle \int_{[k_{j}, k_{i+p+1}]} B_{(i,p,k)}(t)  B_{(j,p,k)}(t) dt & (i \le j) \\
-\displaystyle \int_{[k_{j}, k_{i+p+1}]} B_{(i,p,k)}(t)  B_{(j,p,k)}(t) dt & (j \le i)
+\displaystyle \int_{[k_{i}, k_{j+p+1}]} B_{(i,p,k)}(t)  B_{(j,p,k)}(t) dt & (j \le i)
 \end{cases}
 \end{align}
 ```
 """
-function _b_b_int(P::AbstractBSplineSpace, i, j, nip, nodes, weights)
+function _b_b_int_R(P::AbstractBSplineSpace, i, j, nip, nodes, weights)
     p = degree(P)
     k = knots(P)
     Δ = j - i
@@ -36,15 +36,45 @@ function _b_b_int(P::AbstractBSplineSpace, i, j, nip, nodes, weights)
         return 0.0
     elseif Δ > p
         return 0.0
-    elseif Δ ≥ 0
+    elseif Δ ≥ 0  # i ≤ j
         s = 0.0
         for n in 1:p-j+i+1
             s += _b_b_int(P, i, j, n, nip, nodes, weights)
         end
         return s
-    else
+    else  # j < i
         s = 0.0
         for n in 1:p-i+j+1
+            s += _b_b_int(P, j, i, n, nip, nodes, weights)
+        end
+        return s
+    end
+end
+
+@doc raw"""
+```math
+\begin{align}
+&\int_{I} B_{(i,p,k)}(t) B_{(j,p,k)}(t) dt \\
+\end{align}
+```
+"""
+function _b_b_int_I(P::AbstractBSplineSpace, i, j, nip, nodes, weights)
+    p = degree(P)
+    k = knots(P)
+    Δ = j - i
+    if Δ < -p
+        return 0.0
+    elseif Δ > p
+        return 0.0
+    elseif Δ ≥ 0  # i ≤ j
+        s = 0.0
+        for n in max(p-j+2,1):min(n-j+1,p-j+i+1)
+            s += _b_b_int(P, i, j, n, nip, nodes, weights)
+        end
+        return s
+    else  # j < i
+        s = 0.0
+        for n in max(p-i+2,1):min(n-i+1,p-i+j+1)
             s += _b_b_int(P, j, i, n, nip, nodes, weights)
         end
         return s
@@ -56,7 +86,7 @@ function innerproduct(P::AbstractBSplineSpace)
     n = dim(P)
     nip = p + 1
     nodes, weights = gausslegendre(nip)
-    return [_b_b_int(P, i, j, nip, nodes, weights) for i in 1:n, j in 1:n]
+    return [_b_b_int_R(P, i, j, nip, nodes, weights) for i in 1:n, j in 1:n]
 end
 
 function _f_b_int(func, i1, P1::AbstractBSplineSpace, nip1, nodes1, weights1)

@@ -130,7 +130,7 @@ Assumption: k[i] ≤ t < k[i+1]
 """
 @inline function _bsb2(k, t::Real, i::Integer)
     B = _bsb1(k, t, i)
-    
+
     B1 = (k[i+1]-t)/(k[i+1]-k[i-1]) * B[1]
     B2 = (t-k[i-1])/(k[i+1]-k[i-1]) * B[1] +
          (k[i+2]-t)/(k[i+2]-k[i]) * B[2]
@@ -151,4 +151,20 @@ Assumption: k[i] ≤ t < k[i+1]
          (k[i+3]-t)/(k[i+3]-k[i]) * B[3]
     B4 = (t-k[i])/(k[i+3]-k[i]) * B[3]
     return B1, B2, B3, B4
+end
+
+@inline function _bsplinebasis(P::FastBSplineSpace{0}, t::Real, i::Integer)
+    return _bsb0(P.knotvector,t,i)
+end
+
+@inline function _bsplinebasis(P::FastBSplineSpace{1}, t::Real, i::Integer)
+    return _bsb1(P.knotvector,t,i)
+end
+
+@inline function _bsplinebasis(P::FastBSplineSpace{2}, t::Real, i::Integer)
+    return _bsb2(P.knotvector,t,i)
+end
+
+@inline function _bsplinebasis(P::FastBSplineSpace{3}, t::Real, i::Integer)
+    return _bsb3(P.knotvector,t,i)
 end
