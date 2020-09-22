@@ -253,15 +253,15 @@ function bsplinespaces(M::FastBSplineManifold)
 end
 
 function bsplinespaces(M::BSplineCurve{p1}) where {p1}
-    return [FastBSplineSpace(p1, Knots(M.knotvector1))]
+    return (FastBSplineSpace(p1, Knots(M.knotvector1)), )
 end
 
 function bsplinespaces(M::BSplineSurface{p1,p2}) where {p1} where {p2}
-    return [FastBSplineSpace(p1, Knots(M.knotvector1)), FastBSplineSpace(p2, Knots(M.knotvector2))]
+    return (FastBSplineSpace(p1, Knots(M.knotvector1)), FastBSplineSpace(p2, Knots(M.knotvector2)))
 end
 
 function bsplinespaces(M::BSplineSolid{p1,p2,p3}) where {p1} where {p2} where {p3}
-    return [FastBSplineSpace(p1, Knots(M.knotvector1)), FastBSplineSpace(p2, Knots(M.knotvector2)), FastBSplineSpace(p3, Knots(M.knotvector3))]
+    return (FastBSplineSpace(p1, Knots(M.knotvector1)), FastBSplineSpace(p2, Knots(M.knotvector2)), FastBSplineSpace(p3, Knots(M.knotvector3)))
 end
 
 function controlpoints(M::FastBSplineManifold)
