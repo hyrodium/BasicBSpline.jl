@@ -60,3 +60,10 @@ function Base.:⊆(k::Knots, k′::Knots)
 end
 
 𝔫(k::Knots, t::Real) = count(==(t), k.vector)
+
+function _knotindex(k::Knots, t::Real)
+    return findfirst(i -> (k[i]≤t<k[i+1]), 1:length(k))
+end
+function _knotindex(k::Vector{<:Real}, t::Real)
+    return findfirst(i -> (k[i]≤t<k[i+1]), 1:length(k))
+end

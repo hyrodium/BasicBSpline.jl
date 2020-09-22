@@ -142,17 +142,17 @@ function mapping(M::BSplineCurve{p1}, t::Array{<:Real,1}) where {p1}
     n1 = dim(P1)
     t1, = t
     v1 = M.knotvector1
-    j1 = findfirst(≥(t1), v1)
-    b1 = [bsplinebasis(i1,P1,t1) for i1 in 1:n1]
+    j1 = _knotindex(v1, t1)
+    b1 = _bsplinebasis(P1,t1,j1)
     d̂ = size(a)[end]
 
     S1 = Array{Float64}(undef, d̂)
-    f1 = max(j1-p1-1, 1)
-    l1 = min(j1-1, n1)
+    f1 = j1-p1
+    l1 = j1
     for xx in 1:d̂
-        S1[xx] = b1[f1]*a[f1,xx]
+        S1[xx] = b1[1]*a[f1,xx]
         for i1 in f1+1:l1
-            S1[xx] += b1[i1]*a[i1,xx]
+            S1[xx] += b1[i1-f1+1]*a[i1,xx]
         end
     end
 
@@ -165,27 +165,27 @@ function mapping(M::BSplineSurface{p1,p2}, t::Array{<:Real,1}) where {p1} where 
     n1, n2 = dim(P1), dim(P2)
     t1, t2 = t
     v1, v2 = M.knotvector1, M.knotvector2
-    j1, j2 = findfirst(≥(t1), v1), findfirst(≥(t2), v2)
-    b1 = [bsplinebasis(i1,P1,t1) for i1 in 1:n1]
-    b2 = [bsplinebasis(i2,P2,t2) for i2 in 1:n2]
+    j1, j2 = _knotindex(v1, t1), _knotindex(v2, t2)
+    b1 = _bsplinebasis(P1,t1,j1)
+    b2 = _bsplinebasis(P2,t2,j2)
     d̂ = size(a)[end]
 
     S1 = Array{Float64}(undef, d̂)
     S2 = Array{Float64}(undef, d̂)
-    f1, f2 = max(j1-p1-1, 1), max(j2-p2-1, 1)
-    l1, l2 = min(j1-1, n1), min(j2-1, n2)
+    f1, f2 = j1-p1, j2-p2
+    l1, l2 = j1, j2
     for xx in 1:d̂
-        S2[xx] = b2[f2]*a[f1,f2,xx]
+        S2[xx] = b2[1]*a[f1,f2,xx]
         for i2 in f2+1:l2
-            S2[xx] += b2[i2]*a[f1,i2,xx]
+            S2[xx] += b2[i2-f2+1]*a[f1,i2,xx]
         end
-        S1[xx] = b1[f1]*S2[xx]
+        S1[xx] = b1[1]*S2[xx]
         for i1 in f1+1:l1
-            S2[xx] = b2[f2]*a[i1,f2,xx]
+            S2[xx] = b2[1]*a[i1,f2,xx]
             for i2 in f2+1:l2
-                S2[xx] += b2[i2]*a[i1,i2,xx]
+                S2[xx] += b2[i2-f2+1]*a[i1,i2,xx]
             end
-            S1[xx] += b1[i1]*S2[xx]
+            S1[xx] += b1[i1-f1+1]*S2[xx]
         end
     end
 
@@ -198,43 +198,43 @@ function mapping(M::BSplineSolid{p1,p2,p3}, t::Array{<:Real,1}) where {p1} where
     n1, n2, n3 = dim(P1), dim(P2), dim(P3)
     t1, t2, t3 = t
     v1, v2, v3 = M.knotvector1, M.knotvector2, M.knotvector3
-    j1, j2, j3 = findfirst(≥(t1), v1), findfirst(≥(t2), v2), findfirst(≥(t3), v3)
-    b1 = [bsplinebasis(i1,P1,t1) for i1 in 1:n1]
-    b2 = [bsplinebasis(i2,P2,t2) for i2 in 1:n2]
-    b3 = [bsplinebasis(i3,P3,t3) for i3 in 1:n3]
+    j1, j2, j3 = _knotindex(v1, t1), _knotindex(v2, t2), _knotindex(v3, t3)
+    b1 = _bsplinebasis(P1,t1,j1)
+    b2 = _bsplinebasis(P2,t2,j2)
+    b3 = _bsplinebasis(P3,t3,j3)
     d̂ = size(a)[end]
 
     S1 = Array{Float64}(undef, d̂)
     S2 = Array{Float64}(undef, d̂)
     S3 = Array{Float64}(undef, d̂)
-    f1, f2, f3 = max(j1-p1-1, 1), max(j2-p2-1, 1), max(j3-p3-1, 1)
-    l1, l2, l3 = min(j1-1, n1), min(j2-1, n2), min(j3-1, n3)
+    f1, f2, f3 = j1-p1, j2-p2, j3-p3
+    l1, l2, l3 = j1, j2, j3
     for xx in 1:d̂
-        S3[xx] = b3[f3]*a[f1,f2,f3,xx]
+        S3[xx] = b3[1]*a[f1,f2,f3,xx]
         for i3 in f3+1:l3
-            S3[xx] += b3[i3]*a[f1,f2,i3,xx]
+            S3[xx] += b3[i3-f3+1]*a[f1,f2,i3,xx]
         end
-        S2[xx] = b1[f1]*b2[f2]*S3[xx]
+        S2[xx] = b1[1]*b2[1]*S3[xx]
         for i2 in f2+1:l2
-            S3[xx] = b3[f3]*a[f1,i2,f3,xx]
+            S3[xx] = b3[1]*a[f1,i2,f3,xx]
             for i3 in f3+1:l3
-                S3[xx] += b3[i3]*a[f1,i2,i3,xx]
+                S3[xx] += b3[i3-f3+1]*a[f1,i2,i3,xx]
             end
-            S2[xx] += b1[f1]*b2[i2]*S3[xx]
+            S2[xx] += b1[1]*b2[i2-f2+1]*S3[xx]
         end
         S1[xx] = S2[xx]
         for i1 in f1+1:l1
-            S3[xx] = b3[f3]*a[i1,f2,f3,xx]
+            S3[xx] = b3[1]*a[i1,f2,f3,xx]
             for i3 in f3+1:l3
-                S3[xx] += b3[i3]*a[i1,f2,i3,xx]
+                S3[xx] += b3[i3-f3+1]*a[i1,f2,i3,xx]
             end
-            S2[xx] = b1[i1]*b2[f2]*S3[xx]
+            S2[xx] = b1[i1-f1+1]*b2[1]*S3[xx]
             for i2 in f2+1:l2
-                S3[xx] = b3[f3]*a[i1,i2,f3,xx]
+                S3[xx] = b3[1]*a[i1,i2,f3,xx]
                 for i3 in f3+1:l3
-                    S3[xx] += b3[i3]*a[i1,i2,i3,xx]
+                    S3[xx] += b3[i3-f3+1]*a[i1,i2,i3,xx]
                 end
-                S2[xx] += b1[i1]*b2[i2]*S3[xx]
+                S2[xx] += b1[i1-f1+1]*b2[i2-f2+1]*S3[xx]
             end
             S1[xx] += S2[xx]
         end
