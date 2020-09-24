@@ -41,8 +41,8 @@ Base.getindex(k::Knots, i::Integer) = k.vector[i]
 Base.getindex(k::Knots, v::AbstractArray{<:Integer,1}) = Knots(k.vector[v])
 Base.length(k::Knots) = length(k.vector)
 ♯(k::Knots) = length(k::Knots)
-Base.firstindex(k) = 1
-Base.lastindex(k) = length(k)
+Base.firstindex(k::Knots) = 1
+Base.lastindex(k::Knots) = length(k)
 Base.unique(k::Knots) = Knots(unique(k.vector))
 Base.iterate(k::Knots) = iterate(k.vector)
 Base.iterate(k::Knots, i::Integer) = iterate(k.vector, i)
@@ -60,3 +60,15 @@ function Base.:⊆(k::Knots, k′::Knots)
 end
 
 𝔫(k::Knots, t::Real) = count(==(t), k.vector)
+
+function _knotindex₊₀(k::Union{Knots, Vector{<:Real}}, t::Real)
+    return findfirst(i -> k[i]≤t<k[i+1], 1:length(k)-1)
+end
+
+function _knotindex₋₀(k::Union{Knots, Vector{<:Real}}, t::Real)
+    return findfirst(i -> k[i]<t≤k[i+1], 1:length(k)-1)
+end
+
+function _knotindex(k::Union{Knots, Vector{<:Real}}, t::Real)
+    return findfirst(i -> (k[i]≤t<k[i+1])|(k[i]<t==k[i+1]==k[end]), 1:length(k)-1)
+end
