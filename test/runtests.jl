@@ -425,7 +425,7 @@ using Test
         a_tmp = fittingcontrolpoints(mapping(M), [P1′, P2′, P3′])
         a_fit = reshape(transpose(hcat(reshape(a_tmp, prod(size(a_tmp)))...)), size(a_tmp)..., 4)
 
-        @test norm(a_fit - a_ref) < ε
+        @test norm(a_fit - a_ref) < 1.0e-6
     end
 
 end
