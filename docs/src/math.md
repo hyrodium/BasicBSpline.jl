@@ -426,7 +426,7 @@ P = BSplineSpace(p,k) # B-spline space
 rand_a = [rand(2) for i in 1:dim(P), j in 1:dim(P)]
 a = [[2*i-6.5,2*j-6.5] for i in 1:dim(P), j in 1:dim(P)] + rand_a # random generated control points
 M = BSplineManifold([P,P],a) # Define B-spline manifold
-save_png("docs/src/img/2dim.png", M) # save image
+save_png("2dim.png", M) # save image
 ```
 ![](img/2dim.png)
 
@@ -443,7 +443,7 @@ save_png("docs/src/img/2dim.png", M) # save image
 ```julia
 k₊=[Knots(3.3,4.2),Knots(3.8,3.2,5.3)] # additional knots
 M′ = refinement(M,k₊=k₊) # refinement of B-spline manifold
-save_png("docs/src/img/2dim_refinement.png", M′) # save image
+save_png("2dim_refinement.png", M′) # save image
 ```
 ![](img/2dim_refinement.png)
 
@@ -473,7 +473,7 @@ f(u) = [2u[1]+sin(u[1])+cos(u[2])+u[2]/2, 3u[2]+sin(u[2])+sin(u[1])/2+u[1]^2/6]/
 
 a = fittingcontrolpoints(f, [P1,P2])
 M = BSplineManifold([P1,P2],a)
-save_png("docs/src/img/fitting.png", M, unitlength=50, up=10, down=-10, left=-10, right=10)
+save_png("fitting.png", M, unitlength=50, up=10, down=-10, left=-10, right=10)
 ```
-![](docs/src/img/fitting_desmos.png)
-![](docs/src/img/fitting.png)
+![](img/fitting_desmos.png)
+![](img/fitting.png)
