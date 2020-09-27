@@ -11,16 +11,16 @@ struct Knots
     function Knots(vector::AbstractArray{T,1} where {T<:Real})
         return new(sort(convert(Array{Float64,1}, vector)))
     end
-    function Knots(vector::Array{Any,1})
-        if isempty(vector)
-            return new(Float64[])
-        else
-            return Knots(convert(Array{Float64,1}, vector))
-        end
+end
+function Knots(vector::Array{Any,1})
+    if isempty(vector)
+        return Knots(Float64[])
+    else
+        return Knots(convert(Array{Float64,1}, vector))
     end
-    function Knots(knot::Real...)
-        return Knots(collect(knot))
-    end
+end
+function Knots(knot::Real...)
+    return Knots(collect(knot))
 end
 
 Base.zero(::Type{Knots}) = Knots(Float64[])
