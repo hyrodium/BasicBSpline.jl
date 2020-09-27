@@ -25,7 +25,7 @@ B-spline manifold for general polynomial degree
 struct BSplineManifold <: AbstractBSplineManifold
     bsplinespaces::Array{BSplineSpace,1}
     controlpoints::Array{Float64}
-    function BSplineManifold(Ps::AbstractArray{<:AbstractBSplineSpace,1}, a::AbstractArray{<:Real})
+    function BSplineManifold(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real})
         Ps = BSplineSpace.(Ps)
         if collect(size(a)[1:end-1]) ≠ dim.(Ps)
             error("dimension does not match")

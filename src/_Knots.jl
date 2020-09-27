@@ -8,15 +8,15 @@ k=(k_1,\dots,k_l)
 """
 struct Knots
     vector::Array{Float64,1}
-    function Knots(vector::AbstractArray{T,1} where {T<:Real})
-        return new(sort(convert(Array{Float64,1}, vector)))
+    function Knots(vector::AbstractVector{<:Real})
+        return new(sort(convert(Vector{Float64}, vector)))
     end
 end
 function Knots(vector::Array{Any,1})
     if isempty(vector)
         return Knots(Float64[])
     else
-        return Knots(convert(Array{Float64,1}, vector))
+        return Knots(convert(Vector{Float64}, vector))
     end
 end
 function Knots(knot::Real...)
@@ -38,7 +38,7 @@ end
 
 Base.in(r::Real, k::Knots) = in(r, k.vector)
 Base.getindex(k::Knots, i::Integer) = k.vector[i]
-Base.getindex(k::Knots, v::AbstractArray{<:Integer,1}) = Knots(k.vector[v])
+Base.getindex(k::Knots, v::AbstractVector{<:Integer}) = Knots(k.vector[v])
 Base.length(k::Knots) = length(k.vector)
 ♯(k::Knots) = length(k::Knots)
 Base.firstindex(k::Knots) = 1
