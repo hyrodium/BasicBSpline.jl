@@ -255,7 +255,7 @@ function _f_b_int_I(func, i1, i2, i3, P1::AbstractBSplineSpace, P2::AbstractBSpl
     return S1
 end
 
-function innerproduct_R(func, P1)
+function innerproduct_R(func, P1::AbstractBSplineSpace)
     p1 = degree(P1)
     n1 = dim(P1)
     nip1 = p1 + 1
@@ -263,7 +263,7 @@ function innerproduct_R(func, P1)
     b = [_f_b_int_R(func, i1, P1, nip1, nodes1, weights1) for i1 in 1:n1]
 end
 
-function innerproduct_I(func, P1)
+function innerproduct_I(func, P1::AbstractBSplineSpace)
     p1 = degree(P1)
     n1 = dim(P1)
     nip1 = p1 + 1
@@ -271,7 +271,7 @@ function innerproduct_I(func, P1)
     b = [_f_b_int_I(func, i1, P1, nip1, nodes1, weights1) for i1 in 1:n1]
 end
 
-function innerproduct_R(func, P1, P2)
+function innerproduct_R(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace)
     p1, p2 = degree(P1), degree(P2)
     n1, n2 = dim(P1), dim(P2)
     nip1 = p1 + 1
@@ -281,7 +281,7 @@ function innerproduct_R(func, P1, P2)
     b = [_f_b_int_R(func, i1, i2, P1, P2, nip1, nip2, nodes1, nodes2, weights1, weights2) for i1 in 1:n1, i2 in 1:n2]
 end
 
-function innerproduct_I(func, P1, P2)
+function innerproduct_I(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace)
     p1, p2 = degree(P1), degree(P2)
     n1, n2 = dim(P1), dim(P2)
     nip1 = p1 + 1
@@ -291,7 +291,7 @@ function innerproduct_I(func, P1, P2)
     b = [_f_b_int_I(func, i1, i2, P1, P2, nip1, nip2, nodes1, nodes2, weights1, weights2) for i1 in 1:n1, i2 in 1:n2]
 end
 
-function innerproduct_R(func, P1, P2, P3)
+function innerproduct_R(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, P3::AbstractBSplineSpace)
     p1, p2, p3 = degree(P1), degree(P2), degree(P3)
     n1, n2, n3 = dim(P1), dim(P2), dim(P3)
     nip1 = p1 + 1
@@ -303,7 +303,7 @@ function innerproduct_R(func, P1, P2, P3)
     b = [_f_b_int_R(func, i1, i2, i3, P1, P2, P3, nip1, nip2, nip3, nodes1, nodes2, nodes3, weights1, weights2, weights3) for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3]
 end
 
-function innerproduct_I(func, P1, P2, P3)
+function innerproduct_I(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, P3::AbstractBSplineSpace)
     p1, p2, p3 = degree(P1), degree(P2), degree(P3)
     n1, n2, n3 = dim(P1), dim(P2), dim(P3)
     nip1 = p1 + 1
@@ -318,13 +318,13 @@ end
 """
 * func: Array{Real,1} -> ℝ-linear space
 """
-function fittingcontrolpoints_1dim(func::Function, P1::AbstractBSplineSpace)
+function fittingcontrolpoints_1dim(func, P1::AbstractBSplineSpace)
     b = innerproduct_I(func, P1)
     A = innerproduct_I(P1)
     return inv(A) * b
 end
 
-function fittingcontrolpoints_2dim(func::Function, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace)
+function fittingcontrolpoints_2dim(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace)
     n1, n2 = dim(P1), dim(P2)
     A1, A2 = innerproduct_I(P1), innerproduct_I(P2)
     A = [A1[i1, j1] * A2[i2, j2] for i1 in 1:n1, i2 in 1:n2, j1 in 1:n1, j2 in 1:n2]
@@ -334,7 +334,7 @@ function fittingcontrolpoints_2dim(func::Function, P1::AbstractBSplineSpace, P2:
     return reshape(inv(_A) * _b, n1, n2)
 end
 
-function fittingcontrolpoints_3dim(func::Function, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, P3::AbstractBSplineSpace)
+function fittingcontrolpoints_3dim(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, P3::AbstractBSplineSpace)
     n1, n2, n3 = dim(P1), dim(P2), dim(P3)
     A1, A2, A3 = innerproduct_I(P1), innerproduct_I(P2), innerproduct_I(P3)
     A = [A1[i1, j1] * A2[i2, j2] * A3[i3, j3] for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3, j1 in 1:n1, j2 in 1:n2, j3 in 1:n3]
@@ -349,7 +349,7 @@ end
 Approximate given function by linear combination of B-spline functions.
 This function returns its control points.
 """
-function fittingcontrolpoints(func::Function, Ps::Array{<:AbstractBSplineSpace,1})
+function fittingcontrolpoints(func, Ps::Array{<:AbstractBSplineSpace,1})
     # TODO: currently, this function only supports for 1-dim and 2-dim B-spline manifold.
     d = length(Ps)
     if d == 1
