@@ -1,10 +1,9 @@
 module BasicBSpline
 
-using IntervalSets
-using EllipsisNotation
-using FastGaussQuadrature
-using Statistics
 using LinearAlgebra
+using EllipsisNotation
+using IntervalSets
+using FastGaussQuadrature
 
 export Knots, ♯, BSplineSpace, 𝒫, dim, ⊑, ⊒, ⋢, ⋣, ≃
 export bsplinebasis₊₀, bsplinebasis₋₀, bsplinebasis
