@@ -73,10 +73,10 @@ savefig("docs/src/img/subbsplineplot2.png")
 ##
 p = 3
 k = Knots([0.00, 1.50, 2.50, 5.50, 8.00, 9.00, 9.50, 10.0])
-P0 = 𝒫(0, k)
-P1 = 𝒫(1, k)
-P2 = 𝒫(2, k)
-P3 = 𝒫(3, k)
+P0 = FastBSplineSpace(0, k)
+P1 = FastBSplineSpace(1, k)
+P2 = FastBSplineSpace(2, k)
+P3 = FastBSplineSpace(3, k)
 plot(
     plot([t -> bsplinebasis(i, P0, t) for i in 1:dim(P0)], 0, 10, ylims = (0, 1), legend = false),
     plot([t -> bsplinebasis(i, P1, t) for i in 1:dim(P1)], 0, 10, ylims = (0, 1), legend = false),

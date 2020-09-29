@@ -34,8 +34,8 @@ B_{(i,p)}(t)
 k = Knots([1,3,5,6,8,9])
 BSplineSpace(p,k)</code></pre><p>A B-spline space is said to be <strong>proper</strong> if its degree and knots satisfies following property:</p><div>\[\begin{aligned}
 k_{i}&amp;&lt;k_{i+p+1} &amp; (1 \le i \le l-p-1)
-\end{aligned}\]</div><pre><code class="language-julia">isproper(𝒫(2,Knots([1,3,5,6,8,9]))) # true
-isproper(𝒫(1,Knots([1,3,3,3,8,9]))) # false</code></pre><p>The B-spline space is linear space, and if a B-spline space is proper, its dimension is calculated by:</p><div>\[\dim(\mathcal{P}[p,k])=\sharp k -p -1\]</div><pre><code class="language-julia">dim(𝒫(2,Knots([1,3,5,6,8,9]))) # 3</code></pre><h2 id="B-spline-basis-function-1"><a class="docs-heading-anchor" href="#B-spline-basis-function-1">B-spline basis function</a><a class="docs-heading-anchor-permalink" href="#B-spline-basis-function-1" title="Permalink"></a></h2><div class="admonition is-success"><header class="admonition-header">Def.  B-spline space</header><div class="admonition-body"><p>B-spline basis function is defined by <a href="https://en.wikipedia.org/wiki/De_Boor%27s_algorithm">Cox–de Boor recursion formula</a>.</p><div>\[\begin{aligned}
+\end{aligned}\]</div><pre><code class="language-julia">isproper(BSplineSpace(2,Knots([1,3,5,6,8,9]))) # true
+isproper(BSplineSpace(1,Knots([1,3,3,3,8,9]))) # false</code></pre><p>The B-spline space is linear space, and if a B-spline space is proper, its dimension is calculated by:</p><div>\[\dim(\mathcal{P}[p,k])=\sharp k -p -1\]</div><pre><code class="language-julia">dim(BSplineSpace(2,Knots([1,3,5,6,8,9]))) # 3</code></pre><h2 id="B-spline-basis-function-1"><a class="docs-heading-anchor" href="#B-spline-basis-function-1">B-spline basis function</a><a class="docs-heading-anchor-permalink" href="#B-spline-basis-function-1" title="Permalink"></a></h2><div class="admonition is-success"><header class="admonition-header">Def.  B-spline space</header><div class="admonition-body"><p>B-spline basis function is defined by <a href="https://en.wikipedia.org/wiki/De_Boor%27s_algorithm">Cox–de Boor recursion formula</a>.</p><div>\[\begin{aligned}
 {B}_{(i,p,k)}(t)
 &amp;=
 \frac{t-k_{i}}{k_{i+p}-k_{i}}{B}_{(i,p-1,k)}(t)
@@ -61,7 +61,7 @@ plot([t-&gt;bsplinebasis₊₀(i,P,t) for i in 1:dim(P)], 1, 8, ylims=(0,1.05))<
 \end{aligned}\]</div><h2 id="Support-of-B-spline-basis-function-1"><a class="docs-heading-anchor" href="#Support-of-B-spline-basis-function-1">Support of B-spline basis function</a><a class="docs-heading-anchor-permalink" href="#Support-of-B-spline-basis-function-1" title="Permalink"></a></h2><div class="admonition is-info"><header class="admonition-header">Thm.  Support of B-spline basis function</header><div class="admonition-body"><p>If a B-spline space<span>$\mathcal{P}[p,k]$</span> is proper, the support of its basis function is calculated as follows:</p><div>\[\operatorname{supp}(B_{(i,p,k)})=[k_{i},k_{i+p+1}]\]</div></div></div><p>[fig]</p><pre><code class="language-julia">i = 2
 k = Knots([5,12,13,13,14])
 p = 2
-P = 𝒫(p,k)
+P = BSplineSpace(p,k)
 bsplinesupport(P) # [5..13, 12..14]
 bsplinesupport(i,P) # 12..14</code></pre><h2 id="Derivative-of-B-spline-basis-function-1"><a class="docs-heading-anchor" href="#Derivative-of-B-spline-basis-function-1">Derivative of B-spline basis function</a><a class="docs-heading-anchor-permalink" href="#Derivative-of-B-spline-basis-function-1" title="Permalink"></a></h2><div class="admonition is-info"><header class="admonition-header">Thm.  Derivative of B-spline basis function</header><div class="admonition-body"><p>The derivative of B-spline basis function can be expressed as follows:</p><div>\[\begin{aligned}
 \dot{B}_{(i,p,k)}(t)
@@ -100,17 +100,17 @@ k = Knots(1:8) + p * Knots([1,8])
 P = BSplineSpace(p,k)
 plot(t-&gt;sum(bsplinebasis(i,P,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.05))</code></pre><p><img src="../img/sumofbsplineplot3.png" alt/></p><h2 id="Inclusion-relation-between-B-spline-spaces-1"><a class="docs-heading-anchor" href="#Inclusion-relation-between-B-spline-spaces-1">Inclusion relation between B-spline spaces</a><a class="docs-heading-anchor-permalink" href="#Inclusion-relation-between-B-spline-spaces-1" title="Permalink"></a></h2><div class="admonition is-info"><header class="admonition-header">Thm.  Support of B-spline basis function</header><div class="admonition-body"><p>For proper B-spline spaces, the following relationship holds.</p><div>\[\mathcal{P}[p,k]
 \subseteq \mathcal{P}[p&#39;,k&#39;]
-\Leftrightarrow (m=p&#39;-p \ge 0 \ \text{and} \ k+m\widehat{k}\subseteq k&#39;)\]</div></div></div><p>(as linear subspace..)</p><pre><code class="language-julia">P1 = 𝒫(1,Knots([1,3,5,8]))
-P2 = 𝒫(1,Knots([1,3,5,6,8,9]))
-P3 = 𝒫(2,Knots([1,1,3,3,5,5,8,8]))
+\Leftrightarrow (m=p&#39;-p \ge 0 \ \text{and} \ k+m\widehat{k}\subseteq k&#39;)\]</div></div></div><p>(as linear subspace..)</p><pre><code class="language-julia">P1 = BSplineSpace(1,Knots([1,3,5,8]))
+P2 = BSplineSpace(1,Knots([1,3,5,6,8,9]))
+P3 = BSplineSpace(2,Knots([1,1,3,3,5,5,8,8]))
 P1 ⊆ P2 # true
 P1 ⊆ P3 # true
 P2 ⊆ P3 # false
 P2 ⊈ P3 # true</code></pre><p>Here are plots of the B-spline basis functions of the spaces <code>P1</code>, <code>P2</code>, <code>P3</code>.</p><pre><code class="language-julia">using Plots
 gr()
-P1 = 𝒫(1,Knots([1,3,5,8]))
-P2 = 𝒫(1,Knots([1,3,5,6,8,9]))
-P3 = 𝒫(2,Knots([1,1,3,3,5,5,8,8]))
+P1 = BSplineSpace(1,Knots([1,3,5,8]))
+P2 = BSplineSpace(1,Knots([1,3,5,6,8,9]))
+P3 = BSplineSpace(2,Knots([1,1,3,3,5,5,8,8]))
 plot(
     plot([t-&gt;bsplinebasis₊₀(i,P1,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
     plot([t-&gt;bsplinebasis₊₀(i,P2,t) for i in 1:dim(P2)], 1, 9, ylims=(0,1.05), legend=false),
@@ -133,12 +133,12 @@ plot(
     link=:x
 )</code></pre><p><img src="../img/subbsplineplot2.png" alt/></p><h2 id="Multi-dimensional-B-spline-1"><a class="docs-heading-anchor" href="#Multi-dimensional-B-spline-1">Multi-dimensional B-spline</a><a class="docs-heading-anchor-permalink" href="#Multi-dimensional-B-spline-1" title="Permalink"></a></h2><p>tensor product</p><div>\[B_{i^1,\dots,i^d}(t^1,\dots,t^d)
 =B_{(i^1,p^1,k^1)}(t^1)\cdots B_{(i^d,p^d,k^d)}(t^d)\]</div><h2 id="B-spline-manifold-1"><a class="docs-heading-anchor" href="#B-spline-manifold-1">B-spline manifold</a><a class="docs-heading-anchor-permalink" href="#B-spline-manifold-1" title="Permalink"></a></h2><p>B-spline manifold is a parametric representation of a shape.</p><div class="admonition is-success"><header class="admonition-header">Def.  B-spline manifold</header><div class="admonition-body"><p>For given <span>$d$</span>-dimensional B-spline basis functions <span>$B_{i^1,\dots,i^d}$</span> and given points <span>$\bm{a}_{i^1,\dots,i^d} \in \mathbb{R}^\hat{d}$</span>, B-spline manifold is defined by following equality:</p><div>\[\bm{p}(t^1,\dots,t^d;\bm{a}_{i^1,\dots,i^d})
-=\sum_{i^1,\dots,i^d}B_{i^1,\dots,i^d}(t^1,\dots,t^d) \bm{a}_{i^1,\dots,i^d}\]</div><p>Where <span>$\bm{a}_{i^1,\dots,i^d}$</span> are called <strong>control points</strong>.</p></div></div><p>We will also write <span>$\bm{p}(t^1,\dots,t^d; \bm{a})$</span>, <span>$\bm{p}(t^1,\dots,t^d)$</span>, <span>$\bm{p}(t; \bm{a})$</span> or <span>$\bm{p}(t)$</span> for simplicity.</p><pre><code class="language-julia">P1 = 𝒫(1,Knots([0,0,1,1]))
-P2 = 𝒫(1,Knots([1,1,2,3,3]))
+=\sum_{i^1,\dots,i^d}B_{i^1,\dots,i^d}(t^1,\dots,t^d) \bm{a}_{i^1,\dots,i^d}\]</div><p>Where <span>$\bm{a}_{i^1,\dots,i^d}$</span> are called <strong>control points</strong>.</p></div></div><p>We will also write <span>$\bm{p}(t^1,\dots,t^d; \bm{a})$</span>, <span>$\bm{p}(t^1,\dots,t^d)$</span>, <span>$\bm{p}(t; \bm{a})$</span> or <span>$\bm{p}(t)$</span> for simplicity.</p><pre><code class="language-julia">P1 = BSplineSpace(1,Knots([0,0,1,1]))
+P2 = BSplineSpace(1,Knots([1,1,2,3,3]))
 n1 = dim(P1) # 2
 n2 = dim(P2) # 3
-𝒂 = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.
-M = BSplineManifold([P1, P2], 𝒂)</code></pre><h3 id="B-spline-curve-1"><a class="docs-heading-anchor" href="#B-spline-curve-1">B-spline curve</a><a class="docs-heading-anchor-permalink" href="#B-spline-curve-1" title="Permalink"></a></h3><h3 id="B-spline-surface-1"><a class="docs-heading-anchor" href="#B-spline-surface-1">B-spline surface</a><a class="docs-heading-anchor-permalink" href="#B-spline-surface-1" title="Permalink"></a></h3><pre><code class="language-julia">p = 2 # degree of polynomial
+a = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.
+M = BSplineManifold([P1, P2], a)</code></pre><h3 id="B-spline-curve-1"><a class="docs-heading-anchor" href="#B-spline-curve-1">B-spline curve</a><a class="docs-heading-anchor-permalink" href="#B-spline-curve-1" title="Permalink"></a></h3><h3 id="B-spline-surface-1"><a class="docs-heading-anchor" href="#B-spline-surface-1">B-spline surface</a><a class="docs-heading-anchor-permalink" href="#B-spline-surface-1" title="Permalink"></a></h3><pre><code class="language-julia">p = 2 # degree of polynomial
 k = Knots(1:8) # knot vector
 P = BSplineSpace(p,k) # B-spline space
 rand_a = [rand(2) for i in 1:dim(P), j in 1:dim(P)]
@@ -158,4 +158,4 @@ f(u) = [2u[1]+sin(u[1])+cos(u[2])+u[2]/2, 3u[2]+sin(u[2])+sin(u[1])/2+u[1]^2/6]/
 
 a = fittingcontrolpoints(f, [P1,P2])
 M = BSplineManifold([P1,P2],a)
-save_png(&quot;fitting.png&quot;, M, unitlength=50, up=10, down=-10, left=-10, right=10)</code></pre><p><img src="../img/fitting_desmos.png" alt/> <img src="../img/fitting.png" alt/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Home</a><a class="docs-footer-nextpage" href="../detail/">Docstrings »</a></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Sunday 27 September 2020 11:24">Sunday 27 September 2020</span>. Using Julia version 1.6.0-DEV.1064.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+save_png(&quot;fitting.png&quot;, M, unitlength=50, up=10, down=-10, left=-10, right=10)</code></pre><p><img src="../img/fitting_desmos.png" alt/> <img src="../img/fitting.png" alt/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Home</a><a class="docs-footer-nextpage" href="../detail/">Docstrings »</a></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Tuesday 29 September 2020 15:38">Tuesday 29 September 2020</span>. Using Julia version 1.6.0-DEV.1072.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
