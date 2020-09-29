@@ -144,8 +144,8 @@ k_{i}&<k_{i+p+1} & (1 \le i \le l-p-1)
 ```
 
 ```julia
-isproper(𝒫(2,Knots([1,3,5,6,8,9]))) # true
-isproper(𝒫(1,Knots([1,3,3,3,8,9]))) # false
+isproper(BSplineSpace(2,Knots([1,3,5,6,8,9]))) # true
+isproper(BSplineSpace(1,Knots([1,3,3,3,8,9]))) # false
 ```
 
 The B-spline space is linear space, and if a B-spline space is proper, its dimension is calculated by:
@@ -154,7 +154,7 @@ The B-spline space is linear space, and if a B-spline space is proper, its dimen
 ```
 
 ```julia
-dim(𝒫(2,Knots([1,3,5,6,8,9]))) # 3
+dim(BSplineSpace(2,Knots([1,3,5,6,8,9]))) # 3
 ```
 
 
@@ -222,7 +222,7 @@ You can choose the first terms in different ways.
 i = 2
 k = Knots([5,12,13,13,14])
 p = 2
-P = 𝒫(p,k)
+P = BSplineSpace(p,k)
 bsplinesupport(P) # [5..13, 12..14]
 bsplinesupport(i,P) # 12..14
 ```
@@ -322,9 +322,9 @@ plot(t->sum(bsplinebasis(i,P,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.05))
 (as linear subspace..)
 
 ```julia
-P1 = 𝒫(1,Knots([1,3,5,8]))
-P2 = 𝒫(1,Knots([1,3,5,6,8,9]))
-P3 = 𝒫(2,Knots([1,1,3,3,5,5,8,8]))
+P1 = BSplineSpace(1,Knots([1,3,5,8]))
+P2 = BSplineSpace(1,Knots([1,3,5,6,8,9]))
+P3 = BSplineSpace(2,Knots([1,1,3,3,5,5,8,8]))
 P1 ⊆ P2 # true
 P1 ⊆ P3 # true
 P2 ⊆ P3 # false
@@ -336,9 +336,9 @@ Here are plots of the B-spline basis functions of the spaces `P1`, `P2`, `P3`.
 ```julia
 using Plots
 gr()
-P1 = 𝒫(1,Knots([1,3,5,8]))
-P2 = 𝒫(1,Knots([1,3,5,6,8,9]))
-P3 = 𝒫(2,Knots([1,1,3,3,5,5,8,8]))
+P1 = BSplineSpace(1,Knots([1,3,5,8]))
+P2 = BSplineSpace(1,Knots([1,3,5,6,8,9]))
+P3 = BSplineSpace(2,Knots([1,1,3,3,5,5,8,8]))
 plot(
     plot([t->bsplinebasis₊₀(i,P1,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
     plot([t->bsplinebasis₊₀(i,P2,t) for i in 1:dim(P2)], 1, 9, ylims=(0,1.05), legend=false),
@@ -405,12 +405,12 @@ B-spline manifold is a parametric representation of a shape.
 We will also write ``\bm{p}(t^1,\dots,t^d; \bm{a})``, ``\bm{p}(t^1,\dots,t^d)``, ``\bm{p}(t; \bm{a})`` or ``\bm{p}(t)`` for simplicity.
 
 ```julia
-P1 = 𝒫(1,Knots([0,0,1,1]))
-P2 = 𝒫(1,Knots([1,1,2,3,3]))
+P1 = BSplineSpace(1,Knots([0,0,1,1]))
+P2 = BSplineSpace(1,Knots([1,1,2,3,3]))
 n1 = dim(P1) # 2
 n2 = dim(P2) # 3
-𝒂 = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.
-M = BSplineManifold([P1, P2], 𝒂)
+a = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.
+M = BSplineManifold([P1, P2], a)
 ```
 
 
