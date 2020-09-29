@@ -6,6 +6,7 @@ makedocs(;
     pages = [
         "Home" => "index.md",
         "Mathematical properties of B-spline" => "math.md",
+        "Benchmark" => "benchmark.md",
         "Docstrings" => "detail.md",
         "Future work" => "future.md",
         "Contributing" => "contributing.md",
