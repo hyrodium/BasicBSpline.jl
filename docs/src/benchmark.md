@@ -1,7 +1,7 @@
 # Benchmark
-## Speed and Type
+## Concrete type determination; generality vs speed performance
 ### B-spline space
-There are two subtypes for `AbstractBSplineSpace`.
+There are two subtypes of `AbstractBSplineSpace`.
 ```julia
 julia> subtypes(AbstractBSplineSpace)
 2-element Array{Any,1}:
@@ -15,7 +15,7 @@ julia> subtypes(AbstractBSplineSpace)
     * But much faster than `BSplineSpace`
 
 ### B-spline manifold
-There are five subtypes for `AbstractBSplineManifold`.
+There are five subtypes of `AbstractBSplineManifold`.
 ```julia
 julia> subtypes(AbstractBSplineManifold)
 5-element Array{Any,1}:
