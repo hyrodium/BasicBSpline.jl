@@ -1,12 +1,13 @@
 # Fitting
 
 @doc raw"""
+Calculate
 ```math
 \int_{[k_{j+n-1}, k_{j+n}]} B_{(i,p,k)}(t) B_{(j,p,k)}(t) dt
 ```
 Assumption:
-* i ≤ j
-* 1 ≤ n ≤ p-j+i+1
+* ``i ≤ j``
+* ``1 ≤ n ≤ p-j+i+1``
 """
 function _b_b_int(P::AbstractBSplineSpace, i, j, n, nip, nodes, weights)
     p = degree(P)
@@ -17,15 +18,16 @@ function _b_b_int(P::AbstractBSplineSpace, i, j, n, nip, nodes, weights)
 end
 
 @doc raw"""
+Calculate
 ```math
-\begin{align}
+\begin{aligned}
 &\int_{\mathbb{R}} B_{(i,p,k)}(t) B_{(j,p,k)}(t) dt \\
 ={}&
 \begin{cases}
 \displaystyle \int_{[k_{j}, k_{i+p+1}]} B_{(i,p,k)}(t)  B_{(j,p,k)}(t) dt & (i \le j) \\
 \displaystyle \int_{[k_{i}, k_{j+p+1}]} B_{(i,p,k)}(t)  B_{(j,p,k)}(t) dt & (j \le i)
 \end{cases}
-\end{align}
+\end{aligned}
 ```
 """
 function _b_b_int_R(P::AbstractBSplineSpace, i, j, nip, nodes, weights)
@@ -52,10 +54,11 @@ function _b_b_int_R(P::AbstractBSplineSpace, i, j, nip, nodes, weights)
 end
 
 @doc raw"""
+Calculate
 ```math
-\begin{align}
+\begin{aligned}
 &\int_{I} B_{(i,p,k)}(t) B_{(j,p,k)}(t) dt \\
-\end{align}
+\end{aligned}
 ```
 """
 function _b_b_int_I(P::AbstractBSplineSpace, i, j, nip, nodes, weights)
