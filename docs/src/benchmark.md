@@ -47,6 +47,8 @@ julia> subtypes(AbstractBSplineManifold)
 
 ## Detailed Benchmarks
 ### B-spline basis function
+In this section, we compare the implementation of [Cox-de Boor algorithm](https://en.wikipedia.org/wiki/De_Boor%27s_algorithm).
+
 #### Naive implementation
 ```julia
 using BenchmarkTools
@@ -66,7 +68,7 @@ t = 0.2
 
 @benchmark B(i,p,knotvector,t)
 ```
-↑118.757 ns (0.56% GC)
+Result: 118.757 ns
 
 #### Use type `BSplineSpace`
 
@@ -81,7 +83,7 @@ k = Knots(knotvector)
 P = BSplineSpace(p,k)
 @benchmark bsplinebasis(i,P,t)
 ```
-↑223.359 ns
+Result: 223.359 ns
 
 Slower than naive implementation.
 
@@ -99,9 +101,14 @@ k = Knots(knotvector)
 P = FastBSplineSpace(p,k)
 @benchmark bsplinebasis(i,P,t)
 ```
-↑46.722 ns
+Result: 46.722 ns
 
 The fastest.
 
-### BasicBSpline
-(TODO)
+### B-spline manifold
+
+#### Use type `BSplineManifold`
+
+#### Use type `FastBSplineManifold`
+
+#### Use type `BSplineSurface`
