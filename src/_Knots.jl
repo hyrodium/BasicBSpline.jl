@@ -47,11 +47,11 @@ Base.unique(k::Knots) = Knots(unique(k.vector))
 Base.iterate(k::Knots) = iterate(k.vector)
 Base.iterate(k::Knots, i::Integer) = iterate(k.vector, i)
 
-function Base.:⊆(k::Knots, k′::Knots)
+function Base.issubset(k::Knots, k′::Knots)
     K′ = copy(k′.vector)
     for kᵢ in k.vector
-        i = findfirst(x -> x == kᵢ, K′)
-        if i isa Nothing
+        i = findfirst(==(kᵢ), K′)
+        if isnothing(i)
             return false
         end
         deleteat!(K′, i)
