@@ -114,12 +114,12 @@ B_{(i,p)}(t)
 Where ``\binom{p}{i-1}`` is a binomial coefficient.
 
 !!! tip "Def.  B-spline space"
-    For given polynomial degree ``p\le 0`` and knot vector ``k=(k_1,\dots,k_l)``, B-spline space ``\mathcal{P}[p,k]`` is defined as follows:
+    For given polynomial degree ``p\ge 0`` and knot vector ``k=(k_1,\dots,k_l)``, B-spline space ``\mathcal{P}[p,k]`` is defined as follows:
     ```math
     \mathcal{P}[p,k]
     =\left\{f:\mathbb{R}\to\mathbb{R} \  \left| \ %
         \begin{gathered}
-            f((-\infty, k_1))=f([k_l,+\infty))=\left\{0\right\} \\
+            \operatorname{supp}(f)\subseteq [k_1, k_l] \\
             \exists \tilde{f}\in\mathcal{P}[p], f|_{[k_{i}, k_{i+1})} = \tilde{f}|_{[k_{i}, k_{i+1})}  \\
             \forall t \in \mathbb{R}, \exists \delta > 0, f|_{(t-\delta,t+\delta)}\in C^{p-\mathfrak{n}_k(t)}
         \end{gathered} \right.
@@ -206,8 +206,16 @@ You can choose the first terms in different ways.
 \end{aligned}
 ```
 
+```julia
+using Plots
+gr()
+p = 2
+k = Knots(1:8)
+P = BSplineSpace(p,k)
+plot([t->bsplinebasis₋₀(i,P,t) for i in 1:dim(P)], 1, 8, ylims=(0,1.05))
+```
 
-
+![](img/bsplinebasisplot.png)
 
 ## Support of B-spline basis function
 !!! info "Thm.  Support of B-spline basis function"
