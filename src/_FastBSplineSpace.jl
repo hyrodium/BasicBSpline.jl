@@ -37,17 +37,3 @@ end
 function knots(P::FastBSplineSpace)
     return Knots(P.knotvector)
 end
-
-@doc raw"""
-Retrun FastBSplineSpace if ≤ MAX_DEGREE, or BSplineSpace if not.
-```math
-\mathcal{P}[p,k]
-```
-"""
-function 𝒫(p::Int, k::Knots)
-    if p ≤ MAX_DEGREE
-        FastBSplineSpace(p, k)
-    else
-        BSplineSpace(p, k)
-    end
-end

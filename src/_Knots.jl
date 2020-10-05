@@ -8,19 +8,19 @@ k=(k_1,\dots,k_l)
 """
 struct Knots
     vector::Array{Float64,1}
-    function Knots(vector::AbstractArray{T,1} where {T<:Real})
-        return new(sort(convert(Array{Float64,1}, vector)))
+    function Knots(vector::AbstractVector{<:Real})
+        return new(sort(convert(Vector{Float64}, vector)))
     end
-    function Knots(vector::Array{Any,1})
-        if isempty(vector)
-            return new(Float64[])
-        else
-            return Knots(convert(Array{Float64,1}, vector))
-        end
+end
+function Knots(vector::Array{Any,1})
+    if isempty(vector)
+        return Knots(Float64[])
+    else
+        return Knots(convert(Vector{Float64}, vector))
     end
-    function Knots(knot::Real...)
-        return Knots(collect(knot))
-    end
+end
+function Knots(knot::Real...)
+    return Knots(collect(knot))
 end
 
 Base.zero(::Type{Knots}) = Knots(Float64[])
@@ -38,7 +38,7 @@ end
 
 Base.in(r::Real, k::Knots) = in(r, k.vector)
 Base.getindex(k::Knots, i::Integer) = k.vector[i]
-Base.getindex(k::Knots, v::AbstractArray{<:Integer,1}) = Knots(k.vector[v])
+Base.getindex(k::Knots, v::AbstractVector{<:Integer}) = Knots(k.vector[v])
 Base.length(k::Knots) = length(k.vector)
 ♯(k::Knots) = length(k::Knots)
 Base.firstindex(k::Knots) = 1
@@ -61,14 +61,14 @@ end
 
 𝔫(k::Knots, t::Real) = count(==(t), k.vector)
 
-function _knotindex₊₀(k::Union{Knots, Vector{<:Real}}, t::Real)
+function _knotindex₊₀(k::Union{Knots, AbstractVector{<:Real}}, t::Real)
     return findfirst(i -> k[i]≤t<k[i+1], 1:length(k)-1)
 end
 
-function _knotindex₋₀(k::Union{Knots, Vector{<:Real}}, t::Real)
+function _knotindex₋₀(k::Union{Knots, AbstractVector{<:Real}}, t::Real)
     return findfirst(i -> k[i]<t≤k[i+1], 1:length(k)-1)
 end
 
-function _knotindex(k::Union{Knots, Vector{<:Real}}, t::Real)
+function _knotindex(k::Union{Knots, AbstractVector{<:Real}}, t::Real)
     return findfirst(i -> (k[i]≤t<k[i+1])|(k[i]<t==k[i+1]==k[end]), 1:length(k)-1)
 end

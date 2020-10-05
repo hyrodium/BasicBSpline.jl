@@ -2,14 +2,14 @@
 
 abstract type AbstractBSplineManifold end
 
-function ⊗(X::Array{Float64}, Y::Array{Float64})::Array{Float64}
+function ⊗(X::AbstractArray{<:Real}, Y::AbstractArray{<:Real})
     # TODO: remove this function and use Tensor.jl
     m = size(X)
     n = size(Y)
     reshape(reshape(X, length(X)) * reshape(Y, length(Y))', m..., n...)
 end
 
-function tensorprod(X::Array{T,1}) where {T<:Array{Float64}}
+function tensorprod(X::AbstractArray)
     n = length(X)
     # X[1] ⊗ … ⊗ X[n]
     Y = X[1]
@@ -25,7 +25,7 @@ B-spline manifold for general polynomial degree
 struct BSplineManifold <: AbstractBSplineManifold
     bsplinespaces::Array{BSplineSpace,1}
     controlpoints::Array{Float64}
-    function BSplineManifold(Ps::AbstractArray{<:AbstractBSplineSpace,1}, a::AbstractArray{<:Real})
+    function BSplineManifold(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real})
         Ps = BSplineSpace.(Ps)
         if collect(size(a)[1:end-1]) ≠ dim.(Ps)
             error("dimension does not match")
@@ -51,7 +51,7 @@ B_{i^1,\dots,i^d}(t^1,\dots,t^d)
 =B_{(i^1,p^1,k^1)}(t^1)\cdots B_{(i^d,p^d,k^d)}(t^d)
 ```
 """
-function bsplinebasis(Ps::Array{BSplineSpace,1}, t::Array{<:Real,1})
+function bsplinebasis(Ps::AbstractVector{BSplineSpace}, t::AbstractVector{<:Real})
     d = length(t)
     Bs = [bsplinebasis(Ps[i], t[i]) for i in 1:d]
     return tensorprod(Bs)
@@ -64,13 +64,13 @@ B_{i^1,\dots,i^d}(t^1,\dots,t^d)
 =B_{(i^1,p^1,k^1)}(t^1)\cdots B_{(i^d,p^d,k^d)}(t^d)
 ```
 """
-function bsplinebasis(I::CartesianIndex, Ps::Array{BSplineSpace,1}, t::Array{<:Real,1})
+function bsplinebasis(I::CartesianIndex, Ps::AbstractVector{BSplineSpace}, t::AbstractVector{<:Real})
     d = length(Ps)
     Bs = prod(bsplinebasis(I[i], Ps[i], t[i]) for i in 1:d)
     return tensorprod(Bs)
 end
 
-function bsplinesupport(I::CartesianIndex, Ps::Array{BSplineSpace,1})
+function bsplinesupport(I::CartesianIndex, Ps::AbstractVector{BSplineSpace})
     d = length(Ps)
     return [bsplinesupport(I[i], Ps[i]) for i in 1:d]
 end
@@ -82,7 +82,7 @@ Calculate the mapping of B-spline manifold for given parameter.
 =\sum_{i^1,\dots,i^d}B_{i^1,\dots,i^d}(t^1,\dots,t^d) \bm{a}_{i^1,\dots,i^d}
 ```
 """
-function mapping(M::BSplineManifold, t::Array{<:Real,1})
+function mapping(M::BSplineManifold, t::AbstractVector{<:Real})
     Ps = M.bsplinespaces
     𝒂 = M.controlpoints
     d = length(Ps)
@@ -90,7 +90,7 @@ function mapping(M::BSplineManifold, t::Array{<:Real,1})
     return [sum(bsplinebasis(Ps, t) .* 𝒂[.., i]) for i in 1:d̂]
 end
 
-function mapping(M::AbstractBSplineManifold, t::Array{<:Real,1})
+function mapping(M::AbstractBSplineManifold, t::AbstractVector{<:Real})
     return mapping(BSplineManifold(M), t)
 end
 
