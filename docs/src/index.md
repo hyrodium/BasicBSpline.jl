@@ -19,8 +19,6 @@ This package provides basic (mathematical) operations for [B-spline](https://en.
 * [Dierckx.jl](https://github.com/kbarbary/Dierckx.jl)
     * Only 1-d or 2-d B-spline manifold are supported.
     * 5 or less degree of polynomial are supported.
-* [Splines.jl](https://github.com/bnels/Splines.jl)
-    * No update from 5 years ago.
 * **[BasicBSpline.jl](https://github.com/hyrodium/BasicBSpline.jl) (this package)**
     * Any degree of polynomial are supported.
     * Any dimension are supported.
