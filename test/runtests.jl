@@ -2,6 +2,7 @@ using BasicBSpline
 using IntervalSets
 using LinearAlgebra
 using Test
+using Random
 
 ε = 1.0e-8
 
@@ -29,6 +30,8 @@ using Test
     end
 
     @testset "BSplineSpace" begin
+        Random.seed!(42)
+
         P1 = BSplineSpace(2, Knots([1, 3, 5, 6, 8, 9]))
         @test bsplinesupport(2, P1) == 3..8
         @test dim(P1) == 3
@@ -116,6 +119,8 @@ using Test
     end
 
     @testset "0th degree basis" begin
+        Random.seed!(42)
+
         p = 0
         k = Knots(rand(10)) + Knots(0, 1)
         P = BSplineSpace(p, k)
@@ -138,6 +143,8 @@ using Test
     end
 
     @testset "1st degree basis" begin
+        Random.seed!(42)
+
         p = 1
         k = Knots(rand(10)) + 2 * Knots(0, 1)
         P = BSplineSpace(p, k)
@@ -159,6 +166,8 @@ using Test
     end
 
     @testset "2nd degree basis" begin
+        Random.seed!(42)
+
         p = 2
         k = Knots(rand(10)) + 3 * Knots(0, 1)
         P = BSplineSpace(p, k)
@@ -180,6 +189,8 @@ using Test
     end
 
     @testset "3rd degree basis" begin
+        Random.seed!(42)
+
         p = 3
         k = Knots(rand(10)) + 4 * Knots(0, 1)
         P = BSplineSpace(p, k)
@@ -201,6 +212,8 @@ using Test
     end
 
     @testset "BSplineManifold-2dim" begin
+        Random.seed!(42)
+
         P1 = BSplineSpace(1, Knots([0, 0, 1, 1]))
         P2 = BSplineSpace(1, Knots([1, 1, 2, 3, 3]))
         n1 = dim(P1) # 2
@@ -221,6 +234,8 @@ using Test
     end
 
     @testset "FastBSplineManifold-2dim" begin
+        Random.seed!(42)
+
         P1 = FastBSplineSpace(1, Knots([0, 0, 1, 1]))
         P2 = FastBSplineSpace(1, Knots([1, 1, 2, 3, 3]))
         n1 = dim(P1) # 2
@@ -241,6 +256,8 @@ using Test
     end
 
     @testset "BSplineSurface" begin
+        Random.seed!(42)
+
         P1 = FastBSplineSpace(1, Knots([0, 0, 1, 1]))
         P2 = FastBSplineSpace(1, Knots([1, 1, 2, 3, 3]))
         n1 = dim(P1) # 2
@@ -261,6 +278,8 @@ using Test
     end
 
     @testset "Fitting-curve_R" begin
+        Random.seed!(42)
+
         p1 = 2
         k1 = Knots(rand(3)) + (p1 + 1) * Knots([0, 1])
         P1 = FastBSplineSpace(p1, k1)
@@ -282,6 +301,8 @@ using Test
     end
 
     @testset "Fitting-curve_I" begin
+        Random.seed!(42)
+
         p1 = 2
         k1 = Knots(rand(3)) + Knots([0, 1]) + p1 * Knots([-rand(), 1+rand()])
         P1 = FastBSplineSpace(p1, k1)
@@ -303,6 +324,8 @@ using Test
     end
 
     @testset "Fitting-surface_R" begin
+        Random.seed!(42)
+
         p1 = 2
         k1 = Knots(rand(3)) + (p1 + 1) * Knots([0, 1])
         P1 = FastBSplineSpace(p1, k1)
@@ -331,6 +354,8 @@ using Test
     end
 
     @testset "Fitting-surface_I" begin
+        Random.seed!(42)
+
         p1 = 2
         k1 = Knots(rand(3)) + Knots([0, 1]) + p1 * Knots([-rand(), 1+rand()])
         P1 = FastBSplineSpace(p1, k1)
@@ -359,6 +384,8 @@ using Test
     end
 
     @testset "Fitting-solid_R" begin
+        Random.seed!(42)
+
         p1 = 2
         k1 = Knots(rand(3)) + (p1 + 1) * Knots([0, 1])
         P1 = FastBSplineSpace(p1, k1)
@@ -394,6 +421,8 @@ using Test
     end
 
     @testset "Fitting-solid_I" begin
+        Random.seed!(42)
+
         p1 = 2
         k1 = Knots(rand(3)) + Knots([0, 1]) + p1 * Knots([-rand(), 1+rand()])
         P1 = FastBSplineSpace(p1, k1)
