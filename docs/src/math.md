@@ -403,7 +403,7 @@ B_{i^1,\dots,i^d}(t^1,\dots,t^d)
 B-spline manifold is a parametric representation of a shape.
 
 !!! tip "Def.  B-spline manifold"
-    For given ``d``-dimensional B-spline basis functions ``B_{i^1,\dots,i^d}`` and given points ``\bm{a}_{i^1,\dots,i^d} \in \mathbb{R}^\hat{d}``, B-spline manifold is defined by following equality:
+    For given ``d``-dimensional B-spline basis functions ``B_{i^1,\dots,i^d}`` and given points ``\bm{a}_{i^1,\dots,i^d} \in \mathbb{R}^{\hat{d}}``, B-spline manifold is defined by following equality:
     ```math
     \bm{p}(t^1,\dots,t^d;\bm{a}_{i^1,\dots,i^d})
     =\sum_{i^1,\dots,i^d}B_{i^1,\dots,i^d}(t^1,\dots,t^d) \bm{a}_{i^1,\dots,i^d}
