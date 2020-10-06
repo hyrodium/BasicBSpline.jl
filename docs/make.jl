@@ -2,7 +2,10 @@ using Documenter, BasicBSpline
 
 makedocs(;
     modules = [BasicBSpline],
-    format = Documenter.HTML(),
+    format = Documenter.HTML(
+        canonical = "https://hyrodium.github.io/BasicBSpline.jl/stable/",
+        assets = ["assets/favicon.ico"],
+    ),
     pages = [
         "Home" => "index.md",
         "Mathematical properties of B-spline" => "math.md",
