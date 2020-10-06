@@ -92,10 +92,8 @@ for p in 1:MAX_DEGREE
     # end
 end
 
-"""
-TODO: faster.....
-"""
 function bsplinebasis′(i::Integer, P::FastBSplineSpace, t::Real)::Float64
+    # TODO: faster
     ÷(a, b) = ifelse(b == 0.0, 0.0, a / b)
 
     p = degree(P)
@@ -110,14 +108,16 @@ function bsplinebasis′(i::Integer, P::FastBSplineSpace, t::Real)::Float64
 end
 
 """
-Assumption: k[i] ≤ t < k[i+1]
+Assumption:
+* ```k_{i} ≤ t < k_{i+1}``
 """
 function _bsb0(k, t::Real, i::Integer)
     return 1.0
 end
 
 """
-Assumption: k[i] ≤ t < k[i+1]
+Assumption:
+* ``k_{i} ≤ t < k_{i+1}``
 """
 function _bsb1(k, t::Real, i::Integer)
     B1 = (k[i+1]-t)/(k[i+1]-k[i])
@@ -126,7 +126,8 @@ function _bsb1(k, t::Real, i::Integer)
 end
 
 """
-Assumption: k[i] ≤ t < k[i+1]
+Assumption:
+* ``k_{i} ≤ t < k_{i+1}``
 """
 @inline function _bsb2(k, t::Real, i::Integer)
     B = _bsb1(k, t, i)
@@ -139,7 +140,8 @@ Assumption: k[i] ≤ t < k[i+1]
 end
 
 """
-Assumption: k[i] ≤ t < k[i+1]
+Assumption:
+* ``k_{i} ≤ t < k_{i+1}``
 """
 @inline function _bsb3(k, t::Real, i::Integer)
     B = _bsb2(k, t, i)
