@@ -95,7 +95,7 @@ function bsplinebasis(P::BSplineSpace, t::Real)::Array{Float64,1}
 end
 
 """
-i-th B-spline basis function.
+``i``-th B-spline basis function.
 Right-sided limit version.
 """
 function bsplinebasis₊₀(i::Integer, P::BSplineSpace, t::Real)::Float64
@@ -113,7 +113,7 @@ function bsplinebasis₊₀(i::Integer, P::BSplineSpace, t::Real)::Float64
 end
 
 """
-i-th B-spline basis function.
+``i``-th B-spline basis function.
 Left-sided limit version.
 """
 function bsplinebasis₋₀(i::Integer, P::BSplineSpace, t::Real)::Float64
@@ -131,7 +131,7 @@ function bsplinebasis₋₀(i::Integer, P::BSplineSpace, t::Real)::Float64
 end
 
 """
-i-th B-spline basis function.
+``i``-th B-spline basis function.
 Modified version.
 """
 function bsplinebasis(i::Integer, P::BSplineSpace, t::Real)::Float64
@@ -244,7 +244,10 @@ function bsplinebasis′(i::Integer, P::BSplineSpace, t::Real)::Float64
 end
 
 @doc raw"""
-Return support of i-th B-spline basis function.
+Return the support of ``i``-th B-spline basis function.
+```math
+\operatorname{supp}(B_{(i,p,k)})=[k_{i},k_{i+p+1}]
+```
 """
 function bsplinesupport(i::Integer, P::AbstractBSplineSpace)
     p = degree(P)
