@@ -61,14 +61,23 @@ end
 
 𝔫(k::Knots, t::Real) = count(==(t), k.vector)
 
+"""
+Find an index ``i`` such that ``k_{i} ≤ t < k_{i+1}``.
+"""
 function _knotindex₊₀(k::Union{Knots, AbstractVector{<:Real}}, t::Real)
     return findfirst(i -> k[i]≤t<k[i+1], 1:length(k)-1)
 end
 
+"""
+Find an index ``i`` such that ``k_{i} < t ≤ k_{i+1}``.
+"""
 function _knotindex₋₀(k::Union{Knots, AbstractVector{<:Real}}, t::Real)
     return findfirst(i -> k[i]<t≤k[i+1], 1:length(k)-1)
 end
 
+"""
+Find an index ``i`` such that ``k_{i} ≤ t < k_{i+1}`` or ``k_{i} < t = k_{i+1} = k_{\text{end}}``.
+"""
 function _knotindex(k::Union{Knots, AbstractVector{<:Real}}, t::Real)
     return findfirst(i -> (k[i]≤t<k[i+1])|(k[i]<t==k[i+1]==k[end]), 1:length(k)-1)
 end

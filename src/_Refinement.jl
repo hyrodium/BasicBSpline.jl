@@ -7,7 +7,7 @@ B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p',k')}
 ```
 
 Assumption:
-* P ⊆ P′
+* ``P ⊆ P′``
 """
 function _changebasis_R(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)::Array{Float64,2}
     p = degree(P)
@@ -93,8 +93,8 @@ B_{(i,p_1,k_1)} = \sum_{j}A_{i,j}B_{(j,p_2,k_2)}
 ```
 
 Assumption:
-* P1 ⊑ P2
-* P2 ⊑ P1
+* ``P1 ⊑ P2``
+* ``P2 ⊑ P1``
 """
 function _changebasis_sim(P1::AbstractBSplineSpace, P2::AbstractBSplineSpace)
     # if P1 ⋢ P2
@@ -138,7 +138,7 @@ B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p',k')}
 ```
 
 Assumption:
-* P ⊑ P′
+* ``P ⊑ P′``
 """
 function _changebasis_I(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)::Array{Float64,2}
     I = bsplineunity(P)
