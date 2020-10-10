@@ -136,7 +136,11 @@ Calculate the mapping of B-spline manifold for given parameter.
 #     return mapping(BSplineManifold(M), t)
 # end
 
-function mapping(M::BSplineCurve{p1}, t::AbstractVector{<:Real}) where {p1}
+function (M::FastBSplineManifold)(t::AbstractVector{<:Real})
+    return BSplineManifold(M)(t)
+end
+
+function (M::BSplineCurve{p1})(t::AbstractVector{<:Real}) where {p1}
     P1, = bsplinespaces(M)
     a = controlpoints(M)
     n1 = dim(P1)
@@ -159,7 +163,7 @@ function mapping(M::BSplineCurve{p1}, t::AbstractVector{<:Real}) where {p1}
     return S1
 end
 
-function mapping(M::BSplineSurface{p1,p2}, t::AbstractVector{<:Real}) where {p1} where {p2}
+function (M::BSplineSurface{p1,p2})(t::AbstractVector{<:Real}) where {p1} where {p2}
     P1, P2 = bsplinespaces(M)
     a = controlpoints(M)
     n1, n2 = dim(P1), dim(P2)
@@ -192,7 +196,7 @@ function mapping(M::BSplineSurface{p1,p2}, t::AbstractVector{<:Real}) where {p1}
     return S1
 end
 
-function mapping(M::BSplineSolid{p1,p2,p3}, t::AbstractVector{<:Real}) where {p1} where {p2} where {p3}
+function (M::BSplineSolid{p1,p2,p3})(t::AbstractVector{<:Real}) where {p1} where {p2} where {p3}
     P1, P2, P3 = bsplinespaces(M)
     a = controlpoints(M)
     n1, n2, n3 = dim(P1), dim(P2), dim(P3)

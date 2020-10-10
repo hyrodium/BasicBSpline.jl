@@ -11,7 +11,9 @@ function _code_K(p, q)
 end
 
 function _code_K′(p)
-    join([_s('K', j) for j in 1:2], ',') * " = " * join(["1÷(" * _s('k', j + p) * "-" * _s('k', j) * ")" for j in 1:2], ',')
+    join([_s('K', j) for j in 1:2], ',') *
+    " = " *
+    join(["1÷(" * _s('k', j + p) * "-" * _s('k', j) * ")" for j in 1:2], ',')
 end
 
 function _code_B(p, q)

@@ -82,7 +82,7 @@ Calculate the mapping of B-spline manifold for given parameter.
 =\sum_{i^1,\dots,i^d}B_{i^1,\dots,i^d}(t^1,\dots,t^d) \bm{a}_{i^1,\dots,i^d}
 ```
 """
-function mapping(M::BSplineManifold, t::AbstractVector{<:Real})
+function (M::BSplineManifold)(t::AbstractVector{<:Real})
     Ps = M.bsplinespaces
     𝒂 = M.controlpoints
     d = length(Ps)
@@ -91,7 +91,8 @@ function mapping(M::BSplineManifold, t::AbstractVector{<:Real})
 end
 
 function mapping(M::AbstractBSplineManifold, t::AbstractVector{<:Real})
-    return mapping(BSplineManifold(M), t)
+    Base.depwarn("`mapping(M,t)` is deprecated in favor of `M(t)`.", :mapping)
+    return M(t)
 end
 
 function mapping(M::AbstractBSplineManifold)

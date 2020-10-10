@@ -230,7 +230,7 @@ using Random
 
         M′ = refinement(M, [P1′, P2′])
         ts = [[rand(), 1 + 2 * rand()] for _ in 1:10]
-        @test prod([mapping(M, t) ≈ mapping(M′, t) for t in ts])
+        @test prod([M(t) ≈ M′(t) for t in ts])
     end
 
     @testset "FastBSplineManifold-2dim" begin
@@ -252,7 +252,7 @@ using Random
 
         M′ = refinement(M, [P1′, P2′])
         ts = [[rand(), 1 + 2 * rand()] for _ in 1:10]
-        @test prod([mapping(M, t) ≈ mapping(M′, t) for t in ts])
+        @test prod([M(t) ≈ M′(t) for t in ts])
     end
 
     @testset "BSplineSurface" begin
@@ -274,7 +274,7 @@ using Random
 
         M′ = refinement(M, [P1′, P2′])
         ts = [[rand(), 1 + 2 * rand()] for _ in 1:10]
-        @test prod([mapping(M, t) ≈ mapping(M′, t) for t in ts])
+        @test prod([M(t) ≈ M′(t) for t in ts])
     end
 
     @testset "Fitting-curve_R" begin
@@ -294,7 +294,7 @@ using Random
         M′ = refinement(M, [P1′])
         a_ref = M′.controlpoints
 
-        a_tmp = fittingcontrolpoints(mapping(M), [P1′])
+        a_tmp = fittingcontrolpoints(M, [P1′])
         a_fit = transpose(hcat(a_tmp...))
 
         @test norm(a_fit - a_ref) < ε
@@ -317,7 +317,7 @@ using Random
         M′ = refinement(M, [P1′])
         a_ref = M′.controlpoints
 
-        a_tmp = fittingcontrolpoints(mapping(M), [P1′])
+        a_tmp = fittingcontrolpoints(M, [P1′])
         a_fit = transpose(hcat(a_tmp...))
 
         @test norm(a_fit - a_ref) < ε
@@ -347,7 +347,7 @@ using Random
         M′ = refinement(M, [P1′, P2′])
         a_ref = M′.controlpoints
 
-        a_tmp = fittingcontrolpoints(mapping(M), [P1′, P2′])
+        a_tmp = fittingcontrolpoints(M, [P1′, P2′])
         a_fit = reshape(transpose(hcat(reshape(a_tmp, prod(size(a_tmp)))...)), size(a_tmp)..., 3)
 
         @test norm(a_fit - a_ref) < ε
@@ -377,7 +377,7 @@ using Random
         M′ = refinement(M, [P1′, P2′])
         a_ref = M′.controlpoints
 
-        a_tmp = fittingcontrolpoints(mapping(M), [P1′, P2′])
+        a_tmp = fittingcontrolpoints(M, [P1′, P2′])
         a_fit = reshape(transpose(hcat(reshape(a_tmp, prod(size(a_tmp)))...)), size(a_tmp)..., 3)
 
         @test norm(a_fit - a_ref) < ε
@@ -414,7 +414,7 @@ using Random
         M′ = refinement(M, [P1′, P2′, P3′])
         a_ref = M′.controlpoints
 
-        a_tmp = fittingcontrolpoints(mapping(M), [P1′, P2′, P3′])
+        a_tmp = fittingcontrolpoints(M, [P1′, P2′, P3′])
         a_fit = reshape(transpose(hcat(reshape(a_tmp, prod(size(a_tmp)))...)), size(a_tmp)..., 4)
 
         @test norm(a_fit - a_ref) < ε
@@ -451,7 +451,7 @@ using Random
         M′ = refinement(M, [P1′, P2′, P3′])
         a_ref = M′.controlpoints
 
-        a_tmp = fittingcontrolpoints(mapping(M), [P1′, P2′, P3′])
+        a_tmp = fittingcontrolpoints(M, [P1′, P2′, P3′])
         a_fit = reshape(transpose(hcat(reshape(a_tmp, prod(size(a_tmp)))...)), size(a_tmp)..., 4)
 
         @test norm(a_fit - a_ref) < 1.0e-6

@@ -105,7 +105,7 @@ const ⊑ = issqsubset
 ⋢(l, r) = !⊑(l, r)
 ⋣(l, r) = r ⋢ l
 
-≃(P1, P2) = (P1 ⊑ P2)&(P2 ⊑ P1)
+≃(P1::AbstractBSplineSpace, P2::AbstractBSplineSpace) = (P1 ⊑ P2)&(P2 ⊑ P1)
 
 function iszeros(P::AbstractBSplineSpace)
     p = degree(P)
