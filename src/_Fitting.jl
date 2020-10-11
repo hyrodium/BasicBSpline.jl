@@ -264,6 +264,7 @@ function innerproduct_R(func, P1::AbstractBSplineSpace)
     nip1 = p1 + 1
     nodes1, weights1 = gausslegendre(nip1)
     b = [_f_b_int_R(func, i1, P1, nip1, nodes1, weights1) for i1 in 1:n1]
+    return b
 end
 
 function innerproduct_I(func, P1::AbstractBSplineSpace)
@@ -272,6 +273,7 @@ function innerproduct_I(func, P1::AbstractBSplineSpace)
     nip1 = p1 + 1
     nodes1, weights1 = gausslegendre(nip1)
     b = [_f_b_int_I(func, i1, P1, nip1, nodes1, weights1) for i1 in 1:n1]
+    return b
 end
 
 function innerproduct_R(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace)
@@ -282,6 +284,7 @@ function innerproduct_R(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace
     nodes1, weights1 = gausslegendre(nip1)
     nodes2, weights2 = gausslegendre(nip2)
     b = [_f_b_int_R(func, i1, i2, P1, P2, nip1, nip2, nodes1, nodes2, weights1, weights2) for i1 in 1:n1, i2 in 1:n2]
+    return b
 end
 
 function innerproduct_I(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace)
@@ -292,6 +295,7 @@ function innerproduct_I(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace
     nodes1, weights1 = gausslegendre(nip1)
     nodes2, weights2 = gausslegendre(nip2)
     b = [_f_b_int_I(func, i1, i2, P1, P2, nip1, nip2, nodes1, nodes2, weights1, weights2) for i1 in 1:n1, i2 in 1:n2]
+    return b
 end
 
 function innerproduct_R(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, P3::AbstractBSplineSpace)
@@ -304,6 +308,7 @@ function innerproduct_R(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace
     nodes2, weights2 = gausslegendre(nip2)
     nodes3, weights3 = gausslegendre(nip3)
     b = [_f_b_int_R(func, i1, i2, i3, P1, P2, P3, nip1, nip2, nip3, nodes1, nodes2, nodes3, weights1, weights2, weights3) for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3]
+    return b
 end
 
 function innerproduct_I(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, P3::AbstractBSplineSpace)
@@ -316,6 +321,7 @@ function innerproduct_I(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace
     nodes2, weights2 = gausslegendre(nip2)
     nodes3, weights3 = gausslegendre(nip3)
     b = [_f_b_int_I(func, i1, i2, i3, P1, P2, P3, nip1, nip2, nip3, nodes1, nodes2, nodes3, weights1, weights2, weights3) for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3]
+    return b
 end
 
 """

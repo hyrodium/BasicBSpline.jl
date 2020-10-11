@@ -124,19 +124,8 @@ function FastBSplineManifold(M::AbstractBSplineManifold)
     return FastBSplineManifold(BSplineSpace.(M.bsplinespaces), M.controlpoints)
 end
 
-@doc raw"""
-Calculate the mapping of B-spline manifold for given parameter.
-```math
-\bm{p}(t^1,\dots,t^d)
-=\sum_{i^1,\dots,i^d}B_{i^1,\dots,i^d}(t^1,\dots,t^d) \bm{a}_{i^1,\dots,i^d}
-```
-"""
-# function mapping(M::FastBSplineManifold, t::AbstractVector{<:Real})
-#     # TODO: faster
-#     return mapping(BSplineManifold(M), t)
-# end
-
 function (M::FastBSplineManifold)(t::AbstractVector{<:Real})
+    # TODO: faster
     return BSplineManifold(M)(t)
 end
 

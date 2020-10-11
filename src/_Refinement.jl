@@ -223,7 +223,7 @@ function refinement(M::AbstractBSplineManifold; p₊::Union{Nothing,AbstractVect
     end
 
     Ps′ = similar(Ps)
-    for i in 1:length(Ps)
+    for i in eachindex(Ps)
         P = Ps[i]
         p = degree(P)
         k = knots(P)
