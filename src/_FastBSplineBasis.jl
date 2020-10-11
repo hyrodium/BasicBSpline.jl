@@ -25,7 +25,7 @@ end
 for p in 0:MAX_DEGREE
     @eval function bsplinebasis₊₀(i::Integer, P::FastBSplineSpace{$p}, t::Real)
         ÷(a, b) = ifelse(b == 0.0, 0.0, a / b)
-        $(Meta.parse(join([_s('k', j) for j in 1:p+2], ',') * " = " * join(["P.knotvector[i+" * string(j) * "]" for j in 0:p+1], ',')))
+        $(Meta.parse(join([_s('k', j) for j in 1:p+2], ',') * " = " * join(["P.knots[i+" * string(j) * "]" for j in 0:p+1], ',')))
         $(Meta.parse(
             join([_s('B', j) for j in 1:p+1], ',') * " = " * join(["Float64(" * _s('k', j) * " ≤ t < " * _s('k', j + 1) * ")" for j in 1:p+1], ','),
         ))
@@ -34,7 +34,7 @@ for p in 0:MAX_DEGREE
     end
     @eval function bsplinebasis₋₀(i::Integer, P::FastBSplineSpace{$p}, t::Real)
         ÷(a, b) = ifelse(b == 0.0, 0.0, a / b)
-        $(Meta.parse(join([_s('k', j) for j in 1:p+2], ',') * " = " * join(["P.knotvector[i+" * string(j) * "]" for j in 0:p+1], ',')))
+        $(Meta.parse(join([_s('k', j) for j in 1:p+2], ',') * " = " * join(["P.knots[i+" * string(j) * "]" for j in 0:p+1], ',')))
         $(Meta.parse(
             join([_s('B', j) for j in 1:p+1], ',') * " = " * join(["Float64(" * _s('k', j) * " < t ≤ " * _s('k', j + 1) * ")" for j in 1:p+1], ','),
         ))
@@ -43,8 +43,8 @@ for p in 0:MAX_DEGREE
     end
     @eval function bsplinebasis(i::Integer, P::FastBSplineSpace{$p}, t::Real)
         ÷(a, b) = ifelse(b == 0.0, 0.0, a / b)
-        k_end = P.knotvector[end]
-        $(Meta.parse(join([_s('k', j) for j in 1:p+2], ',') * " = " * join(["P.knotvector[i+" * string(j) * "]" for j in 0:p+1], ',')))
+        k_end = P.knots[end]
+        $(Meta.parse(join([_s('k', j) for j in 1:p+2], ',') * " = " * join(["P.knots[i+" * string(j) * "]" for j in 0:p+1], ',')))
         $(Meta.parse(
             join([_s('B', j) for j in 1:p+1], ',') * " = " * join(["Float64(" * _s('k', j) * " ≤ t < " * _s('k', j + 1) * ")" for j in 1:p+1], ','),
         ))
@@ -61,7 +61,7 @@ bsplinebasis′(i::Integer, P::FastBSplineSpace{0}, t::Real) = 0.0
 for p in 1:MAX_DEGREE
     @eval function bsplinebasis′₊₀(i::Integer, P::FastBSplineSpace{$p}, t::Real)
         ÷(a, b) = ifelse(b == 0.0, 0.0, a / b)
-        $(Meta.parse(join([_s('k', j) for j in 1:p+2], ',') * " = " * join(["P.knotvector[i+" * string(j) * "]" for j in 0:p+1], ',')))
+        $(Meta.parse(join([_s('k', j) for j in 1:p+2], ',') * " = " * join(["P.knots[i+" * string(j) * "]" for j in 0:p+1], ',')))
         $(Meta.parse(
             join([_s('B', j) for j in 1:p+1], ',') * " = " * join(["Float64(" * _s('k', j) * " ≤ t < " * _s('k', j + 1) * ")" for j in 1:p+1], ','),
         ))
@@ -72,7 +72,7 @@ for p in 1:MAX_DEGREE
     end
     @eval function bsplinebasis′₋₀(i::Integer, P::FastBSplineSpace{$p}, t::Real)
         ÷(a, b) = ifelse(b == 0.0, 0.0, a / b)
-        $(Meta.parse(join([_s('k', j) for j in 1:p+2], ',') * " = " * join(["P.knotvector[i+" * string(j) * "]" for j in 0:p+1], ',')))
+        $(Meta.parse(join([_s('k', j) for j in 1:p+2], ',') * " = " * join(["P.knots[i+" * string(j) * "]" for j in 0:p+1], ',')))
         $(Meta.parse(
             join([_s('B', j) for j in 1:p+1], ',') * " = " * join(["Float64(" * _s('k', j) * " < t ≤ " * _s('k', j + 1) * ")" for j in 1:p+1], ','),
         ))
@@ -83,8 +83,8 @@ for p in 1:MAX_DEGREE
     end
     # @eval function bsplinebasis′(i::Integer, P::FastBSplineSpace{$p}, t::Real)
     #     ÷(a,b) = ifelse(b == 0.0, 0.0, a/b)
-    #     k_end = P.knotvector[end]
-    #     $(Meta.parse(join([_s('k',j) for j in 1:p+2],',')*" = "*join(["P.knotvector[i+"*string(j)*"]" for j in 0:p+1],',')))
+    #     k_end = P.knots[end]
+    #     $(Meta.parse(join([_s('k',j) for j in 1:p+2],',')*" = "*join(["P.knots[i+"*string(j)*"]" for j in 0:p+1],',')))
     #     $(Meta.parse(join([_s('B',j) for j in 1:p+1],',')*" = "*join(["Float64("*_s('k',j)*" ≤ t < "*_s('k',j+1)*")" for j in 1:p+1],',')))
     #     $(Meta.parse(_s('B',p+1)*" += Float64(t == "*_s('k',p+2)*" == k_end)"))
     #     $(Meta.parse("begin "*join([_code_K(p,q)*"\n"*_code_B(p,q) for q in 1:p-1],'\n')*" end"))
@@ -158,17 +158,17 @@ Assumption:
 end
 
 @inline function _bsplinebasis(P::FastBSplineSpace{0}, t::Real, i::Integer)
-    return _bsb0(P.knotvector,t,i)
+    return _bsb0(P.knots,t,i)
 end
 
 @inline function _bsplinebasis(P::FastBSplineSpace{1}, t::Real, i::Integer)
-    return _bsb1(P.knotvector,t,i)
+    return _bsb1(P.knots,t,i)
 end
 
 @inline function _bsplinebasis(P::FastBSplineSpace{2}, t::Real, i::Integer)
-    return _bsb2(P.knotvector,t,i)
+    return _bsb2(P.knots,t,i)
 end
 
 @inline function _bsplinebasis(P::FastBSplineSpace{3}, t::Real, i::Integer)
-    return _bsb3(P.knotvector,t,i)
+    return _bsb3(P.knots,t,i)
 end

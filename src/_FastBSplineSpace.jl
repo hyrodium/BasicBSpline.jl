@@ -4,23 +4,18 @@
 B-spline space for lower polynomial degree
 """
 struct FastBSplineSpace{p} <: AbstractBSplineSpace
-    knotvector::Array{Float64,1}
+    knots::Knots
     function FastBSplineSpace(p::Integer, knots::Knots)
         if p < 0
             error("degree of polynominal must be non-negative")
         elseif p > MAX_DEGREE
             error("FastBSpline supports only degree 0 , ... , $(MAX_DEGREE)")
         end
-        new{p}(knots.vector)
+        new{p}(knots)
     end
-    function FastBSplineSpace{q}(p::Integer, knots::Knots) where {q}
-        if p < 0
-            error("degree of polynominal must be non-negative")
-        elseif p > MAX_DEGREE
-            error("FastBSpline supports only degree 0 , ... , $(MAX_DEGREE)")
-        end
-        new{p}(knots.vector)
-    end
+end
+function FastBSplineSpace{q}(p::Integer, knots::Knots) where {q}
+    FastBSplineSpace(p,knots)
 end
 
 """
@@ -35,5 +30,5 @@ function degree(P::FastBSplineSpace{p}) where {p}
 end
 
 function knots(P::FastBSplineSpace)
-    return Knots(P.knotvector)
+    return P.knots
 end
