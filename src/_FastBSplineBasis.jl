@@ -110,28 +110,31 @@ function bsplinebasis′(i::Integer, P::FastBSplineSpace, t::Real)::Float64
 end
 
 """
+Returns the value of ``B_{(i,0,k)}(t)``.
 Assumption:
 * ```k_{i} ≤ t < k_{i+1}``
 """
-function _bsb0(k, t::Real, i::Integer)
+function _bsb0(k::Union{Vector{<:Real},Knots}, t::Real, i::Integer)
     return 1.0
 end
 
 """
+Returns the values of ``B_{(i,1,k)}(t), B_{(i+1,1,k)}(t)``.
 Assumption:
 * ``k_{i} ≤ t < k_{i+1}``
 """
-function _bsb1(k, t::Real, i::Integer)
+function _bsb1(k::Union{Vector{<:Real},Knots}, t::Real, i::Integer)
     B1 = (k[i+1]-t)/(k[i+1]-k[i])
     B2 = (t-k[i])/(k[i+1]-k[i])
     return B1, B2
 end
 
 """
+Returns the values of ``B_{(i,2,k)}(t), B_{(i+1,2,k)}(t), B_{(i+2,2,k)}(t)``.
 Assumption:
 * ``k_{i} ≤ t < k_{i+1}``
 """
-@inline function _bsb2(k, t::Real, i::Integer)
+@inline function _bsb2(k::Union{Vector{<:Real},Knots}, t::Real, i::Integer)
     B = _bsb1(k, t, i)
 
     B1 = (k[i+1]-t)/(k[i+1]-k[i-1]) * B[1]
@@ -142,10 +145,11 @@ Assumption:
 end
 
 """
+Returns the values of ``B_{(i,3,k)}(t), B_{(i+1,3,k)}(t), B_{(i+2,3,k)}(t), B_{(i+3,3,k)}(t)``.
 Assumption:
 * ``k_{i} ≤ t < k_{i+1}``
 """
-@inline function _bsb3(k, t::Real, i::Integer)
+@inline function _bsb3(k::Union{Vector{<:Real},Knots}, t::Real, i::Integer)
     B = _bsb2(k, t, i)
 
     B1 = (k[i+1]-t)/(k[i+1]-k[i-2]) * B[1]
