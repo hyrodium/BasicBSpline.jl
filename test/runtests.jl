@@ -224,13 +224,17 @@ using Random
 
         P1′ = BSplineSpace(2, Knots([-2, 0, 0, 1, 1, 2]))
         P2′ = BSplineSpace(1, Knots([-3, 1, 2, 1.45, 3, 4]))
+        p₊ = [1, 0]
+        k₊ = [Knots(), Knots(1.45)]
 
         @test P1 ⊑ P1′
         @test P2 ⊑ P2′
 
         M′ = refinement(M, [P1′, P2′])
+        M′′ = refinement(M, p₊=p₊, k₊=k₊)
         ts = [[rand(), 1 + 2 * rand()] for _ in 1:10]
         @test prod([M(t) ≈ M′(t) for t in ts])
+        @test prod([M(t) ≈ M′′(t) for t in ts])
     end
 
     @testset "FastBSplineManifold-2dim" begin
@@ -246,13 +250,17 @@ using Random
 
         P1′ = FastBSplineSpace(2, Knots([0, 0, 0, 1, 1, 1]))
         P2′ = FastBSplineSpace(1, Knots([1, 1, 2, 1.45, 3, 3]))
+        p₊ = [1, 0]
+        k₊ = [Knots(), Knots(1.45)]
 
         @test P1 ⊆ P1′
         @test P2 ⊆ P2′
 
         M′ = refinement(M, [P1′, P2′])
+        M′′ = refinement(M, p₊=p₊, k₊=k₊)
         ts = [[rand(), 1 + 2 * rand()] for _ in 1:10]
         @test prod([M(t) ≈ M′(t) for t in ts])
+        @test prod([M(t) ≈ M′′(t) for t in ts])
     end
 
     @testset "BSplineSurface" begin
@@ -268,13 +276,17 @@ using Random
 
         P1′ = FastBSplineSpace(2, Knots([0, 0, 0, 1, 1, 1]))
         P2′ = FastBSplineSpace(1, Knots([1, 1, 2, 1.45, 3, 3]))
+        p₊ = [1, 0]
+        k₊ = [Knots(), Knots(1.45)]
 
         @test P1 ⊆ P1′
         @test P2 ⊆ P2′
 
         M′ = refinement(M, [P1′, P2′])
+        M′′ = refinement(M, p₊=p₊, k₊=k₊)
         ts = [[rand(), 1 + 2 * rand()] for _ in 1:10]
         @test prod([M(t) ≈ M′(t) for t in ts])
+        @test prod([M(t) ≈ M′′(t) for t in ts])
     end
 
     @testset "Fitting-curve_R" begin
@@ -304,7 +316,7 @@ using Random
         Random.seed!(42)
 
         p1 = 2
-        k1 = Knots(rand(3)) + Knots([0, 1]) + p1 * Knots([-rand(), 1+rand()])
+        k1 = Knots(rand(3)) + Knots([0, 1]) + p1 * Knots([-rand(), 1 + rand()])
         P1 = FastBSplineSpace(p1, k1)
         n1 = dim(P1)
         a_org = [[i1, rand()] for i1 in 1:n1]
@@ -357,11 +369,11 @@ using Random
         Random.seed!(42)
 
         p1 = 2
-        k1 = Knots(rand(3)) + Knots([0, 1]) + p1 * Knots([-rand(), 1+rand()])
+        k1 = Knots(rand(3)) + Knots([0, 1]) + p1 * Knots([-rand(), 1 + rand()])
         P1 = FastBSplineSpace(p1, k1)
         n1 = dim(P1)
         p2 = 1
-        k2 = Knots(rand(4)) + Knots([0, 1]) + p2 * Knots([-rand(), 1+rand()])
+        k2 = Knots(rand(4)) + Knots([0, 1]) + p2 * Knots([-rand(), 1 + rand()])
         P2 = FastBSplineSpace(p2, k2)
         n2 = dim(P2)
         a_org = [[i1, i2, rand()] for i1 in 1:n1, i2 in 1:n2]
@@ -424,15 +436,15 @@ using Random
         Random.seed!(42)
 
         p1 = 2
-        k1 = Knots(rand(3)) + Knots([0, 1]) + p1 * Knots([-rand(), 1+rand()])
+        k1 = Knots(rand(3)) + Knots([0, 1]) + p1 * Knots([-rand(), 1 + rand()])
         P1 = FastBSplineSpace(p1, k1)
         n1 = dim(P1)
         p2 = 1
-        k2 = Knots(rand(4)) + Knots([0, 1]) + p1 * Knots([-rand(), 1+rand()])
+        k2 = Knots(rand(4)) + Knots([0, 1]) + p1 * Knots([-rand(), 1 + rand()])
         P2 = FastBSplineSpace(p2, k2)
         n2 = dim(P2)
         p3 = 2
-        k3 = Knots(rand(5)) + Knots([0, 1]) + p1 * Knots([-rand(), 1+rand()])
+        k3 = Knots(rand(5)) + Knots([0, 1]) + p1 * Knots([-rand(), 1 + rand()])
         P3 = FastBSplineSpace(p3, k3)
         n3 = dim(P3)
         a_org = [[i1, i2, i3, rand()] for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3]

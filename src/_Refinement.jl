@@ -222,7 +222,10 @@ function refinement(M::AbstractBSplineManifold; p₊::Union{Nothing,AbstractVect
         error("dimension does not match")
     end
 
-    Ps′ = [typeof(Ps[i])(degree(P) + p₊[i], knots(P) + p₊[i] * unique(k) + k₊[i]) for i in eachindex(Ps)]
+    Ps′ = [(P = Ps[i];
+    p = degree(P);
+    k = knots(P);
+    typeof(P)(p + p₊[i], k + p₊[i] * unique(k) + k₊[i])) for i in eachindex(Ps)]
 
     return refinement(M, Ps′)
 end
