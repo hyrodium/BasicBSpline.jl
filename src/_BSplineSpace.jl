@@ -121,3 +121,9 @@ end
 function properdim(P::AbstractBSplineSpace)
     return dim(P) - sum(iszeros(P))
 end
+
+function _knotindex(P,t)
+    p = degree(P)
+    k = knots(P)
+    return _knotindex(k[1+p:end-p], t)+p
+end
