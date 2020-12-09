@@ -20,7 +20,6 @@ save_png("docs/src/img/2dim_refinement.png", M′, unitlength = 50)
 
 ## Makie
 points = [M([u,v]) for u in range(3.0,6.0,length=50), v in range(3.0,6.0,length=50)]
-# points = [M([u,v]) for u in range(3.0,5.999,length=50), v in range(3.0,5.999,length=50)]  # Currently, the mapping function M(u,v) is incomplete. The number 5.999 should be 6.0, but it doesn't work correctly.
 X = [point[1] for point in points]
 Y = [point[2] for point in points]
 scene = Scene(resolution=(1000,1000))
