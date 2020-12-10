@@ -25,6 +25,13 @@ function FastBSplineSpace(P::AbstractBSplineSpace)
     return FastBSplineSpace(degree(P), knots(P))
 end
 
+"""
+convert AbstractBSplineSpace to FastBSplineSpace
+"""
+function Base.convert(::Type{<:FastBSplineSpace}, P::AbstractBSplineSpace)
+    return FastBSplineSpace(degree(P), knots(P))
+end
+
 function degree(P::FastBSplineSpace{p}) where {p}
     return p
 end

@@ -161,8 +161,8 @@ function (M::BSplineCurve{p1})(t::AbstractVector{<:Real}) where {p1}
     a = controlpoints(M)
     n1 = dim(P1)
     t1, = t
-    v1 = P1.knots.vector
-    j1 = _knotindex(v1, t1)
+    k1 = P1.knots
+    j1 = _knotindex(P1, t1)
     b1 = _bsplinebasis(P1,t1,j1)
     d̂ = size(a)[end]
 
@@ -184,8 +184,8 @@ function (M::BSplineSurface{p1,p2})(t::AbstractVector{<:Real}) where {p1} where 
     a = controlpoints(M)
     n1, n2 = dim(P1), dim(P2)
     t1, t2 = t
-    v1, v2 = P1.knots.vector, P2.knots.vector
-    j1, j2 = _knotindex(v1, t1), _knotindex(v2, t2)
+    k1, k2 = P1.knots, P2.knots
+    j1, j2 = _knotindex(P1, t1), _knotindex(P2, t2)
     b1 = _bsplinebasis(P1,t1,j1)
     b2 = _bsplinebasis(P2,t2,j2)
     d̂ = size(a)[end]
@@ -217,8 +217,8 @@ function (M::BSplineSolid{p1,p2,p3})(t::AbstractVector{<:Real}) where {p1} where
     a = controlpoints(M)
     n1, n2, n3 = dim(P1), dim(P2), dim(P3)
     t1, t2, t3 = t
-    v1, v2, v3 = P1.knots.vector, P2.knots.vector, P3.knots.vector
-    j1, j2, j3 = _knotindex(v1, t1), _knotindex(v2, t2), _knotindex(v3, t3)
+    k1, k2, k3 = P1.knots, P2.knots, P3.knots
+    j1, j2, j3 = _knotindex(P1, t1), _knotindex(P2, t2), _knotindex(P3, t3)
     b1 = _bsplinebasis(P1,t1,j1)
     b2 = _bsplinebasis(P2,t2,j2)
     b3 = _bsplinebasis(P3,t3,j3)
