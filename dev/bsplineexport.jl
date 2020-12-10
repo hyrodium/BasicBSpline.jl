@@ -1,5 +1,8 @@
+using Random
+using Makie
 using BasicBSpline
 using ExportNURBS
+Random.seed!(2)
 
 ## 2-dim B-spline manifold
 p = 2 # degree of polynomial
@@ -14,6 +17,16 @@ save_png("docs/src/img/2dim.png", M, unitlength = 50)
 k₊ = [Knots(3.3, 4.2), Knots(3.8, 3.2, 5.3)]
 M′ = refinement(M, k₊ = k₊)
 save_png("docs/src/img/2dim_refinement.png", M′, unitlength = 50)
+
+## Makie
+points = [M([u,v]) for u in range(3.0,6.0,length=50), v in range(3.0,6.0,length=50)]
+X = [point[1] for point in points]
+Y = [point[2] for point in points]
+scene = Scene(resolution=(1000,1000))
+Makie.surface!(X,Y)
+Makie.xlims!(-5,5)
+Makie.ylims!(-5,5)
+save("docs/src/img/2dim_makie.png", scene)
 
 ## Fitting
 p1 = 2
@@ -53,3 +66,20 @@ f(u) = [u[1], sin(u[1])]
 a = fittingcontrolpoints(f, [P])
 M = BSplineManifold([P], a)
 save_svg("docs/src/img/sine_curve.svg", M, unitlength = 50, up = 2, down = -2, left = -8, right = 8)
+
+## Makie
+p = 3
+k = Knots((0:10)/2)
+P = FastBSplineSpace(p,k)
+a = [[i+rand(),j+rand(),2*rand()] for i in 1:dim(P), j in 1:dim(P)]
+M = BSplineSurface([P,P],a)
+points = [M([u,v]) for u in range(3.0,6.999,length=50), v in range(3.0,6.999,length=50)]
+
+X = [point[1] for point in points]
+Y = [point[2] for point in points]
+Z = [point[3] for point in points]
+
+Makie.surface(X,Y,Z)
+
+
+Makie.surface(X,Y)
