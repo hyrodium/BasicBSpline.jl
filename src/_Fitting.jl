@@ -327,13 +327,13 @@ end
 """
 * func: Array{Real,1} -> ℝ-linear space
 """
-function fittingcontrolpoints_1dim(func, P1::AbstractBSplineSpace)
+function fittingcontrolpoints(func, P1::AbstractBSplineSpace)
     b = innerproduct_I(func, P1)
     A = innerproduct_I(P1)
     return inv(A) * b
 end
 
-function fittingcontrolpoints_2dim(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace)
+function fittingcontrolpoints(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace)
     n1, n2 = dim(P1), dim(P2)
     A1, A2 = innerproduct_I(P1), innerproduct_I(P2)
     A = [A1[i1, j1] * A2[i2, j2] for i1 in 1:n1, i2 in 1:n2, j1 in 1:n1, j2 in 1:n2]
@@ -343,7 +343,7 @@ function fittingcontrolpoints_2dim(func, P1::AbstractBSplineSpace, P2::AbstractB
     return reshape(inv(_A) * _b, n1, n2)
 end
 
-function fittingcontrolpoints_3dim(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, P3::AbstractBSplineSpace)
+function fittingcontrolpoints(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, P3::AbstractBSplineSpace)
     n1, n2, n3 = dim(P1), dim(P2), dim(P3)
     A1, A2, A3 = innerproduct_I(P1), innerproduct_I(P2), innerproduct_I(P3)
     A = [A1[i1, j1] * A2[i2, j2] * A3[i3, j3] for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3, j1 in 1:n1, j2 in 1:n2, j3 in 1:n3]
@@ -359,15 +359,6 @@ Approximate given function by linear combination of B-spline functions.
 This function returns its control points.
 """
 function fittingcontrolpoints(func, Ps::Array{<:AbstractBSplineSpace,1})
-    # TODO: currently, this function only supports for 1-dim and 2-dim B-spline manifold.
-    d = length(Ps)
-    if d == 1
-        return fittingcontrolpoints_1dim(func, Ps[1])
-    elseif d == 2
-        return fittingcontrolpoints_2dim(func, Ps[1], Ps[2])
-    elseif d == 3
-        return fittingcontrolpoints_3dim(func, Ps[1], Ps[2], Ps[3])
-    else
-        error("fittingcontrolpoints supports only 1 to 3 dimensions.")
-    end
+    # TODO: currently, this function only supports for 1-dim, 2-dim and 3-dim B-spline manifold.
+    return fittingcontrolpoints(func, Ps...)
 end
