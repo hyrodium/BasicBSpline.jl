@@ -13,8 +13,8 @@ struct FastBSplineManifold <: AbstractBSplineManifold
             error("dimension does not match")
         else
             P = convert(Array{FastBSplineSpace,1}, Ps)
-            a = convert(Array{Float64}, a)
-            new(P, a)
+            a′ = convert(Array{Float64}, a)
+            new(P, a′)
         end
     end
 end
@@ -27,20 +27,19 @@ struct BSplineCurve{p1} <: AbstractBSplineManifold
         if size(a)[1:end-1] ≠ (dim(P1),)
             error("dimension does not match")
         else
-            a = convert(Array{Float64}, a)
-            new{p1}(P1, a)
+            a′ = convert(Array{Float64}, a)
+            new{p1}(P1, a′)
         end
     end
 end
 function BSplineCurve(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real})
-    # p1, k1 = degree(Ps[1]), knots(Ps[1])
     if collect(size(a)[1:end-1]) ≠ dim.(Ps)
         error("dimension does not match")
-    # elseif p1 > MAX_DEGREE
-    #     return BSplineManifold(Ps, a)
+    elseif length(Ps) ≠ 1
+        error("dimension does not match")
     else
-        a = convert(Array{Float64}, a)
-        return BSplineCurve(Ps[1],a)
+        a′ = convert(Array{Float64}, a)
+        return BSplineCurve(Ps[1],a′)
     end
 end
 function BSplineCurve{q1}(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real}) where {q1}
@@ -56,21 +55,19 @@ struct BSplineSurface{p1,p2} <: AbstractBSplineManifold
         if size(a)[1:end-1] ≠ (dim(P1), dim(P2))
             error("dimension does not match")
         else
-            a = convert(Array{Float64}, a)
-            new{p1,p2}(P1, P2, a)
+            a′ = convert(Array{Float64}, a)
+            new{p1,p2}(P1, P2, a′)
         end
     end
 end
 function BSplineSurface(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real})
-    # p1, k1 = degree(Ps[1]), knots(Ps[1])
-    # p2, k2 = degree(Ps[2]), knots(Ps[2])
     if collect(size(a)[1:end-1]) ≠ dim.(Ps)
         error("dimension does not match")
-    # elseif p1 > MAX_DEGREE || p2 > MAX_DEGREE
-    #     return BSplineManifold(Ps, a)
+    elseif length(Ps) ≠ 2
+        error("dimension does not match")
     else
-        a = convert(Array{Float64}, a)
-        return BSplineSurface(Ps[1], Ps[2], a)
+        a′ = convert(Array{Float64}, a)
+        return BSplineSurface(Ps[1], Ps[2], a′)
     end
 end
 function BSplineSurface{q1,q2}(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real}) where {q1} where {q2}
@@ -87,22 +84,19 @@ struct BSplineSolid{p1,p2,p3} <: AbstractBSplineManifold
         if size(a)[1:end-1] ≠ (dim(P1), dim(P2), dim(P3))
             error("dimension does not match")
         else
-            a = convert(Array{Float64}, a)
-            new{p1,p2,p3}(P1, P2, P3, a)
+            a′ = convert(Array{Float64}, a)
+            new{p1,p2,p3}(P1, P2, P3, a′)
         end
     end
 end
 function BSplineSolid(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real})
-    # p1, k1 = degree(Ps[1]), knots(Ps[1])
-    # p2, k2 = degree(Ps[2]), knots(Ps[2])
-    # p3, k3 = degree(Ps[3]), knots(Ps[3])
     if collect(size(a)[1:end-1]) ≠ dim.(Ps)
         error("dimension does not match")
-    # elseif p1 > MAX_DEGREE || p2 > MAX_DEGREE || p3 > MAX_DEGREE
-    #     return BSplineManifold(Ps, a)
+    elseif length(Ps) ≠ 3
+        error("dimension does not match")
     else
-        a = convert(Array{Float64}, a)
-        BSplineSolid(Ps[1],Ps[2],Ps[3],a)
+        a′ = convert(Array{Float64}, a)
+        BSplineSolid(Ps[1],Ps[2],Ps[3],a′)
     end
 end
 function BSplineSolid{q1,q2,q3}(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real}) where {q1} where {q2} where {q3}
@@ -110,7 +104,7 @@ function BSplineSolid{q1,q2,q3}(Ps::AbstractVector{<:AbstractBSplineSpace}, a::A
 end
 
 for fname in (:BSplineCurve, :BSplineSurface, :BSplineSolid, :FastBSplineManifold, :BSplineManifold)
-    @eval function $fname(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{Array{T,1}} where {T<:Real})
+    @eval function $fname(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:AbstractVector{<:Real}})
         d̂ = length(a[1])
         A = reshape(transpose(hcat(reshape(a, prod(size(a)))...)), size(a)..., d̂)
         return $fname(Ps, A)
@@ -156,11 +150,10 @@ function (M::FastBSplineManifold)(t::AbstractVector{<:Real})
     return BSplineManifold(M)(t)
 end
 
-function (M::BSplineCurve{p1})(t::AbstractVector{<:Real}) where {p1}
+function (M::BSplineCurve{p1})(t1::Real) where {p1}
     P1, = bsplinespaces(M)
     a = controlpoints(M)
     n1 = dim(P1)
-    t1, = t
     k1 = P1.knots
     j1 = _knotindex(P1, t1)
     b1 = _bsplinebasis(P1,t1,j1)
@@ -179,11 +172,10 @@ function (M::BSplineCurve{p1})(t::AbstractVector{<:Real}) where {p1}
     return S1
 end
 
-function (M::BSplineSurface{p1,p2})(t::AbstractVector{<:Real}) where {p1} where {p2}
+function (M::BSplineSurface{p1,p2})(t1::Real,t2::Real) where {p1} where {p2}
     P1, P2 = bsplinespaces(M)
     a = controlpoints(M)
     n1, n2 = dim(P1), dim(P2)
-    t1, t2 = t
     k1, k2 = P1.knots, P2.knots
     j1, j2 = _knotindex(P1, t1), _knotindex(P2, t2)
     b1 = _bsplinebasis(P1,t1,j1)
@@ -212,11 +204,10 @@ function (M::BSplineSurface{p1,p2})(t::AbstractVector{<:Real}) where {p1} where 
     return S1
 end
 
-function (M::BSplineSolid{p1,p2,p3})(t::AbstractVector{<:Real}) where {p1} where {p2} where {p3}
+function (M::BSplineSolid{p1,p2,p3})(t1::Real,t2::Real,t3::Real) where {p1} where {p2} where {p3}
     P1, P2, P3 = M.bsplinespace1, M.bsplinespace2, M.bsplinespace3
     a = controlpoints(M)
     n1, n2, n3 = dim(P1), dim(P2), dim(P3)
-    t1, t2, t3 = t
     k1, k2, k3 = P1.knots, P2.knots, P3.knots
     j1, j2, j3 = _knotindex(P1, t1), _knotindex(P2, t2), _knotindex(P3, t3)
     b1 = _bsplinebasis(P1,t1,j1)
@@ -261,6 +252,10 @@ function (M::BSplineSolid{p1,p2,p3})(t::AbstractVector{<:Real}) where {p1} where
     end
 
     return S1
+end
+
+function (M::Union{BSplineCurve,BSplineSurface,BSplineSolid})(t::AbstractVector{<:Real})
+    return M(t...)
 end
 
 dim(M::FastBSplineManifold) = length(M.bsplinespaces)
