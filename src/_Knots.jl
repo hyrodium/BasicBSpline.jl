@@ -47,6 +47,13 @@ Base.unique(k::Knots) = Knots(unique(k.vector))
 Base.iterate(k::Knots) = iterate(k.vector)
 Base.iterate(k::Knots, i::Integer) = iterate(k.vector, i)
 
+@doc raw"""
+Check a inclusive relation ship ``k\subset k'``.
+```math
+(1,2,3) \subseteq (1,2,3,4)
+(1,2,5) \nsubseteq (1,2,3,4)
+```
+"""
 function Base.issubset(k::Knots, k′::Knots)
     K′ = copy(k′.vector)
     for kᵢ in k.vector
