@@ -10,7 +10,7 @@ struct FastBSplineManifold <: AbstractBSplineManifold
     function FastBSplineManifold(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real})
         Ps = FastBSplineSpace.(Ps)
         if collect(size(a)[1:end-1]) ≠ dim.(Ps)
-            error("dimension does not match")
+            throw(DimensionMismatch())
         else
             P = convert(Array{FastBSplineSpace,1}, Ps)
             a′ = convert(Array{Float64}, a)
@@ -25,7 +25,7 @@ struct BSplineCurve{p1} <: AbstractBSplineManifold
     function BSplineCurve(P1::AbstractBSplineSpace, a::AbstractArray{<:Real})
         p1 = degree(P1)
         if size(a)[1:end-1] ≠ (dim(P1),)
-            error("dimension does not match")
+            throw(DimensionMismatch())
         else
             a′ = convert(Array{Float64}, a)
             new{p1}(P1, a′)
@@ -34,9 +34,9 @@ struct BSplineCurve{p1} <: AbstractBSplineManifold
 end
 function BSplineCurve(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real})
     if collect(size(a)[1:end-1]) ≠ dim.(Ps)
-        error("dimension does not match")
+        throw(DimensionMismatch())
     elseif length(Ps) ≠ 1
-        error("dimension does not match")
+        throw(DimensionMismatch())
     else
         a′ = convert(Array{Float64}, a)
         return BSplineCurve(Ps[1],a′)
@@ -53,7 +53,7 @@ struct BSplineSurface{p1,p2} <: AbstractBSplineManifold
     function BSplineSurface(P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, a::AbstractArray{<:Real})
         p1, p2 = degree(P1), degree(P2)
         if size(a)[1:end-1] ≠ (dim(P1), dim(P2))
-            error("dimension does not match")
+            throw(DimensionMismatch())
         else
             a′ = convert(Array{Float64}, a)
             new{p1,p2}(P1, P2, a′)
@@ -62,9 +62,9 @@ struct BSplineSurface{p1,p2} <: AbstractBSplineManifold
 end
 function BSplineSurface(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real})
     if collect(size(a)[1:end-1]) ≠ dim.(Ps)
-        error("dimension does not match")
+        throw(DimensionMismatch())
     elseif length(Ps) ≠ 2
-        error("dimension does not match")
+        throw(DimensionMismatch())
     else
         a′ = convert(Array{Float64}, a)
         return BSplineSurface(Ps[1], Ps[2], a′)
@@ -82,7 +82,7 @@ struct BSplineSolid{p1,p2,p3} <: AbstractBSplineManifold
     function BSplineSolid(P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, P3::AbstractBSplineSpace, a::AbstractArray{<:Real})
         p1, p2, p3 = degree(P1), degree(P2), degree(P3)
         if size(a)[1:end-1] ≠ (dim(P1), dim(P2), dim(P3))
-            error("dimension does not match")
+            throw(DimensionMismatch())
         else
             a′ = convert(Array{Float64}, a)
             new{p1,p2,p3}(P1, P2, P3, a′)
@@ -91,9 +91,9 @@ struct BSplineSolid{p1,p2,p3} <: AbstractBSplineManifold
 end
 function BSplineSolid(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real})
     if collect(size(a)[1:end-1]) ≠ dim.(Ps)
-        error("dimension does not match")
+        throw(DimensionMismatch())
     elseif length(Ps) ≠ 3
-        error("dimension does not match")
+        throw(DimensionMismatch())
     else
         a′ = convert(Array{Float64}, a)
         BSplineSolid(Ps[1],Ps[2],Ps[3],a′)

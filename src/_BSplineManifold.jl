@@ -28,7 +28,7 @@ struct BSplineManifold <: AbstractBSplineManifold
     function BSplineManifold(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real})
         Ps = BSplineSpace.(Ps)
         if collect(size(a)[1:end-1]) ≠ dim.(Ps)
-            error("dimension does not match")
+            throw(DimensionMismatch())
         else
             P = convert(Array{BSplineSpace,1}, Ps)
             a = convert(Array{Float64}, a)

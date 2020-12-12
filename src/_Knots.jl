@@ -32,7 +32,7 @@ function Base.:*(p₊::Integer, k::Knots)
     elseif p₊ > 0
         return sum(k for _ in 1:p₊)
     else
-        error("Polynominal degree p₊ must be non-negative.")
+        throw(DomainError(p₊, "additional degree of polynominal must be non-negative"))
     end
 end
 
