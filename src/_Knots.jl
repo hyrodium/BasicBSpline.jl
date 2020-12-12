@@ -12,7 +12,7 @@ struct Knots
         return new(sort(convert(Vector{Float64}, vector)))
     end
 end
-function Knots(vector::Array{Any,1})
+function Knots(vector::AbstractVector)
     if isempty(vector)
         return Knots(Float64[])
     else

@@ -9,7 +9,7 @@ B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p',k')}
 Assumption:
 * ``P ⊆ P′``
 """
-function _changebasis_R(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)::Array{Float64,2}
+function _changebasis_R(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)::Matrix{Float64}
     p = degree(P)
     k = knots(P)
     p′ = degree(P′)
@@ -140,7 +140,7 @@ B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p',k')}
 Assumption:
 * ``P ⊑ P′``
 """
-function _changebasis_I(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)::Array{Float64,2}
+function _changebasis_I(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)::Matrix{Float64}
     I = bsplineunity(P)
     p = degree(P)
     k = knots(P)
