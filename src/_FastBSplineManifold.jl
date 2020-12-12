@@ -103,11 +103,16 @@ function BSplineSolid{q1,q2,q3}(Ps::AbstractVector{<:AbstractBSplineSpace}, a::A
     return BSplineSolid(Ps, a)
 end
 
+function _arrayofvector2array(a::AbstractArray{<:AbstractVector{<:Real}})
+    d̂ = length(a[1])
+    a′ = reshape(transpose(hcat(reshape(a, prod(size(a)))...)), size(a)..., d̂)
+    return a′
+end
+
 for fname in (:BSplineCurve, :BSplineSurface, :BSplineSolid, :FastBSplineManifold, :BSplineManifold)
     @eval function $fname(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:AbstractVector{<:Real}})
-        d̂ = length(a[1])
-        A = reshape(transpose(hcat(reshape(a, prod(size(a)))...)), size(a)..., d̂)
-        return $fname(Ps, A)
+        a′ = _arrayofvector2array(a)
+        return $fname(Ps, a′)
     end
 end
 

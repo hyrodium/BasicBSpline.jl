@@ -360,7 +360,7 @@ using Random
         a_ref = M′.controlpoints
 
         a_tmp = fittingcontrolpoints(M, [P1′, P2′])
-        a_fit = reshape(transpose(hcat(reshape(a_tmp, prod(size(a_tmp)))...)), size(a_tmp)..., 3)
+        a_fit = BasicBSpline._arrayofvector2array(a_tmp)
 
         @test norm(a_fit - a_ref) < ε
     end
@@ -390,7 +390,7 @@ using Random
         a_ref = M′.controlpoints
 
         a_tmp = fittingcontrolpoints(M, [P1′, P2′])
-        a_fit = reshape(transpose(hcat(reshape(a_tmp, prod(size(a_tmp)))...)), size(a_tmp)..., 3)
+        a_fit = BasicBSpline._arrayofvector2array(a_tmp)
 
         @test norm(a_fit - a_ref) < ε
     end
@@ -427,7 +427,7 @@ using Random
         a_ref = M′.controlpoints
 
         a_tmp = fittingcontrolpoints(M, [P1′, P2′, P3′])
-        a_fit = reshape(transpose(hcat(reshape(a_tmp, prod(size(a_tmp)))...)), size(a_tmp)..., 4)
+        a_fit = BasicBSpline._arrayofvector2array(a_tmp)
 
         @test norm(a_fit - a_ref) < ε
     end
@@ -464,7 +464,7 @@ using Random
         a_ref = M′.controlpoints
 
         a_tmp = fittingcontrolpoints(M, [P1′, P2′, P3′])
-        a_fit = reshape(transpose(hcat(reshape(a_tmp, prod(size(a_tmp)))...)), size(a_tmp)..., 4)
+        a_fit = BasicBSpline._arrayofvector2array(a_tmp)
 
         @test norm(a_fit - a_ref) < 1.0e-6
     end
