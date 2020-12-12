@@ -58,8 +58,8 @@ plot(
 savefig("docs/src/img/subbsplineplot.png")
 
 ##
-A12 = BasicBSpline.changebasis(P1, P2)
-A13 = BasicBSpline.changebasis(P1, P3)
+A12 = changebasis(P1, P2)
+A13 = changebasis(P1, P3)
 
 plot(
     plot([t -> bsplinebasis₊₀(i, P1, t) for i in 1:dim(P1)], 1, 9, ylims = (0, 1), legend = false),
