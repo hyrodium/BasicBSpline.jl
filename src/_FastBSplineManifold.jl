@@ -254,7 +254,19 @@ function (M::BSplineSolid{p1,p2,p3})(t1::Real,t2::Real,t3::Real) where {p1} wher
     return S1
 end
 
-function (M::Union{BSplineCurve,BSplineSurface,BSplineSolid})(t::AbstractVector{<:Real})
+# function (M::Union{BSplineCurve,BSplineSurface,BSplineSolid})(t::AbstractVector{<:Real})
+#     return M(t...)
+# end
+
+function (M::BSplineCurve)(t::AbstractVector{<:Real})
+    return M(t...)
+end
+
+function (M::BSplineSurface)(t::AbstractVector{<:Real})
+    return M(t...)
+end
+
+function (M::BSplineSolid)(t::AbstractVector{<:Real})
     return M(t...)
 end
 
