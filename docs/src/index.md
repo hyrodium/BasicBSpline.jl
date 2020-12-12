@@ -14,9 +14,9 @@ This package provides basic (mathematical) operations for [B-spline](https://en.
     * >Currently this package's support is best for B-splines and also supports irregular grids.
     * But seems like no method for B-spline manifold.
 * [ApproXD.jl](https://github.com/floswald/ApproXD.jl)
-    * Wrapper for the dierckx Fortran library.
     * Its functions are similar to Interpolations.jl.
 * [Dierckx.jl](https://github.com/kbarbary/Dierckx.jl)
+    * Wrapper for the dierckx Fortran library.
     * Only 1-d or 2-d B-spline manifold are supported.
     * 5 or less degree of polynomial are supported.
 * **[BasicBSpline.jl](https://github.com/hyrodium/BasicBSpline.jl) (this package)**
