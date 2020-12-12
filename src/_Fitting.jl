@@ -325,7 +325,7 @@ function innerproduct_I(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace
 end
 
 """
-* func: Array{Real,1} -> ℝ-linear space
+* func: Real -> ℝ-vector space
 """
 function fittingcontrolpoints(func, P1::AbstractBSplineSpace)
     b = innerproduct_I(func, P1)
@@ -333,6 +333,9 @@ function fittingcontrolpoints(func, P1::AbstractBSplineSpace)
     return inv(A) * b
 end
 
+"""
+* func: (Real,Real) -> ℝ-vector space
+"""
 function fittingcontrolpoints(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace)
     n1, n2 = dim(P1), dim(P2)
     A1, A2 = innerproduct_I(P1), innerproduct_I(P2)
@@ -343,6 +346,9 @@ function fittingcontrolpoints(func, P1::AbstractBSplineSpace, P2::AbstractBSplin
     return reshape(inv(_A) * _b, n1, n2)
 end
 
+"""
+* func: (Real,Real,Real) -> ℝ-vector space
+"""
 function fittingcontrolpoints(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, P3::AbstractBSplineSpace)
     n1, n2, n3 = dim(P1), dim(P2), dim(P3)
     A1, A2, A3 = innerproduct_I(P1), innerproduct_I(P2), innerproduct_I(P3)
@@ -357,6 +363,7 @@ end
 """
 Approximate given function by linear combination of B-spline functions.
 This function returns its control points.
+* func: Vector{<:Real} -> ℝ-vector space
 """
 function fittingcontrolpoints(func, Ps::AbstractVector{<:AbstractBSplineSpace})
     # TODO: currently, this function only supports for 1-dim, 2-dim and 3-dim B-spline manifold.
