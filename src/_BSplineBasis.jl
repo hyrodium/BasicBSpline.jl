@@ -18,7 +18,7 @@ Right-sided limit version.
 \end{aligned}
 ```
 """
-function bsplinebasis₊₀(P::BSplineSpace, t::Real)::Array{Float64,1}
+function bsplinebasis₊₀(P::BSplineSpace, t::Real)::Vector{Float64}
     p = P.degree
     k = P.knots
 
@@ -49,7 +49,7 @@ Left-sided limit version.
 \end{aligned}
 ```
 """
-function bsplinebasis₋₀(P::BSplineSpace, t::Real)::Array{Float64,1}
+function bsplinebasis₋₀(P::BSplineSpace, t::Real)::Vector{Float64}
     p = P.degree
     k = P.knots
 
@@ -81,7 +81,7 @@ Modified version.
 \end{aligned}
 ```
 """
-function bsplinebasis(P::BSplineSpace, t::Real)::Array{Float64,1}
+function bsplinebasis(P::BSplineSpace, t::Real)::Vector{Float64}
     p = P.degree
     k = P.knots
 
@@ -156,7 +156,7 @@ Right-sided limit version.
 =p\left(\frac{1}{k_{i+p}-k_{i}}B_{(i,p-1,k)}(t)-\frac{1}{k_{i+p+1}-k_{i+1}}B_{(i+1,p-1,k)}(t)\right)
 ```
 """
-function bsplinebasis′₊₀(P::BSplineSpace, t)::Array{Float64,1}
+function bsplinebasis′₊₀(P::BSplineSpace, t)::Vector{Float64}
     p = P.degree
     k = P.knots
 
@@ -177,7 +177,7 @@ Left-sided limit version.
 =p\left(\frac{1}{k_{i+p}-k_{i}}B_{(i,p-1,k)}(t)-\frac{1}{k_{i+p+1}-k_{i+1}}B_{(i+1,p-1,k)}(t)\right)
 ```
 """
-function bsplinebasis′₋₀(P::BSplineSpace, t)::Array{Float64,1}
+function bsplinebasis′₋₀(P::BSplineSpace, t)::Vector{Float64}
     p = P.degree
     k = P.knots
 
@@ -200,7 +200,7 @@ Modified version.
 """
 bsplinebasis′
 
-function bsplinebasis′(P::BSplineSpace, t)::Array{Float64,1}
+function bsplinebasis′(P::BSplineSpace, t)::Vector{Float64}
     p = P.degree
     k = P.knots
 

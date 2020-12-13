@@ -5,14 +5,14 @@ B-spline manifold for lower polynomial degree
 TODO: make the field `bsplinespaces` to be conposite type, not abstract type, for performance
 """
 struct FastBSplineManifold <: AbstractBSplineManifold
-    bsplinespaces::Array{<:FastBSplineSpace,1}
+    bsplinespaces::Vector{<:FastBSplineSpace}
     controlpoints::Array{Float64}
     function FastBSplineManifold(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real})
         Ps = FastBSplineSpace.(Ps)
         if collect(size(a)[1:end-1]) ≠ dim.(Ps)
             throw(DimensionMismatch())
         else
-            P = convert(Array{FastBSplineSpace,1}, Ps)
+            P = convert(Vector{FastBSplineSpace}, Ps)
             a′ = convert(Array{Float64}, a)
             new(P, a′)
         end
@@ -22,7 +22,7 @@ end
 struct BSplineCurve{p1} <: AbstractBSplineManifold
     bsplinespace1::FastBSplineSpace{p1}
     controlpoints::Array{Float64,2}
-    function BSplineCurve(P1::AbstractBSplineSpace, a::AbstractArray{<:Real})
+    function BSplineCurve(P1::AbstractBSplineSpace, a::AbstractArray{<:Real,2})
         p1 = degree(P1)
         if size(a)[1:end-1] ≠ (dim(P1),)
             throw(DimensionMismatch())
@@ -31,6 +31,10 @@ struct BSplineCurve{p1} <: AbstractBSplineManifold
             new{p1}(P1, a′)
         end
     end
+end
+function BSplineCurve(P1,::AbstractBSplineSpace, a::AbstractArray{<:AbstractVector{<:Real},1})
+    a′ = _arrayofvector2array(a)
+    return BSplineCurve(P1, a′)
 end
 function BSplineCurve(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real})
     if collect(size(a)[1:end-1]) ≠ dim.(Ps)
@@ -50,7 +54,7 @@ struct BSplineSurface{p1,p2} <: AbstractBSplineManifold
     bsplinespace1::FastBSplineSpace{p1}
     bsplinespace2::FastBSplineSpace{p2}
     controlpoints::Array{Float64,3}
-    function BSplineSurface(P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, a::AbstractArray{<:Real})
+    function BSplineSurface(P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, a::AbstractArray{<:Real,3})
         p1, p2 = degree(P1), degree(P2)
         if size(a)[1:end-1] ≠ (dim(P1), dim(P2))
             throw(DimensionMismatch())
@@ -59,6 +63,10 @@ struct BSplineSurface{p1,p2} <: AbstractBSplineManifold
             new{p1,p2}(P1, P2, a′)
         end
     end
+end
+function BSplineSurface(P1,::AbstractBSplineSpace, P2,::AbstractBSplineSpace, a::AbstractArray{<:AbstractVector{<:Real},2})
+    a′ = _arrayofvector2array(a)
+    return BSplineSurface(P1, P2, a′)
 end
 function BSplineSurface(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real})
     if collect(size(a)[1:end-1]) ≠ dim.(Ps)
@@ -88,6 +96,10 @@ struct BSplineSolid{p1,p2,p3} <: AbstractBSplineManifold
             new{p1,p2,p3}(P1, P2, P3, a′)
         end
     end
+end
+function BSplineSolid(P1,::AbstractBSplineSpace, P2,::AbstractBSplineSpace, P3,::AbstractBSplineSpace, a::AbstractArray{<:AbstractVector{<:Real},3})
+    a′ = _arrayofvector2array(a)
+    return BSplineSolid(P1, P2, P3, a′)
 end
 function BSplineSolid(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real})
     if collect(size(a)[1:end-1]) ≠ dim.(Ps)
