@@ -9,7 +9,7 @@ export Knots, ♯, BSplineSpace, dim, ⊑, ⊒, ⋢, ⋣, ≃
 export bsplinebasis₊₀, bsplinebasis₋₀, bsplinebasis
 export bsplinebasis′₊₀, bsplinebasis′₋₀, bsplinebasis′
 export bsplinesupport, bsplineunity, changebasis
-export BSplineManifold, refinement, mapping, bsplinespaces, controlpoints
+export BSplineManifold, refinement, bsplinespaces, controlpoints
 export isproper, properdim
 export degree, knots
 export 𝔫

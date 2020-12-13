@@ -90,15 +90,6 @@ function (M::BSplineManifold)(t::AbstractVector{<:Real})
     return [sum(bsplinebasis(Ps, t) .* 𝒂[.., i]) for i in 1:d̂]
 end
 
-function mapping(M::AbstractBSplineManifold, t::AbstractVector{<:Real})
-    Base.depwarn("`mapping(M,t)` is deprecated in favor of `M(t)`.", :mapping)
-    return M(t)
-end
-
-function mapping(M::AbstractBSplineManifold)
-    return Base.Fix1(mapping, M)
-end
-
 @doc raw"""
 Calculate the dimension of B-spline manifold.
 """
