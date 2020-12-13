@@ -103,9 +103,12 @@ function BSplineSolid{q1,q2,q3}(Ps::AbstractVector{<:AbstractBSplineSpace}, a::A
     return BSplineSolid(Ps, a)
 end
 
-function _arrayofvector2array(a::AbstractArray{<:AbstractVector{<:Real}})
+function _arrayofvector2array(a::AbstractArray{<:AbstractVector{R}, d})::Array{R,d+1} where d where R<:Real
     d̂ = length(a[1])
-    a′ = reshape(transpose(hcat(reshape(a, prod(size(a)))...)), size(a)..., d̂)
+    s = size(a)
+    N = prod(s)
+    a_2dim = [a[i][j] for i in 1:N, j in 1:d̂]
+    a′ = reshape(a_2dim, s..., d̂)
     return a′
 end
 
