@@ -1,5 +1,7 @@
 # BasicBSpline.jl
 
+![](img/BasicBSplineLogo.png)
+
 ## Summary
 This package provides basic (mathematical) operations for [B-spline](https://en.wikipedia.org/wiki/B-spline).
 
