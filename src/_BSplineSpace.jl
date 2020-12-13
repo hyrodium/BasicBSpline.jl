@@ -13,7 +13,7 @@ struct BSplineSpace <: AbstractBSplineSpace
     knots::Knots
     function BSplineSpace(degree::Integer, knots::Knots)
         if degree < 0
-            error("degree of polynominal must be non-negative")
+            throw(DomainError(p, "degree of polynominal must be non-negative"))
         end
         new(degree, knots)
     end

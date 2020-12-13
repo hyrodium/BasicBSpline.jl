@@ -7,12 +7,12 @@ k=(k_1,\dots,k_l)
 ```
 """
 struct Knots
-    vector::Array{Float64,1}
+    vector::Vector{Float64}
     function Knots(vector::AbstractVector{<:Real})
         return new(sort(convert(Vector{Float64}, vector)))
     end
 end
-function Knots(vector::Array{Any,1})
+function Knots(vector::AbstractVector)
     if isempty(vector)
         return Knots(Float64[])
     else
@@ -32,7 +32,7 @@ function Base.:*(p₊::Integer, k::Knots)
     elseif p₊ > 0
         return sum(k for _ in 1:p₊)
     else
-        error("Polynominal degree p₊ must be non-negative.")
+        throw(DomainError(p₊, "additional degree of polynominal must be non-negative"))
     end
 end
 
@@ -47,6 +47,13 @@ Base.unique(k::Knots) = Knots(unique(k.vector))
 Base.iterate(k::Knots) = iterate(k.vector)
 Base.iterate(k::Knots, i::Integer) = iterate(k.vector, i)
 
+@doc raw"""
+Check a inclusive relation ship ``k\subset k'``.
+```math
+(1,2,3) \subseteq (1,2,3,4)
+(1,2,5) \nsubseteq (1,2,3,4)
+```
+"""
 function Base.issubset(k::Knots, k′::Knots)
     K′ = copy(k′.vector)
     for kᵢ in k.vector

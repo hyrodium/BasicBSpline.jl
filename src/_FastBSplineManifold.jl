@@ -5,16 +5,16 @@ B-spline manifold for lower polynomial degree
 TODO: make the field `bsplinespaces` to be conposite type, not abstract type, for performance
 """
 struct FastBSplineManifold <: AbstractBSplineManifold
-    bsplinespaces::Array{<:FastBSplineSpace,1}
+    bsplinespaces::Vector{<:FastBSplineSpace}
     controlpoints::Array{Float64}
     function FastBSplineManifold(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real})
         Ps = FastBSplineSpace.(Ps)
         if collect(size(a)[1:end-1]) ≠ dim.(Ps)
-            error("dimension does not match")
+            throw(DimensionMismatch())
         else
-            P = convert(Array{FastBSplineSpace,1}, Ps)
-            a = convert(Array{Float64}, a)
-            new(P, a)
+            P = convert(Vector{FastBSplineSpace}, Ps)
+            a′ = convert(Array{Float64}, a)
+            new(P, a′)
         end
     end
 end
@@ -22,25 +22,28 @@ end
 struct BSplineCurve{p1} <: AbstractBSplineManifold
     bsplinespace1::FastBSplineSpace{p1}
     controlpoints::Array{Float64,2}
-    function BSplineCurve(P1::AbstractBSplineSpace, a::AbstractArray{<:Real})
+    function BSplineCurve(P1::AbstractBSplineSpace, a::AbstractArray{<:Real,2})
         p1 = degree(P1)
         if size(a)[1:end-1] ≠ (dim(P1),)
-            error("dimension does not match")
+            throw(DimensionMismatch())
         else
-            a = convert(Array{Float64}, a)
-            new{p1}(P1, a)
+            a′ = convert(Array{Float64}, a)
+            new{p1}(P1, a′)
         end
     end
 end
+function BSplineCurve(P1,::AbstractBSplineSpace, a::AbstractArray{<:AbstractVector{<:Real},1})
+    a′ = _arrayofvector2array(a)
+    return BSplineCurve(P1, a′)
+end
 function BSplineCurve(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real})
-    # p1, k1 = degree(Ps[1]), knots(Ps[1])
     if collect(size(a)[1:end-1]) ≠ dim.(Ps)
-        error("dimension does not match")
-    # elseif p1 > MAX_DEGREE
-    #     return BSplineManifold(Ps, a)
+        throw(DimensionMismatch())
+    elseif length(Ps) ≠ 1
+        throw(DimensionMismatch())
     else
-        a = convert(Array{Float64}, a)
-        return BSplineCurve(Ps[1],a)
+        a′ = convert(Array{Float64}, a)
+        return BSplineCurve(Ps[1],a′)
     end
 end
 function BSplineCurve{q1}(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real}) where {q1}
@@ -51,26 +54,28 @@ struct BSplineSurface{p1,p2} <: AbstractBSplineManifold
     bsplinespace1::FastBSplineSpace{p1}
     bsplinespace2::FastBSplineSpace{p2}
     controlpoints::Array{Float64,3}
-    function BSplineSurface(P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, a::AbstractArray{<:Real})
+    function BSplineSurface(P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, a::AbstractArray{<:Real,3})
         p1, p2 = degree(P1), degree(P2)
         if size(a)[1:end-1] ≠ (dim(P1), dim(P2))
-            error("dimension does not match")
+            throw(DimensionMismatch())
         else
-            a = convert(Array{Float64}, a)
-            new{p1,p2}(P1, P2, a)
+            a′ = convert(Array{Float64}, a)
+            new{p1,p2}(P1, P2, a′)
         end
     end
 end
+function BSplineSurface(P1,::AbstractBSplineSpace, P2,::AbstractBSplineSpace, a::AbstractArray{<:AbstractVector{<:Real},2})
+    a′ = _arrayofvector2array(a)
+    return BSplineSurface(P1, P2, a′)
+end
 function BSplineSurface(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real})
-    # p1, k1 = degree(Ps[1]), knots(Ps[1])
-    # p2, k2 = degree(Ps[2]), knots(Ps[2])
     if collect(size(a)[1:end-1]) ≠ dim.(Ps)
-        error("dimension does not match")
-    # elseif p1 > MAX_DEGREE || p2 > MAX_DEGREE
-    #     return BSplineManifold(Ps, a)
+        throw(DimensionMismatch())
+    elseif length(Ps) ≠ 2
+        throw(DimensionMismatch())
     else
-        a = convert(Array{Float64}, a)
-        return BSplineSurface(Ps[1], Ps[2], a)
+        a′ = convert(Array{Float64}, a)
+        return BSplineSurface(Ps[1], Ps[2], a′)
     end
 end
 function BSplineSurface{q1,q2}(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real}) where {q1} where {q2}
@@ -85,61 +90,64 @@ struct BSplineSolid{p1,p2,p3} <: AbstractBSplineManifold
     function BSplineSolid(P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, P3::AbstractBSplineSpace, a::AbstractArray{<:Real})
         p1, p2, p3 = degree(P1), degree(P2), degree(P3)
         if size(a)[1:end-1] ≠ (dim(P1), dim(P2), dim(P3))
-            error("dimension does not match")
+            throw(DimensionMismatch())
         else
-            a = convert(Array{Float64}, a)
-            new{p1,p2,p3}(P1, P2, P3, a)
+            a′ = convert(Array{Float64}, a)
+            new{p1,p2,p3}(P1, P2, P3, a′)
         end
     end
 end
+function BSplineSolid(P1,::AbstractBSplineSpace, P2,::AbstractBSplineSpace, P3,::AbstractBSplineSpace, a::AbstractArray{<:AbstractVector{<:Real},3})
+    a′ = _arrayofvector2array(a)
+    return BSplineSolid(P1, P2, P3, a′)
+end
 function BSplineSolid(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real})
-    # p1, k1 = degree(Ps[1]), knots(Ps[1])
-    # p2, k2 = degree(Ps[2]), knots(Ps[2])
-    # p3, k3 = degree(Ps[3]), knots(Ps[3])
     if collect(size(a)[1:end-1]) ≠ dim.(Ps)
-        error("dimension does not match")
-    # elseif p1 > MAX_DEGREE || p2 > MAX_DEGREE || p3 > MAX_DEGREE
-    #     return BSplineManifold(Ps, a)
+        throw(DimensionMismatch())
+    elseif length(Ps) ≠ 3
+        throw(DimensionMismatch())
     else
-        a = convert(Array{Float64}, a)
-        BSplineSolid(Ps[1],Ps[2],Ps[3],a)
+        a′ = convert(Array{Float64}, a)
+        BSplineSolid(Ps[1],Ps[2],Ps[3],a′)
     end
 end
 function BSplineSolid{q1,q2,q3}(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real}) where {q1} where {q2} where {q3}
     return BSplineSolid(Ps, a)
 end
 
+function _arrayofvector2array(a::AbstractArray{<:AbstractVector{R}, d})::Array{R,d+1} where d where R<:Real
+    d̂ = length(a[1])
+    s = size(a)
+    N = prod(s)
+    a_2dim = [a[i][j] for i in 1:N, j in 1:d̂]
+    a′ = reshape(a_2dim, s..., d̂)
+    return a′
+end
+
 for fname in (:BSplineCurve, :BSplineSurface, :BSplineSolid, :FastBSplineManifold, :BSplineManifold)
-    @eval function $fname(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{Array{T,1}} where {T<:Real})
-        d̂ = length(a[1])
-        A = reshape(transpose(hcat(reshape(a, prod(size(a)))...)), size(a)..., d̂)
-        return $fname(Ps, A)
+    @eval function $fname(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:AbstractVector{<:Real}})
+        a′ = _arrayofvector2array(a)
+        return $fname(Ps, a′)
     end
 end
 
 function BSplineManifold(M::BSplineCurve{p1}) where {p1}
-    k1 = M.knots1
-    P1 = BSplineSpace(p1, k1)
+    P1 = M.bsplinespace1
     a = M.controlpoints
     return BSplineManifold([P1], a)
 end
 
 function BSplineManifold(M::BSplineSurface{p1,p2}) where {p1} where {p2}
-    k1 = M.knots1
-    P1 = BSplineSpace(p1, k1)
-    k2 = M.knots2
-    P2 = BSplineSpace(p2, k2)
+    k1 = M.bsplinespace1
+    P2 = M.bsplinespace2
     a = M.controlpoints
     return BSplineManifold([P1, P2], a)
 end
 
 function BSplineManifold(M::BSplineSolid{p1,p2,p3}) where {p1} where {p2} where {p3}
-    k1 = M.knots1
-    P1 = BSplineSpace(p1, k1)
-    k2 = M.knots2
-    P2 = BSplineSpace(p2, k2)
-    k3 = M.knots3
-    P3 = BSplineSpace(p3, k3)
+    P1 = M.bsplinespace1
+    P2 = M.bsplinespace2
+    P3 = M.bsplinespace3
     a = M.controlpoints
     return BSplineManifold([P1, P2, P3], a)
 end
@@ -156,11 +164,10 @@ function (M::FastBSplineManifold)(t::AbstractVector{<:Real})
     return BSplineManifold(M)(t)
 end
 
-function (M::BSplineCurve{p1})(t::AbstractVector{<:Real}) where {p1}
+function (M::BSplineCurve{p1})(t1::Real) where {p1}
     P1, = bsplinespaces(M)
     a = controlpoints(M)
     n1 = dim(P1)
-    t1, = t
     k1 = P1.knots
     j1 = _knotindex(P1, t1)
     b1 = _bsplinebasis(P1,t1,j1)
@@ -179,11 +186,10 @@ function (M::BSplineCurve{p1})(t::AbstractVector{<:Real}) where {p1}
     return S1
 end
 
-function (M::BSplineSurface{p1,p2})(t::AbstractVector{<:Real}) where {p1} where {p2}
+function (M::BSplineSurface{p1,p2})(t1::Real,t2::Real) where {p1} where {p2}
     P1, P2 = bsplinespaces(M)
     a = controlpoints(M)
     n1, n2 = dim(P1), dim(P2)
-    t1, t2 = t
     k1, k2 = P1.knots, P2.knots
     j1, j2 = _knotindex(P1, t1), _knotindex(P2, t2)
     b1 = _bsplinebasis(P1,t1,j1)
@@ -212,11 +218,10 @@ function (M::BSplineSurface{p1,p2})(t::AbstractVector{<:Real}) where {p1} where 
     return S1
 end
 
-function (M::BSplineSolid{p1,p2,p3})(t::AbstractVector{<:Real}) where {p1} where {p2} where {p3}
+function (M::BSplineSolid{p1,p2,p3})(t1::Real,t2::Real,t3::Real) where {p1} where {p2} where {p3}
     P1, P2, P3 = M.bsplinespace1, M.bsplinespace2, M.bsplinespace3
     a = controlpoints(M)
     n1, n2, n3 = dim(P1), dim(P2), dim(P3)
-    t1, t2, t3 = t
     k1, k2, k3 = P1.knots, P2.knots, P3.knots
     j1, j2, j3 = _knotindex(P1, t1), _knotindex(P2, t2), _knotindex(P3, t3)
     b1 = _bsplinebasis(P1,t1,j1)
@@ -261,6 +266,22 @@ function (M::BSplineSolid{p1,p2,p3})(t::AbstractVector{<:Real}) where {p1} where
     end
 
     return S1
+end
+
+# function (M::Union{BSplineCurve,BSplineSurface,BSplineSolid})(t::AbstractVector{<:Real})
+#     return M(t...)
+# end
+
+function (M::BSplineCurve)(t::AbstractVector{<:Real})
+    return M(t...)
+end
+
+function (M::BSplineSurface)(t::AbstractVector{<:Real})
+    return M(t...)
+end
+
+function (M::BSplineSolid)(t::AbstractVector{<:Real})
+    return M(t...)
 end
 
 dim(M::FastBSplineManifold) = length(M.bsplinespaces)

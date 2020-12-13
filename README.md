@@ -18,9 +18,9 @@ This package provides basic (mathematical) operations for [B-spline](https://en.
     * >Currently this package's support is best for B-splines and also supports irregular grids.
     * But seems like no method for B-spline manifold.
 * [ApproXD.jl](https://github.com/floswald/ApproXD.jl)
-    * Wrapper for the dierckx Fortran library.
     * Its functions are similar to Interpolations.jl.
 * [Dierckx.jl](https://github.com/kbarbary/Dierckx.jl)
+    * Wrapper for the dierckx Fortran library.
     * Only 1-d or 2-d B-spline manifold are supported.
     * 5 or less degree of polynomial are supported.
 * **[BasicBSpline.jl](https://github.com/hyrodium/BasicBSpline.jl) (this package)**
@@ -104,9 +104,9 @@ k2 = Knots(-10:10)+p2*Knots(-10,10)
 P1 = FastBSplineSpace(p1, k1)
 P2 = FastBSplineSpace(p2, k2)
 
-f(u) = [2u[1]+sin(u[1])+cos(u[2])+u[2]/2, 3u[2]+sin(u[2])+sin(u[1])/2+u[1]^2/6]/5
+f(u1,u2) = [2u1 + sin(u1) + cos(u2) + u2 / 2, 3u2 + sin(u2) + sin(u1) / 2 + u1^2 / 6] / 5
 
-a = fittingcontrolpoints(f, [P1,P2])
+a = fittingcontrolpoints(f, P1, P2)
 M = BSplineManifold([P1,P2],a)
 save_png("fitting.png", M, unitlength=50, up=10, down=-10, left=-10, right=10)
 ```
@@ -136,9 +136,9 @@ p = 3
 k = Knots(range(-2π,2π,length=8))+p*Knots(-2π,2π)
 P = FastBSplineSpace(p, k)
 
-f(u) = [u[1],sin(u[1])]
+f(u) = [u,sin(u)]
 
-a = fittingcontrolpoints(f, [P])
+a = fittingcontrolpoints(f, P)
 M = BSplineManifold([P],a)
 save_svg("sine_curve.svg", M, unitlength=50, up=2, down=-2, left=-8, right=8)
 ```

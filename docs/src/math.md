@@ -438,6 +438,18 @@ save_png("2dim.png", M) # save image
 ```
 ![](img/2dim.png)
 
+```julia
+points = [M([u,v]) for u in range(3.0,6.0,length=50), v in range(3.0,6.0,length=50)]
+X = [point[1] for point in points]
+Y = [point[2] for point in points]
+scene = Scene(resolution=(1000,1000))
+Makie.surface!(X,Y)
+Makie.xlims!(-5,5)
+Makie.ylims!(-5,5)
+save("2dim_makie.png", scene)
+```
+
+![](img/2dim_makie.png)
 
 ## Affine commutativity
 !!! info "Thm.  Affine commutativity"

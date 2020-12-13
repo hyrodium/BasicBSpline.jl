@@ -23,16 +23,16 @@ end
 B-spline manifold for general polynomial degree
 """
 struct BSplineManifold <: AbstractBSplineManifold
-    bsplinespaces::Array{BSplineSpace,1}
+    bsplinespaces::Vector{BSplineSpace}
     controlpoints::Array{Float64}
     function BSplineManifold(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real})
         Ps = BSplineSpace.(Ps)
         if collect(size(a)[1:end-1]) ≠ dim.(Ps)
-            error("dimension does not match")
+            throw(DimensionMismatch())
         else
-            P = convert(Array{BSplineSpace,1}, Ps)
-            a = convert(Array{Float64}, a)
-            new(P, a)
+            P = convert(Vector{BSplineSpace}, Ps)
+            a′ = convert(Array{Float64}, a)
+            new(P, a′)
         end
     end
 end

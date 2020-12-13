@@ -9,7 +9,7 @@ B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p',k')}
 Assumption:
 * ``P ⊆ P′``
 """
-function _changebasis_R(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)::Array{Float64,2}
+function _changebasis_R(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)::Matrix{Float64}
     p = degree(P)
     k = knots(P)
     p′ = degree(P′)
@@ -140,7 +140,7 @@ B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p',k')}
 Assumption:
 * ``P ⊑ P′``
 """
-function _changebasis_I(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)::Array{Float64,2}
+function _changebasis_I(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)::Matrix{Float64}
     I = bsplineunity(P)
     p = degree(P)
     k = knots(P)
@@ -170,7 +170,7 @@ function changebasis(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
     elseif P ⊑ P′
         return _changebasis_I(P, P′)
     else
-        error("𝒫[p,k] ⊄ 𝒫[p′,k′] and 𝒫[p,k] ⋢ 𝒫[p′,k′]")
+        throw(DomainError((P, P′),"𝒫[p,k] ⊆ 𝒫[p′,k′] or 𝒫[p,k] ⊑ 𝒫[p′,k′] must hold."))
     end
 end
 
@@ -214,12 +214,12 @@ function refinement(M::AbstractBSplineManifold; p₊::Union{Nothing,AbstractVect
     if isnothing(p₊)
         p₊ = zeros(Int, d)
     elseif length(Ps) ≠ length(p₊)
-        error("dimension does not match")
+        throw(DimensionMismatch())
     end
     if isnothing(k₊)
         k₊ = zeros(Knots, d)
     elseif length(Ps) ≠ length(k₊)
-        error("dimension does not match")
+        throw(DimensionMismatch())
     end
 
     Ps′ = [(P = Ps[i];

@@ -104,7 +104,7 @@ end
 function _f_b_int_R(func, i1, P1::AbstractBSplineSpace, nip1, nodes1, weights1)
     k1 = knots(P1)
     p1 = degree(P1)
-    F(t1) = bsplinebasis(i1, P1, t1) * func([t1])
+    F(t1) = bsplinebasis(i1, P1, t1) * func(t1)
 
     f1,l1 = i1, i1+p1
 
@@ -119,7 +119,7 @@ function _f_b_int_I(func, i1, P1::AbstractBSplineSpace, nip1, nodes1, weights1)
     k1 = knots(P1)
     m1 = length(k1)
     p1 = degree(P1)
-    F(t1) = bsplinebasis(i1, P1, t1) * func([t1])
+    F(t1) = bsplinebasis(i1, P1, t1) * func(t1)
 
     f1,l1 = max(i1, p1+1), min(i1+p1, m1-p1-1)
 
@@ -133,7 +133,7 @@ end
 function _f_b_int_R(func, i1, i2, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, nip1, nip2, nodes1, nodes2, weights1, weights2)
     k1, k2 = knots(P1), knots(P2)
     p1, p2 = degree(P1), degree(P2)
-    F(t1, t2) = bsplinebasis(i1, P1, t1) * bsplinebasis(i2, P2, t2) * func([t1, t2])
+    F(t1, t2) = bsplinebasis(i1, P1, t1) * bsplinebasis(i2, P2, t2) * func(t1, t2)
 
     f1, l1 = i1, i1+p1
     f2, l2 = i2, i2+p2
@@ -157,7 +157,7 @@ function _f_b_int_I(func, i1, i2, P1::AbstractBSplineSpace, P2::AbstractBSplineS
     k1, k2 = knots(P1), knots(P2)
     m1, m2 = length(k1), length(k2)
     p1, p2 = degree(P1), degree(P2)
-    F(t1, t2) = bsplinebasis(i1, P1, t1) * bsplinebasis(i2, P2, t2) * func([t1, t2])
+    F(t1, t2) = bsplinebasis(i1, P1, t1) * bsplinebasis(i2, P2, t2) * func(t1, t2)
 
     f1, l1 = max(i1, p1+1), min(i1+p1, m1-p1-1)
     f2, l2 = max(i2, p2+1), min(i2+p2, m2-p2-1)
@@ -180,7 +180,7 @@ end
 function _f_b_int_R(func, i1, i2, i3, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, P3::AbstractBSplineSpace, nip1, nip2, nip3, nodes1, nodes2, nodes3, weights1, weights2, weights3)
     k1, k2, k3 = knots(P1), knots(P2), knots(P3)
     p1, p2, p3 = degree(P1), degree(P2), degree(P3)
-    F(t1, t2, t3) = bsplinebasis(i1, P1, t1) * bsplinebasis(i2, P2, t2) * bsplinebasis(i3, P3, t3) * func([t1, t2, t3])
+    F(t1, t2, t3) = bsplinebasis(i1, P1, t1) * bsplinebasis(i2, P2, t2) * bsplinebasis(i3, P3, t3) * func(t1, t2, t3)
 
     f1, l1 = i1, i1+p1
     f2, l2 = i2, i2+p2
@@ -221,7 +221,7 @@ function _f_b_int_I(func, i1, i2, i3, P1::AbstractBSplineSpace, P2::AbstractBSpl
     k1, k2, k3 = knots(P1), knots(P2), knots(P3)
     m1, m2, m3 = length(k1), length(k2), length(k3)
     p1, p2, p3 = degree(P1), degree(P2), degree(P3)
-    F(t1, t2, t3) = bsplinebasis(i1, P1, t1) * bsplinebasis(i2, P2, t2) * bsplinebasis(i3, P3, t3) * func([t1, t2, t3])
+    F(t1, t2, t3) = bsplinebasis(i1, P1, t1) * bsplinebasis(i2, P2, t2) * bsplinebasis(i3, P3, t3) * func(t1, t2, t3)
 
     f1, l1 = max(i1, p1+1), min(i1+p1, m1-p1-1)
     f2, l2 = max(i2, p2+1), min(i2+p2, m2-p2-1)
@@ -325,15 +325,18 @@ function innerproduct_I(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace
 end
 
 """
-* func: Array{Real,1} -> ℝ-linear space
+* func: Real -> ℝ-vector space
 """
-function fittingcontrolpoints_1dim(func, P1::AbstractBSplineSpace)
+function fittingcontrolpoints(func, P1::AbstractBSplineSpace)
     b = innerproduct_I(func, P1)
     A = innerproduct_I(P1)
     return inv(A) * b
 end
 
-function fittingcontrolpoints_2dim(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace)
+"""
+* func: (Real,Real) -> ℝ-vector space
+"""
+function fittingcontrolpoints(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace)
     n1, n2 = dim(P1), dim(P2)
     A1, A2 = innerproduct_I(P1), innerproduct_I(P2)
     A = [A1[i1, j1] * A2[i2, j2] for i1 in 1:n1, i2 in 1:n2, j1 in 1:n1, j2 in 1:n2]
@@ -343,7 +346,10 @@ function fittingcontrolpoints_2dim(func, P1::AbstractBSplineSpace, P2::AbstractB
     return reshape(inv(_A) * _b, n1, n2)
 end
 
-function fittingcontrolpoints_3dim(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, P3::AbstractBSplineSpace)
+"""
+* func: (Real,Real,Real) -> ℝ-vector space
+"""
+function fittingcontrolpoints(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, P3::AbstractBSplineSpace)
     n1, n2, n3 = dim(P1), dim(P2), dim(P3)
     A1, A2, A3 = innerproduct_I(P1), innerproduct_I(P2), innerproduct_I(P3)
     A = [A1[i1, j1] * A2[i2, j2] * A3[i3, j3] for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3, j1 in 1:n1, j2 in 1:n2, j3 in 1:n3]
@@ -357,17 +363,10 @@ end
 """
 Approximate given function by linear combination of B-spline functions.
 This function returns its control points.
+* func: Vector{<:Real} -> ℝ-vector space
 """
-function fittingcontrolpoints(func, Ps::Array{<:AbstractBSplineSpace,1})
-    # TODO: currently, this function only supports for 1-dim and 2-dim B-spline manifold.
-    d = length(Ps)
-    if d == 1
-        return fittingcontrolpoints_1dim(func, Ps[1])
-    elseif d == 2
-        return fittingcontrolpoints_2dim(func, Ps[1], Ps[2])
-    elseif d == 3
-        return fittingcontrolpoints_3dim(func, Ps[1], Ps[2], Ps[3])
-    else
-        error("fittingcontrolpoints supports only 1 to 3 dimensions.")
-    end
+function fittingcontrolpoints(func, Ps::AbstractVector{<:AbstractBSplineSpace})
+    # TODO: currently, this function only supports for 1-dim, 2-dim and 3-dim B-spline manifold.
+    _func(t...) = func([t...])
+    return fittingcontrolpoints(_func, Ps...)
 end
