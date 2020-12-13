@@ -120,28 +120,22 @@ for fname in (:BSplineCurve, :BSplineSurface, :BSplineSolid, :FastBSplineManifol
 end
 
 function BSplineManifold(M::BSplineCurve{p1}) where {p1}
-    k1 = M.knots1
-    P1 = BSplineSpace(p1, k1)
+    P1 = M.bsplinespace1
     a = M.controlpoints
     return BSplineManifold([P1], a)
 end
 
 function BSplineManifold(M::BSplineSurface{p1,p2}) where {p1} where {p2}
-    k1 = M.knots1
-    P1 = BSplineSpace(p1, k1)
-    k2 = M.knots2
-    P2 = BSplineSpace(p2, k2)
+    k1 = M.bsplinespace1
+    P2 = M.bsplinespace2
     a = M.controlpoints
     return BSplineManifold([P1, P2], a)
 end
 
 function BSplineManifold(M::BSplineSolid{p1,p2,p3}) where {p1} where {p2} where {p3}
-    k1 = M.knots1
-    P1 = BSplineSpace(p1, k1)
-    k2 = M.knots2
-    P2 = BSplineSpace(p2, k2)
-    k3 = M.knots3
-    P3 = BSplineSpace(p3, k3)
+    P1 = M.bsplinespace1
+    P2 = M.bsplinespace2
+    P3 = M.bsplinespace3
     a = M.controlpoints
     return BSplineManifold([P1, P2, P3], a)
 end
