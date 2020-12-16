@@ -32,13 +32,13 @@ This package provides basic (mathematical) operations for [B-spline](https://en.
 Install this package
 
 ```julia
-(pkg)> add https://github.com/hyrodium/BasicBSpline.jl
+pkg> add BasicBSpline
 ```
 
 To export graphics, use [ExportNURBS.jl](https://github.com/hyrodium/ExportNURBS.jl).
 
 ```julia
-(pkg)> add https://github.com/hyrodium/ExportNURBS.jl
+pkg> add https://github.com/hyrodium/ExportNURBS.jl
 ```
 
 ## Example
