@@ -4,6 +4,14 @@ using BasicBSpline
 using ExportNURBS
 Random.seed!(2)
 
+## 1-dim B-spline manifold
+p = 2 # degree of polynomial
+k = Knots(1:12) # knot vector
+P = FastBSplineSpace(p, k) # B-spline space
+a = [[i-5, 3*sin(i^2)] for i in 1:dim(P)] # control points
+M = BSplineCurve([P], a) # Define B-spline manifold
+save_png("docs/src/img/1dim.png", M, unitlength = 50)
+
 ## 2-dim B-spline manifold
 p = 2 # degree of polynomial
 k = Knots(1:8) # knot vector
@@ -73,12 +81,7 @@ P = FastBSplineSpace(p,k)
 a = [[i+rand(),j+rand(),2*rand()] for i in 1:dim(P), j in 1:dim(P)]
 M = BSplineSurface([P,P],a)
 points = [M([u,v]) for u in range(3.0,6.999,length=50), v in range(3.0,6.999,length=50)]
-
 X = [point[1] for point in points]
 Y = [point[2] for point in points]
 Z = [point[3] for point in points]
-
 Makie.surface(X,Y,Z)
-
-
-Makie.surface(X,Y)
