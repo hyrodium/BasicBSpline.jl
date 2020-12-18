@@ -1,7 +1,7 @@
 name = "BasicBSpline"
 uuid = "4c5d9882-2acf-4ea4-9e48-968fd4518195"
 authors = ["hyrodium <hyrodium@gmail.com>"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 EllipsisNotation = "da5c29d0-fa7d-589e-88eb-ea29b0a81949"
