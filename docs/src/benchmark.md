@@ -11,7 +11,7 @@ julia> subtypes(AbstractBSplineSpace)
 * `BSplineSpace`
     * General degree of polynomial is supported.
 * `FastBSplineSpace`
-    * 3 or less degree of polynomial is supported.
+    * 5 or less degree of polynomial is supported.
     * But much faster than `BSplineSpace`
 
 ### B-spline manifold
@@ -29,19 +29,19 @@ julia> subtypes(AbstractBSplineManifold)
     * General degree of polynomial is supported.
     * General dimension of polynomial is supported.
 * `FastBSplineManifold`
-    * 3 or less degree of polynomial is supported.
+    * 5 or less degree of polynomial is supported.
     * General dimensional manifold is supported.
     * Much faster than `BSplineManifold`
 * `BSplineCurve`
-    * 3 or less degree of polynomial is supported.
+    * 5 or less degree of polynomial is supported.
     * Only one dimensional manifold (curve) is supported.
     * Much faster than `FastBSplineManifold`
 * `BSplineSurface`
-    * 3 or less degree of polynomial is supported.
+    * 5 or less degree of polynomial is supported.
     * Only two dimensional manifold (surface) is supported.
     * Much faster than `FastBSplineManifold`
 * `BSplineCurve`
-    * 3 or less degree of polynomial is supported.
+    * 5 or less degree of polynomial is supported.
     * Only three dimensional manifold (solid) is supported.
     * Much faster than `FastBSplineManifold`
 

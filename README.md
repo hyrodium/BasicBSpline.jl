@@ -28,7 +28,7 @@ This package provides basic (mathematical) operations for [B-spline](https://en.
 * **[BasicBSpline.jl](https://github.com/hyrodium/BasicBSpline.jl) (this package)**
     * Any degree of polynomial are supported.
     * Any dimension are supported.
-    * Fast implementation for lower degree (≤ 3) and dimension (≤ 3).
+    * Fast implementation for lower degree (≤ 5) and dimension (≤ 3).
     * Refinement algorithm for B-spline manifold.
     * Fitting algorithm by least squares.
 
