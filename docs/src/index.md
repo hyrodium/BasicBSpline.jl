@@ -1,5 +1,9 @@
 # BasicBSpline.jl
 
+| **Documentation** | **Build Status** | **DOI** |
+|:---:|:---:|:---:|
+| [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://hyrodium.github.io/BasicBSpline.jl/stable) [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://hyrodium.github.io/BasicBSpline.jl/dev) | [![Build Status](https://travis-ci.org/hyrodium/BasicBSpline.jl.svg?branch=master)](https://travis-ci.com/hyrodium/BasicBSpline.jl) | [![DOI](https://zenodo.org/badge/258791290.svg)](https://zenodo.org/badge/latestdoi/258791290) |
+
 ![](img/BasicBSplineLogo.png)
 
 ## Summary
@@ -78,7 +82,7 @@ P = BSplineSpace(p,k) # B-spline space
 rand_a = [rand(2) for i in 1:dim(P), j in 1:dim(P)]
 a = [[2*i-6.5,2*j-6.5] for i in 1:dim(P), j in 1:dim(P)] + rand_a # random generated control points
 M = BSplineManifold([P,P],a) # Define B-spline manifold
-save_png("docs/src/img/2dim.png", M) # save image
+save_png("2dim.png", M) # save image
 ```
 ![](img/2dim.png)
 
@@ -86,7 +90,7 @@ save_png("docs/src/img/2dim.png", M) # save image
 ```julia
 k₊=[Knots(3.3,4.2),Knots(3.8,3.2,5.3)] # additional knots
 M′ = refinement(M,k₊=k₊) # refinement of B-spline manifold
-save_png("docs/src/img/2dim_refinement.png", M′) # save image
+save_png("2dim_refinement.png", M′) # save image
 ```
 ![](img/2dim_refinement.png)
 
@@ -102,11 +106,11 @@ k2 = Knots(-10:10)+p2*Knots(-10,10)
 P1 = FastBSplineSpace(p1, k1)
 P2 = FastBSplineSpace(p2, k2)
 
-f(u1, u2) = [2u1+sin(u1)+cos(u2)+u2/2, 3u2+sin(u2)+sin(u1)/2+u1^2/6]/5
+f(u1, u2) = [2u1 + sin(u1) + cos(u2) + u2 / 2, 3u2 + sin(u2) + sin(u1) / 2 + u1^2 / 6] / 5
 
 a = fittingcontrolpoints(f, P1, P2)
 M = BSplineManifold([P1,P2],a)
-save_png("docs/src/img/fitting.png", M, unitlength=50, up=10, down=-10, left=-10, right=10)
+save_png("fitting.png", M, unitlength=50, up=10, down=-10, left=-10, right=10)
 ```
 ![](img/fitting_desmos.png)
 ![](img/fitting.png)
@@ -120,11 +124,11 @@ k2 = Knots(-10:5:10)+p2*Knots(-10,10)
 P1 = FastBSplineSpace(p1, k1)
 P2 = FastBSplineSpace(p2, k2)
 
-f(u1,u2) = [2u1 + sin(u1) + cos(u2) + u2 / 2, 3u2 + sin(u2) + sin(u1) / 2 + u1^2 / 6] / 5
+f(u1, u2) = [2u1 + sin(u1) + cos(u2) + u2 / 2, 3u2 + sin(u2) + sin(u1) / 2 + u1^2 / 6] / 5
 
 a = fittingcontrolpoints(f, P1, P2)
 M = BSplineManifold([P1,P2],a)
-save_png("docs/src/img/fitting_coarse.png", M, unitlength=50, up=10, down=-10, left=-10, right=10)
+save_png("fitting_coarse.png", M, unitlength=50, up=10, down=-10, left=-10, right=10)
 ```
 ![](img/fitting_coarse.png)
 
@@ -138,8 +142,21 @@ f(u) = [u,sin(u)]
 
 a = fittingcontrolpoints(f, P)
 M = BSplineManifold([P],a)
-save_svg("docs/src/img/sine_curve.svg", M, unitlength=50, up=2, down=-2, left=-8, right=8)
+save_svg("sine_curve.svg", M, unitlength=50, up=2, down=-2, left=-8, right=8)
 ```
 ![](img/sine_curve.svg)
 
-This feature is useful when you use vector graphics editor.
+This is useful when you edit graphs (or curves) with your favorite vector graphics editor.
+
+## References
+If you use BasicBSpline.jl in your work, please consider citing it by
+
+```bibtex
+@misc{Horikawa:2020:BasicBSpline,
+  title={BasicBSpline.jl: Basic operations for B-spline functions and related things with julia},
+  author={Yuto Horikawa},
+  year={2020},
+  howpublished={\url{https://hyrodium.github.io/BasicBSpline.jl/stable/}},
+  doi={10.5281/zenodo.4356869}
+}
+```

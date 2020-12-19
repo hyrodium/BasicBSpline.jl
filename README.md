@@ -1,4 +1,4 @@
-# BasicBSpline
+# BasicBSpline.jl
 
 | **Documentation** | **Build Status** | **DOI** |
 |:---:|:---:|:---:|
@@ -69,7 +69,7 @@ plot(
 
 ![](docs/src/img/cover.png)
 
-To learn B-spline functions, try [an interactive graph with desmos graphing calculator](https://www.desmos.com/calculator/ql6jqgdabs)!
+Try [interactive graph with Desmos graphing calculator](https://www.desmos.com/calculator/ql6jqgdabs)!
 
 ### B-spline manifold
 ```julia
@@ -106,7 +106,7 @@ k2 = Knots(-10:10)+p2*Knots(-10,10)
 P1 = FastBSplineSpace(p1, k1)
 P2 = FastBSplineSpace(p2, k2)
 
-f(u1,u2) = [2u1 + sin(u1) + cos(u2) + u2 / 2, 3u2 + sin(u2) + sin(u1) / 2 + u1^2 / 6] / 5
+f(u1, u2) = [2u1 + sin(u1) + cos(u2) + u2 / 2, 3u2 + sin(u2) + sin(u1) / 2 + u1^2 / 6] / 5
 
 a = fittingcontrolpoints(f, P1, P2)
 M = BSplineManifold([P1,P2],a)
@@ -124,7 +124,7 @@ k2 = Knots(-10:5:10)+p2*Knots(-10,10)
 P1 = FastBSplineSpace(p1, k1)
 P2 = FastBSplineSpace(p2, k2)
 
-f(u1, u2) = [2u1+sin(u1)+cos(u2)+u2/2, 3u2+sin(u2)+sin(u1)/2+u1^2/6]/5
+f(u1, u2) = [2u1 + sin(u1) + cos(u2) + u2 / 2, 3u2 + sin(u2) + sin(u1) / 2 + u1^2 / 6] / 5
 
 a = fittingcontrolpoints(f, P1, P2)
 M = BSplineManifold([P1,P2],a)
@@ -151,7 +151,7 @@ This is useful when you edit graphs (or curves) with your favorite vector graphi
 ## References
 If you use BasicBSpline.jl in your work, please consider citing it by
 
-```
+```bibtex
 @misc{Horikawa:2020:BasicBSpline,
   title={BasicBSpline.jl: Basic operations for B-spline functions and related things with julia},
   author={Yuto Horikawa},
