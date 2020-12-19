@@ -1,8 +1,8 @@
 # BasicBSpline
 
-| **Documentation** | **Build Status** |
-|:---:|:---:|
-| [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://hyrodium.github.io/BasicBSpline.jl/stable) [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://hyrodium.github.io/BasicBSpline.jl/dev) | [![Build Status](https://travis-ci.org/hyrodium/BasicBSpline.jl.svg?branch=master)](https://travis-ci.com/hyrodium/BasicBSpline.jl) |
+| **Documentation** | **Build Status** | **DOI** |
+|:---:|:---:|:---:|
+| [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://hyrodium.github.io/BasicBSpline.jl/stable) [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://hyrodium.github.io/BasicBSpline.jl/dev) | [![Build Status](https://travis-ci.org/hyrodium/BasicBSpline.jl.svg?branch=master)](https://travis-ci.com/hyrodium/BasicBSpline.jl) | [![DOI](https://zenodo.org/badge/258791290.svg)](https://zenodo.org/badge/latestdoi/258791290) |
 
 ![](docs/src/img/BasicBSplineLogo.png)
 
@@ -147,3 +147,16 @@ save_svg("sine_curve.svg", M, unitlength=50, up=2, down=-2, left=-8, right=8)
 ![](docs/src/img/sine_curve.svg)
 
 This is useful when you edit graphs (or curves) with your favorite vector graphics editor.
+
+## References
+If you use BasicBSpline.jl in your work, please consider citing it by
+
+```
+@misc{Horikawa:2020:BasicBSpline,
+  title={BasicBSpline.jl: Basic operations for B-spline functions and related things with julia},
+  author={Yuto Horikawa},
+  year={2020},
+  howpublished={\url{https://hyrodium.github.io/BasicBSpline.jl/stable/}},
+  doi={10.5281/zenodo.4356869}
+}
+```
