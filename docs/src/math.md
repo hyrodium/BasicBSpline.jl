@@ -430,7 +430,7 @@ k = Knots(1:12) # knot vector
 P = FastBSplineSpace(p, k) # B-spline space
 a = [[i-5, 3*sin(i^2)] for i in 1:dim(P)] # control points
 M = BSplineCurve([P], a) # Define B-spline manifold
-save_png("docs/src/img/1dim.png", M, unitlength = 50)
+save_png("1dim.png", M, unitlength = 50)
 ```
 ![](img/1dim.png)
 
