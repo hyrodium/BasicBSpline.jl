@@ -358,6 +358,25 @@ using Random
         @test norm(a_fit - a_ref) < ε
     end
 
+    @testset "array <-> array of vector" begin
+        Random.seed!(42)
+
+        A = rand(3,4)
+        A′ = BasicBSpline.array2arrayofvector(A)
+        A′′ = BasicBSpline.arrayofvector2array(A′)
+        @test A == A′′
+
+        B = rand(3,4,5)
+        B′ = BasicBSpline.array2arrayofvector(B)
+        B′′ = BasicBSpline.arrayofvector2array(B′)
+        @test B == B′′
+
+        C = rand(3,4,5,6)
+        C′ = BasicBSpline.array2arrayofvector(C)
+        C′′ = BasicBSpline.arrayofvector2array(C′)
+        @test C == C′′
+    end
+
     @testset "Fitting-surface_R" begin
         Random.seed!(42)
 
@@ -383,7 +402,7 @@ using Random
         a_ref = M′.controlpoints
 
         a_tmp = fittingcontrolpoints(M, [P1′, P2′])
-        a_fit = BasicBSpline._arrayofvector2array(a_tmp)
+        a_fit = BasicBSpline.arrayofvector2array(a_tmp)
 
         @test norm(a_fit - a_ref) < ε
     end
@@ -413,7 +432,7 @@ using Random
         a_ref = M′.controlpoints
 
         a_tmp = fittingcontrolpoints(M, [P1′, P2′])
-        a_fit = BasicBSpline._arrayofvector2array(a_tmp)
+        a_fit = BasicBSpline.arrayofvector2array(a_tmp)
 
         @test norm(a_fit - a_ref) < ε
     end
@@ -450,7 +469,7 @@ using Random
         a_ref = M′.controlpoints
 
         a_tmp = fittingcontrolpoints(M, [P1′, P2′, P3′])
-        a_fit = BasicBSpline._arrayofvector2array(a_tmp)
+        a_fit = BasicBSpline.arrayofvector2array(a_tmp)
 
         @test norm(a_fit - a_ref) < ε
     end
@@ -487,7 +506,7 @@ using Random
         a_ref = M′.controlpoints
 
         a_tmp = fittingcontrolpoints(M, [P1′, P2′, P3′])
-        a_fit = BasicBSpline._arrayofvector2array(a_tmp)
+        a_fit = BasicBSpline.arrayofvector2array(a_tmp)
 
         @test norm(a_fit - a_ref) < 1.0e-6
     end

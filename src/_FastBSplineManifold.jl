@@ -33,7 +33,7 @@ struct BSplineCurve{p1} <: AbstractBSplineManifold
     end
 end
 function BSplineCurve(P1,::AbstractBSplineSpace, a::AbstractArray{<:AbstractVector{<:Real},1})
-    a′ = _arrayofvector2array(a)
+    a′ = arrayofvector2array(a)
     return BSplineCurve(P1, a′)
 end
 function BSplineCurve(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real})
@@ -65,7 +65,7 @@ struct BSplineSurface{p1,p2} <: AbstractBSplineManifold
     end
 end
 function BSplineSurface(P1,::AbstractBSplineSpace, P2,::AbstractBSplineSpace, a::AbstractArray{<:AbstractVector{<:Real},2})
-    a′ = _arrayofvector2array(a)
+    a′ = arrayofvector2array(a)
     return BSplineSurface(P1, P2, a′)
 end
 function BSplineSurface(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real})
@@ -98,7 +98,7 @@ struct BSplineSolid{p1,p2,p3} <: AbstractBSplineManifold
     end
 end
 function BSplineSolid(P1,::AbstractBSplineSpace, P2,::AbstractBSplineSpace, P3,::AbstractBSplineSpace, a::AbstractArray{<:AbstractVector{<:Real},3})
-    a′ = _arrayofvector2array(a)
+    a′ = arrayofvector2array(a)
     return BSplineSolid(P1, P2, P3, a′)
 end
 function BSplineSolid(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real})
@@ -115,7 +115,7 @@ function BSplineSolid{q1,q2,q3}(Ps::AbstractVector{<:AbstractBSplineSpace}, a::A
     return BSplineSolid(Ps, a)
 end
 
-function _arrayofvector2array(a::AbstractArray{<:AbstractVector{R}, d})::Array{R,d+1} where d where R<:Real
+function arrayofvector2array(a::AbstractArray{<:AbstractVector{R}, d})::Array{R,d+1} where d where R<:Real
     d̂ = length(a[1])
     s = size(a)
     N = prod(s)
@@ -124,9 +124,19 @@ function _arrayofvector2array(a::AbstractArray{<:AbstractVector{R}, d})::Array{R
     return a′
 end
 
+function array2arrayofvector(a::AbstractArray{R,d})::Array{Vector{R}, d-1} where d where R<:Real
+    s = size(a)
+    d̂ = s[end]
+    N = s[1:end-1]
+    a_flat = reshape(a,prod(N),d̂)
+    a_vec = [a_flat[i,:] for i in 1:prod(N)]
+    a′ = reshape(a_vec,N)
+    return a′
+end
+
 for fname in (:BSplineCurve, :BSplineSurface, :BSplineSolid, :FastBSplineManifold, :BSplineManifold)
     @eval function $fname(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:AbstractVector{<:Real}})
-        a′ = _arrayofvector2array(a)
+        a′ = arrayofvector2array(a)
         return $fname(Ps, a′)
     end
 end
