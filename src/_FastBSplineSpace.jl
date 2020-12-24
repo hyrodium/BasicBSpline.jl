@@ -32,7 +32,7 @@ end
 #     return FastBSplineSpace(degree(P), knots(P))
 # end
 
-function degree(P::FastBSplineSpace{p}) where {p}
+function degree(::FastBSplineSpace{p}) where {p}
     return p
 end
 
