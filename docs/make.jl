@@ -1,5 +1,25 @@
 using Documenter, BasicBSpline
 
+function generate_indexmd_from_readmemd()
+    path_readme = "README.md"
+    path_index = "docs/src/index.md"
+
+    # open README.md
+    f = open(path_readme)
+    text_readme = read(f,String)
+    close(f)
+
+    # generate text for index.md
+    text_index = replace(text_readme,"![](docs/src/img" => "![](img")
+
+    # save index.md
+    open(path_index, "w") do f
+        write(f,text_index)
+    end
+end
+
+generate_indexmd_from_readmemd()
+
 makedocs(;
     modules = [BasicBSpline],
     format = Documenter.HTML(
