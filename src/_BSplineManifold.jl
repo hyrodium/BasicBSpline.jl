@@ -84,10 +84,15 @@ Calculate the mapping of B-spline manifold for given parameter.
 """
 function (M::BSplineManifold)(t::AbstractVector{<:Real})
     Ps = M.bsplinespaces
-    𝒂 = M.controlpoints
+    a = M.controlpoints
     d = length(Ps)
-    d̂ = size(𝒂)[end]
-    return [sum(bsplinebasis(Ps, t) .* 𝒂[.., i]) for i in 1:d̂]
+    d̂ = size(a)[end]
+    N = prod(dim.(Ps))
+
+    B = bsplinebasis(Ps, t)
+    B_flat = reshape(B,N)
+    a_flat = reshape(a,N,d̂)
+    return [sum(B_flat .* a_flat[:,i]) for i in 1:d̂]
 end
 
 @doc raw"""
