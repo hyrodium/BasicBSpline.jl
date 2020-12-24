@@ -95,11 +95,13 @@ save_png("2dim_h-refinement.png", M′) # save image
 ```
 ![](docs/src/img/2dim_h-refinement.png)
 
+Note that this shape and the last shape are identical.
+
 #### p-refinemnet
 ```julia
 p₊=[1,2] # additional degrees
 M′ = refinement(M,p₊=p₊) # refinement of B-spline manifold
-save_png("2dim_h-refinement.png", M′) # save image
+save_png("2dim_p-refinement.png", M′) # save image
 ```
 ![](docs/src/img/2dim_p-refinement.png)
 
@@ -161,7 +163,7 @@ This is useful when you edit graphs (or curves) with your favorite vector graphi
 If you use BasicBSpline.jl in your work, please consider citing it by
 
 ```bibtex
-@misc{Horikawa:2020:BasicBSpline,
+@misc{hyrodium:2020:BasicBSpline,
   title={BasicBSpline.jl: Basic operations for B-spline functions and related things with julia},
   author={Yuto Horikawa},
   year={2020},
