@@ -1,7 +1,6 @@
 module BasicBSpline
 
 using LinearAlgebra
-using EllipsisNotation
 using IntervalSets
 using FastGaussQuadrature
 
