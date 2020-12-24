@@ -225,7 +225,8 @@ function refinement(M::AbstractBSplineManifold; p₊::Union{Nothing,AbstractVect
     Ps′ = [(P = Ps[i];
     p = degree(P);
     k = knots(P);
-    typeof(P)(p + p₊[i], k + p₊[i] * unique(k) + k₊[i])) for i in eachindex(Ps)]
+    k_unique = unique(k[1+p:end-p]);
+    typeof(P)(p + p₊[i], k + p₊[i] * k_unique + k₊[i])) for i in eachindex(Ps)]
 
     return refinement(M, Ps′)
 end

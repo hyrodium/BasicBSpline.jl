@@ -21,10 +21,15 @@ a = [[2 * i - 6.5, 2 * j - 6.5] for i in 1:dim(P), j in 1:dim(P)] + rand_a # ran
 M = BSplineManifold([P, P], a) # Define B-spline manifold
 save_png("docs/src/img/2dim.png", M, unitlength = 50)
 
-## Refinement
+## h-Refinement
 k₊ = [Knots(3.3, 4.2), Knots(3.8, 3.2, 5.3)]
 M′ = refinement(M, k₊ = k₊)
-save_png("docs/src/img/2dim_refinement.png", M′, unitlength = 50)
+save_png("docs/src/img/2dim_h-refinement.png", M′, unitlength = 50)
+
+## p-Refinement
+p₊ = [1,2]
+M′ = refinement(M, p₊ = p₊)
+save_png("docs/src/img/2dim_p-refinement.png", M′, unitlength = 50)
 
 ## Makie
 points = [M([u,v]) for u in range(3.0,6.0,length=50), v in range(3.0,6.0,length=50)]
@@ -73,15 +78,3 @@ f(u) = [u, sin(u)]
 a = fittingcontrolpoints(f, P)
 M = BSplineManifold([P], a)
 save_svg("docs/src/img/sine_curve.svg", M, unitlength = 50, up = 2, down = -2, left = -8, right = 8)
-
-## Makie
-p = 3
-k = Knots((0:10)/2)
-P = FastBSplineSpace(p,k)
-a = [[i+rand(),j+rand(),2*rand()] for i in 1:dim(P), j in 1:dim(P)]
-M = BSplineSurface([P,P],a)
-points = [M([u,v]) for u in range(3.0,6.999,length=50), v in range(3.0,6.999,length=50)]
-X = [point[1] for point in points]
-Y = [point[2] for point in points]
-Z = [point[3] for point in points]
-Makie.surface(X,Y,Z)
