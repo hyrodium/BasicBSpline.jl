@@ -29,6 +29,7 @@ include("_FastBSplineManifold.jl")
 include("_Refinement.jl")
 include("_Integral.jl")
 include("_Fitting.jl")
+include("_Geometry.jl")
 
 if VERSION < v"1.2.0"
     <=(x) = Fix2(<=, x)
