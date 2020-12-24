@@ -109,6 +109,7 @@ function bsplinebasis′(i::Integer, P::FastBSplineSpace, t::Real)::Float64
     return B_1
 end
 
+# TODO: use @eval macro to produce code
 """
 Returns the value of ``B_{(i,0,k)}(t)``.
 Assumption:
