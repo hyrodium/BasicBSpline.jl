@@ -2,6 +2,10 @@
 
 @doc raw"""
 B-spline space for lower polynomial degree
+```math
+\mathcal{P}[p,k]
+```
+This type `FastBSplineSpace` is faster than `BSplineSpace`, but the degree must be equal or less than `MAX_DEGREE`.
 """
 struct FastBSplineSpace{p} <: AbstractBSplineSpace
     knots::Knots

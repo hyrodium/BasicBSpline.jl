@@ -7,6 +7,7 @@ Construct B-spline space from given polynominal degree and knot vector.
 ```math
 \mathcal{P}[p,k]
 ```
+This type `BSplineSpace` is slower than `FastBSplineSpace`, but this type is not limited with degree.
 """
 struct BSplineSpace <: AbstractBSplineSpace
     degree::Int

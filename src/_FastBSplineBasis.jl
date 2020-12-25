@@ -109,12 +109,13 @@ function bsplinebasis′(i::Integer, P::FastBSplineSpace, t::Real)::Float64
     return B_1
 end
 
+# TODO: use @eval macro to produce code
 """
 Returns the value of ``B_{(i,0,k)}(t)``.
 Assumption:
 * ```k_{i} ≤ t < k_{i+1}``
 """
-function _bsb0(k::Union{Vector{<:Real},Knots}, t::Real, i::Integer)
+function _bsb0(::Union{Vector{<:Real},Knots}, ::Real, ::Integer)
     return 1.0
 end
 
@@ -161,6 +162,46 @@ Assumption:
     return B1, B2, B3, B4
 end
 
+"""
+Returns the values of ``B_{(i,4,k)}(t), B_{(i+1,4,k)}(t), B_{(i+2,4,k)}(t), B_{(i+3,4,k)}(t), B_{(i+4,4,k)}(t)``.
+Assumption:
+* ``k_{i} ≤ t < k_{i+1}``
+"""
+@inline function _bsb4(k::Union{Vector{<:Real},Knots}, t::Real, i::Integer)
+    B = _bsb3(k, t, i)
+
+    B1 = (k[i+1]-t)/(k[i+1]-k[i-3]) * B[1]
+    B2 = (t-k[i-3])/(k[i+1]-k[i-3]) * B[1] +
+         (k[i+2]-t)/(k[i+2]-k[i-2]) * B[2]
+    B3 = (t-k[i-2])/(k[i+2]-k[i-2]) * B[2] +
+         (k[i+3]-t)/(k[i+3]-k[i-1]) * B[3]
+    B4 = (t-k[i-1])/(k[i+3]-k[i-1]) * B[3] +
+         (k[i+4]-t)/(k[i+4]-k[i]) * B[4]
+    B5 = (t-k[i])/(k[i+4]-k[i]) * B[4]
+    return B1, B2, B3, B4, B5
+end
+
+"""
+Returns the values of ``B_{(i,5,k)}(t), B_{(i+1,5,k)}(t), B_{(i+2,5,k)}(t), B_{(i+3,5,k)}(t), B_{(i+4,5,k)}(t), B_{(i+5,5,k)}(t)``.
+Assumption:
+* ``k_{i} ≤ t < k_{i+1}``
+"""
+@inline function _bsb5(k::Union{Vector{<:Real},Knots}, t::Real, i::Integer)
+    B = _bsb2(k, t, i)
+
+    B1 = (k[i+1]-t)/(k[i+1]-k[i-4]) * B[1]
+    B2 = (t-k[i-4])/(k[i+1]-k[i-4]) * B[1] +
+         (k[i+2]-t)/(k[i+2]-k[i-3]) * B[2]
+    B3 = (t-k[i-3])/(k[i+2]-k[i-3]) * B[2] +
+         (k[i+3]-t)/(k[i+3]-k[i-2]) * B[3]
+    B4 = (t-k[i-2])/(k[i+3]-k[i-2]) * B[3] +
+         (k[i+4]-t)/(k[i+4]-k[i-1]) * B[4]
+    B5 = (t-k[i-1])/(k[i+4]-k[i-1]) * B[4] +
+         (k[i+5]-t)/(k[i+5]-k[i]) * B[5]
+    B6 = (t-k[i])/(k[i+5]-k[i]) * B[5]
+    return B1, B2, B3, B4, B5, B6
+end
+
 @inline function _bsplinebasis(P::FastBSplineSpace{0}, t::Real, i::Integer)
     return _bsb0(P.knots,t,i)
 end
@@ -174,5 +215,13 @@ end
 end
 
 @inline function _bsplinebasis(P::FastBSplineSpace{3}, t::Real, i::Integer)
+    return _bsb3(P.knots,t,i)
+end
+
+@inline function _bsplinebasis(P::FastBSplineSpace{4}, t::Real, i::Integer)
+    return _bsb3(P.knots,t,i)
+end
+
+@inline function _bsplinebasis(P::FastBSplineSpace{5}, t::Real, i::Integer)
     return _bsb3(P.knots,t,i)
 end

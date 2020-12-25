@@ -234,6 +234,24 @@ using Random
         @test prod([bsplinebasis′(i, P, t) ≈ bsplinebasis′(i, fP, t) for i in 1:n, t in k])
     end
 
+    @testset "_bsplinebasis" begin
+        Random.seed!(42)
+
+        k = Knots(rand(10).-1) + Knots(rand(10)) + Knots(rand(10).+1)
+        ts = rand(10)
+
+        for p in 0:BasicBSpline.MAX_DEGREE
+            p = 2
+            P = FastBSplineSpace(p,k)
+            for t in ts
+                j = BasicBSpline._knotindex(P,t)
+                _B = BasicBSpline._bsplinebasis(P,t,j)
+                B = [bsplinebasis(i,P,t) for i in j-p:j]
+                @test norm(collect(_B) - B) < ε
+            end
+        end
+    end
+
     @testset "BSplineManifold-2dim" begin
         Random.seed!(42)
 
@@ -241,7 +259,7 @@ using Random
         P2 = BSplineSpace(1, Knots([1, 1, 2, 3, 3]))
         n1 = dim(P1) # 2
         n2 = dim(P2) # 3
-        a = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.
+        a = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂-dim vector.
         M = BSplineManifold([P1, P2], a)
         @test dim(M) == 2
 
@@ -267,7 +285,7 @@ using Random
         P2 = FastBSplineSpace(1, Knots([1, 1, 2, 3, 3]))
         n1 = dim(P1) # 2
         n2 = dim(P2) # 3
-        a = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.
+        a = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂-dim vector.
         M = FastBSplineManifold([P1, P2], a)
         @test dim(M) == 2
 
@@ -293,7 +311,7 @@ using Random
         P2 = FastBSplineSpace(1, Knots([1, 1, 2, 3, 3]))
         n1 = dim(P1) # 2
         n2 = dim(P2) # 3
-        a = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.
+        a = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂-dim vector.
         M = BSplineSurface([P1, P2], a)
         @test dim(M) == 2
 
