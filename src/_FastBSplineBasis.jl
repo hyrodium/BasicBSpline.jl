@@ -187,7 +187,7 @@ Assumption:
 * ``k_{i} ≤ t < k_{i+1}``
 """
 @inline function _bsb5(k::Union{Vector{<:Real},Knots}, t::Real, i::Integer)
-    B = _bsb2(k, t, i)
+    B = _bsb4(k, t, i)
 
     B1 = (k[i+1]-t)/(k[i+1]-k[i-4]) * B[1]
     B2 = (t-k[i-4])/(k[i+1]-k[i-4]) * B[1] +
@@ -219,9 +219,9 @@ end
 end
 
 @inline function _bsplinebasis(P::FastBSplineSpace{4}, t::Real, i::Integer)
-    return _bsb3(P.knots,t,i)
+    return _bsb4(P.knots,t,i)
 end
 
 @inline function _bsplinebasis(P::FastBSplineSpace{5}, t::Real, i::Integer)
-    return _bsb3(P.knots,t,i)
+    return _bsb5(P.knots,t,i)
 end
