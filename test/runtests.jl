@@ -241,7 +241,6 @@ using Random
         ts = rand(10)
 
         for p in 0:BasicBSpline.MAX_DEGREE
-            p = 2
             P = FastBSplineSpace(p,k)
             for t in ts
                 j = BasicBSpline._knotindex(P,t)
