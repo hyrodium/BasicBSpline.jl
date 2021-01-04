@@ -21,3 +21,4 @@ jobs:
           Pkg.instantiate();
           include("docs/make.jl");'
       after_success: skip
+codecov: true
