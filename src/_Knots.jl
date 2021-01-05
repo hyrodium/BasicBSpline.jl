@@ -7,9 +7,9 @@ k=(k_1,\dots,k_l)
 ```
 
 # Examples
-```jldoctest
+```jldoctest; setup = :(using BasicBSpline)
 julia> k = Knots(1:3)
-Knots([1,2,3])
+Knots([1.0, 2.0, 3.0])
 ```
 """
 struct Knots
