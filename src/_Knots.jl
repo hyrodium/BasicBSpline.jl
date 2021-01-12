@@ -7,9 +7,9 @@ k=(k_1,\dots,k_l)
 ```
 
 # Examples
-```jldoctest
+```jldoctest; setup = :(using BasicBSpline)
 julia> k = Knots(1:3)
-Knots([1,2,3])
+Knots([1.0, 2.0, 3.0])
 ```
 """
 struct Knots
@@ -58,6 +58,14 @@ Check a inclusive relation ship ``k\subset k'``.
 ```math
 (1,2,3) \subseteq (1,2,3,4)
 (1,2,5) \nsubseteq (1,2,3,4)
+```
+
+# Examples
+```jldoctest; setup = :(using BasicBSpline)
+julia> k1, k2 = Knots(1:3), Knots(-2,1,3,2,4);
+
+julia> k1 ⊆ k2
+true
 ```
 """
 function Base.issubset(k::Knots, k′::Knots)
