@@ -5,6 +5,12 @@ Construct knot vector from given array.
 ```math
 k=(k_1,\dots,k_l)
 ```
+
+# Examples
+```jldoctest; setup = :(using BasicBSpline)
+julia> k = Knots(1:3)
+Knots([1.0, 2.0, 3.0])
+```
 """
 struct Knots
     vector::Vector{Float64}
