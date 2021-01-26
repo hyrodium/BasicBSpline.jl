@@ -1,5 +1,8 @@
 using Documenter, BasicBSpline
 
+# Setup for doctests in docstrings
+DocMeta.setdocmeta!(BasicBSpline, :DocTestSetup, :(using LinearAlgebra, BasicBSpline))
+
 function generate_indexmd_from_readmemd()
     path_readme = "README.md"
     path_index = "docs/src/index.md"

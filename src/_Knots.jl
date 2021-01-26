@@ -7,7 +7,7 @@ k=(k_1,\dots,k_l)
 ```
 
 # Examples
-```jldoctest; setup = :(using BasicBSpline)
+```jldoctest
 julia> k = Knots(1:3)
 Knots([1.0, 2.0, 3.0])
 ```
