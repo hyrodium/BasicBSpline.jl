@@ -9,21 +9,28 @@ using Random
 @testset "BasicBSpline.jl" begin
 
     @testset "Knots" begin
-        @test Knots([1, 2, 3]) == Knots(1:3) == Knots(1, 2, 3)
-        @test Knots(2, 4, 5) == Knots([2, 4, 5])
-        @test zero(Knots) == Knots([])
-        @test Knots(1:3) == Knots([3, 2, 1])
+        @test Knots([1,2,3]) == Knots(1:3) == Knots(1,2,3)
+        @test Knots(2,4,5) == Knots([2,4,5])
+        @test zero(Knots) == Knots() == Knots([])
+        @test Knots(1:3) == Knots([3,2,1])
 
-        k = Knots([4, 5, 6])
+        k = Knots([4,5,6])
         @test ♯(k) == length(k) == 3
 
-        @test Knots([-1, 2, 3]) + 2 * Knots([2, 5]) == Knots([-1, 2, 2, 2, 3, 5, 5])
-        Knots([1, 2, 3]) + Knots([2, 4, 5]) == Knots([1, 2, 2, 3, 5])
-        2 * Knots([2, 3]) == Knots([2, 2, 3, 3])
+        @test Knots([-1,2,3]) + 2 * Knots([2,5]) == Knots([-1,2,2,2,3,5,5])
+        @test Knots([1,2,3]) + Knots([2,4,5]) == Knots([1,2,2,3,4,5])
+        @test 2 * Knots([2,3]) == Knots([2,2,3,3])
 
-        unique(Knots([1, 2, 2, 3])) == Knots([1, 2, 3])
+        @test unique(Knots([1,2,2,3])) == Knots([1,2,3])
 
-        k = Knots([1, 2, 2, 3])
+        @test Knots([1,2,3]) ⊆ Knots([1,2,3])
+        @test Knots([1,2,3]) ⊇ Knots([1,2,3])
+        @test Knots([1,2,2,3]) ⊆ Knots([1,2,2,3,5])
+        @test Knots([1,2,2,3]) ⊈ Knots([1,2,3,5])
+        @test Knots([1,2,2,3,5]) ⊇ Knots([1,2,2,3])
+        @test Knots([1,2,3,5]) ⊉ Knots([1,2,2,3])
+
+        k = Knots([1,2,2,3])
         @test 𝔫(k, 0.3) == 0
         @test 𝔫(k, 1.0) == 1
         @test 𝔫(k, 2.0) == 2
