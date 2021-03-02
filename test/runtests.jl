@@ -14,8 +14,8 @@ using Random
         @test zero(Knots) == Knots() == Knots([])
         @test Knots(1:3) == Knots([3,2,1])
 
-        k = Knots([4,5,6])
-        @test ♯(k) == length(k) == 3
+        k = Knots([1,2,2,3])
+        @test ♯(k) == length(k) == 4
 
         @test Knots([-1,2,3]) + 2 * Knots([2,5]) == Knots([-1,2,2,2,3,5,5])
         @test Knots([1,2,3]) + Knots([2,4,5]) == Knots([1,2,2,3,4,5])
@@ -30,7 +30,6 @@ using Random
         @test Knots([1,2,2,3,5]) ⊇ Knots([1,2,2,3])
         @test Knots([1,2,3,5]) ⊉ Knots([1,2,2,3])
 
-        k = Knots([1,2,2,3])
         @test 𝔫(k, 0.3) == 0
         @test 𝔫(k, 1.0) == 1
         @test 𝔫(k, 2.0) == 2
@@ -52,6 +51,9 @@ using Random
         @test BasicBSpline._knotindex₊₀(k,1) == 1
         @test BasicBSpline._knotindex₊₀(k,2) == 3
         @test BasicBSpline._knotindex₊₀(k,3) == nothing
+
+        @test string(k) == "Knots([1.0, 2.0, 2.0, 3.0])"
+        @test string(Knots()) == "Knots([])"
     end
 
     @testset "BSplineSpace" begin
@@ -354,6 +356,25 @@ using Random
         @test prod([M(t) ≈ M′′(t) for t in ts])
     end
 
+    @testset "array <-> array of vector" begin
+        Random.seed!(42)
+
+        A = rand(3,4)
+        A′ = BasicBSpline.array2arrayofvector(A)
+        A′′ = BasicBSpline.arrayofvector2array(A′)
+        @test A == A′′
+
+        B = rand(3,4,5)
+        B′ = BasicBSpline.array2arrayofvector(B)
+        B′′ = BasicBSpline.arrayofvector2array(B′)
+        @test B == B′′
+
+        C = rand(3,4,5,6)
+        C′ = BasicBSpline.array2arrayofvector(C)
+        C′′ = BasicBSpline.arrayofvector2array(C′)
+        @test C == C′′
+    end
+
     @testset "Fitting-curve_R" begin
         Random.seed!(42)
 
@@ -373,7 +394,10 @@ using Random
 
         a_tmp = fittingcontrolpoints(M, [P1′])
         a_fit = transpose(hcat(a_tmp...))
+        @test norm(a_fit - a_ref) < ε
 
+        a_tmp = fittingcontrolpoints(M, [P1′], domain=:R)
+        a_fit = transpose(hcat(a_tmp...))
         @test norm(a_fit - a_ref) < ε
     end
 
@@ -398,25 +422,6 @@ using Random
         a_fit = transpose(hcat(a_tmp...))
 
         @test norm(a_fit - a_ref) < ε
-    end
-
-    @testset "array <-> array of vector" begin
-        Random.seed!(42)
-
-        A = rand(3,4)
-        A′ = BasicBSpline.array2arrayofvector(A)
-        A′′ = BasicBSpline.arrayofvector2array(A′)
-        @test A == A′′
-
-        B = rand(3,4,5)
-        B′ = BasicBSpline.array2arrayofvector(B)
-        B′′ = BasicBSpline.arrayofvector2array(B′)
-        @test B == B′′
-
-        C = rand(3,4,5,6)
-        C′ = BasicBSpline.array2arrayofvector(C)
-        C′′ = BasicBSpline.arrayofvector2array(C′)
-        @test C == C′′
     end
 
     @testset "Fitting-surface_R" begin
@@ -445,7 +450,10 @@ using Random
 
         a_tmp = fittingcontrolpoints(M, [P1′, P2′])
         a_fit = BasicBSpline.arrayofvector2array(a_tmp)
+        @test norm(a_fit - a_ref) < ε
 
+        a_tmp = fittingcontrolpoints(M, [P1′, P2′], domain=:R)
+        a_fit = BasicBSpline.arrayofvector2array(a_tmp)
         @test norm(a_fit - a_ref) < ε
     end
 
@@ -475,7 +483,6 @@ using Random
 
         a_tmp = fittingcontrolpoints(M, [P1′, P2′])
         a_fit = BasicBSpline.arrayofvector2array(a_tmp)
-
         @test norm(a_fit - a_ref) < ε
     end
 
@@ -512,7 +519,10 @@ using Random
 
         a_tmp = fittingcontrolpoints(M, [P1′, P2′, P3′])
         a_fit = BasicBSpline.arrayofvector2array(a_tmp)
+        @test norm(a_fit - a_ref) < ε
 
+        a_tmp = fittingcontrolpoints(M, [P1′, P2′, P3′], domain=:R)
+        a_fit = BasicBSpline.arrayofvector2array(a_tmp)
         @test norm(a_fit - a_ref) < ε
     end
 
