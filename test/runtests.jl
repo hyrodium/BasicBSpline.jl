@@ -34,6 +34,24 @@ using Random
         @test 𝔫(k, 0.3) == 0
         @test 𝔫(k, 1.0) == 1
         @test 𝔫(k, 2.0) == 2
+        @test 1 ∈ k
+        @test 1.5 ∉ k
+        @test BasicBSpline._knotindex(k,1.5) == 1
+        @test BasicBSpline._knotindex(k,2.5) == 3
+        @test BasicBSpline._knotindex₋₀(k,1.5) == 1
+        @test BasicBSpline._knotindex₋₀(k,2.5) == 3
+        @test BasicBSpline._knotindex₊₀(k,1.5) == 1
+        @test BasicBSpline._knotindex₊₀(k,2.5) == 3
+
+        @test BasicBSpline._knotindex(k,1) == 1
+        @test BasicBSpline._knotindex(k,2) == 3
+        @test BasicBSpline._knotindex(k,3) == 3
+        @test BasicBSpline._knotindex₋₀(k,1) == nothing
+        @test BasicBSpline._knotindex₋₀(k,2) == 1
+        @test BasicBSpline._knotindex₋₀(k,3) == 3
+        @test BasicBSpline._knotindex₊₀(k,1) == 1
+        @test BasicBSpline._knotindex₊₀(k,2) == 3
+        @test BasicBSpline._knotindex₊₀(k,3) == nothing
     end
 
     @testset "BSplineSpace" begin
