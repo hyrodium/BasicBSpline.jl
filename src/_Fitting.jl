@@ -327,20 +327,30 @@ end
 """
 * func: Real -> ℝ-vector space
 """
-function fittingcontrolpoints(func, P1::AbstractBSplineSpace)
-    b = innerproduct_I(func, P1)
-    A = innerproduct_I(P1)
+function fittingcontrolpoints(func, P1::AbstractBSplineSpace; domain=:I)
+    if domain == :I
+        b = innerproduct_I(func, P1)
+        A = innerproduct_I(P1)
+    elseif domain == :R
+        b = innerproduct_R(func, P1)
+        A = innerproduct_R(P1)
+    end
     return inv(A) * b
 end
 
 """
 * func: (Real,Real) -> ℝ-vector space
 """
-function fittingcontrolpoints(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace)
+function fittingcontrolpoints(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace; domain=:I)
     n1, n2 = dim(P1), dim(P2)
-    A1, A2 = innerproduct_I(P1), innerproduct_I(P2)
+    if domain == :I
+        A1, A2 = innerproduct_I(P1), innerproduct_I(P2)
+        b = innerproduct_I(func, P1, P2)
+    elseif domain == :R
+        A1, A2 = innerproduct_R(P1), innerproduct_R(P2)
+        b = innerproduct_R(func, P1, P2)
+    end
     A = [A1[i1, j1] * A2[i2, j2] for i1 in 1:n1, i2 in 1:n2, j1 in 1:n1, j2 in 1:n2]
-    b = innerproduct_I(func, P1, P2)
     _A = reshape(A, n1 * n2, n1 * n2)
     _b = reshape(b, n1 * n2)
     return reshape(inv(_A) * _b, n1, n2)
@@ -349,11 +359,16 @@ end
 """
 * func: (Real,Real,Real) -> ℝ-vector space
 """
-function fittingcontrolpoints(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, P3::AbstractBSplineSpace)
+function fittingcontrolpoints(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, P3::AbstractBSplineSpace; domain=:I)
     n1, n2, n3 = dim(P1), dim(P2), dim(P3)
-    A1, A2, A3 = innerproduct_I(P1), innerproduct_I(P2), innerproduct_I(P3)
+    if domain == :I
+        A1, A2, A3 = innerproduct_I(P1), innerproduct_I(P2), innerproduct_I(P3)
+        b = innerproduct_I(func, P1, P2, P3)
+    elseif domain == :R
+        A1, A2, A3 = innerproduct_R(P1), innerproduct_R(P2), innerproduct_R(P3)
+        b = innerproduct_R(func, P1, P2, P3)
+    end
     A = [A1[i1, j1] * A2[i2, j2] * A3[i3, j3] for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3, j1 in 1:n1, j2 in 1:n2, j3 in 1:n3]
-    b = innerproduct_I(func, P1, P2, P3)
     _A = reshape(A, n1 * n2 * n3, n1 * n2 * n3)
     _b = reshape(b, n1 * n2 * n3)
     return reshape(inv(_A) * _b, n1, n2, n3)
@@ -365,8 +380,8 @@ Approximate given function by linear combination of B-spline functions.
 This function returns its control points.
 * func: Vector{<:Real} -> ℝ-vector space
 """
-function fittingcontrolpoints(func, Ps::AbstractVector{<:AbstractBSplineSpace})
+function fittingcontrolpoints(func, Ps::AbstractVector{<:AbstractBSplineSpace}; domain=:I)
     # TODO: currently, this function only supports for 1-dim, 2-dim and 3-dim B-spline manifold.
     _func(t...) = func([t...])
-    return fittingcontrolpoints(_func, Ps...)
+    return fittingcontrolpoints(_func, Ps..., domain=domain)
 end
