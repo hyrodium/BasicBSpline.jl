@@ -1,37 +1,108 @@
 # Knots
 
-@doc raw"""
-Construct knot vector from given array.
-```math
-k=(k_1,\dots,k_l)
-```
-
-# Examples
-```jldoctest
-julia> k = Knots(1:3)
-Knots([1.0, 2.0, 3.0])
-```
-"""
 struct Knots
     vector::Vector{Float64}
+    @doc raw"""
+    Construct knot vector from given array.
+    ```math
+    k=(k_1,\dots,k_l)
+    ```
+    
+    # Examples
+    ```jldoctest
+    julia> k = Knots([1,2,3])
+    Knots([1.0, 2.0, 3.0])
+    
+    julia> k = Knots(1:3)
+    Knots([1.0, 2.0, 3.0])
+    ```
+    """
     function Knots(vector::AbstractVector{<:Real})
         return new(sort(convert(Vector{Float64}, vector)))
     end
 end
+
 function Knots(vector::AbstractVector)
     if isempty(vector)
+        @warn "use Knots() or Knots(Float64[]), instead of Knots([])."
         return Knots(Float64[])
     else
+        @warn "the type $(typeof(vector)) is deprecated."
         return Knots(convert(Vector{Float64}, vector))
     end
 end
+
+@doc raw"""
+Construct knot vector from given real numbers.
+
+# Examples
+```jldoctest
+julia> k = Knots(1,2,3)
+Knots([1.0, 2.0, 3.0])
+
+julia> k = Knots()
+Knots([])
+```
+"""
 function Knots(knot::Real...)
     return Knots(collect(knot))
 end
 
+function Base.show(io::IO, k::Knots)
+    if k.vector == Float64[]
+        print(io, "Knots([])")
+    else
+        print(io, "Knots($(k.vector))")
+    end
+end
+
 Base.zero(::Type{Knots}) = Knots(Float64[])
 Base.:(==)(k₁::Knots, k₂::Knots) = (k₁.vector == k₂.vector)
+
+@doc raw"""
+Sum of knot vectors
+
+```math
+\begin{aligned}
+k^{(1)}+k^{(2)}
+&=(k^{(1)}_1, \dots, k^{(1)}_{l^{(1)}}) + (k^{(2)}_1, \dots, k^{(2)}_{l^{(2)}}) \\
+&=(\text{sort of union of} \  k^{(1)} \ \text{and} \  k^{(2)} \text{)}
+\end{aligned}
+```
+
+For example, ``(1,2,3,5)+(4,5,8)=(1,2,3,4,5,5,8)``.
+
+# Examples
+```jldoctest
+julia> k1 = Knots(1,2,3,5);
+
+julia> k2 = Knots(4,5,8);
+
+julia> k1 + k2
+Knots([1.0, 2.0, 3.0, 4.0, 5.0, 5.0, 8.0])
+```
+"""
 Base.:+(k₁::Knots, k₂::Knots) = Knots(sort([k₁.vector..., k₂.vector...]))
+
+@doc raw"""
+Product of integer and knot vector
+
+```math
+\begin{aligned}
+m\cdot k&=\underbrace{k+\cdots+k}_{m}
+\end{aligned}
+```
+
+For example, ``2\cdot (1,2,2,5)=(1,1,2,2,2,2,5,5)``.
+
+# Examples
+```jldoctest
+julia> k = Knots(1,2,2,5);
+
+julia> 2 * k
+Knots([1.0, 1.0, 2.0, 2.0, 2.0, 2.0, 5.0, 5.0])
+```
+"""
 function Base.:*(p₊::Integer, k::Knots)
     if p₊ == 0
         return zero(Knots)
@@ -45,13 +116,47 @@ end
 Base.in(r::Real, k::Knots) = in(r, k.vector)
 Base.getindex(k::Knots, i::Integer) = k.vector[i]
 Base.getindex(k::Knots, v::AbstractVector{<:Integer}) = Knots(k.vector[v])
+
+@doc raw"""
+Length of knot vector
+
+# Examples
+```jldoctest
+julia> k = Knots(1,2,3,5);
+
+julia> length(k)
+4
+```
+"""
 Base.length(k::Knots) = length(k.vector)
+
 function ♯(k::Knots)
     @warn "BasicBSpline.♯ is deprecated."
     return length(k::Knots)
 end
 Base.firstindex(k::Knots) = 1
 Base.lastindex(k::Knots) = length(k)
+
+@doc raw"""
+Unique elements of knot vector.
+
+```math
+\begin{aligned}
+\widehat{k}
+&=(\text{remove duplicates of} \  k) \\
+\end{aligned}
+```
+
+For example, ``\widehat{(1,2,2,3)}=(1,2,3)``.
+
+# Examples
+```jldoctest
+julia> k = Knots([1,2,2,3]);
+
+julia> unique(k)
+Knots([1.0, 2.0, 3.0])
+```
+"""
 Base.unique(k::Knots) = Knots(unique(k.vector))
 Base.iterate(k::Knots) = iterate(k.vector)
 Base.iterate(k::Knots, i::Integer) = iterate(k.vector, i)
@@ -75,6 +180,27 @@ function Base.issubset(k::Knots, k′::Knots)
     return true
 end
 
+@doc raw"""
+For Given knot vector ``k``, the following function ``\mathfrak{n}_k:\mathbb{R}\to\mathbb{Z}`` represents the number of knots that duplicate the knot vector ``k``.
+
+```math
+\mathfrak{n}_k(t) = \sharp\{i \mid k_i=t \}
+```
+For example, if ``k=(1,2,2,3)``, then ``\mathfrak{n}_k(0.3)=0``, ``\mathfrak{n}_k(1)=1``, ``\mathfrak{n}_k(2)=2``.
+
+```jldoctest
+julia> k = Knots([1,2,2,3]);
+
+julia> 𝔫(k,0.3)
+0
+
+julia> 𝔫(k,1.0)
+1
+
+julia> 𝔫(k,2.0)
+2
+```
+"""
 𝔫(k::Knots, t::Real) = count(==(t), k.vector)
 
 """
