@@ -46,7 +46,10 @@ Base.in(r::Real, k::Knots) = in(r, k.vector)
 Base.getindex(k::Knots, i::Integer) = k.vector[i]
 Base.getindex(k::Knots, v::AbstractVector{<:Integer}) = Knots(k.vector[v])
 Base.length(k::Knots) = length(k.vector)
-♯(k::Knots) = length(k::Knots)
+function ♯(k::Knots)
+    @warn "BasicBSpline.♯ is deprecated."
+    return length(k::Knots)
+end
 Base.firstindex(k::Knots) = 1
 Base.lastindex(k::Knots) = length(k)
 Base.unique(k::Knots) = Knots(unique(k.vector))
