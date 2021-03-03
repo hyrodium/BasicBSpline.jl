@@ -6,7 +6,7 @@
 In this page, we'll explain the mathematical definition and property of B-spline with Julia code.
 
 Before running the following code, do not forget importing the package:
-```julia
+```@example
 using BasicBSpline
 ```
 
@@ -26,66 +26,38 @@ using BasicBSpline
 
 [fig]
 
-```julia
-k = Knots([1,2,3])
-k = Knots(1:3)
-k = Knots(1,2,3)
+```@docs
+Knots(vector::AbstractVector{<:Real})
 ```
 
-We denotes a number of knots by *sharp* symbol like this:
-```math
-\sharp k = \sharp(k_1, \dots, k_l) =l
+```@docs
+Knots(knot::Real)
 ```
 
-```julia
-k = Knots([4,5,6])
-♯(k) # 3
-length(k) # 3
+```@docs
+length(k::Knots)
 ```
 
-We introduce additional operator ``+`` and product operator ``\cdot``
-```math
-\begin{aligned}
-k^{(1)}+k^{(2)}
-&=(k^{(1)}_1, \dots, k^{(1)}_l) + (k^{(2)}_1, \dots, k^{(2)}_l) \\
-&=(\text{sort of union of} \  k^{(1)} \ \text{and} \  k^{(2)} \text{)} \\
-m\cdot k&=\underbrace{k+\cdots+k}_{m}
-\end{aligned}
-```
-For example, ``(1,2,3)+(2,4,5)=(1,2,2,3,5)``, ``2\cdot (2,3)=(2,2,3,3)``.
+We introduce **additional operator** ``+``.
 
-```julia
-Knots([1,2,3]) + Knots([2,4,5]) # Knots([1,2,2,3,5])
-2 * Knots([2,3]) # Knots([2,2,3,3])
+```@docs
++(k₁::Knots, k₂::Knots)
 ```
 
-Deleting duplicates operator
-```math
-\begin{aligned}
-\widehat{k}
-&=(\text{remove duplicates of} \  k) \\
-\end{aligned}
-```
-For example, ``\widehat{(1,2,2,3)}=(1,2,3)``.
+And **product operator** ``\cdot``.
 
-```julia
-unique(Knots([1,2,2,3])) # Knots([1,2,3])
+```@docs
+*(n::Integer, k::Knots)
 ```
 
-For Given knot vector ``k``, the following function ``\mathfrak{n}_k:\mathbb{R}\to\mathbb{Z}`` represents the counts of ..
-
-```math
-\mathfrak{n}_k(t) = \sharp\{i \mid k_i=t \}
+```@docs
+unique(k::Knots)
 ```
-For example, if ``k=(1,2,2,3)``, then ``\mathfrak{n}_k(0.3)=0``, ``\mathfrak{n}_k(1)=1``, ``\mathfrak{n}_k(2)=2``.
 
-
-```julia
-k = Knots([1,2,2,3])
-𝔫(k,0.3) # 0
-𝔫(k,1.0) # 1
-𝔫(k,2.0) # 2
+```@docs
+𝔫(k::Knots, t::Real)
 ```
+
 
 ## B-spline space
 Before defining B-spline space, we'll define polynomial space with degree ``p``.
@@ -130,7 +102,8 @@ Note that a element of the space ``\mathcal{P}[p,k]`` is piecewise polynomial.
 
 [fig]
 
-```julia
+```@repl
+using BasicBSpline
 p = 2
 k = Knots([1,3,5,6,8,9])
 BSplineSpace(p,k)
@@ -143,7 +116,8 @@ k_{i}&<k_{i+p+1} & (1 \le i \le l-p-1)
 \end{aligned}
 ```
 
-```julia
+```@repl
+using BasicBSpline
 isproper(BSplineSpace(2,Knots([1,3,5,6,8,9]))) # true
 isproper(BSplineSpace(1,Knots([1,3,3,3,8,9]))) # false
 ```
@@ -153,7 +127,8 @@ The B-spline space is linear space, and if a B-spline space is proper, its dimen
 \dim(\mathcal{P}[p,k])=\sharp k -p -1
 ```
 
-```julia
+```@repl
+using BasicBSpline
 dim(BSplineSpace(2,Knots([1,3,5,6,8,9]))) # 3
 ```
 
@@ -182,7 +157,8 @@ dim(BSplineSpace(2,Knots([1,3,5,6,8,9]))) # 3
     The set of functions ``\{B_{(i,p,k)}\}_i`` is a basis of B-spline space ``\mathcal{P}[p,k]``.
 
 
-```julia
+```@repl
+using BasicBSpline
 using Plots
 gr()
 p = 2
@@ -206,7 +182,8 @@ You can choose the first terms in different ways.
 \end{aligned}
 ```
 
-```julia
+```@repl
+using BasicBSpline
 using Plots
 gr()
 p = 2
@@ -226,7 +203,8 @@ plot([t->bsplinebasis₋₀(i,P,t) for i in 1:dim(P)], 1, 8, ylims=(0,1.05))
 
 [fig]
 
-```julia
+```@repl
+using BasicBSpline
 i = 2
 k = Knots([5,12,13,13,14])
 p = 2
@@ -247,7 +225,8 @@ bsplinesupport(i,P) # 12..14
     ```
     Note that ``\dot{B}_{(i,p,k)}\in\mathcal{P}[p-1,k]``.
 
-```julia
+```@repl
+using BasicBSpline
 using Plots
 gr()
 p = 2
@@ -267,7 +246,8 @@ plot([t->bsplinebasis′₊₀(i,P,t) for i in 1:dim(P)], 1, 8, ylims=(0,1.05))
     \end{aligned}
     ```
 
-```julia
+```@repl
+using BasicBSpline
 using Plots
 gr()
 p = 2
@@ -280,7 +260,8 @@ plot(t->sum(bsplinebasis₊₀(i,P,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.05))
 
 To satisfy the partition of unity on whole interval ``[1,8]``, sometimes more knots will be inserted to the endpoints of the interval.
 
-```julia
+```@repl
+using BasicBSpline
 using Plots
 gr()
 p = 2
@@ -306,7 +287,8 @@ Therefore, to satisfy partition of unity on closed interval ``[k_{p+1}, k_{l-p}]
 \end{aligned}
 ```
 
-```julia
+```@repl
+using BasicBSpline
 using Plots
 gr()
 p = 2
@@ -329,7 +311,8 @@ plot(t->sum(bsplinebasis(i,P,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.05))
 
 (as linear subspace..)
 
-```julia
+```@repl
+using BasicBSpline
 P1 = BSplineSpace(1,Knots([1,3,5,8]))
 P2 = BSplineSpace(1,Knots([1,3,5,6,8,9]))
 P3 = BSplineSpace(2,Knots([1,1,3,3,5,5,8,8]))
@@ -341,7 +324,8 @@ P2 ⊈ P3 # true
 
 Here are plots of the B-spline basis functions of the spaces `P1`, `P2`, `P3`.
 
-```julia
+```@repl
+using BasicBSpline
 using Plots
 gr()
 P1 = BSplineSpace(1,Knots([1,3,5,8]))
@@ -371,12 +355,14 @@ n'&=\dim(\mathcal{P}[p',k'])
 
 You can calculate the change of basis matrix ``A`` with `changebasis`.
 
-```julia
+```@repl
+using BasicBSpline
 A12 = changebasis(P1,P2)
 A13 = changebasis(P1,P3)
 ```
 
-```julia
+```@repl
+using BasicBSpline
 using Plots
 gr()
 plot(
@@ -412,7 +398,8 @@ B-spline manifold is a parametric representation of a shape.
 
 We will also write ``\bm{p}(t^1,\dots,t^d; \bm{a})``, ``\bm{p}(t^1,\dots,t^d)``, ``\bm{p}(t; \bm{a})`` or ``\bm{p}(t)`` for simplicity.
 
-```julia
+```@repl
+using BasicBSpline
 P1 = BSplineSpace(1,Knots([0,0,1,1]))
 P2 = BSplineSpace(1,Knots([1,1,2,3,3]))
 n1 = dim(P1) # 2
@@ -423,7 +410,8 @@ M = BSplineManifold([P1, P2], a)
 
 
 ### B-spline curve
-```julia
+```@repl
+using BasicBSpline
 ## 1-dim B-spline manifold
 p = 2 # degree of polynomial
 k = Knots(1:12) # knot vector
@@ -436,7 +424,8 @@ save_png("1dim.png", M, unitlength = 50)
 
 
 ### B-spline surface
-```julia
+```@repl
+using BasicBSpline
 p = 2 # degree of polynomial
 k = Knots(1:8) # knot vector
 P = BSplineSpace(p,k) # B-spline space
@@ -447,7 +436,8 @@ save_png("2dim.png", M) # save image
 ```
 ![](img/2dim.png)
 
-```julia
+```@repl
+using BasicBSpline
 points = [M([u,v]) for u in range(3.0,6.0,length=50), v in range(3.0,6.0,length=50)]
 X = [point[1] for point in points]
 Y = [point[2] for point in points]
@@ -473,7 +463,8 @@ save("2dim_makie.png", scene)
 ### h-refinemnet
 Insert additional knots to knot vector.
 
-```julia
+```@repl
+using BasicBSpline
 k₊=[Knots(3.3,4.2),Knots(3.8,3.2,5.3)] # additional knots
 M′ = refinement(M,k₊=k₊) # refinement of B-spline manifold
 save_png("2dim_h-refinement.png", M′) # save image
@@ -486,7 +477,8 @@ Note that this shape and the last shape are identical.
 ### p-refinemnet
 Increase the polynomial degree of B-spline manifold.
 
-```julia
+```@repl
+using BasicBSpline
 p₊=[1,2] # additional degrees
 M′ = refinement(M,p₊=p₊) # refinement of B-spline manifold
 save_png("2dim_p-refinement.png", M′) # save image
@@ -500,7 +492,8 @@ Note that this shape and the last shape are identical.
 Least squares method.
 
 [Try on Desmos graphing graphing calculator!](https://www.desmos.com/calculator/2hm3b1fbdf)
-```julia
+```@repl
+using BasicBSpline
 p1 = 2
 p2 = 2
 k1 = Knots(-10:10)+p1*Knots(-10,10)
