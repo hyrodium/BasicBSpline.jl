@@ -21,8 +21,8 @@
         M′ = refinement(M, [P1′, P2′])
         M′′ = refinement(M, p₊=p₊, k₊=k₊)
         ts = [[rand(), 1 + 2 * rand()] for _ in 1:10]
-        @test prod([M(t) ≈ M′(t) for t in ts])
-        @test prod([M(t) ≈ M′′(t) for t in ts])
+        @test all([M(t) ≈ M′(t) for t in ts])
+        @test all([M(t) ≈ M′′(t) for t in ts])
     end
 
     @testset "FastBSplineManifold-2dim" begin
@@ -47,8 +47,8 @@
         M′ = refinement(M, [P1′, P2′])
         M′′ = refinement(M, p₊=p₊, k₊=k₊)
         ts = [[rand(), 1 + 2 * rand()] for _ in 1:10]
-        @test prod([M(t) ≈ M′(t) for t in ts])
-        @test prod([M(t) ≈ M′′(t) for t in ts])
+        @test all([M(t) ≈ M′(t) for t in ts])
+        @test all([M(t) ≈ M′′(t) for t in ts])
     end
 
     @testset "BSplineSurface" begin
@@ -73,8 +73,8 @@
         M′ = refinement(M, [P1′, P2′])
         M′′ = refinement(M, p₊=p₊, k₊=k₊)
         ts = [[rand(), 1 + 2 * rand()] for _ in 1:10]
-        @test prod([M(t) ≈ M′(t) for t in ts])
-        @test prod([M(t) ≈ M′′(t) for t in ts])
+        @test all([M(t) ≈ M′(t) for t in ts])
+        @test all([M(t) ≈ M′′(t) for t in ts])
     end
 
     @testset "array <-> array of vector" begin
