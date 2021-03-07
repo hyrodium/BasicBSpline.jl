@@ -1,4 +1,6 @@
 @testset "Fitting" begin
+    ε = 1.0e-8
+
     @testset "Fitting-curve_R" begin
         Random.seed!(42)
 
