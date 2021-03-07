@@ -4,8 +4,6 @@ using LinearAlgebra
 using Test
 using Random
 
-ε = 1.0e-8
-
 @testset "BasicBSpline.jl" begin
     include("test_Knots.jl")
     include("test_BSplineSpace.jl")
