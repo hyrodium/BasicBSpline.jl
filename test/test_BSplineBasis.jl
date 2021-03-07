@@ -274,6 +274,71 @@ end
         end
     end
 
+    @testset "4th degree basis" begin
+        Random.seed!(42)
+
+        p = 4
+        v = rand(10)
+        k = Knots(v) + (p+1)*Knots(0, 1) + Knots(v[2], v[3])
+        P = BSplineSpace(p, k)
+        fP = FastBSplineSpace(p, k)
+        n = dim(P)
+
+        @test degree(P) == degree(fP) == 4
+
+        # Check the values of B-spline basis funcitons
+        for i in 1:n, t in rand(5)
+            for t in rand(5)
+                @test (bsplinebasis₊₀(i, P, t)
+                     ≈ bsplinebasis₊₀(i, fP, t)
+                     ≈ bsplinebasis₋₀(i, P, t)
+                     ≈ bsplinebasis₋₀(i, fP, t)
+                     ≈ bsplinebasis(i, P, t)
+                     ≈ bsplinebasis(i, fP, t))
+            end
+            for t in k
+                t₊₀ = nextfloat(t)
+                t₋₀ = prevfloat(t)
+                @test bsplinebasis₊₀(i, P, t) ≈ bsplinebasis₊₀(i, fP, t) ≒ bsplinebasis₊₀(i, P, t₊₀) ≒ bsplinebasis₊₀(i, fP, t₊₀)
+                @test bsplinebasis₋₀(i, P, t) ≈ bsplinebasis₋₀(i, fP, t) ≒ bsplinebasis₋₀(i, P, t₋₀) ≒ bsplinebasis₋₀(i, fP, t₋₀)
+                @test bsplinebasis(i, P, t) ≈ bsplinebasis(i, fP, t)
+            end
+        end
+
+        # Check the values of the derivative of B-spline basis funcitons
+        for i in 1:n
+            for t in rand(5)
+                @test (bsplinebasis′₊₀(i, P, t)
+                     ≈ bsplinebasis′₊₀(i, fP, t)
+                     ≈ bsplinebasis′₋₀(i, P, t)
+                     ≈ bsplinebasis′₋₀(i, fP, t)
+                     ≈ bsplinebasis′(i, P, t)
+                     ≈ bsplinebasis′(i, fP, t))
+            end
+            for t in k
+                t₊₀ = nextfloat(t)
+                t₋₀ = prevfloat(t)
+                @test bsplinebasis′₊₀(i, P, t) ≈ bsplinebasis′₊₀(i, fP, t) ≒ bsplinebasis′₊₀(i, P, t₊₀) ≒ bsplinebasis′₊₀(i, fP, t₊₀)
+                @test bsplinebasis′₋₀(i, P, t) ≈ bsplinebasis′₋₀(i, fP, t) ≒ bsplinebasis′₋₀(i, P, t₋₀) ≒ bsplinebasis′₋₀(i, fP, t₋₀)
+                @test bsplinebasis′(i, P, t) ≈ bsplinebasis′(i, fP, t)
+            end
+        end
+
+        # Check the derivative
+        @testset "derivative" begin
+            Random.seed!(57)
+            for i in 1:n, t in rand(5)
+                b′₊₀ = bsplinebasis′₊₀(i, fP, t)
+                b′₋₀ = bsplinebasis′₋₀(i, fP, t)
+                b′   = bsplinebasis′(i, fP, t)
+                a′₊₀ = (bsplinebasis₊₀(i, fP, t+Δt) - bsplinebasis₊₀(i, fP, t-Δt)) / 2Δt
+                a′₋₀ = (bsplinebasis₋₀(i, fP, t+Δt) - bsplinebasis₋₀(i, fP, t-Δt)) / 2Δt
+                a′   = (bsplinebasis(i, fP, t+Δt) - bsplinebasis(i, fP, t-Δt)) / 2Δt
+                @test b′₊₀ ≈ b′₋₀ ≈ b′ ≈ a′₊₀ ≈ a′₋₀ ≈ a′
+            end
+        end
+    end
+
     @testset "5th degree basis" begin
         Random.seed!(42)
 
