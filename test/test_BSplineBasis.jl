@@ -11,7 +11,7 @@ end
 @testset "BSplineBasis" begin
 
     Δt = 1.0e-8
-    ε = 1.0e-7
+    ε = 1.0e-8
     ∞ = Inf
 
     @testset "0th degree basis" begin
@@ -411,12 +411,33 @@ end
         ts = rand(10)
 
         for p in 0:BasicBSpline.MAX_DEGREE
-            P = FastBSplineSpace(p,k)
+            fP = FastBSplineSpace(p,k)
+            P = BSplineSpace(p,k)
             for t in ts
-                j = BasicBSpline._knotindex(P,t)
-                _B = BasicBSpline._bsplinebasis(P,t,j)
-                B = [bsplinebasis(i,P,t) for i in j-p:j]
+                j = BasicBSpline._knotindex(fP,t)
+                _B = BasicBSpline._bsplinebasis(fP,t,j)
+                # _B′ = BasicBSpline._bsplinebasis′(fP,t,j)
+                B = [bsplinebasis(i,fP,t) for i in j-p:j]
+                B′ = [bsplinebasis′(i,fP,t) for i in j-p:j]
                 @test norm(collect(_B) - B) < ε
+
+                _B = bsplinebasis(P,t)[j-p:j]
+                @test norm(_B - B) < ε
+
+                _B = bsplinebasis₊₀(P,t)[j-p:j]
+                @test norm(_B - B) < ε
+
+                _B = bsplinebasis₋₀(P,t)[j-p:j]
+                @test norm(_B - B) < ε
+
+                _B′ = bsplinebasis′(P,t)[j-p:j]
+                @test norm(_B′ - B′) < ε
+
+                _B′ = bsplinebasis′₊₀(P,t)[j-p:j]
+                @test norm(_B′ - B′) < ε
+
+                _B′ = bsplinebasis′₋₀(P,t)[j-p:j]
+                @test norm(_B′ - B′) < ε
             end
         end
     end
