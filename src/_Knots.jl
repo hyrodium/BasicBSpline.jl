@@ -160,6 +160,8 @@ Knots([1.0, 2.0, 3.0])
 Base.unique(k::Knots) = Knots(unique(k.vector))
 Base.iterate(k::Knots) = iterate(k.vector)
 Base.iterate(k::Knots, i::Integer) = iterate(k.vector, i)
+Base.searchsortedlast(k::Knots,t) = searchsortedlast(k.vector,t)
+Base.searchsortedfirst(k::Knots,t) = searchsortedfirst(k.vector,t)
 
 @doc raw"""
 Check a inclusive relation ship ``k\subset k'``.
@@ -221,5 +223,10 @@ end
 Find an index ``i`` such that ``k_{i} ≤ t < k_{i+1}`` or ``k_{i} < t = k_{i+1} = k_{\text{end}}``.
 """
 function _knotindex(k::Union{Knots, AbstractVector{<:Real}}, t::Real)
-    return findfirst(i -> (k[i]≤t<k[i+1])|(k[i]<t==k[i+1]==k[end]), 1:length(k)-1)
+    j = searchsortedlast(k, t)
+    if j < length(k)
+        return j
+    else
+        return searchsortedfirst(k, t) - 1
+    end
 end
