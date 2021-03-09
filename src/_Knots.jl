@@ -131,7 +131,7 @@ julia> length(k)
 Base.length(k::Knots) = length(k.vector)
 
 function ♯(k::Knots)
-    @warn "BasicBSpline.♯ is deprecated."
+    @warn "BasicBSpline.♯ is deprecated. Use `length` instead."
     return length(k::Knots)
 end
 Base.firstindex(k::Knots) = 1
@@ -217,14 +217,14 @@ end
 Find an index ``i`` such that ``k_{i} ≤ t < k_{i+1}``.
 """
 function _knotindex₊₀(k::Union{Knots, AbstractVector{<:Real}}, t::Real)
-    return findfirst(i -> k[i]≤t<k[i+1], 1:length(k)-1)
+    return searchsortedlast(k, t)
 end
 
 """
 Find an index ``i`` such that ``k_{i} < t ≤ k_{i+1}``.
 """
 function _knotindex₋₀(k::Union{Knots, AbstractVector{<:Real}}, t::Real)
-    return findfirst(i -> k[i]<t≤k[i+1], 1:length(k)-1)
+    return searchsortedfirst(k, t) - 1
 end
 
 """
