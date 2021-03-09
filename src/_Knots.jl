@@ -131,7 +131,7 @@ julia> length(k)
 Base.length(k::Knots) = length(k.vector)
 
 function ♯(k::Knots)
-    @warn "BasicBSpline.♯ is deprecated."
+    @warn "BasicBSpline.♯ is deprecated. Use `length` instead."
     return length(k::Knots)
 end
 Base.firstindex(k::Knots) = 1
@@ -160,6 +160,9 @@ Knots([1.0, 2.0, 3.0])
 Base.unique(k::Knots) = Knots(unique(k.vector))
 Base.iterate(k::Knots) = iterate(k.vector)
 Base.iterate(k::Knots, i::Integer) = iterate(k.vector, i)
+Base.searchsortedfirst(k::Knots,t) = searchsortedfirst(k.vector,t)
+Base.searchsortedlast(k::Knots,t) = searchsortedlast(k.vector,t)
+Base.searchsorted(k::Knots,t) = searchsorted(k.vector,t)
 
 @doc raw"""
 Check a inclusive relation ship ``k\subset k'``.
@@ -169,13 +172,14 @@ Check a inclusive relation ship ``k\subset k'``.
 ```
 """
 function Base.issubset(k::Knots, k′::Knots)
-    K′ = copy(k′.vector)
-    for kᵢ in k.vector
-        i = findfirst(==(kᵢ), K′)
+    v = k′.vector
+    l = length(v)
+    i = 0
+    for kᵢ in k
+        i = findnext(==(kᵢ), v, i+1)
         if isnothing(i)
             return false
         end
-        deleteat!(K′, i)
     end
     return true
 end
@@ -201,25 +205,36 @@ julia> 𝔫(k,2.0)
 2
 ```
 """
-𝔫(k::Knots, t::Real) = count(==(t), k.vector)
+function 𝔫(k::Knots, t::Real)
+    # for small case, this is faster
+    # return count(==(t), k.vector)
+
+    # for large case, this is faster
+    return length(searchsorted(k,t))
+end
 
 """
 Find an index ``i`` such that ``k_{i} ≤ t < k_{i+1}``.
 """
 function _knotindex₊₀(k::Union{Knots, AbstractVector{<:Real}}, t::Real)
-    return findfirst(i -> k[i]≤t<k[i+1], 1:length(k)-1)
+    return searchsortedlast(k, t)
 end
 
 """
 Find an index ``i`` such that ``k_{i} < t ≤ k_{i+1}``.
 """
 function _knotindex₋₀(k::Union{Knots, AbstractVector{<:Real}}, t::Real)
-    return findfirst(i -> k[i]<t≤k[i+1], 1:length(k)-1)
+    return searchsortedfirst(k, t) - 1
 end
 
 """
 Find an index ``i`` such that ``k_{i} ≤ t < k_{i+1}`` or ``k_{i} < t = k_{i+1} = k_{\text{end}}``.
 """
 function _knotindex(k::Union{Knots, AbstractVector{<:Real}}, t::Real)
-    return findfirst(i -> (k[i]≤t<k[i+1])|(k[i]<t==k[i+1]==k[end]), 1:length(k)-1)
+    j = searchsortedlast(k, t)
+    if j < length(k)
+        return j
+    else
+        return searchsortedfirst(k, t) - 1
+    end
 end

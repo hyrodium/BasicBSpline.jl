@@ -126,5 +126,6 @@ end
 function _knotindex(P,t)
     p = degree(P)
     k = knots(P)
-    return _knotindex(k[1+p:end-p], t)+p
+    l = length(k)
+    return _knotindex(view(k.vector, 1+p:l-p), t) + p
 end
