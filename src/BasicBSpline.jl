@@ -30,13 +30,4 @@ include("_Refinement.jl")
 include("_Integral.jl")
 include("_Fitting.jl")
 
-if VERSION < v"1.2.0"
-    <=(x) = Fix2(<=, x)
-    >=(x) = Fix2(>=, x)
-end
-if VERSION < v"1.1.0"
-    isnothing(::Any) = false
-    isnothing(::Nothing) = true
-end
-
 end # module
