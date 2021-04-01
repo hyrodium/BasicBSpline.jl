@@ -6,7 +6,7 @@ TODO: make the field `bsplinespaces` to be conposite type, not abstract type, fo
 """
 struct FastBSplineManifold <: AbstractBSplineManifold
     bsplinespaces::Vector{<:FastBSplineSpace}
-    controlpoints::Array{Float64}
+    controlpoints::Array{<:Point}
     function FastBSplineManifold(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real})
         Ps = FastBSplineSpace.(Ps)
         if collect(size(a)[1:end-1]) ≠ dim.(Ps)
@@ -22,9 +22,9 @@ end
 struct BSplineCurve{p1} <: AbstractBSplineManifold
     bsplinespace1::FastBSplineSpace{p1}
     controlpoints::Array{Float64,2}
-    function BSplineCurve(P1::AbstractBSplineSpace, a::AbstractArray{<:Real,2})
+    function BSplineCurve(P1::AbstractBSplineSpace, a::AbstractArray{<:Point,1})
         p1 = degree(P1)
-        if size(a)[1:end-1] ≠ (dim(P1),)
+        if size(a)[1:end] ≠ (dim(P1),)
             throw(DimensionMismatch())
         else
             a′ = convert(Array{Float64}, a)
@@ -32,7 +32,7 @@ struct BSplineCurve{p1} <: AbstractBSplineManifold
         end
     end
 end
-function BSplineCurve(P1,::AbstractBSplineSpace, a::AbstractArray{<:AbstractVector{<:Real},1})
+function BSplineCurve(P1,::AbstractBSplineSpace, a::AbstractArray{<:Point,1})
     a′ = arrayofvector2array(a)
     return BSplineCurve(P1, a′)
 end
