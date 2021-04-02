@@ -1,4 +1,4 @@
-@testset begin
+@testset "Numerical integral" begin
     gl1 = BasicBSpline.GaussLegendre(1)
     gl2 = BasicBSpline.GaussLegendre(2)
     gl3 = BasicBSpline.GaussLegendre(3)

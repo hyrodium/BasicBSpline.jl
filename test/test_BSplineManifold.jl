@@ -5,7 +5,7 @@
 
             P1 = BSplineSpace(1, Knots([0, 0, 1, 1]))
             n1 = dim(P1) # 2
-            a = [[i, rand()] for i in 1:n1]  # n1 × n2 array of d̂-dim vector.
+            a = [Point(i, rand()) for i in 1:n1]  # n1 × n2 array of d̂-dim vector.
             M = BSplineManifold([P1], a)
             @test dim(M) == 1
 
@@ -29,7 +29,7 @@
 
             P1 = FastBSplineSpace(1, Knots([0, 0, 1, 1]))
             n1 = dim(P1) # 2
-            a = [[i, rand()] for i in 1:n1]  # n1 × n2 array of d̂-dim vector.
+            a = [Point(i, rand()) for i in 1:n1]  # n1 × n2 array of d̂-dim vector.
             M = FastBSplineManifold([P1], a)
             @test dim(M) == 1
 
@@ -53,7 +53,7 @@
 
             P1 = FastBSplineSpace(1, Knots([0, 0, 1, 1]))
             n1 = dim(P1) # 2
-            a = [[i, rand()] for i in 1:n1]  # n1 × n2 array of d̂-dim vector.
+            a = [Point(i, rand()) for i in 1:n1]  # n1 × n2 array of d̂-dim vector.
             M = BSplineCurve([P1], a)
             @test dim(M) == 1
 
@@ -81,7 +81,7 @@
             P2 = BSplineSpace(1, Knots([1, 1, 2, 3, 3]))
             n1 = dim(P1) # 2
             n2 = dim(P2) # 3
-            a = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂-dim vector.
+            a = [Point(i, j) for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂-dim vector.
             M = BSplineManifold([P1, P2], a)
             @test dim(M) == 2
 
@@ -109,7 +109,7 @@
             P2 = FastBSplineSpace(1, Knots([1, 1, 2, 3, 3]))
             n1 = dim(P1) # 2
             n2 = dim(P2) # 3
-            a = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂-dim vector.
+            a = [Point(i, j) for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂-dim vector.
             M = FastBSplineManifold([P1, P2], a)
             @test dim(M) == 2
 
@@ -137,7 +137,7 @@
             P2 = FastBSplineSpace(1, Knots([1, 1, 2, 3, 3]))
             n1 = dim(P1) # 2
             n2 = dim(P2) # 3
-            a = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂-dim vector.
+            a = [Point(i, j) for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂-dim vector.
             M = BSplineSurface([P1, P2], a)
             @test dim(M) == 2
 
@@ -157,24 +157,5 @@
                 @test M(t) ≈ M′′(t)
             end
         end
-    end
-
-    @testset "array <-> array of vector" begin
-        Random.seed!(42)
-
-        A = rand(3,4)
-        A′ = BasicBSpline.array2arrayofvector(A)
-        A′′ = BasicBSpline.arrayofvector2array(A′)
-        @test A == A′′
-
-        B = rand(3,4,5)
-        B′ = BasicBSpline.array2arrayofvector(B)
-        B′′ = BasicBSpline.arrayofvector2array(B′)
-        @test B == B′′
-
-        C = rand(3,4,5,6)
-        C′ = BasicBSpline.array2arrayofvector(C)
-        C′′ = BasicBSpline.arrayofvector2array(C′)
-        @test C == C′′
     end
 end

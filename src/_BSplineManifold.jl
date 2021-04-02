@@ -25,7 +25,7 @@ B-spline manifold for general polynomial degree
 struct BSplineManifold{T} <: AbstractBSplineManifold
     bsplinespaces::Vector{BSplineSpace}
     controlpoints::Array{T} where T<:Point
-    function BSplineManifold(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{<:Real})
+    function BSplineManifold(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{T}) where T
         Ps = BSplineSpace.(Ps)
         if collect(size(a)) ≠ dim.(Ps)
             throw(DimensionMismatch())
@@ -91,8 +91,8 @@ function (M::BSplineManifold)(t::AbstractVector{<:Real})
 
     B = bsplinebasis(Ps, t)
     B_flat = reshape(B,N)
-    a_flat = reshape(a,N,d̂)
-    return [sum(B_flat .* a_flat[:,i]) for i in 1:d̂]
+    a_flat = reshape(a,N)
+    return sum(B_flat .* a_flat[:])
 end
 
 @doc raw"""
