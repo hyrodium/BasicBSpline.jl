@@ -29,38 +29,38 @@ end
         # Check the values of B-spline basis funcitons
         for i in 1:n, t in rand(5)
             for t in rand(5)
-                @test (bsplinebasis₊₀(i, P, t)
-                     ≈ bsplinebasis₊₀(i, fP, t)
-                     ≈ bsplinebasis₋₀(i, P, t)
-                     ≈ bsplinebasis₋₀(i, fP, t)
-                     ≈ bsplinebasis(i, P, t)
-                     ≈ bsplinebasis(i, fP, t))
+                @test (bsplinebasis₊₀(P, i, t)
+                     ≈ bsplinebasis₊₀(fP, i, t)
+                     ≈ bsplinebasis₋₀(P, i, t)
+                     ≈ bsplinebasis₋₀(fP, i, t)
+                     ≈ bsplinebasis(P, i, t)
+                     ≈ bsplinebasis(fP, i, t))
             end
             for t in k
                 t₊₀ = nextfloat(t)
                 t₋₀ = prevfloat(t)
-                @test bsplinebasis₊₀(i, P, t) ≈ bsplinebasis₊₀(i, fP, t) ≒ bsplinebasis₊₀(i, P, t₊₀) ≒ bsplinebasis₊₀(i, fP, t₊₀)
-                @test bsplinebasis₋₀(i, P, t) ≈ bsplinebasis₋₀(i, fP, t) ≒ bsplinebasis₋₀(i, P, t₋₀) ≒ bsplinebasis₋₀(i, fP, t₋₀)
-                @test bsplinebasis(i, P, t) ≈ bsplinebasis(i, fP, t)
+                @test bsplinebasis₊₀(P, i, t) ≈ bsplinebasis₊₀(fP, i, t) ≒ bsplinebasis₊₀(P, i, t₊₀) ≒ bsplinebasis₊₀(fP, i, t₊₀)
+                @test bsplinebasis₋₀(P, i, t) ≈ bsplinebasis₋₀(fP, i, t) ≒ bsplinebasis₋₀(P, i, t₋₀) ≒ bsplinebasis₋₀(fP, i, t₋₀)
+                @test bsplinebasis(P, i, t) ≈ bsplinebasis(fP, i, t)
             end
         end
 
         # Check the values of the derivative of B-spline basis funcitons
         for i in 1:n
             for t in rand(5)
-                @test (bsplinebasis′₊₀(i, P, t)
-                     ≈ bsplinebasis′₊₀(i, fP, t)
-                     ≈ bsplinebasis′₋₀(i, P, t)
-                     ≈ bsplinebasis′₋₀(i, fP, t)
-                     ≈ bsplinebasis′(i, P, t)
-                     ≈ bsplinebasis′(i, fP, t))
+                @test (bsplinebasis′₊₀(P, i, t)
+                     ≈ bsplinebasis′₊₀(fP, i, t)
+                     ≈ bsplinebasis′₋₀(P, i, t)
+                     ≈ bsplinebasis′₋₀(fP, i, t)
+                     ≈ bsplinebasis′(P, i, t)
+                     ≈ bsplinebasis′(fP, i, t))
             end
             for t in k
                 t₊₀ = nextfloat(t)
                 t₋₀ = prevfloat(t)
-                @test bsplinebasis′₊₀(i, P, t) ≈ bsplinebasis′₊₀(i, fP, t) ≒ bsplinebasis′₊₀(i, P, t₊₀) ≒ bsplinebasis′₊₀(i, fP, t₊₀)
-                @test bsplinebasis′₋₀(i, P, t) ≈ bsplinebasis′₋₀(i, fP, t) ≒ bsplinebasis′₋₀(i, P, t₋₀) ≒ bsplinebasis′₋₀(i, fP, t₋₀)
-                @test bsplinebasis′(i, P, t) ≈ bsplinebasis′(i, fP, t)
+                @test bsplinebasis′₊₀(P, i, t) ≈ bsplinebasis′₊₀(fP, i, t) ≒ bsplinebasis′₊₀(P, i, t₊₀) ≒ bsplinebasis′₊₀(fP, i, t₊₀)
+                @test bsplinebasis′₋₀(P, i, t) ≈ bsplinebasis′₋₀(fP, i, t) ≒ bsplinebasis′₋₀(P, i, t₋₀) ≒ bsplinebasis′₋₀(fP, i, t₋₀)
+                @test bsplinebasis′(P, i, t) ≈ bsplinebasis′(fP, i, t)
             end
         end
 
@@ -68,12 +68,12 @@ end
         @testset "derivative" begin
             Random.seed!(57)
             for i in 1:n, t in rand(5)
-                b′₊₀ = bsplinebasis′₊₀(i, fP, t)
-                b′₋₀ = bsplinebasis′₋₀(i, fP, t)
-                b′   = bsplinebasis′(i, fP, t)
-                a′₊₀ = (bsplinebasis₊₀(i, fP, t+Δt) - bsplinebasis₊₀(i, fP, t-Δt)) / 2Δt
-                a′₋₀ = (bsplinebasis₋₀(i, fP, t+Δt) - bsplinebasis₋₀(i, fP, t-Δt)) / 2Δt
-                a′   = (bsplinebasis(i, fP, t+Δt) - bsplinebasis(i, fP, t-Δt)) / 2Δt
+                b′₊₀ = bsplinebasis′₊₀(fP, i, t)
+                b′₋₀ = bsplinebasis′₋₀(fP, i, t)
+                b′   = bsplinebasis′(fP, i, t)
+                a′₊₀ = (bsplinebasis₊₀(fP, i, t+Δt) - bsplinebasis₊₀(fP, i, t-Δt)) / 2Δt
+                a′₋₀ = (bsplinebasis₋₀(fP, i, t+Δt) - bsplinebasis₋₀(fP, i, t-Δt)) / 2Δt
+                a′   = (bsplinebasis(fP, i, t+Δt) - bsplinebasis(fP, i, t-Δt)) / 2Δt
                 @test b′₊₀ ≈ b′₋₀ ≈ b′ ≈ a′₊₀ ≈ a′₋₀ ≈ a′
             end
         end
@@ -94,38 +94,38 @@ end
         # Check the values of B-spline basis funcitons
         for i in 1:n, t in rand(5)
             for t in rand(5)
-                @test (bsplinebasis₊₀(i, P, t)
-                     ≈ bsplinebasis₊₀(i, fP, t)
-                     ≈ bsplinebasis₋₀(i, P, t)
-                     ≈ bsplinebasis₋₀(i, fP, t)
-                     ≈ bsplinebasis(i, P, t)
-                     ≈ bsplinebasis(i, fP, t))
+                @test (bsplinebasis₊₀(P, i, t)
+                     ≈ bsplinebasis₊₀(fP, i, t)
+                     ≈ bsplinebasis₋₀(P, i, t)
+                     ≈ bsplinebasis₋₀(fP, i, t)
+                     ≈ bsplinebasis(P, i, t)
+                     ≈ bsplinebasis(fP, i, t))
             end
             for t in k
                 t₊₀ = nextfloat(t)
                 t₋₀ = prevfloat(t)
-                @test bsplinebasis₊₀(i, P, t) ≈ bsplinebasis₊₀(i, fP, t) ≒ bsplinebasis₊₀(i, P, t₊₀) ≒ bsplinebasis₊₀(i, fP, t₊₀)
-                @test bsplinebasis₋₀(i, P, t) ≈ bsplinebasis₋₀(i, fP, t) ≒ bsplinebasis₋₀(i, P, t₋₀) ≒ bsplinebasis₋₀(i, fP, t₋₀)
-                @test bsplinebasis(i, P, t) ≈ bsplinebasis(i, fP, t)
+                @test bsplinebasis₊₀(P, i, t) ≈ bsplinebasis₊₀(fP, i, t) ≒ bsplinebasis₊₀(P, i, t₊₀) ≒ bsplinebasis₊₀(fP, i, t₊₀)
+                @test bsplinebasis₋₀(P, i, t) ≈ bsplinebasis₋₀(fP, i, t) ≒ bsplinebasis₋₀(P, i, t₋₀) ≒ bsplinebasis₋₀(fP, i, t₋₀)
+                @test bsplinebasis(P, i, t) ≈ bsplinebasis(fP, i, t)
             end
         end
 
         # Check the values of the derivative of B-spline basis funcitons
         for i in 1:n
             for t in rand(5)
-                @test (bsplinebasis′₊₀(i, P, t)
-                     ≈ bsplinebasis′₊₀(i, fP, t)
-                     ≈ bsplinebasis′₋₀(i, P, t)
-                     ≈ bsplinebasis′₋₀(i, fP, t)
-                     ≈ bsplinebasis′(i, P, t)
-                     ≈ bsplinebasis′(i, fP, t))
+                @test (bsplinebasis′₊₀(P, i, t)
+                     ≈ bsplinebasis′₊₀(fP, i, t)
+                     ≈ bsplinebasis′₋₀(P, i, t)
+                     ≈ bsplinebasis′₋₀(fP, i, t)
+                     ≈ bsplinebasis′(P, i, t)
+                     ≈ bsplinebasis′(fP, i, t))
             end
             for t in k
                 t₊₀ = nextfloat(t)
                 t₋₀ = prevfloat(t)
-                @test bsplinebasis′₊₀(i, P, t) ≈ bsplinebasis′₊₀(i, fP, t) ≒ bsplinebasis′₊₀(i, P, t₊₀) ≒ bsplinebasis′₊₀(i, fP, t₊₀)
-                @test bsplinebasis′₋₀(i, P, t) ≈ bsplinebasis′₋₀(i, fP, t) ≒ bsplinebasis′₋₀(i, P, t₋₀) ≒ bsplinebasis′₋₀(i, fP, t₋₀)
-                @test bsplinebasis′(i, P, t) ≈ bsplinebasis′(i, fP, t)
+                @test bsplinebasis′₊₀(P, i, t) ≈ bsplinebasis′₊₀(fP, i, t) ≒ bsplinebasis′₊₀(P, i, t₊₀) ≒ bsplinebasis′₊₀(fP, i, t₊₀)
+                @test bsplinebasis′₋₀(P, i, t) ≈ bsplinebasis′₋₀(fP, i, t) ≒ bsplinebasis′₋₀(P, i, t₋₀) ≒ bsplinebasis′₋₀(fP, i, t₋₀)
+                @test bsplinebasis′(P, i, t) ≈ bsplinebasis′(fP, i, t)
             end
         end
 
@@ -133,12 +133,12 @@ end
         @testset "derivative" begin
             Random.seed!(57)
             for i in 1:n, t in rand(5)
-                b′₊₀ = bsplinebasis′₊₀(i, fP, t)
-                b′₋₀ = bsplinebasis′₋₀(i, fP, t)
-                b′   = bsplinebasis′(i, fP, t)
-                a′₊₀ = (bsplinebasis₊₀(i, fP, t+Δt) - bsplinebasis₊₀(i, fP, t-Δt)) / 2Δt
-                a′₋₀ = (bsplinebasis₋₀(i, fP, t+Δt) - bsplinebasis₋₀(i, fP, t-Δt)) / 2Δt
-                a′   = (bsplinebasis(i, fP, t+Δt) - bsplinebasis(i, fP, t-Δt)) / 2Δt
+                b′₊₀ = bsplinebasis′₊₀(fP, i, t)
+                b′₋₀ = bsplinebasis′₋₀(fP, i, t)
+                b′   = bsplinebasis′(fP, i, t)
+                a′₊₀ = (bsplinebasis₊₀(fP, i, t+Δt) - bsplinebasis₊₀(fP, i, t-Δt)) / 2Δt
+                a′₋₀ = (bsplinebasis₋₀(fP, i, t+Δt) - bsplinebasis₋₀(fP, i, t-Δt)) / 2Δt
+                a′   = (bsplinebasis(fP, i, t+Δt) - bsplinebasis(fP, i, t-Δt)) / 2Δt
                 @test b′₊₀ ≈ b′₋₀ ≈ b′ ≈ a′₊₀ ≈ a′₋₀ ≈ a′
             end
         end
@@ -159,38 +159,38 @@ end
         # Check the values of B-spline basis funcitons
         for i in 1:n, t in rand(5)
             for t in rand(5)
-                @test (bsplinebasis₊₀(i, P, t)
-                     ≈ bsplinebasis₊₀(i, fP, t)
-                     ≈ bsplinebasis₋₀(i, P, t)
-                     ≈ bsplinebasis₋₀(i, fP, t)
-                     ≈ bsplinebasis(i, P, t)
-                     ≈ bsplinebasis(i, fP, t))
+                @test (bsplinebasis₊₀(P, i, t)
+                     ≈ bsplinebasis₊₀(fP, i, t)
+                     ≈ bsplinebasis₋₀(P, i, t)
+                     ≈ bsplinebasis₋₀(fP, i, t)
+                     ≈ bsplinebasis(P, i, t)
+                     ≈ bsplinebasis(fP, i, t))
             end
             for t in k
                 t₊₀ = nextfloat(t)
                 t₋₀ = prevfloat(t)
-                @test bsplinebasis₊₀(i, P, t) ≈ bsplinebasis₊₀(i, fP, t) ≒ bsplinebasis₊₀(i, P, t₊₀) ≒ bsplinebasis₊₀(i, fP, t₊₀)
-                @test bsplinebasis₋₀(i, P, t) ≈ bsplinebasis₋₀(i, fP, t) ≒ bsplinebasis₋₀(i, P, t₋₀) ≒ bsplinebasis₋₀(i, fP, t₋₀)
-                @test bsplinebasis(i, P, t) ≈ bsplinebasis(i, fP, t)
+                @test bsplinebasis₊₀(P, i, t) ≈ bsplinebasis₊₀(fP, i, t) ≒ bsplinebasis₊₀(P, i, t₊₀) ≒ bsplinebasis₊₀(fP, i, t₊₀)
+                @test bsplinebasis₋₀(P, i, t) ≈ bsplinebasis₋₀(fP, i, t) ≒ bsplinebasis₋₀(P, i, t₋₀) ≒ bsplinebasis₋₀(fP, i, t₋₀)
+                @test bsplinebasis(P, i, t) ≈ bsplinebasis(fP, i, t)
             end
         end
 
         # Check the values of the derivative of B-spline basis funcitons
         for i in 1:n
             for t in rand(5)
-                @test (bsplinebasis′₊₀(i, P, t)
-                     ≈ bsplinebasis′₊₀(i, fP, t)
-                     ≈ bsplinebasis′₋₀(i, P, t)
-                     ≈ bsplinebasis′₋₀(i, fP, t)
-                     ≈ bsplinebasis′(i, P, t)
-                     ≈ bsplinebasis′(i, fP, t))
+                @test (bsplinebasis′₊₀(P, i, t)
+                     ≈ bsplinebasis′₊₀(fP, i, t)
+                     ≈ bsplinebasis′₋₀(P, i, t)
+                     ≈ bsplinebasis′₋₀(fP, i, t)
+                     ≈ bsplinebasis′(P, i, t)
+                     ≈ bsplinebasis′(fP, i, t))
             end
             for t in k
                 t₊₀ = nextfloat(t)
                 t₋₀ = prevfloat(t)
-                @test bsplinebasis′₊₀(i, P, t) ≈ bsplinebasis′₊₀(i, fP, t) ≒ bsplinebasis′₊₀(i, P, t₊₀) ≒ bsplinebasis′₊₀(i, fP, t₊₀)
-                @test bsplinebasis′₋₀(i, P, t) ≈ bsplinebasis′₋₀(i, fP, t) ≒ bsplinebasis′₋₀(i, P, t₋₀) ≒ bsplinebasis′₋₀(i, fP, t₋₀)
-                @test bsplinebasis′(i, P, t) ≈ bsplinebasis′(i, fP, t)
+                @test bsplinebasis′₊₀(P, i, t) ≈ bsplinebasis′₊₀(fP, i, t) ≒ bsplinebasis′₊₀(P, i, t₊₀) ≒ bsplinebasis′₊₀(fP, i, t₊₀)
+                @test bsplinebasis′₋₀(P, i, t) ≈ bsplinebasis′₋₀(fP, i, t) ≒ bsplinebasis′₋₀(P, i, t₋₀) ≒ bsplinebasis′₋₀(fP, i, t₋₀)
+                @test bsplinebasis′(P, i, t) ≈ bsplinebasis′(fP, i, t)
             end
         end
 
@@ -198,12 +198,12 @@ end
         @testset "derivative" begin
             Random.seed!(57)
             for i in 1:n, t in rand(5)
-                b′₊₀ = bsplinebasis′₊₀(i, fP, t)
-                b′₋₀ = bsplinebasis′₋₀(i, fP, t)
-                b′   = bsplinebasis′(i, fP, t)
-                a′₊₀ = (bsplinebasis₊₀(i, fP, t+Δt) - bsplinebasis₊₀(i, fP, t-Δt)) / 2Δt
-                a′₋₀ = (bsplinebasis₋₀(i, fP, t+Δt) - bsplinebasis₋₀(i, fP, t-Δt)) / 2Δt
-                a′   = (bsplinebasis(i, fP, t+Δt) - bsplinebasis(i, fP, t-Δt)) / 2Δt
+                b′₊₀ = bsplinebasis′₊₀(fP, i, t)
+                b′₋₀ = bsplinebasis′₋₀(fP, i, t)
+                b′   = bsplinebasis′(fP, i, t)
+                a′₊₀ = (bsplinebasis₊₀(fP, i, t+Δt) - bsplinebasis₊₀(fP, i, t-Δt)) / 2Δt
+                a′₋₀ = (bsplinebasis₋₀(fP, i, t+Δt) - bsplinebasis₋₀(fP, i, t-Δt)) / 2Δt
+                a′   = (bsplinebasis(fP, i, t+Δt) - bsplinebasis(fP, i, t-Δt)) / 2Δt
                 @test b′₊₀ ≈ b′₋₀ ≈ b′ ≈ a′₊₀ ≈ a′₋₀ ≈ a′
             end
         end
@@ -224,38 +224,38 @@ end
         # Check the values of B-spline basis funcitons
         for i in 1:n, t in rand(5)
             for t in rand(5)
-                @test (bsplinebasis₊₀(i, P, t)
-                     ≈ bsplinebasis₊₀(i, fP, t)
-                     ≈ bsplinebasis₋₀(i, P, t)
-                     ≈ bsplinebasis₋₀(i, fP, t)
-                     ≈ bsplinebasis(i, P, t)
-                     ≈ bsplinebasis(i, fP, t))
+                @test (bsplinebasis₊₀(P, i, t)
+                     ≈ bsplinebasis₊₀(fP, i, t)
+                     ≈ bsplinebasis₋₀(P, i, t)
+                     ≈ bsplinebasis₋₀(fP, i, t)
+                     ≈ bsplinebasis(P, i, t)
+                     ≈ bsplinebasis(fP, i, t))
             end
             for t in k
                 t₊₀ = nextfloat(t)
                 t₋₀ = prevfloat(t)
-                @test bsplinebasis₊₀(i, P, t) ≈ bsplinebasis₊₀(i, fP, t) ≒ bsplinebasis₊₀(i, P, t₊₀) ≒ bsplinebasis₊₀(i, fP, t₊₀)
-                @test bsplinebasis₋₀(i, P, t) ≈ bsplinebasis₋₀(i, fP, t) ≒ bsplinebasis₋₀(i, P, t₋₀) ≒ bsplinebasis₋₀(i, fP, t₋₀)
-                @test bsplinebasis(i, P, t) ≈ bsplinebasis(i, fP, t)
+                @test bsplinebasis₊₀(P, i, t) ≈ bsplinebasis₊₀(fP, i, t) ≒ bsplinebasis₊₀(P, i, t₊₀) ≒ bsplinebasis₊₀(fP, i, t₊₀)
+                @test bsplinebasis₋₀(P, i, t) ≈ bsplinebasis₋₀(fP, i, t) ≒ bsplinebasis₋₀(P, i, t₋₀) ≒ bsplinebasis₋₀(fP, i, t₋₀)
+                @test bsplinebasis(P, i, t) ≈ bsplinebasis(fP, i, t)
             end
         end
 
         # Check the values of the derivative of B-spline basis funcitons
         for i in 1:n
             for t in rand(5)
-                @test (bsplinebasis′₊₀(i, P, t)
-                     ≈ bsplinebasis′₊₀(i, fP, t)
-                     ≈ bsplinebasis′₋₀(i, P, t)
-                     ≈ bsplinebasis′₋₀(i, fP, t)
-                     ≈ bsplinebasis′(i, P, t)
-                     ≈ bsplinebasis′(i, fP, t))
+                @test (bsplinebasis′₊₀(P, i, t)
+                     ≈ bsplinebasis′₊₀(fP, i, t)
+                     ≈ bsplinebasis′₋₀(P, i, t)
+                     ≈ bsplinebasis′₋₀(fP, i, t)
+                     ≈ bsplinebasis′(P, i, t)
+                     ≈ bsplinebasis′(fP, i, t))
             end
             for t in k
                 t₊₀ = nextfloat(t)
                 t₋₀ = prevfloat(t)
-                @test bsplinebasis′₊₀(i, P, t) ≈ bsplinebasis′₊₀(i, fP, t) ≒ bsplinebasis′₊₀(i, P, t₊₀) ≒ bsplinebasis′₊₀(i, fP, t₊₀)
-                @test bsplinebasis′₋₀(i, P, t) ≈ bsplinebasis′₋₀(i, fP, t) ≒ bsplinebasis′₋₀(i, P, t₋₀) ≒ bsplinebasis′₋₀(i, fP, t₋₀)
-                @test bsplinebasis′(i, P, t) ≈ bsplinebasis′(i, fP, t)
+                @test bsplinebasis′₊₀(P, i, t) ≈ bsplinebasis′₊₀(fP, i, t) ≒ bsplinebasis′₊₀(P, i, t₊₀) ≒ bsplinebasis′₊₀(fP, i, t₊₀)
+                @test bsplinebasis′₋₀(P, i, t) ≈ bsplinebasis′₋₀(fP, i, t) ≒ bsplinebasis′₋₀(P, i, t₋₀) ≒ bsplinebasis′₋₀(fP, i, t₋₀)
+                @test bsplinebasis′(P, i, t) ≈ bsplinebasis′(fP, i, t)
             end
         end
 
@@ -263,12 +263,12 @@ end
         @testset "derivative" begin
             Random.seed!(57)
             for i in 1:n, t in rand(5)
-                b′₊₀ = bsplinebasis′₊₀(i, fP, t)
-                b′₋₀ = bsplinebasis′₋₀(i, fP, t)
-                b′   = bsplinebasis′(i, fP, t)
-                a′₊₀ = (bsplinebasis₊₀(i, fP, t+Δt) - bsplinebasis₊₀(i, fP, t-Δt)) / 2Δt
-                a′₋₀ = (bsplinebasis₋₀(i, fP, t+Δt) - bsplinebasis₋₀(i, fP, t-Δt)) / 2Δt
-                a′   = (bsplinebasis(i, fP, t+Δt) - bsplinebasis(i, fP, t-Δt)) / 2Δt
+                b′₊₀ = bsplinebasis′₊₀(fP, i, t)
+                b′₋₀ = bsplinebasis′₋₀(fP, i, t)
+                b′   = bsplinebasis′(fP, i, t)
+                a′₊₀ = (bsplinebasis₊₀(fP, i, t+Δt) - bsplinebasis₊₀(fP, i, t-Δt)) / 2Δt
+                a′₋₀ = (bsplinebasis₋₀(fP, i, t+Δt) - bsplinebasis₋₀(fP, i, t-Δt)) / 2Δt
+                a′   = (bsplinebasis(fP, i, t+Δt) - bsplinebasis(fP, i, t-Δt)) / 2Δt
                 @test b′₊₀ ≈ b′₋₀ ≈ b′ ≈ a′₊₀ ≈ a′₋₀ ≈ a′
             end
         end
@@ -289,38 +289,38 @@ end
         # Check the values of B-spline basis funcitons
         for i in 1:n, t in rand(5)
             for t in rand(5)
-                @test (bsplinebasis₊₀(i, P, t)
-                     ≈ bsplinebasis₊₀(i, fP, t)
-                     ≈ bsplinebasis₋₀(i, P, t)
-                     ≈ bsplinebasis₋₀(i, fP, t)
-                     ≈ bsplinebasis(i, P, t)
-                     ≈ bsplinebasis(i, fP, t))
+                @test (bsplinebasis₊₀(P, i, t)
+                     ≈ bsplinebasis₊₀(fP, i, t)
+                     ≈ bsplinebasis₋₀(P, i, t)
+                     ≈ bsplinebasis₋₀(fP, i, t)
+                     ≈ bsplinebasis(P, i, t)
+                     ≈ bsplinebasis(fP, i, t))
             end
             for t in k
                 t₊₀ = nextfloat(t)
                 t₋₀ = prevfloat(t)
-                @test bsplinebasis₊₀(i, P, t) ≈ bsplinebasis₊₀(i, fP, t) ≒ bsplinebasis₊₀(i, P, t₊₀) ≒ bsplinebasis₊₀(i, fP, t₊₀)
-                @test bsplinebasis₋₀(i, P, t) ≈ bsplinebasis₋₀(i, fP, t) ≒ bsplinebasis₋₀(i, P, t₋₀) ≒ bsplinebasis₋₀(i, fP, t₋₀)
-                @test bsplinebasis(i, P, t) ≈ bsplinebasis(i, fP, t)
+                @test bsplinebasis₊₀(P, i, t) ≈ bsplinebasis₊₀(fP, i, t) ≒ bsplinebasis₊₀(P, i, t₊₀) ≒ bsplinebasis₊₀(fP, i, t₊₀)
+                @test bsplinebasis₋₀(P, i, t) ≈ bsplinebasis₋₀(fP, i, t) ≒ bsplinebasis₋₀(P, i, t₋₀) ≒ bsplinebasis₋₀(fP, i, t₋₀)
+                @test bsplinebasis(P, i, t) ≈ bsplinebasis(fP, i, t)
             end
         end
 
         # Check the values of the derivative of B-spline basis funcitons
         for i in 1:n
             for t in rand(5)
-                @test (bsplinebasis′₊₀(i, P, t)
-                     ≈ bsplinebasis′₊₀(i, fP, t)
-                     ≈ bsplinebasis′₋₀(i, P, t)
-                     ≈ bsplinebasis′₋₀(i, fP, t)
-                     ≈ bsplinebasis′(i, P, t)
-                     ≈ bsplinebasis′(i, fP, t))
+                @test (bsplinebasis′₊₀(P, i, t)
+                     ≈ bsplinebasis′₊₀(fP, i, t)
+                     ≈ bsplinebasis′₋₀(P, i, t)
+                     ≈ bsplinebasis′₋₀(fP, i, t)
+                     ≈ bsplinebasis′(P, i, t)
+                     ≈ bsplinebasis′(fP, i, t))
             end
             for t in k
                 t₊₀ = nextfloat(t)
                 t₋₀ = prevfloat(t)
-                @test bsplinebasis′₊₀(i, P, t) ≈ bsplinebasis′₊₀(i, fP, t) ≒ bsplinebasis′₊₀(i, P, t₊₀) ≒ bsplinebasis′₊₀(i, fP, t₊₀)
-                @test bsplinebasis′₋₀(i, P, t) ≈ bsplinebasis′₋₀(i, fP, t) ≒ bsplinebasis′₋₀(i, P, t₋₀) ≒ bsplinebasis′₋₀(i, fP, t₋₀)
-                @test bsplinebasis′(i, P, t) ≈ bsplinebasis′(i, fP, t)
+                @test bsplinebasis′₊₀(P, i, t) ≈ bsplinebasis′₊₀(fP, i, t) ≒ bsplinebasis′₊₀(P, i, t₊₀) ≒ bsplinebasis′₊₀(fP, i, t₊₀)
+                @test bsplinebasis′₋₀(P, i, t) ≈ bsplinebasis′₋₀(fP, i, t) ≒ bsplinebasis′₋₀(P, i, t₋₀) ≒ bsplinebasis′₋₀(fP, i, t₋₀)
+                @test bsplinebasis′(P, i, t) ≈ bsplinebasis′(fP, i, t)
             end
         end
 
@@ -328,12 +328,12 @@ end
         @testset "derivative" begin
             Random.seed!(57)
             for i in 1:n, t in rand(5)
-                b′₊₀ = bsplinebasis′₊₀(i, fP, t)
-                b′₋₀ = bsplinebasis′₋₀(i, fP, t)
-                b′   = bsplinebasis′(i, fP, t)
-                a′₊₀ = (bsplinebasis₊₀(i, fP, t+Δt) - bsplinebasis₊₀(i, fP, t-Δt)) / 2Δt
-                a′₋₀ = (bsplinebasis₋₀(i, fP, t+Δt) - bsplinebasis₋₀(i, fP, t-Δt)) / 2Δt
-                a′   = (bsplinebasis(i, fP, t+Δt) - bsplinebasis(i, fP, t-Δt)) / 2Δt
+                b′₊₀ = bsplinebasis′₊₀(fP, i, t)
+                b′₋₀ = bsplinebasis′₋₀(fP, i, t)
+                b′   = bsplinebasis′(fP, i, t)
+                a′₊₀ = (bsplinebasis₊₀(fP, i, t+Δt) - bsplinebasis₊₀(fP, i, t-Δt)) / 2Δt
+                a′₋₀ = (bsplinebasis₋₀(fP, i, t+Δt) - bsplinebasis₋₀(fP, i, t-Δt)) / 2Δt
+                a′   = (bsplinebasis(fP, i, t+Δt) - bsplinebasis(fP, i, t-Δt)) / 2Δt
                 @test b′₊₀ ≈ b′₋₀ ≈ b′ ≈ a′₊₀ ≈ a′₋₀ ≈ a′
             end
         end
@@ -354,38 +354,38 @@ end
         # Check the values of B-spline basis funcitons
         for i in 1:n, t in rand(5)
             for t in rand(5)
-                @test (bsplinebasis₊₀(i, P, t)
-                     ≈ bsplinebasis₊₀(i, fP, t)
-                     ≈ bsplinebasis₋₀(i, P, t)
-                     ≈ bsplinebasis₋₀(i, fP, t)
-                     ≈ bsplinebasis(i, P, t)
-                     ≈ bsplinebasis(i, fP, t))
+                @test (bsplinebasis₊₀(P, i, t)
+                     ≈ bsplinebasis₊₀(fP, i, t)
+                     ≈ bsplinebasis₋₀(P, i, t)
+                     ≈ bsplinebasis₋₀(fP, i, t)
+                     ≈ bsplinebasis(P, i, t)
+                     ≈ bsplinebasis(fP, i, t))
             end
             for t in k
                 t₊₀ = nextfloat(t)
                 t₋₀ = prevfloat(t)
-                @test bsplinebasis₊₀(i, P, t) ≈ bsplinebasis₊₀(i, fP, t) ≒ bsplinebasis₊₀(i, P, t₊₀) ≒ bsplinebasis₊₀(i, fP, t₊₀)
-                @test bsplinebasis₋₀(i, P, t) ≈ bsplinebasis₋₀(i, fP, t) ≒ bsplinebasis₋₀(i, P, t₋₀) ≒ bsplinebasis₋₀(i, fP, t₋₀)
-                @test bsplinebasis(i, P, t) ≈ bsplinebasis(i, fP, t)
+                @test bsplinebasis₊₀(P, i, t) ≈ bsplinebasis₊₀(fP, i, t) ≒ bsplinebasis₊₀(P, i, t₊₀) ≒ bsplinebasis₊₀(fP, i, t₊₀)
+                @test bsplinebasis₋₀(P, i, t) ≈ bsplinebasis₋₀(fP, i, t) ≒ bsplinebasis₋₀(P, i, t₋₀) ≒ bsplinebasis₋₀(fP, i, t₋₀)
+                @test bsplinebasis(P, i, t) ≈ bsplinebasis(fP, i, t)
             end
         end
 
         # Check the values of the derivative of B-spline basis funcitons
         for i in 1:n
             for t in rand(5)
-                @test (bsplinebasis′₊₀(i, P, t)
-                     ≈ bsplinebasis′₊₀(i, fP, t)
-                     ≈ bsplinebasis′₋₀(i, P, t)
-                     ≈ bsplinebasis′₋₀(i, fP, t)
-                     ≈ bsplinebasis′(i, P, t)
-                     ≈ bsplinebasis′(i, fP, t))
+                @test (bsplinebasis′₊₀(P, i, t)
+                     ≈ bsplinebasis′₊₀(fP, i, t)
+                     ≈ bsplinebasis′₋₀(P, i, t)
+                     ≈ bsplinebasis′₋₀(fP, i, t)
+                     ≈ bsplinebasis′(P, i, t)
+                     ≈ bsplinebasis′(fP, i, t))
             end
             for t in k
                 t₊₀ = nextfloat(t)
                 t₋₀ = prevfloat(t)
-                @test bsplinebasis′₊₀(i, P, t) ≈ bsplinebasis′₊₀(i, fP, t) ≒ bsplinebasis′₊₀(i, P, t₊₀) ≒ bsplinebasis′₊₀(i, fP, t₊₀)
-                @test bsplinebasis′₋₀(i, P, t) ≈ bsplinebasis′₋₀(i, fP, t) ≒ bsplinebasis′₋₀(i, P, t₋₀) ≒ bsplinebasis′₋₀(i, fP, t₋₀)
-                @test bsplinebasis′(i, P, t) ≈ bsplinebasis′(i, fP, t)
+                @test bsplinebasis′₊₀(P, i, t) ≈ bsplinebasis′₊₀(fP, i, t) ≒ bsplinebasis′₊₀(P, i, t₊₀) ≒ bsplinebasis′₊₀(fP, i, t₊₀)
+                @test bsplinebasis′₋₀(P, i, t) ≈ bsplinebasis′₋₀(fP, i, t) ≒ bsplinebasis′₋₀(P, i, t₋₀) ≒ bsplinebasis′₋₀(fP, i, t₋₀)
+                @test bsplinebasis′(P, i, t) ≈ bsplinebasis′(fP, i, t)
             end
         end
 
@@ -393,12 +393,12 @@ end
         @testset "derivative" begin
             Random.seed!(57)
             for i in 1:n, t in rand(5)
-                b′₊₀ = bsplinebasis′₊₀(i, fP, t)
-                b′₋₀ = bsplinebasis′₋₀(i, fP, t)
-                b′   = bsplinebasis′(i, fP, t)
-                a′₊₀ = (bsplinebasis₊₀(i, fP, t+Δt) - bsplinebasis₊₀(i, fP, t-Δt)) / 2Δt
-                a′₋₀ = (bsplinebasis₋₀(i, fP, t+Δt) - bsplinebasis₋₀(i, fP, t-Δt)) / 2Δt
-                a′   = (bsplinebasis(i, fP, t+Δt) - bsplinebasis(i, fP, t-Δt)) / 2Δt
+                b′₊₀ = bsplinebasis′₊₀(fP, i, t)
+                b′₋₀ = bsplinebasis′₋₀(fP, i, t)
+                b′   = bsplinebasis′(fP, i, t)
+                a′₊₀ = (bsplinebasis₊₀(fP, i, t+Δt) - bsplinebasis₊₀(fP, i, t-Δt)) / 2Δt
+                a′₋₀ = (bsplinebasis₋₀(fP, i, t+Δt) - bsplinebasis₋₀(fP, i, t-Δt)) / 2Δt
+                a′   = (bsplinebasis(fP, i, t+Δt) - bsplinebasis(fP, i, t-Δt)) / 2Δt
                 @test b′₊₀ ≈ b′₋₀ ≈ b′ ≈ a′₊₀ ≈ a′₋₀ ≈ a′
             end
         end
@@ -417,8 +417,8 @@ end
                 j = BasicBSpline._knotindex(fP,t)
                 _B = BasicBSpline._bsplinebasis(fP,t,j)
                 # _B′ = BasicBSpline._bsplinebasis′(fP,t,j)
-                B = [bsplinebasis(i,fP,t) for i in j-p:j]
-                B′ = [bsplinebasis′(i,fP,t) for i in j-p:j]
+                B = [bsplinebasis(fP,i,t) for i in j-p:j]
+                B′ = [bsplinebasis′(fP,i,t) for i in j-p:j]
                 @test norm(collect(_B) - B) < ε
 
                 _B = bsplinebasis(P,t)[j-p:j]

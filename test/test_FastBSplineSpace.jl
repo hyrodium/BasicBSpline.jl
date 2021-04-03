@@ -14,7 +14,7 @@
     p = 2
     P = FastBSplineSpace(p, k)
     @test bsplinesupport(P) == [5..13, 12..14]
-    @test bsplinesupport(i, P) == 12..14
+    @test bsplinesupport(P, i) == 12..14
 
     @test isproper(FastBSplineSpace(2, Knots([1, 3, 5, 6, 8, 9])))
     @test !isproper(FastBSplineSpace(1, Knots([1, 3, 3, 3, 8, 9])))

@@ -164,7 +164,7 @@ gr()
 p = 2
 k = Knots(1:8)
 P = BSplineSpace(p,k)
-plot([t->bsplinebasis₊₀(i,P,t) for i in 1:dim(P)], 1, 8, ylims=(0,1.05))
+plot([t->bsplinebasis₊₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(0,1.05))
 ```
 
 ![](img/bsplinebasisplot.png)
@@ -189,7 +189,7 @@ gr()
 p = 2
 k = Knots(1:8)
 P = BSplineSpace(p,k)
-plot([t->bsplinebasis₋₀(i,P,t) for i in 1:dim(P)], 1, 8, ylims=(0,1.05))
+plot([t->bsplinebasis₋₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(0,1.05))
 ```
 
 ![](img/bsplinebasisplot.png)
@@ -210,7 +210,7 @@ k = Knots([5,12,13,13,14])
 p = 2
 P = BSplineSpace(p,k)
 bsplinesupport(P) # [5..13, 12..14]
-bsplinesupport(i,P) # 12..14
+bsplinesupport(P,i) # 12..14
 ```
 
 ## Derivative of B-spline basis function
@@ -232,7 +232,7 @@ gr()
 p = 2
 k = Knots(1:8)
 P = BSplineSpace(p,k)
-plot([t->bsplinebasis′₊₀(i,P,t) for i in 1:dim(P)], 1, 8, ylims=(0,1.05))
+plot([t->bsplinebasis′₊₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(0,1.05))
 ```
 
 ![](img/bsplinebasisderivativeplot.png)
@@ -253,7 +253,7 @@ gr()
 p = 2
 k = Knots(1:8)
 P = BSplineSpace(p,k)
-plot(t->sum(bsplinebasis₊₀(i,P,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.05))
+plot(t->sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.05))
 ```
 
 ![](img/sumofbsplineplot.png)
@@ -267,7 +267,7 @@ gr()
 p = 2
 k = Knots(1:8) + p * Knots([1,8])
 P = BSplineSpace(p,k)
-plot(t->sum(bsplinebasis₊₀(i,P,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.05))
+plot(t->sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.05))
 ```
 
 ![](img/sumofbsplineplot2.png)
@@ -294,7 +294,7 @@ gr()
 p = 2
 k = Knots(1:8) + p * Knots([1,8])
 P = BSplineSpace(p,k)
-plot(t->sum(bsplinebasis(i,P,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.05))
+plot(t->sum(bsplinebasis(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.05))
 ```
 
 ![](img/sumofbsplineplot3.png)
@@ -332,9 +332,9 @@ P1 = BSplineSpace(1,Knots([1,3,5,8]))
 P2 = BSplineSpace(1,Knots([1,3,5,6,8,9]))
 P3 = BSplineSpace(2,Knots([1,1,3,3,5,5,8,8]))
 plot(
-    plot([t->bsplinebasis₊₀(i,P1,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
-    plot([t->bsplinebasis₊₀(i,P2,t) for i in 1:dim(P2)], 1, 9, ylims=(0,1.05), legend=false),
-    plot([t->bsplinebasis₊₀(i,P3,t) for i in 1:dim(P3)], 1, 9, ylims=(0,1.05), legend=false),
+    plot([t->bsplinebasis₊₀(P1,i,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
+    plot([t->bsplinebasis₊₀(P2,i,t) for i in 1:dim(P2)], 1, 9, ylims=(0,1.05), legend=false),
+    plot([t->bsplinebasis₊₀(P3,i,t) for i in 1:dim(P3)], 1, 9, ylims=(0,1.05), legend=false),
     layout=(3,1),
     link=:x
 )
@@ -366,7 +366,7 @@ using BasicBSpline
 using Plots
 gr()
 plot(
-    plot([t->bsplinebasis₊₀(i,P1,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
+    plot([t->bsplinebasis₊₀(P1,i,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
     plot([t->sum(A12[i,j]*bsplinebasis₊₀(j,P2,t) for j in 1:dim(P2)) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
     plot([t->sum(A13[i,j]*bsplinebasis₊₀(j,P3,t) for j in 1:dim(P3)) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
     layout=(3,1),

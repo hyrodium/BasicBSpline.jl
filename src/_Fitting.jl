@@ -13,7 +13,7 @@ function _b_b_int(P::AbstractBSplineSpace, i, j, n, gl)
     p = degree(P)
     I = knots(P)[j+n-1]..knots(P)[j+n]
 
-    f(t) = bsplinebasis(i, P, t) * bsplinebasis(j, P, t)
+    f(t) = bsplinebasis(P, i, t) * bsplinebasis(P, j, t)
     return integrate(f, I, gl)
 end
 
@@ -104,7 +104,7 @@ end
 function _f_b_int_R(func, i1, P1::AbstractBSplineSpace, gl1)
     k1 = knots(P1)
     p1 = degree(P1)
-    F(t1) = bsplinebasis(i1, P1, t1) * func(t1)
+    F(t1) = bsplinebasis(P1, i1, t1) * func(t1)
 
     f1,l1 = i1, i1+p1
 
@@ -119,7 +119,7 @@ function _f_b_int_I(func, i1, P1::AbstractBSplineSpace, gl1)
     k1 = knots(P1)
     m1 = length(k1)
     p1 = degree(P1)
-    F(t1) = bsplinebasis(i1, P1, t1) * func(t1)
+    F(t1) = bsplinebasis(P1, i1, t1) * func(t1)
 
     f1,l1 = max(i1, p1+1), min(i1+p1, m1-p1-1)
 
@@ -133,7 +133,7 @@ end
 function _f_b_int_R(func, i1, i2, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, gl1, gl2)
     k1, k2 = knots(P1), knots(P2)
     p1, p2 = degree(P1), degree(P2)
-    F(t1, t2) = bsplinebasis(i1, P1, t1) * bsplinebasis(i2, P2, t2) * func(t1, t2)
+    F(t1, t2) = bsplinebasis(P1, i1, t1) * bsplinebasis(P2, i2, t2) * func(t1, t2)
 
     f1, l1 = i1, i1+p1
     f2, l2 = i2, i2+p2
@@ -157,7 +157,7 @@ function _f_b_int_I(func, i1, i2, P1::AbstractBSplineSpace, P2::AbstractBSplineS
     k1, k2 = knots(P1), knots(P2)
     m1, m2 = length(k1), length(k2)
     p1, p2 = degree(P1), degree(P2)
-    F(t1, t2) = bsplinebasis(i1, P1, t1) * bsplinebasis(i2, P2, t2) * func(t1, t2)
+    F(t1, t2) = bsplinebasis(P1, i1, t1) * bsplinebasis(P2, i2, t2) * func(t1, t2)
 
     f1, l1 = max(i1, p1+1), min(i1+p1, m1-p1-1)
     f2, l2 = max(i2, p2+1), min(i2+p2, m2-p2-1)
@@ -180,7 +180,7 @@ end
 function _f_b_int_R(func, i1, i2, i3, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, P3::AbstractBSplineSpace, gl1, gl2, gl3)
     k1, k2, k3 = knots(P1), knots(P2), knots(P3)
     p1, p2, p3 = degree(P1), degree(P2), degree(P3)
-    F(t1, t2, t3) = bsplinebasis(i1, P1, t1) * bsplinebasis(i2, P2, t2) * bsplinebasis(i3, P3, t3) * func(t1, t2, t3)
+    F(t1, t2, t3) = bsplinebasis(P1, i1, t1) * bsplinebasis(P2, i2, t2) * bsplinebasis(P3, i3, t3) * func(t1, t2, t3)
 
     f1, l1 = i1, i1+p1
     f2, l2 = i2, i2+p2
@@ -221,7 +221,7 @@ function _f_b_int_I(func, i1, i2, i3, P1::AbstractBSplineSpace, P2::AbstractBSpl
     k1, k2, k3 = knots(P1), knots(P2), knots(P3)
     m1, m2, m3 = length(k1), length(k2), length(k3)
     p1, p2, p3 = degree(P1), degree(P2), degree(P3)
-    F(t1, t2, t3) = bsplinebasis(i1, P1, t1) * bsplinebasis(i2, P2, t2) * bsplinebasis(i3, P3, t3) * func(t1, t2, t3)
+    F(t1, t2, t3) = bsplinebasis(P1, i1, t1) * bsplinebasis(P2, i2, t2) * bsplinebasis(P3, i3, t3) * func(t1, t2, t3)
 
     f1, l1 = max(i1, p1+1), min(i1+p1, m1-p1-1)
     f2, l2 = max(i2, p2+1), min(i2+p2, m2-p2-1)
