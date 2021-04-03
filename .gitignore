@@ -6,6 +6,5 @@
 untitled*
 /docs/Manifest.toml
 /docs/src/index.md
-/benchmark/tune.json
 /.benchmarkci
 /benchmark/*.json
