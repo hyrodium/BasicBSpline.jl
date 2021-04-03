@@ -86,7 +86,6 @@ function (M::BSplineManifold)(t::AbstractVector{<:Real})
     Ps = M.bsplinespaces
     a = M.controlpoints
     d = length(Ps)
-    d̂ = size(a)[end]
     N = prod(dim.(Ps))
 
     B = bsplinebasis(Ps, t)
