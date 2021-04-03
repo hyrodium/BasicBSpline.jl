@@ -3,7 +3,9 @@ module BasicBSpline
 using LinearAlgebra
 using IntervalSets
 using FastGaussQuadrature
+using GeometryBasics
 
+export Point
 export Knots, ♯, BSplineSpace, dim, ⊑, ⊒, ⋢, ⋣, ≃
 export bsplinebasis₊₀, bsplinebasis₋₀, bsplinebasis
 export bsplinebasis′₊₀, bsplinebasis′₋₀, bsplinebasis′
