@@ -65,12 +65,14 @@ B_{i^1,\dots,i^d}(t^1,\dots,t^d)
 ```
 """
 function bsplinebasis(I::CartesianIndex, Ps::AbstractVector{BSplineSpace}, t::AbstractVector{<:Real})
+    @warn "The method `bsplinebasis(I::CartesianIndex, Ps::AbstractVector{BSplineSpace}, t::AbstractVector{<:Real})` will be deprecated."
     d = length(Ps)
     Bs = prod(bsplinebasis(I[i], Ps[i], t[i]) for i in 1:d)
     return tensorprod(Bs)
 end
 
 function bsplinesupport(I::CartesianIndex, Ps::AbstractVector{BSplineSpace})
+    @warn "The method `bsplinesupport(I::CartesianIndex, Ps::AbstractVector{BSplineSpace})` will be deprecated."
     d = length(Ps)
     return [bsplinesupport(I[i], Ps[i]) for i in 1:d]
 end
@@ -86,7 +88,6 @@ function (M::BSplineManifold)(t::AbstractVector{<:Real})
     Ps = M.bsplinespaces
     a = M.controlpoints
     d = length(Ps)
-    d̂ = size(a)[end]
     N = prod(dim.(Ps))
 
     B = bsplinebasis(Ps, t)

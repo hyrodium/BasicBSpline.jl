@@ -12,4 +12,5 @@ using Random
     include("test_BSplineManifold.jl")
     include("test_Integral.jl")
     include("test_Fitting.jl")
+    include("test_compatibility.jl")
 end

@@ -121,9 +121,7 @@ function (M::BSplineCurve{p1})(t1::Real) where {p1}
     k1 = P1.knots
     j1 = _knotindex(P1, t1)
     b1 = _bsplinebasis(P1,t1,j1)
-    d̂ = size(a)[end]
 
-    S1 = Array{Float64}(undef, d̂)
     f1 = j1-p1
     l1 = j1
     S1 = b1[1]*a[f1]
@@ -142,10 +140,7 @@ function (M::BSplineSurface{p1,p2})(t1::Real,t2::Real) where {p1} where {p2}
     j1, j2 = _knotindex(P1, t1), _knotindex(P2, t2)
     b1 = _bsplinebasis(P1,t1,j1)
     b2 = _bsplinebasis(P2,t2,j2)
-    d̂ = size(a)[end]
 
-    S1 = Array{Float64}(undef, d̂)
-    S2 = Array{Float64}(undef, d̂)
     f1, f2 = j1-p1, j2-p2
     l1, l2 = j1, j2
     S2 = b2[1]*a[f1,f2]
@@ -173,11 +168,7 @@ function (M::BSplineSolid{p1,p2,p3})(t1::Real,t2::Real,t3::Real) where {p1} wher
     b1 = _bsplinebasis(P1,t1,j1)
     b2 = _bsplinebasis(P2,t2,j2)
     b3 = _bsplinebasis(P3,t3,j3)
-    d̂ = size(a)[end]
 
-    S1 = Array{Float64}(undef, d̂)
-    S2 = Array{Float64}(undef, d̂)
-    S3 = Array{Float64}(undef, d̂)
     f1, f2, f3 = j1-p1, j2-p2, j3-p3
     l1, l2, l3 = j1, j2, j3
     S3 = b3[1]*a[f1,f2,f3]
