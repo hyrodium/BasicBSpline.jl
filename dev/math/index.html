@@ -3,14 +3,14 @@
 Knots([1.0, 2.0, 3.0])
 
 julia&gt; k = Knots(1:3)
-Knots([1.0, 2.0, 3.0])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/a484e097d6bab6b1e89b42f9fd7e89eb43501f8a/src/_Knots.jl#LL5-L19">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="BasicBSpline.Knots-Tuple{Real}" href="#BasicBSpline.Knots-Tuple{Real}"><code>BasicBSpline.Knots</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Construct knot vector from given real numbers.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; k = Knots(1,2,3)
+Knots([1.0, 2.0, 3.0])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/7cdac7b3192f09abb83258abbe6695c8291b29d8/src/_Knots.jl#LL5-L19">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="BasicBSpline.Knots-Tuple{Real}" href="#BasicBSpline.Knots-Tuple{Real}"><code>BasicBSpline.Knots</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Construct knot vector from given real numbers.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; k = Knots(1,2,3)
 Knots([1.0, 2.0, 3.0])
 
 julia&gt; k = Knots()
-Knots([])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/a484e097d6bab6b1e89b42f9fd7e89eb43501f8a/src/_Knots.jl#LL35-L46">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="Base.length-Tuple{Knots}" href="#Base.length-Tuple{Knots}"><code>Base.length</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Length of knot vector</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; k = Knots(1,2,3,5);
+Knots([])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/7cdac7b3192f09abb83258abbe6695c8291b29d8/src/_Knots.jl#LL35-L46">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="Base.length-Tuple{Knots}" href="#Base.length-Tuple{Knots}"><code>Base.length</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Length of knot vector</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; k = Knots(1,2,3,5);
 
 julia&gt; length(k)
-4</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/a484e097d6bab6b1e89b42f9fd7e89eb43501f8a/src/_Knots.jl#LL120-L130">source</a></section></article><p>We introduce <strong>additional operator</strong> <span>$+$</span>.</p><article class="docstring"><header><a class="docstring-binding" id="Base.:+-Tuple{Knots, Knots}" href="#Base.:+-Tuple{Knots, Knots}"><code>Base.:+</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Sum of knot vectors</p><p class="math-container">\[\begin{aligned}
+4</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/7cdac7b3192f09abb83258abbe6695c8291b29d8/src/_Knots.jl#LL120-L130">source</a></section></article><p>We introduce <strong>additional operator</strong> <span>$+$</span>.</p><article class="docstring"><header><a class="docstring-binding" id="Base.:+-Tuple{Knots, Knots}" href="#Base.:+-Tuple{Knots, Knots}"><code>Base.:+</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Sum of knot vectors</p><p class="math-container">\[\begin{aligned}
 k^{(1)}+k^{(2)}
 &amp;=(k^{(1)}_1, \dots, k^{(1)}_{l^{(1)}}) + (k^{(2)}_1, \dots, k^{(2)}_{l^{(2)}}) \\
 &amp;=(\text{sort of union of} \  k^{(1)} \ \text{and} \  k^{(2)} \text{)}
@@ -19,18 +19,18 @@ k^{(1)}+k^{(2)}
 julia&gt; k2 = Knots(4,5,8);
 
 julia&gt; k1 + k2
-Knots([1.0, 2.0, 3.0, 4.0, 5.0, 5.0, 8.0])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/a484e097d6bab6b1e89b42f9fd7e89eb43501f8a/src/_Knots.jl#LL62-L84">source</a></section></article><p>And <strong>product operator</strong> <span>$\cdot$</span>.</p><article class="docstring"><header><a class="docstring-binding" id="Base.:*-Tuple{Integer, Knots}" href="#Base.:*-Tuple{Integer, Knots}"><code>Base.:*</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Product of integer and knot vector</p><p class="math-container">\[\begin{aligned}
+Knots([1.0, 2.0, 3.0, 4.0, 5.0, 5.0, 8.0])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/7cdac7b3192f09abb83258abbe6695c8291b29d8/src/_Knots.jl#LL62-L84">source</a></section></article><p>And <strong>product operator</strong> <span>$\cdot$</span>.</p><article class="docstring"><header><a class="docstring-binding" id="Base.:*-Tuple{Integer, Knots}" href="#Base.:*-Tuple{Integer, Knots}"><code>Base.:*</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Product of integer and knot vector</p><p class="math-container">\[\begin{aligned}
 m\cdot k&amp;=\underbrace{k+\cdots+k}_{m}
 \end{aligned}\]</p><p>For example, <span>$2\cdot (1,2,2,5)=(1,1,2,2,2,2,5,5)$</span>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; k = Knots(1,2,2,5);
 
 julia&gt; 2 * k
-Knots([1.0, 1.0, 2.0, 2.0, 2.0, 2.0, 5.0, 5.0])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/a484e097d6bab6b1e89b42f9fd7e89eb43501f8a/src/_Knots.jl#LL87-L105">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="Base.unique-Tuple{Knots}" href="#Base.unique-Tuple{Knots}"><code>Base.unique</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Unique elements of knot vector.</p><p class="math-container">\[\begin{aligned}
+Knots([1.0, 1.0, 2.0, 2.0, 2.0, 2.0, 5.0, 5.0])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/7cdac7b3192f09abb83258abbe6695c8291b29d8/src/_Knots.jl#LL87-L105">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="Base.unique-Tuple{Knots}" href="#Base.unique-Tuple{Knots}"><code>Base.unique</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Unique elements of knot vector.</p><p class="math-container">\[\begin{aligned}
 \widehat{k}
 &amp;=(\text{remove duplicates of} \  k) \\
 \end{aligned}\]</p><p>For example, <span>$\widehat{(1,2,2,3)}=(1,2,3)$</span>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; k = Knots([1,2,2,3]);
 
 julia&gt; unique(k)
-Knots([1.0, 2.0, 3.0])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/a484e097d6bab6b1e89b42f9fd7e89eb43501f8a/src/_Knots.jl#LL140-L159">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="BasicBSpline.𝔫-Tuple{Knots, Real}" href="#BasicBSpline.𝔫-Tuple{Knots, Real}"><code>BasicBSpline.𝔫</code></a> — <span class="docstring-category">Method</span></header><section><div><p>For Given knot vector <span>$k$</span>, the following function <span>$\mathfrak{n}_k:\mathbb{R}\to\mathbb{Z}$</span> represents the number of knots that duplicate the knot vector <span>$k$</span>.</p><p class="math-container">\[\mathfrak{n}_k(t) = \sharp\{i \mid k_i=t \}\]</p><p>For example, if <span>$k=(1,2,2,3)$</span>, then <span>$\mathfrak{n}_k(0.3)=0$</span>, <span>$\mathfrak{n}_k(1)=1$</span>, <span>$\mathfrak{n}_k(2)=2$</span>.</p><pre><code class="language-julia-repl">julia&gt; k = Knots([1,2,2,3]);
+Knots([1.0, 2.0, 3.0])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/7cdac7b3192f09abb83258abbe6695c8291b29d8/src/_Knots.jl#LL140-L159">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="BasicBSpline.𝔫-Tuple{Knots, Real}" href="#BasicBSpline.𝔫-Tuple{Knots, Real}"><code>BasicBSpline.𝔫</code></a> — <span class="docstring-category">Method</span></header><section><div><p>For Given knot vector <span>$k$</span>, the following function <span>$\mathfrak{n}_k:\mathbb{R}\to\mathbb{Z}$</span> represents the number of knots that duplicate the knot vector <span>$k$</span>.</p><p class="math-container">\[\mathfrak{n}_k(t) = \sharp\{i \mid k_i=t \}\]</p><p>For example, if <span>$k=(1,2,2,3)$</span>, then <span>$\mathfrak{n}_k(0.3)=0$</span>, <span>$\mathfrak{n}_k(1)=1$</span>, <span>$\mathfrak{n}_k(2)=2$</span>.</p><pre><code class="language-julia-repl">julia&gt; k = Knots([1,2,2,3]);
 
 julia&gt; 𝔫(k,0.3)
 0
@@ -39,7 +39,7 @@ julia&gt; 𝔫(k,1.0)
 1
 
 julia&gt; 𝔫(k,2.0)
-2</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/a484e097d6bab6b1e89b42f9fd7e89eb43501f8a/src/_Knots.jl#LL187-L207">source</a></section></article><h2 id="B-spline-space"><a class="docs-heading-anchor" href="#B-spline-space">B-spline space</a><a id="B-spline-space-1"></a><a class="docs-heading-anchor-permalink" href="#B-spline-space" title="Permalink"></a></h2><p>Before defining B-spline space, we&#39;ll define polynomial space with degree <span>$p$</span>.</p><div class="admonition is-success"><header class="admonition-header">Def.  Polynomial space</header><div class="admonition-body"><p>Polynomial space with degree <span>$p$</span>.</p><p class="math-container">\[\mathcal{P}[p]
+2</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/7cdac7b3192f09abb83258abbe6695c8291b29d8/src/_Knots.jl#LL187-L207">source</a></section></article><h2 id="B-spline-space"><a class="docs-heading-anchor" href="#B-spline-space">B-spline space</a><a id="B-spline-space-1"></a><a class="docs-heading-anchor-permalink" href="#B-spline-space" title="Permalink"></a></h2><p>Before defining B-spline space, we&#39;ll define polynomial space with degree <span>$p$</span>.</p><div class="admonition is-success"><header class="admonition-header">Def.  Polynomial space</header><div class="admonition-body"><p>Polynomial space with degree <span>$p$</span>.</p><p class="math-container">\[\mathcal{P}[p]
 =\left\{f:\mathbb{R}\to\mathbb{R}\ ;\ t\mapsto a_0+a_1t^1+\cdots+a_pt^p \  \left| \ %
     a_i\in \mathbb{R}
     \right.
@@ -387,19 +387,19 @@ BSplineSpace(2, Knots([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]))
 
 julia&gt; rand_a = [rand(2) for i in 1:dim(P), j in 1:dim(P)]
 5×5 Matrix{Vector{Float64}}:
- [0.817034, 0.860885]  [0.253903, 0.288188]   …  [0.109389, 0.839346]
- [0.904529, 0.397442]  [0.631178, 0.652511]      [0.364562, 0.379259]
- [0.924511, 0.989161]  [0.556182, 0.0157432]     [0.918503, 0.0897871]
- [0.537395, 0.439235]  [0.964289, 0.723059]      [0.666175, 0.961212]
- [0.984809, 0.193957]  [0.849006, 0.566195]      [0.35518, 0.839714]
+ [0.29555, 0.100355]    [0.734695, 0.0210054]  …  [0.672065, 0.916379]
+ [0.0422701, 0.659267]  [0.346805, 0.439139]      [0.374437, 0.468811]
+ [0.528167, 0.486033]   [0.607611, 0.448182]      [0.483124, 0.256722]
+ [0.983159, 0.808678]   [0.927764, 0.50494]       [0.426687, 0.846471]
+ [0.186525, 0.795356]   [0.284674, 0.9217]        [0.50299, 0.466497]
 
 julia&gt; a = [[2*i-6.5,2*j-6.5] for i in 1:dim(P), j in 1:dim(P)] + rand_a # random generated control points
 5×5 Matrix{Vector{Float64}}:
- [-3.68297, -3.63911]  [-4.2461, -2.21181]    …  [-4.39061, 4.33935]
- [-1.59547, -4.10256]  [-1.86882, -1.84749]      [-2.13544, 3.87926]
- [0.424511, -3.51084]  [0.0561815, -2.48426]     [0.418503, 3.58979]
- [2.0374, -4.06077]    [2.46429, -1.77694]       [2.16617, 4.46121]
- [4.48481, -4.30604]   [4.34901, -1.9338]        [3.85518, 4.33971]
+ [-4.20445, -4.39964]   [-3.7653, -2.47899]   …  [-3.82794, 4.41638]
+ [-2.45773, -3.84073]   [-2.15319, -2.06086]     [-2.12556, 3.96881]
+ [0.0281672, -4.01397]  [0.107611, -2.05182]     [-0.0168764, 3.75672]
+ [2.48316, -3.69132]    [2.42776, -1.99506]      [1.92669, 4.34647]
+ [3.68653, -3.70464]    [3.78467, -1.5783]       [4.00299, 3.9665]
 
 julia&gt; M = BSplineManifold([P,P],a) # Define B-spline manifold
 ERROR: MethodError: no method matching zero(::Type{Vector{Float64}})
@@ -512,4 +512,4 @@ Closest candidates are:
   ...
 
 julia&gt; save_png(&quot;fitting.png&quot;, M, unitlength=50, up=10, down=-10, left=-10, right=10)
-ERROR: UndefVarError: save_png not defined</code></pre><p><img src="../img/fitting_desmos.png" alt/> <img src="../img/fitting.png" alt/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Home</a><a class="docs-footer-nextpage" href="../benchmark/">Benchmark »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Saturday 3 April 2021 05:43">Saturday 3 April 2021</span>. Using Julia version 1.6.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+ERROR: UndefVarError: save_png not defined</code></pre><p><img src="../img/fitting_desmos.png" alt/> <img src="../img/fitting.png" alt/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Home</a><a class="docs-footer-nextpage" href="../benchmark/">Benchmark »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Saturday 3 April 2021 14:41">Saturday 3 April 2021</span>. Using Julia version 1.6.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
