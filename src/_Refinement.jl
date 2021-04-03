@@ -197,6 +197,7 @@ function refinement(M::AbstractBSplineManifold, Ps′::Vector{<:AbstractBSplineS
             for J₁ in 1:n′[1], J₂ in 1:n′[2], J₃ in 1:n′[3]
         ]
     end
+    sleep(0.3)
     return (typeof(M).name.wrapper)(Ps′, a′)
 end
 
