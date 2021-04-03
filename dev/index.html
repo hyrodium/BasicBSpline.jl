@@ -9,10 +9,10 @@ P1 = BSplineSpace(1,k) # 1st degree piecewise polynomial space
 P2 = BSplineSpace(2,k) # 2nd degree piecewise polynomial space
 P3 = BSplineSpace(3,k) # 3rd degree piecewise polynomial space
 plot(
-    plot([t-&gt;bsplinebasis(i,P0,t) for i in 1:dim(P0)], 0, 10, ylims=(0,1), legend=false),
-    plot([t-&gt;bsplinebasis(i,P1,t) for i in 1:dim(P1)], 0, 10, ylims=(0,1), legend=false),
-    plot([t-&gt;bsplinebasis(i,P2,t) for i in 1:dim(P2)], 0, 10, ylims=(0,1), legend=false),
-    plot([t-&gt;bsplinebasis(i,P3,t) for i in 1:dim(P3)], 0, 10, ylims=(0,1), legend=false),
+    plot([t-&gt;bsplinebasis(P0,i,t) for i in 1:dim(P0)], 0, 10, ylims=(0,1), legend=false),
+    plot([t-&gt;bsplinebasis(P1,i,t) for i in 1:dim(P1)], 0, 10, ylims=(0,1), legend=false),
+    plot([t-&gt;bsplinebasis(P2,i,t) for i in 1:dim(P2)], 0, 10, ylims=(0,1), legend=false),
+    plot([t-&gt;bsplinebasis(P3,i,t) for i in 1:dim(P3)], 0, 10, ylims=(0,1), legend=false),
     layout=(2,2),
 )</code></pre><p><img src="img/cover.png" alt/></p><p>Try <a href="https://www.desmos.com/calculator/ql6jqgdabs">interactive graph with Desmos graphing calculator</a>!</p><h3 id="B-spline-manifold"><a class="docs-heading-anchor" href="#B-spline-manifold">B-spline manifold</a><a id="B-spline-manifold-1"></a><a class="docs-heading-anchor-permalink" href="#B-spline-manifold" title="Permalink"></a></h3><pre><code class="language-julia">using BasicBSpline
 using ExportNURBS
@@ -63,4 +63,4 @@ save_svg(&quot;sine_curve.svg&quot;, M, unitlength=50, up=2, down=-2, left=-8, r
   year={2020},
   howpublished={\url{https://hyrodium.github.io/BasicBSpline.jl/stable/}},
   doi={10.5281/zenodo.4356869}
-}</code></pre></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="math/">Mathematical properties of B-spline »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Saturday 3 April 2021 03:38">Saturday 3 April 2021</span>. Using Julia version 1.6.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+}</code></pre></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="math/">Mathematical properties of B-spline »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Saturday 3 April 2021 05:42">Saturday 3 April 2021</span>. Using Julia version 1.6.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
