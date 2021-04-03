@@ -6,11 +6,11 @@
     i = n÷2
     t = 0.5
 
-    bsplinebasis₊₀(i::Integer,P::AbstractBSplineSpace,t::Real) = bsplinebasis(P,i,t)
-    bsplinebasis₋₀(i::Integer,P::AbstractBSplineSpace,t::Real) = bsplinebasis(P,i,t)
-    bsplinebasis(i::Integer,P::AbstractBSplineSpace,t::Real) = bsplinebasis(P,i,t)
-    bsplinebasis′₊₀(i::Integer,P::AbstractBSplineSpace,t::Real) = bsplinebasis(P,i,t)
-    bsplinebasis′₋₀(i::Integer,P::AbstractBSplineSpace,t::Real) = bsplinebasis(P,i,t)
-    bsplinebasis′(i::Integer,P::AbstractBSplineSpace,t::Real) = bsplinebasis(P,i,t)
-    bsplinesupport(i::Integer,P::AbstractBSplineSpace) = bsplinesupport(P,i)
+    @test bsplinebasis₊₀(i::Integer,P::AbstractBSplineSpace,t::Real) == bsplinebasis(P,i,t)
+    @test bsplinebasis₋₀(i::Integer,P::AbstractBSplineSpace,t::Real) == bsplinebasis(P,i,t)
+    @test bsplinebasis(i::Integer,P::AbstractBSplineSpace,t::Real) == bsplinebasis(P,i,t)
+    @test bsplinebasis′₊₀(i::Integer,P::AbstractBSplineSpace,t::Real) == bsplinebasis(P,i,t)
+    @test bsplinebasis′₋₀(i::Integer,P::AbstractBSplineSpace,t::Real) == bsplinebasis(P,i,t)
+    @test bsplinebasis′(i::Integer,P::AbstractBSplineSpace,t::Real) == bsplinebasis(P,i,t)
+    @test bsplinesupport(i::Integer,P::AbstractBSplineSpace) == bsplinesupport(P,i)
 end
