@@ -1,36 +1,36 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Mathematical properties of B-spline · BasicBSpline.jl</title><link rel="canonical" href="https://hyrodium.github.io/BasicBSpline.jl/stable/math/"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script><link href="../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../"><img src="../assets/logo.svg" alt="BasicBSpline.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit">BasicBSpline.jl</span></div><form class="docs-search" action="../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../">Home</a></li><li class="is-active"><a class="tocitem" href>Mathematical properties of B-spline</a><ul class="internal"><li><a class="tocitem" href="#Introduction"><span>Introduction</span></a></li><li><a class="tocitem" href="#Knot-vector"><span>Knot vector</span></a></li><li><a class="tocitem" href="#B-spline-space"><span>B-spline space</span></a></li><li><a class="tocitem" href="#B-spline-basis-function"><span>B-spline basis function</span></a></li><li><a class="tocitem" href="#Support-of-B-spline-basis-function"><span>Support of B-spline basis function</span></a></li><li><a class="tocitem" href="#Derivative-of-B-spline-basis-function"><span>Derivative of B-spline basis function</span></a></li><li><a class="tocitem" href="#Partition-of-unity"><span>Partition of unity</span></a></li><li><a class="tocitem" href="#Inclusion-relation-between-B-spline-spaces"><span>Inclusion relation between B-spline spaces</span></a></li><li><a class="tocitem" href="#Multi-dimensional-B-spline"><span>Multi-dimensional B-spline</span></a></li><li><a class="tocitem" href="#B-spline-manifold"><span>B-spline manifold</span></a></li><li><a class="tocitem" href="#Affine-commutativity"><span>Affine commutativity</span></a></li><li><a class="tocitem" href="#Refinement"><span>Refinement</span></a></li><li><a class="tocitem" href="#Fitting"><span>Fitting</span></a></li></ul></li><li><a class="tocitem" href="../benchmark/">Benchmark</a></li><li><a class="tocitem" href="../poisson/">Example 1 - Poisson&#39;s equation</a></li><li><a class="tocitem" href="../elasticity/">Example 2 - Linear elasticity</a></li><li><a class="tocitem" href="../detail/">Docstrings</a></li><li><a class="tocitem" href="../future/">Future work</a></li><li><a class="tocitem" href="../contributing/">Contributing</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Mathematical properties of B-spline</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Mathematical properties of B-spline</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/hyrodium/BasicBSpline.jl/blob/master/docs/src/math.md#L" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Mathematical-properties-of-B-spline"><a class="docs-heading-anchor" href="#Mathematical-properties-of-B-spline">Mathematical properties of B-spline</a><a id="Mathematical-properties-of-B-spline-1"></a><a class="docs-heading-anchor-permalink" href="#Mathematical-properties-of-B-spline" title="Permalink"></a></h1><h2 id="Introduction"><a class="docs-heading-anchor" href="#Introduction">Introduction</a><a id="Introduction-1"></a><a class="docs-heading-anchor-permalink" href="#Introduction" title="Permalink"></a></h2><p><a href="https://en.wikipedia.org/wiki/B-spline">B-spline</a> is a mathematical object, and it has a lot of application(e.g. <a href="https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline">NURBS</a>, <a href="https://en.wikipedia.org/wiki/Isogeometric_analysis">IGA</a>).</p><p>In this page, we&#39;ll explain the mathematical definition and property of B-spline with Julia code.</p><p>Before running the following code, do not forget importing the package:</p><pre><code class="language-julia">using BasicBSpline</code></pre><h3 id="Notice"><a class="docs-heading-anchor" href="#Notice">Notice</a><a id="Notice-1"></a><a class="docs-heading-anchor-permalink" href="#Notice" title="Permalink"></a></h3><ul><li>A book <a href="https://www.routledge.com/p/book/9780367447243">&quot;Geometric Modeling with Splines&quot;</a> by Elaine Cohen, Richard F. Riesenfeld, Gershon Elber is really recommended.</li><li><strong>Some of notations in this page are my original</strong>, but these are well-considered results.</li></ul><h2 id="Knot-vector"><a class="docs-heading-anchor" href="#Knot-vector">Knot vector</a><a id="Knot-vector-1"></a><a class="docs-heading-anchor-permalink" href="#Knot-vector" title="Permalink"></a></h2><div class="admonition is-success"><header class="admonition-header">Def.  Knot vector</header><div class="admonition-body"><p>A finite sequence</p><p class="math-container">\[k = (k_1, \dots, k_l)\]</p><p>is called <strong>knot vector</strong> if the sequence is broad monotonic increase, i.e. <span>$k_{i} \le k_{i+1}$</span>.</p></div></div><p>[fig]</p><article class="docstring"><header><a class="docstring-binding" id="BasicBSpline.Knots-Tuple{AbstractVector{var&quot;#s25&quot;} where var&quot;#s25&quot;&lt;:Real}" href="#BasicBSpline.Knots-Tuple{AbstractVector{var&quot;#s25&quot;} where var&quot;#s25&quot;&lt;:Real}"><code>BasicBSpline.Knots</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Construct knot vector from given array.</p><p class="math-container">\[k=(k_1,\dots,k_l)\]</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; k = Knots([1,2,3])
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Mathematical properties of B-spline · BasicBSpline.jl</title><script data-outdated-warner src="../assets/warner.js"></script><link rel="canonical" href="https://hyrodium.github.io/BasicBSpline.jl/stable/math/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.039/juliamono-regular.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.11/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script><link href="../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../"><img src="../assets/logo.svg" alt="BasicBSpline.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../">BasicBSpline.jl</a></span></div><form class="docs-search" action="../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../">Home</a></li><li class="is-active"><a class="tocitem" href>Mathematical properties of B-spline</a><ul class="internal"><li><a class="tocitem" href="#Introduction"><span>Introduction</span></a></li><li><a class="tocitem" href="#Knot-vector"><span>Knot vector</span></a></li><li><a class="tocitem" href="#B-spline-space"><span>B-spline space</span></a></li><li><a class="tocitem" href="#B-spline-basis-function"><span>B-spline basis function</span></a></li><li><a class="tocitem" href="#Support-of-B-spline-basis-function"><span>Support of B-spline basis function</span></a></li><li><a class="tocitem" href="#Derivative-of-B-spline-basis-function"><span>Derivative of B-spline basis function</span></a></li><li><a class="tocitem" href="#Partition-of-unity"><span>Partition of unity</span></a></li><li><a class="tocitem" href="#Inclusion-relation-between-B-spline-spaces"><span>Inclusion relation between B-spline spaces</span></a></li><li><a class="tocitem" href="#Multi-dimensional-B-spline"><span>Multi-dimensional B-spline</span></a></li><li><a class="tocitem" href="#B-spline-manifold"><span>B-spline manifold</span></a></li><li><a class="tocitem" href="#Affine-commutativity"><span>Affine commutativity</span></a></li><li><a class="tocitem" href="#Refinement"><span>Refinement</span></a></li><li><a class="tocitem" href="#Fitting"><span>Fitting</span></a></li></ul></li><li><a class="tocitem" href="../benchmark/">Benchmark</a></li><li><a class="tocitem" href="../poisson/">Example 1 - Poisson&#39;s equation</a></li><li><a class="tocitem" href="../elasticity/">Example 2 - Linear elasticity</a></li><li><a class="tocitem" href="../detail/">Docstrings</a></li><li><a class="tocitem" href="../future/">Future work</a></li><li><a class="tocitem" href="../contributing/">Contributing</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Mathematical properties of B-spline</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Mathematical properties of B-spline</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/hyrodium/BasicBSpline.jl/blob/master/docs/src/math.md#L" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Mathematical-properties-of-B-spline"><a class="docs-heading-anchor" href="#Mathematical-properties-of-B-spline">Mathematical properties of B-spline</a><a id="Mathematical-properties-of-B-spline-1"></a><a class="docs-heading-anchor-permalink" href="#Mathematical-properties-of-B-spline" title="Permalink"></a></h1><h2 id="Introduction"><a class="docs-heading-anchor" href="#Introduction">Introduction</a><a id="Introduction-1"></a><a class="docs-heading-anchor-permalink" href="#Introduction" title="Permalink"></a></h2><p><a href="https://en.wikipedia.org/wiki/B-spline">B-spline</a> is a mathematical object, and it has a lot of application(e.g. <a href="https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline">NURBS</a>, <a href="https://en.wikipedia.org/wiki/Isogeometric_analysis">IGA</a>).</p><p>In this page, we&#39;ll explain the mathematical definition and property of B-spline with Julia code.</p><p>Before running the following code, do not forget importing the package:</p><pre><code class="language-julia hljs">using BasicBSpline</code></pre><h3 id="Notice"><a class="docs-heading-anchor" href="#Notice">Notice</a><a id="Notice-1"></a><a class="docs-heading-anchor-permalink" href="#Notice" title="Permalink"></a></h3><ul><li>A book <a href="https://www.routledge.com/p/book/9780367447243">&quot;Geometric Modeling with Splines&quot;</a> by Elaine Cohen, Richard F. Riesenfeld, Gershon Elber is really recommended.</li><li><strong>Some of notations in this page are my original</strong>, but these are well-considered results.</li></ul><h2 id="Knot-vector"><a class="docs-heading-anchor" href="#Knot-vector">Knot vector</a><a id="Knot-vector-1"></a><a class="docs-heading-anchor-permalink" href="#Knot-vector" title="Permalink"></a></h2><div class="admonition is-success"><header class="admonition-header">Def.  Knot vector</header><div class="admonition-body"><p>A finite sequence</p><p class="math-container">\[k = (k_1, \dots, k_l)\]</p><p>is called <strong>knot vector</strong> if the sequence is broad monotonic increase, i.e. <span>$k_{i} \le k_{i+1}$</span>.</p></div></div><p>[fig]</p><article class="docstring"><header><a class="docstring-binding" id="BasicBSpline.Knots-Tuple{AbstractVector{var&quot;#s25&quot;} where var&quot;#s25&quot;&lt;:Real}" href="#BasicBSpline.Knots-Tuple{AbstractVector{var&quot;#s25&quot;} where var&quot;#s25&quot;&lt;:Real}"><code>BasicBSpline.Knots</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Construct knot vector from given array.</p><p class="math-container">\[k=(k_1,\dots,k_l)\]</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; k = Knots([1,2,3])
 Knots([1.0, 2.0, 3.0])
 
 julia&gt; k = Knots(1:3)
-Knots([1.0, 2.0, 3.0])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/7bdbf0d7d7a5abdc1c7e0614675062b44ed329f1/src/_Knots.jl#LL5-L19">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="BasicBSpline.Knots-Tuple{Real}" href="#BasicBSpline.Knots-Tuple{Real}"><code>BasicBSpline.Knots</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Construct knot vector from given real numbers.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; k = Knots(1,2,3)
+Knots([1.0, 2.0, 3.0])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/4fa0c7ba69b62c8c115cbd98c4aa3223dd2e89a2/src/_Knots.jl#LL5-L19">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="BasicBSpline.Knots-Tuple{Real}" href="#BasicBSpline.Knots-Tuple{Real}"><code>BasicBSpline.Knots</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Construct knot vector from given real numbers.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; k = Knots(1,2,3)
 Knots([1.0, 2.0, 3.0])
 
 julia&gt; k = Knots()
-Knots([])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/7bdbf0d7d7a5abdc1c7e0614675062b44ed329f1/src/_Knots.jl#LL35-L46">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="Base.length-Tuple{Knots}" href="#Base.length-Tuple{Knots}"><code>Base.length</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Length of knot vector</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; k = Knots(1,2,3,5);
+Knots([])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/4fa0c7ba69b62c8c115cbd98c4aa3223dd2e89a2/src/_Knots.jl#LL35-L46">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="Base.length-Tuple{Knots}" href="#Base.length-Tuple{Knots}"><code>Base.length</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Length of knot vector</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; k = Knots(1,2,3,5);
 
 julia&gt; length(k)
-4</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/7bdbf0d7d7a5abdc1c7e0614675062b44ed329f1/src/_Knots.jl#LL120-L130">source</a></section></article><p>We introduce <strong>additional operator</strong> <span>$+$</span>.</p><article class="docstring"><header><a class="docstring-binding" id="Base.:+-Tuple{Knots, Knots}" href="#Base.:+-Tuple{Knots, Knots}"><code>Base.:+</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Sum of knot vectors</p><p class="math-container">\[\begin{aligned}
+4</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/4fa0c7ba69b62c8c115cbd98c4aa3223dd2e89a2/src/_Knots.jl#LL120-L130">source</a></section></article><p>We introduce <strong>additional operator</strong> <span>$+$</span>.</p><article class="docstring"><header><a class="docstring-binding" id="Base.:+-Tuple{Knots, Knots}" href="#Base.:+-Tuple{Knots, Knots}"><code>Base.:+</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Sum of knot vectors</p><p class="math-container">\[\begin{aligned}
 k^{(1)}+k^{(2)}
 &amp;=(k^{(1)}_1, \dots, k^{(1)}_{l^{(1)}}) + (k^{(2)}_1, \dots, k^{(2)}_{l^{(2)}}) \\
 &amp;=(\text{sort of union of} \  k^{(1)} \ \text{and} \  k^{(2)} \text{)}
-\end{aligned}\]</p><p>For example, <span>$(1,2,3,5)+(4,5,8)=(1,2,3,4,5,5,8)$</span>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; k1 = Knots(1,2,3,5);
+\end{aligned}\]</p><p>For example, <span>$(1,2,3,5)+(4,5,8)=(1,2,3,4,5,5,8)$</span>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; k1 = Knots(1,2,3,5);
 
 julia&gt; k2 = Knots(4,5,8);
 
 julia&gt; k1 + k2
-Knots([1.0, 2.0, 3.0, 4.0, 5.0, 5.0, 8.0])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/7bdbf0d7d7a5abdc1c7e0614675062b44ed329f1/src/_Knots.jl#LL62-L84">source</a></section></article><p>And <strong>product operator</strong> <span>$\cdot$</span>.</p><article class="docstring"><header><a class="docstring-binding" id="Base.:*-Tuple{Integer, Knots}" href="#Base.:*-Tuple{Integer, Knots}"><code>Base.:*</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Product of integer and knot vector</p><p class="math-container">\[\begin{aligned}
+Knots([1.0, 2.0, 3.0, 4.0, 5.0, 5.0, 8.0])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/4fa0c7ba69b62c8c115cbd98c4aa3223dd2e89a2/src/_Knots.jl#LL62-L84">source</a></section></article><p>And <strong>product operator</strong> <span>$\cdot$</span>.</p><article class="docstring"><header><a class="docstring-binding" id="Base.:*-Tuple{Integer, Knots}" href="#Base.:*-Tuple{Integer, Knots}"><code>Base.:*</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Product of integer and knot vector</p><p class="math-container">\[\begin{aligned}
 m\cdot k&amp;=\underbrace{k+\cdots+k}_{m}
-\end{aligned}\]</p><p>For example, <span>$2\cdot (1,2,2,5)=(1,1,2,2,2,2,5,5)$</span>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; k = Knots(1,2,2,5);
+\end{aligned}\]</p><p>For example, <span>$2\cdot (1,2,2,5)=(1,1,2,2,2,2,5,5)$</span>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; k = Knots(1,2,2,5);
 
 julia&gt; 2 * k
-Knots([1.0, 1.0, 2.0, 2.0, 2.0, 2.0, 5.0, 5.0])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/7bdbf0d7d7a5abdc1c7e0614675062b44ed329f1/src/_Knots.jl#LL87-L105">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="Base.unique-Tuple{Knots}" href="#Base.unique-Tuple{Knots}"><code>Base.unique</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Unique elements of knot vector.</p><p class="math-container">\[\begin{aligned}
+Knots([1.0, 1.0, 2.0, 2.0, 2.0, 2.0, 5.0, 5.0])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/4fa0c7ba69b62c8c115cbd98c4aa3223dd2e89a2/src/_Knots.jl#LL87-L105">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="Base.unique-Tuple{Knots}" href="#Base.unique-Tuple{Knots}"><code>Base.unique</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Unique elements of knot vector.</p><p class="math-container">\[\begin{aligned}
 \widehat{k}
 &amp;=(\text{remove duplicates of} \  k) \\
-\end{aligned}\]</p><p>For example, <span>$\widehat{(1,2,2,3)}=(1,2,3)$</span>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; k = Knots([1,2,2,3]);
+\end{aligned}\]</p><p>For example, <span>$\widehat{(1,2,2,3)}=(1,2,3)$</span>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; k = Knots([1,2,2,3]);
 
 julia&gt; unique(k)
-Knots([1.0, 2.0, 3.0])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/7bdbf0d7d7a5abdc1c7e0614675062b44ed329f1/src/_Knots.jl#LL140-L159">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="BasicBSpline.𝔫-Tuple{Knots, Real}" href="#BasicBSpline.𝔫-Tuple{Knots, Real}"><code>BasicBSpline.𝔫</code></a> — <span class="docstring-category">Method</span></header><section><div><p>For Given knot vector <span>$k$</span>, the following function <span>$\mathfrak{n}_k:\mathbb{R}\to\mathbb{Z}$</span> represents the number of knots that duplicate the knot vector <span>$k$</span>.</p><p class="math-container">\[\mathfrak{n}_k(t) = \sharp\{i \mid k_i=t \}\]</p><p>For example, if <span>$k=(1,2,2,3)$</span>, then <span>$\mathfrak{n}_k(0.3)=0$</span>, <span>$\mathfrak{n}_k(1)=1$</span>, <span>$\mathfrak{n}_k(2)=2$</span>.</p><pre><code class="language-julia-repl">julia&gt; k = Knots([1,2,2,3]);
+Knots([1.0, 2.0, 3.0])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/4fa0c7ba69b62c8c115cbd98c4aa3223dd2e89a2/src/_Knots.jl#LL140-L159">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="BasicBSpline.𝔫-Tuple{Knots, Real}" href="#BasicBSpline.𝔫-Tuple{Knots, Real}"><code>BasicBSpline.𝔫</code></a> — <span class="docstring-category">Method</span></header><section><div><p>For Given knot vector <span>$k$</span>, the following function <span>$\mathfrak{n}_k:\mathbb{R}\to\mathbb{Z}$</span> represents the number of knots that duplicate the knot vector <span>$k$</span>.</p><p class="math-container">\[\mathfrak{n}_k(t) = \sharp\{i \mid k_i=t \}\]</p><p>For example, if <span>$k=(1,2,2,3)$</span>, then <span>$\mathfrak{n}_k(0.3)=0$</span>, <span>$\mathfrak{n}_k(1)=1$</span>, <span>$\mathfrak{n}_k(2)=2$</span>.</p><pre><code class="language-julia-repl hljs">julia&gt; k = Knots([1,2,2,3]);
 
 julia&gt; 𝔫(k,0.3)
 0
@@ -39,7 +39,7 @@ julia&gt; 𝔫(k,1.0)
 1
 
 julia&gt; 𝔫(k,2.0)
-2</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/7bdbf0d7d7a5abdc1c7e0614675062b44ed329f1/src/_Knots.jl#LL187-L207">source</a></section></article><h2 id="B-spline-space"><a class="docs-heading-anchor" href="#B-spline-space">B-spline space</a><a id="B-spline-space-1"></a><a class="docs-heading-anchor-permalink" href="#B-spline-space" title="Permalink"></a></h2><p>Before defining B-spline space, we&#39;ll define polynomial space with degree <span>$p$</span>.</p><div class="admonition is-success"><header class="admonition-header">Def.  Polynomial space</header><div class="admonition-body"><p>Polynomial space with degree <span>$p$</span>.</p><p class="math-container">\[\mathcal{P}[p]
+2</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/4fa0c7ba69b62c8c115cbd98c4aa3223dd2e89a2/src/_Knots.jl#LL187-L207">source</a></section></article><h2 id="B-spline-space"><a class="docs-heading-anchor" href="#B-spline-space">B-spline space</a><a id="B-spline-space-1"></a><a class="docs-heading-anchor-permalink" href="#B-spline-space" title="Permalink"></a></h2><p>Before defining B-spline space, we&#39;ll define polynomial space with degree <span>$p$</span>.</p><div class="admonition is-success"><header class="admonition-header">Def.  Polynomial space</header><div class="admonition-body"><p>Polynomial space with degree <span>$p$</span>.</p><p class="math-container">\[\mathcal{P}[p]
 =\left\{f:\mathbb{R}\to\mathbb{R}\ ;\ t\mapsto a_0+a_1t^1+\cdots+a_pt^p \  \left| \ %
     a_i\in \mathbb{R}
     \right.
@@ -54,27 +54,9 @@ B_{(i,p)}(t)
         \exists \tilde{f}\in\mathcal{P}[p], f|_{[k_{i}, k_{i+1})} = \tilde{f}|_{[k_{i}, k_{i+1})}  \\
         \forall t \in \mathbb{R}, \exists \delta &gt; 0, f|_{(t-\delta,t+\delta)}\in C^{p-\mathfrak{n}_k(t)}
     \end{gathered} \right.
-\right\}\]</p></div></div><p>Note that a element of the space <span>$\mathcal{P}[p,k]$</span> is piecewise polynomial.</p><p>[fig]</p><pre><code class="language-julia-repl">julia&gt; using BasicBSpline
-
-julia&gt; p = 2
-2
-
-julia&gt; k = Knots([1,3,5,6,8,9])
-Knots([1.0, 3.0, 5.0, 6.0, 8.0, 9.0])
-
-julia&gt; BSplineSpace(p,k)
-BSplineSpace(2, Knots([1.0, 3.0, 5.0, 6.0, 8.0, 9.0]))</code></pre><p>A B-spline space is said to be <strong>proper</strong> if its degree and knots satisfies following property:</p><p class="math-container">\[\begin{aligned}
+\right\}\]</p></div></div><p>Note that a element of the space <span>$\mathcal{P}[p,k]$</span> is piecewise polynomial.</p><p>[fig]</p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; using BasicBSpline</code><code class="nohighlight hljs ansi" style="display:block;"></code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; p = 2</code><code class="nohighlight hljs ansi" style="display:block;">2</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; k = Knots([1,3,5,6,8,9])</code><code class="nohighlight hljs ansi" style="display:block;">Knots([1.0, 3.0, 5.0, 6.0, 8.0, 9.0])</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; BSplineSpace(p,k)</code><code class="nohighlight hljs ansi" style="display:block;">BSplineSpace(2, Knots([1.0, 3.0, 5.0, 6.0, 8.0, 9.0]))</code></pre><p>A B-spline space is said to be <strong>proper</strong> if its degree and knots satisfies following property:</p><p class="math-container">\[\begin{aligned}
 k_{i}&amp;&lt;k_{i+p+1} &amp; (1 \le i \le l-p-1)
-\end{aligned}\]</p><pre><code class="language-julia-repl">julia&gt; using BasicBSpline
-
-julia&gt; isproper(BSplineSpace(2,Knots([1,3,5,6,8,9]))) # true
-true
-
-julia&gt; isproper(BSplineSpace(1,Knots([1,3,3,3,8,9]))) # false
-false</code></pre><p>The B-spline space is linear space, and if a B-spline space is proper, its dimension is calculated by:</p><p class="math-container">\[\dim(\mathcal{P}[p,k])=\sharp k -p -1\]</p><pre><code class="language-julia-repl">julia&gt; using BasicBSpline
-
-julia&gt; dim(BSplineSpace(2,Knots([1,3,5,6,8,9]))) # 3
-3</code></pre><h2 id="B-spline-basis-function"><a class="docs-heading-anchor" href="#B-spline-basis-function">B-spline basis function</a><a id="B-spline-basis-function-1"></a><a class="docs-heading-anchor-permalink" href="#B-spline-basis-function" title="Permalink"></a></h2><div class="admonition is-success"><header class="admonition-header">Def.  B-spline space</header><div class="admonition-body"><p>B-spline basis function is defined by <a href="https://en.wikipedia.org/wiki/De_Boor%27s_algorithm">Cox–de Boor recursion formula</a>.</p><p class="math-container">\[\begin{aligned}
+\end{aligned}\]</p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; using BasicBSpline</code><code class="nohighlight hljs ansi" style="display:block;"></code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; isproper(BSplineSpace(2,Knots([1,3,5,6,8,9]))) # true</code><code class="nohighlight hljs ansi" style="display:block;">true</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; isproper(BSplineSpace(1,Knots([1,3,3,3,8,9]))) # false</code><code class="nohighlight hljs ansi" style="display:block;">false</code></pre><p>The B-spline space is linear space, and if a B-spline space is proper, its dimension is calculated by:</p><p class="math-container">\[\dim(\mathcal{P}[p,k])=\sharp k -p -1\]</p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; using BasicBSpline</code><code class="nohighlight hljs ansi" style="display:block;"></code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; dim(BSplineSpace(2,Knots([1,3,5,6,8,9]))) # 3</code><code class="nohighlight hljs ansi" style="display:block;">3</code></pre><h2 id="B-spline-basis-function"><a class="docs-heading-anchor" href="#B-spline-basis-function">B-spline basis function</a><a id="B-spline-basis-function-1"></a><a class="docs-heading-anchor-permalink" href="#B-spline-basis-function" title="Permalink"></a></h2><div class="admonition is-success"><header class="admonition-header">Def.  B-spline space</header><div class="admonition-body"><p>B-spline basis function is defined by <a href="https://en.wikipedia.org/wiki/De_Boor%27s_algorithm">Cox–de Boor recursion formula</a>.</p><p class="math-container">\[\begin{aligned}
 {B}_{(i,p,k)}(t)
 &amp;=
 \frac{t-k_{i}}{k_{i+p}-k_{i}}{B}_{(i,p-1,k)}(t)
@@ -85,136 +67,28 @@ julia&gt; dim(BSplineSpace(2,Knots([1,3,5,6,8,9]))) # 3
     &amp;1\quad (k_{i}\le t&lt; k_{i+1})\\
     &amp;0\quad (\text{otherwise})
 \end{cases}
-\end{aligned}\]</p><p>If the denominator is ..</p></div></div><div class="admonition is-info"><header class="admonition-header">Thm.  Basis of B-spline space</header><div class="admonition-body"><p>The set of functions <span>$\{B_{(i,p,k)}\}_i$</span> is a basis of B-spline space <span>$\mathcal{P}[p,k]$</span>.</p></div></div><pre><code class="language-julia-repl">julia&gt; using BasicBSpline
-
-julia&gt; using Plots
-ERROR: ArgumentError: Package Plots not found in current path:
-- Run `import Pkg; Pkg.add(&quot;Plots&quot;)` to install the Plots package.
-
-julia&gt; gr()
-ERROR: UndefVarError: gr not defined
-
-julia&gt; p = 2
-2
-
-julia&gt; k = Knots(1:8)
-Knots([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0])
-
-julia&gt; P = BSplineSpace(p,k)
-BSplineSpace(2, Knots([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]))
-
-julia&gt; plot([t-&gt;bsplinebasis₊₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(0,1.05))
-ERROR: UndefVarError: plot not defined</code></pre><p><img src="../img/bsplinebasisplot.png" alt/></p><p>You can choose the first terms in different ways.</p><p class="math-container">\[\begin{aligned}
+\end{aligned}\]</p><p>If the denominator is ..</p></div></div><div class="admonition is-info"><header class="admonition-header">Thm.  Basis of B-spline space</header><div class="admonition-body"><p>The set of functions <span>$\{B_{(i,p,k)}\}_i$</span> is a basis of B-spline space <span>$\mathcal{P}[p,k]$</span>.</p></div></div><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; using BasicBSpline</code><code class="nohighlight hljs ansi" style="display:block;"></code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; using Plots</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: ArgumentError: Package Plots not found in current path:
+- Run `import Pkg; Pkg.add(&quot;Plots&quot;)` to install the Plots package.</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; gr()</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: gr not defined</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; p = 2</code><code class="nohighlight hljs ansi" style="display:block;">2</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; k = Knots(1:8)</code><code class="nohighlight hljs ansi" style="display:block;">Knots([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0])</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P = BSplineSpace(p,k)</code><code class="nohighlight hljs ansi" style="display:block;">BSplineSpace(2, Knots([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]))</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; plot([t-&gt;bsplinebasis₊₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(0,1.05))</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: plot not defined</code></pre><p><img src="../img/bsplinebasisplot.png" alt/></p><p>You can choose the first terms in different ways.</p><p class="math-container">\[\begin{aligned}
 {B}_{(i,0,k)}(t)
 &amp;=
 \begin{cases}
     &amp;1\quad (k_{i} &lt; t \le k_{i+1}) \\
     &amp;0\quad (\text{otherwise})
 \end{cases}
-\end{aligned}\]</p><pre><code class="language-julia-repl">julia&gt; using BasicBSpline
-
-julia&gt; using Plots
-ERROR: ArgumentError: Package Plots not found in current path:
-- Run `import Pkg; Pkg.add(&quot;Plots&quot;)` to install the Plots package.
-
-julia&gt; gr()
-ERROR: UndefVarError: gr not defined
-
-julia&gt; p = 2
-2
-
-julia&gt; k = Knots(1:8)
-Knots([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0])
-
-julia&gt; P = BSplineSpace(p,k)
-BSplineSpace(2, Knots([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]))
-
-julia&gt; plot([t-&gt;bsplinebasis₋₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(0,1.05))
-ERROR: UndefVarError: plot not defined</code></pre><p><img src="../img/bsplinebasisplot.png" alt/></p><h2 id="Support-of-B-spline-basis-function"><a class="docs-heading-anchor" href="#Support-of-B-spline-basis-function">Support of B-spline basis function</a><a id="Support-of-B-spline-basis-function-1"></a><a class="docs-heading-anchor-permalink" href="#Support-of-B-spline-basis-function" title="Permalink"></a></h2><div class="admonition is-info"><header class="admonition-header">Thm.  Support of B-spline basis function</header><div class="admonition-body"><p>If a B-spline space<span>$\mathcal{P}[p,k]$</span> is proper, the support of its basis function is calculated as follows:</p><p class="math-container">\[\operatorname{supp}(B_{(i,p,k)})=[k_{i},k_{i+p+1}]\]</p></div></div><p>[fig]</p><pre><code class="language-julia-repl">julia&gt; using BasicBSpline
-
-julia&gt; i = 2
-2
-
-julia&gt; k = Knots([5,12,13,13,14])
-Knots([5.0, 12.0, 13.0, 13.0, 14.0])
-
-julia&gt; p = 2
-2
-
-julia&gt; P = BSplineSpace(p,k)
-BSplineSpace(2, Knots([5.0, 12.0, 13.0, 13.0, 14.0]))
-
-julia&gt; bsplinesupport(P) # [5..13, 12..14]
-2-element Vector{IntervalSets.ClosedInterval{Float64}}:
+\end{aligned}\]</p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; using BasicBSpline</code><code class="nohighlight hljs ansi" style="display:block;"></code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; using Plots</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: ArgumentError: Package Plots not found in current path:
+- Run `import Pkg; Pkg.add(&quot;Plots&quot;)` to install the Plots package.</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; gr()</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: gr not defined</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; p = 2</code><code class="nohighlight hljs ansi" style="display:block;">2</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; k = Knots(1:8)</code><code class="nohighlight hljs ansi" style="display:block;">Knots([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0])</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P = BSplineSpace(p,k)</code><code class="nohighlight hljs ansi" style="display:block;">BSplineSpace(2, Knots([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]))</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; plot([t-&gt;bsplinebasis₋₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(0,1.05))</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: plot not defined</code></pre><p><img src="../img/bsplinebasisplot.png" alt/></p><h2 id="Support-of-B-spline-basis-function"><a class="docs-heading-anchor" href="#Support-of-B-spline-basis-function">Support of B-spline basis function</a><a id="Support-of-B-spline-basis-function-1"></a><a class="docs-heading-anchor-permalink" href="#Support-of-B-spline-basis-function" title="Permalink"></a></h2><div class="admonition is-info"><header class="admonition-header">Thm.  Support of B-spline basis function</header><div class="admonition-body"><p>If a B-spline space<span>$\mathcal{P}[p,k]$</span> is proper, the support of its basis function is calculated as follows:</p><p class="math-container">\[\operatorname{supp}(B_{(i,p,k)})=[k_{i},k_{i+p+1}]\]</p></div></div><p>[fig]</p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; using BasicBSpline</code><code class="nohighlight hljs ansi" style="display:block;"></code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; i = 2</code><code class="nohighlight hljs ansi" style="display:block;">2</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; k = Knots([5,12,13,13,14])</code><code class="nohighlight hljs ansi" style="display:block;">Knots([5.0, 12.0, 13.0, 13.0, 14.0])</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; p = 2</code><code class="nohighlight hljs ansi" style="display:block;">2</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P = BSplineSpace(p,k)</code><code class="nohighlight hljs ansi" style="display:block;">BSplineSpace(2, Knots([5.0, 12.0, 13.0, 13.0, 14.0]))</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; bsplinesupport(P) # [5..13, 12..14]</code><code class="nohighlight hljs ansi" style="display:block;">2-element Vector{IntervalSets.ClosedInterval{Float64}}:
  5.0..13.0
- 12.0..14.0
-
-julia&gt; bsplinesupport(P,i) # 12..14
-12.0..14.0</code></pre><h2 id="Derivative-of-B-spline-basis-function"><a class="docs-heading-anchor" href="#Derivative-of-B-spline-basis-function">Derivative of B-spline basis function</a><a id="Derivative-of-B-spline-basis-function-1"></a><a class="docs-heading-anchor-permalink" href="#Derivative-of-B-spline-basis-function" title="Permalink"></a></h2><div class="admonition is-info"><header class="admonition-header">Thm.  Derivative of B-spline basis function</header><div class="admonition-body"><p>The derivative of B-spline basis function can be expressed as follows:</p><p class="math-container">\[\begin{aligned}
+ 12.0..14.0</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; bsplinesupport(P,i) # 12..14</code><code class="nohighlight hljs ansi" style="display:block;">12.0..14.0</code></pre><h2 id="Derivative-of-B-spline-basis-function"><a class="docs-heading-anchor" href="#Derivative-of-B-spline-basis-function">Derivative of B-spline basis function</a><a id="Derivative-of-B-spline-basis-function-1"></a><a class="docs-heading-anchor-permalink" href="#Derivative-of-B-spline-basis-function" title="Permalink"></a></h2><div class="admonition is-info"><header class="admonition-header">Thm.  Derivative of B-spline basis function</header><div class="admonition-body"><p>The derivative of B-spline basis function can be expressed as follows:</p><p class="math-container">\[\begin{aligned}
 \dot{B}_{(i,p,k)}(t)
 &amp;=\frac{d}{dt}B_{(i,p,k)}(t) \\
 &amp;=p\left(\frac{1}{k_{i+p}-k_{i}}B_{(i,p-1,k)}(t)-\frac{1}{k_{i+p+1}-k_{i+1}}B_{(i+1,p-1,k)}(t)\right)
-\end{aligned}\]</p><p>Note that <span>$\dot{B}_{(i,p,k)}\in\mathcal{P}[p-1,k]$</span>.</p></div></div><pre><code class="language-julia-repl">julia&gt; using BasicBSpline
-
-julia&gt; using Plots
-ERROR: ArgumentError: Package Plots not found in current path:
-- Run `import Pkg; Pkg.add(&quot;Plots&quot;)` to install the Plots package.
-
-julia&gt; gr()
-ERROR: UndefVarError: gr not defined
-
-julia&gt; p = 2
-2
-
-julia&gt; k = Knots(1:8)
-Knots([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0])
-
-julia&gt; P = BSplineSpace(p,k)
-BSplineSpace(2, Knots([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]))
-
-julia&gt; plot([t-&gt;bsplinebasis′₊₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(0,1.05))
-ERROR: UndefVarError: plot not defined</code></pre><p><img src="../img/bsplinebasisderivativeplot.png" alt/></p><h2 id="Partition-of-unity"><a class="docs-heading-anchor" href="#Partition-of-unity">Partition of unity</a><a id="Partition-of-unity-1"></a><a class="docs-heading-anchor-permalink" href="#Partition-of-unity" title="Permalink"></a></h2><div class="admonition is-info"><header class="admonition-header">Thm.  Partition of unity</header><div class="admonition-body"><p class="math-container">\[\begin{aligned}
+\end{aligned}\]</p><p>Note that <span>$\dot{B}_{(i,p,k)}\in\mathcal{P}[p-1,k]$</span>.</p></div></div><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; using BasicBSpline</code><code class="nohighlight hljs ansi" style="display:block;"></code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; using Plots</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: ArgumentError: Package Plots not found in current path:
+- Run `import Pkg; Pkg.add(&quot;Plots&quot;)` to install the Plots package.</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; gr()</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: gr not defined</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; p = 2</code><code class="nohighlight hljs ansi" style="display:block;">2</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; k = Knots(1:8)</code><code class="nohighlight hljs ansi" style="display:block;">Knots([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0])</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P = BSplineSpace(p,k)</code><code class="nohighlight hljs ansi" style="display:block;">BSplineSpace(2, Knots([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]))</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; plot([t-&gt;bsplinebasis′₊₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(0,1.05))</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: plot not defined</code></pre><p><img src="../img/bsplinebasisderivativeplot.png" alt/></p><h2 id="Partition-of-unity"><a class="docs-heading-anchor" href="#Partition-of-unity">Partition of unity</a><a id="Partition-of-unity-1"></a><a class="docs-heading-anchor-permalink" href="#Partition-of-unity" title="Permalink"></a></h2><div class="admonition is-info"><header class="admonition-header">Thm.  Partition of unity</header><div class="admonition-body"><p class="math-container">\[\begin{aligned}
 \sum_{i}B_{(i,p,k)}(t) &amp;= 1 &amp; (k_{p+1} \le t &lt; k_{l-p}) \\
 0 \le B_{(i,p,k)}(t) &amp;\le 1
-\end{aligned}\]</p></div></div><pre><code class="language-julia-repl">julia&gt; using BasicBSpline
-
-julia&gt; using Plots
-ERROR: ArgumentError: Package Plots not found in current path:
-- Run `import Pkg; Pkg.add(&quot;Plots&quot;)` to install the Plots package.
-
-julia&gt; gr()
-ERROR: UndefVarError: gr not defined
-
-julia&gt; p = 2
-2
-
-julia&gt; k = Knots(1:8)
-Knots([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0])
-
-julia&gt; P = BSplineSpace(p,k)
-BSplineSpace(2, Knots([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]))
-
-julia&gt; plot(t-&gt;sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.05))
-ERROR: UndefVarError: plot not defined</code></pre><p><img src="../img/sumofbsplineplot.png" alt/></p><p>To satisfy the partition of unity on whole interval <span>$[1,8]$</span>, sometimes more knots will be inserted to the endpoints of the interval.</p><pre><code class="language-julia-repl">julia&gt; using BasicBSpline
-
-julia&gt; using Plots
-ERROR: ArgumentError: Package Plots not found in current path:
-- Run `import Pkg; Pkg.add(&quot;Plots&quot;)` to install the Plots package.
-
-julia&gt; gr()
-ERROR: UndefVarError: gr not defined
-
-julia&gt; p = 2
-2
-
-julia&gt; k = Knots(1:8) + p * Knots([1,8])
-Knots([1.0, 1.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 8.0, 8.0])
-
-julia&gt; P = BSplineSpace(p,k)
-BSplineSpace(2, Knots([1.0, 1.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 8.0, 8.0]))
-
-julia&gt; plot(t-&gt;sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.05))
-ERROR: UndefVarError: plot not defined</code></pre><p><img src="../img/sumofbsplineplot2.png" alt/></p><p>But, the sum <span>$\sum_{i} B_{(i,p,k)}(t)$</span> is not equal to <span>$1$</span> if <span>$t=8$</span>. Therefore, to satisfy partition of unity on closed interval <span>$[k_{p+1}, k_{l-p}]$</span>, the definition of first terms of B-spline basis functions are sometimes replaced:</p><p class="math-container">\[\begin{aligned}
+\end{aligned}\]</p></div></div><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; using BasicBSpline</code><code class="nohighlight hljs ansi" style="display:block;"></code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; using Plots</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: ArgumentError: Package Plots not found in current path:
+- Run `import Pkg; Pkg.add(&quot;Plots&quot;)` to install the Plots package.</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; gr()</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: gr not defined</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; p = 2</code><code class="nohighlight hljs ansi" style="display:block;">2</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; k = Knots(1:8)</code><code class="nohighlight hljs ansi" style="display:block;">Knots([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0])</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P = BSplineSpace(p,k)</code><code class="nohighlight hljs ansi" style="display:block;">BSplineSpace(2, Knots([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]))</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; plot(t-&gt;sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.05))</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: plot not defined</code></pre><p><img src="../img/sumofbsplineplot.png" alt/></p><p>To satisfy the partition of unity on whole interval <span>$[1,8]$</span>, sometimes more knots will be inserted to the endpoints of the interval.</p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; using BasicBSpline</code><code class="nohighlight hljs ansi" style="display:block;"></code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; using Plots</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: ArgumentError: Package Plots not found in current path:
+- Run `import Pkg; Pkg.add(&quot;Plots&quot;)` to install the Plots package.</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; gr()</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: gr not defined</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; p = 2</code><code class="nohighlight hljs ansi" style="display:block;">2</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; k = Knots(1:8) + p * Knots([1,8])</code><code class="nohighlight hljs ansi" style="display:block;">Knots([1.0, 1.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 8.0, 8.0])</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P = BSplineSpace(p,k)</code><code class="nohighlight hljs ansi" style="display:block;">BSplineSpace(2, Knots([1.0, 1.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 8.0, 8.0]))</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; plot(t-&gt;sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.05))</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: plot not defined</code></pre><p><img src="../img/sumofbsplineplot2.png" alt/></p><p>But, the sum <span>$\sum_{i} B_{(i,p,k)}(t)$</span> is not equal to <span>$1$</span> if <span>$t=8$</span>. Therefore, to satisfy partition of unity on closed interval <span>$[k_{p+1}, k_{l-p}]$</span>, the definition of first terms of B-spline basis functions are sometimes replaced:</p><p class="math-container">\[\begin{aligned}
 {B}_{(i,0,k)}(t)
 &amp;=
 \begin{cases}
@@ -222,141 +96,39 @@ ERROR: UndefVarError: plot not defined</code></pre><p><img src="../img/sumofbspl
     &amp;1\quad (k_{i} &lt; t = k_{i+1}=k_{l})\\
     &amp;0\quad (\text{otherwise})
 \end{cases}
-\end{aligned}\]</p><pre><code class="language-julia-repl">julia&gt; using BasicBSpline
-
-julia&gt; using Plots
-ERROR: ArgumentError: Package Plots not found in current path:
-- Run `import Pkg; Pkg.add(&quot;Plots&quot;)` to install the Plots package.
-
-julia&gt; gr()
-ERROR: UndefVarError: gr not defined
-
-julia&gt; p = 2
-2
-
-julia&gt; k = Knots(1:8) + p * Knots([1,8])
-Knots([1.0, 1.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 8.0, 8.0])
-
-julia&gt; P = BSplineSpace(p,k)
-BSplineSpace(2, Knots([1.0, 1.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 8.0, 8.0]))
-
-julia&gt; plot(t-&gt;sum(bsplinebasis(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.05))
-ERROR: UndefVarError: plot not defined</code></pre><p><img src="../img/sumofbsplineplot3.png" alt/></p><h2 id="Inclusion-relation-between-B-spline-spaces"><a class="docs-heading-anchor" href="#Inclusion-relation-between-B-spline-spaces">Inclusion relation between B-spline spaces</a><a id="Inclusion-relation-between-B-spline-spaces-1"></a><a class="docs-heading-anchor-permalink" href="#Inclusion-relation-between-B-spline-spaces" title="Permalink"></a></h2><div class="admonition is-info"><header class="admonition-header">Thm.  Support of B-spline basis function</header><div class="admonition-body"><p>For proper B-spline spaces, the following relationship holds.</p><p class="math-container">\[\mathcal{P}[p,k]
+\end{aligned}\]</p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; using BasicBSpline</code><code class="nohighlight hljs ansi" style="display:block;"></code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; using Plots</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: ArgumentError: Package Plots not found in current path:
+- Run `import Pkg; Pkg.add(&quot;Plots&quot;)` to install the Plots package.</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; gr()</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: gr not defined</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; p = 2</code><code class="nohighlight hljs ansi" style="display:block;">2</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; k = Knots(1:8) + p * Knots([1,8])</code><code class="nohighlight hljs ansi" style="display:block;">Knots([1.0, 1.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 8.0, 8.0])</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P = BSplineSpace(p,k)</code><code class="nohighlight hljs ansi" style="display:block;">BSplineSpace(2, Knots([1.0, 1.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 8.0, 8.0]))</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; plot(t-&gt;sum(bsplinebasis(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.05))</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: plot not defined</code></pre><p><img src="../img/sumofbsplineplot3.png" alt/></p><h2 id="Inclusion-relation-between-B-spline-spaces"><a class="docs-heading-anchor" href="#Inclusion-relation-between-B-spline-spaces">Inclusion relation between B-spline spaces</a><a id="Inclusion-relation-between-B-spline-spaces-1"></a><a class="docs-heading-anchor-permalink" href="#Inclusion-relation-between-B-spline-spaces" title="Permalink"></a></h2><div class="admonition is-info"><header class="admonition-header">Thm.  Support of B-spline basis function</header><div class="admonition-body"><p>For proper B-spline spaces, the following relationship holds.</p><p class="math-container">\[\mathcal{P}[p,k]
 \subseteq \mathcal{P}[p&#39;,k&#39;]
-\Leftrightarrow (m=p&#39;-p \ge 0 \ \text{and} \ k+m\widehat{k}\subseteq k&#39;)\]</p></div></div><p>(as linear subspace..)</p><pre><code class="language-julia-repl">julia&gt; using BasicBSpline
-
-julia&gt; P1 = BSplineSpace(1,Knots([1,3,5,8]))
-BSplineSpace(1, Knots([1.0, 3.0, 5.0, 8.0]))
-
-julia&gt; P2 = BSplineSpace(1,Knots([1,3,5,6,8,9]))
-BSplineSpace(1, Knots([1.0, 3.0, 5.0, 6.0, 8.0, 9.0]))
-
-julia&gt; P3 = BSplineSpace(2,Knots([1,1,3,3,5,5,8,8]))
-BSplineSpace(2, Knots([1.0, 1.0, 3.0, 3.0, 5.0, 5.0, 8.0, 8.0]))
-
-julia&gt; P1 ⊆ P2 # true
-true
-
-julia&gt; P1 ⊆ P3 # true
-true
-
-julia&gt; P2 ⊆ P3 # false
-false
-
-julia&gt; P2 ⊈ P3 # true
-true</code></pre><p>Here are plots of the B-spline basis functions of the spaces <code>P1</code>, <code>P2</code>, <code>P3</code>.</p><pre><code class="language-julia-repl">julia&gt; using BasicBSpline
-
-julia&gt; using Plots
-ERROR: ArgumentError: Package Plots not found in current path:
-- Run `import Pkg; Pkg.add(&quot;Plots&quot;)` to install the Plots package.
-
-julia&gt; gr()
-ERROR: UndefVarError: gr not defined
-
-julia&gt; P1 = BSplineSpace(1,Knots([1,3,5,8]))
-BSplineSpace(1, Knots([1.0, 3.0, 5.0, 8.0]))
-
-julia&gt; P2 = BSplineSpace(1,Knots([1,3,5,6,8,9]))
-BSplineSpace(1, Knots([1.0, 3.0, 5.0, 6.0, 8.0, 9.0]))
-
-julia&gt; P3 = BSplineSpace(2,Knots([1,1,3,3,5,5,8,8]))
-BSplineSpace(2, Knots([1.0, 1.0, 3.0, 3.0, 5.0, 5.0, 8.0, 8.0]))
-
-julia&gt; plot(
+\Leftrightarrow (m=p&#39;-p \ge 0 \ \text{and} \ k+m\widehat{k}\subseteq k&#39;)\]</p></div></div><p>(as linear subspace..)</p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; using BasicBSpline</code><code class="nohighlight hljs ansi" style="display:block;"></code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P1 = BSplineSpace(1,Knots([1,3,5,8]))</code><code class="nohighlight hljs ansi" style="display:block;">BSplineSpace(1, Knots([1.0, 3.0, 5.0, 8.0]))</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P2 = BSplineSpace(1,Knots([1,3,5,6,8,9]))</code><code class="nohighlight hljs ansi" style="display:block;">BSplineSpace(1, Knots([1.0, 3.0, 5.0, 6.0, 8.0, 9.0]))</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P3 = BSplineSpace(2,Knots([1,1,3,3,5,5,8,8]))</code><code class="nohighlight hljs ansi" style="display:block;">BSplineSpace(2, Knots([1.0, 1.0, 3.0, 3.0, 5.0, 5.0, 8.0, 8.0]))</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P1 ⊆ P2 # true</code><code class="nohighlight hljs ansi" style="display:block;">true</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P1 ⊆ P3 # true</code><code class="nohighlight hljs ansi" style="display:block;">true</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P2 ⊆ P3 # false</code><code class="nohighlight hljs ansi" style="display:block;">false</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P2 ⊈ P3 # true</code><code class="nohighlight hljs ansi" style="display:block;">true</code></pre><p>Here are plots of the B-spline basis functions of the spaces <code>P1</code>, <code>P2</code>, <code>P3</code>.</p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; using BasicBSpline</code><code class="nohighlight hljs ansi" style="display:block;"></code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; using Plots</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: ArgumentError: Package Plots not found in current path:
+- Run `import Pkg; Pkg.add(&quot;Plots&quot;)` to install the Plots package.</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; gr()</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: gr not defined</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P1 = BSplineSpace(1,Knots([1,3,5,8]))</code><code class="nohighlight hljs ansi" style="display:block;">BSplineSpace(1, Knots([1.0, 3.0, 5.0, 8.0]))</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P2 = BSplineSpace(1,Knots([1,3,5,6,8,9]))</code><code class="nohighlight hljs ansi" style="display:block;">BSplineSpace(1, Knots([1.0, 3.0, 5.0, 6.0, 8.0, 9.0]))</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P3 = BSplineSpace(2,Knots([1,1,3,3,5,5,8,8]))</code><code class="nohighlight hljs ansi" style="display:block;">BSplineSpace(2, Knots([1.0, 1.0, 3.0, 3.0, 5.0, 5.0, 8.0, 8.0]))</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; plot(
            plot([t-&gt;bsplinebasis₊₀(P1,i,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
            plot([t-&gt;bsplinebasis₊₀(P2,i,t) for i in 1:dim(P2)], 1, 9, ylims=(0,1.05), legend=false),
            plot([t-&gt;bsplinebasis₊₀(P3,i,t) for i in 1:dim(P3)], 1, 9, ylims=(0,1.05), legend=false),
            layout=(3,1),
            link=:x
-       )
-ERROR: UndefVarError: plot not defined</code></pre><p><img src="../img/subbsplineplot.png" alt/></p><p>This means, there exists a <span>$n \times n&#39;$</span> matrix <span>$A$</span> which holds:</p><p class="math-container">\[\begin{aligned}
+       )</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: plot not defined</code></pre><p><img src="../img/subbsplineplot.png" alt/></p><p>This means, there exists a <span>$n \times n&#39;$</span> matrix <span>$A$</span> which holds:</p><p class="math-container">\[\begin{aligned}
 B_{(i,p,k)}
 &amp;=\sum_{j}A_{ij} B_{(j,p&#39;,k&#39;)} \\
 n&amp;=\dim(\mathcal{P}[p,k]) \\
 n&#39;&amp;=\dim(\mathcal{P}[p&#39;,k&#39;])
-\end{aligned}\]</p><p>You can calculate the change of basis matrix <span>$A$</span> with <code>changebasis</code>.</p><pre><code class="language-julia-repl">julia&gt; using BasicBSpline
-
-julia&gt; A12 = changebasis(P1,P2)
-ERROR: UndefVarError: P1 not defined
-
-julia&gt; A13 = changebasis(P1,P3)
-ERROR: UndefVarError: P1 not defined</code></pre><pre><code class="language-julia-repl">julia&gt; using BasicBSpline
-
-julia&gt; using Plots
-ERROR: ArgumentError: Package Plots not found in current path:
-- Run `import Pkg; Pkg.add(&quot;Plots&quot;)` to install the Plots package.
-
-julia&gt; gr()
-ERROR: UndefVarError: gr not defined
-
-julia&gt; plot(
+\end{aligned}\]</p><p>You can calculate the change of basis matrix <span>$A$</span> with <code>changebasis</code>.</p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; using BasicBSpline</code><code class="nohighlight hljs ansi" style="display:block;"></code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; A12 = changebasis(P1,P2)</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: P1 not defined</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; A13 = changebasis(P1,P3)</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: P1 not defined</code></pre><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; using BasicBSpline</code><code class="nohighlight hljs ansi" style="display:block;"></code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; using Plots</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: ArgumentError: Package Plots not found in current path:
+- Run `import Pkg; Pkg.add(&quot;Plots&quot;)` to install the Plots package.</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; gr()</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: gr not defined</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; plot(
            plot([t-&gt;bsplinebasis₊₀(P1,i,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
            plot([t-&gt;sum(A12[i,j]*bsplinebasis₊₀(j,P2,t) for j in 1:dim(P2)) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
            plot([t-&gt;sum(A13[i,j]*bsplinebasis₊₀(j,P3,t) for j in 1:dim(P3)) for i in 1:dim(P1)], 1, 9, ylims=(0,1.05), legend=false),
            layout=(3,1),
            link=:x
-       )
-ERROR: UndefVarError: P1 not defined</code></pre><p><img src="../img/subbsplineplot2.png" alt/></p><h2 id="Multi-dimensional-B-spline"><a class="docs-heading-anchor" href="#Multi-dimensional-B-spline">Multi-dimensional B-spline</a><a id="Multi-dimensional-B-spline-1"></a><a class="docs-heading-anchor-permalink" href="#Multi-dimensional-B-spline" title="Permalink"></a></h2><p>tensor product</p><p class="math-container">\[B_{i^1,\dots,i^d}(t^1,\dots,t^d)
+       )</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: P1 not defined</code></pre><p><img src="../img/subbsplineplot2.png" alt/></p><h2 id="Multi-dimensional-B-spline"><a class="docs-heading-anchor" href="#Multi-dimensional-B-spline">Multi-dimensional B-spline</a><a id="Multi-dimensional-B-spline-1"></a><a class="docs-heading-anchor-permalink" href="#Multi-dimensional-B-spline" title="Permalink"></a></h2><p>tensor product</p><p class="math-container">\[B_{i^1,\dots,i^d}(t^1,\dots,t^d)
 =B_{(i^1,p^1,k^1)}(t^1)\cdots B_{(i^d,p^d,k^d)}(t^d)\]</p><h2 id="B-spline-manifold"><a class="docs-heading-anchor" href="#B-spline-manifold">B-spline manifold</a><a id="B-spline-manifold-1"></a><a class="docs-heading-anchor-permalink" href="#B-spline-manifold" title="Permalink"></a></h2><p>B-spline manifold is a parametric representation of a shape.</p><div class="admonition is-success"><header class="admonition-header">Def.  B-spline manifold</header><div class="admonition-body"><p>For given <span>$d$</span>-dimensional B-spline basis functions <span>$B_{i^1,\dots,i^d}$</span> and given points <span>$\bm{a}_{i^1,\dots,i^d} \in \mathbb{R}^{\hat{d}}$</span>, B-spline manifold is defined by following equality:</p><p class="math-container">\[\bm{p}(t^1,\dots,t^d;\bm{a}_{i^1,\dots,i^d})
-=\sum_{i^1,\dots,i^d}B_{i^1,\dots,i^d}(t^1,\dots,t^d) \bm{a}_{i^1,\dots,i^d}\]</p><p>Where <span>$\bm{a}_{i^1,\dots,i^d}$</span> are called <strong>control points</strong>.</p></div></div><p>We will also write <span>$\bm{p}(t^1,\dots,t^d; \bm{a})$</span>, <span>$\bm{p}(t^1,\dots,t^d)$</span>, <span>$\bm{p}(t; \bm{a})$</span> or <span>$\bm{p}(t)$</span> for simplicity.</p><pre><code class="language-julia-repl">julia&gt; using BasicBSpline
-
-julia&gt; P1 = BSplineSpace(1,Knots([0,0,1,1]))
-BSplineSpace(1, Knots([0.0, 0.0, 1.0, 1.0]))
-
-julia&gt; P2 = BSplineSpace(1,Knots([1,1,2,3,3]))
-BSplineSpace(1, Knots([1.0, 1.0, 2.0, 3.0, 3.0]))
-
-julia&gt; n1 = dim(P1) # 2
-2
-
-julia&gt; n2 = dim(P2) # 3
-3
-
-julia&gt; a = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.
-2×3 Matrix{Vector{Int64}}:
+=\sum_{i^1,\dots,i^d}B_{i^1,\dots,i^d}(t^1,\dots,t^d) \bm{a}_{i^1,\dots,i^d}\]</p><p>Where <span>$\bm{a}_{i^1,\dots,i^d}$</span> are called <strong>control points</strong>.</p></div></div><p>We will also write <span>$\bm{p}(t^1,\dots,t^d; \bm{a})$</span>, <span>$\bm{p}(t^1,\dots,t^d)$</span>, <span>$\bm{p}(t; \bm{a})$</span> or <span>$\bm{p}(t)$</span> for simplicity.</p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; using BasicBSpline</code><code class="nohighlight hljs ansi" style="display:block;"></code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P1 = BSplineSpace(1,Knots([0,0,1,1]))</code><code class="nohighlight hljs ansi" style="display:block;">BSplineSpace(1, Knots([0.0, 0.0, 1.0, 1.0]))</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P2 = BSplineSpace(1,Knots([1,1,2,3,3]))</code><code class="nohighlight hljs ansi" style="display:block;">BSplineSpace(1, Knots([1.0, 1.0, 2.0, 3.0, 3.0]))</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; n1 = dim(P1) # 2</code><code class="nohighlight hljs ansi" style="display:block;">2</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; n2 = dim(P2) # 3</code><code class="nohighlight hljs ansi" style="display:block;">3</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; a = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.</code><code class="nohighlight hljs ansi" style="display:block;">2×3 Matrix{Vector{Int64}}:
  [1, 1]  [1, 2]  [1, 3]
- [2, 1]  [2, 2]  [2, 3]
-
-julia&gt; M = BSplineManifold([P1, P2], a)
-ERROR: MethodError: no method matching zero(::Type{Vector{Int64}})
+ [2, 1]  [2, 2]  [2, 3]</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; M = BSplineManifold([P1, P2], a)</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: MethodError: no method matching zero(::Type{Vector{Int64}})
 Closest candidates are:
   zero(!Matched::Union{Type{P}, P}) where P&lt;:Dates.Period at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.6/Dates/src/periods.jl:53
-  zero(!Matched::AbstractIrrational) at irrationals.jl:148
-  zero(!Matched::T) where T&lt;:Dates.TimeType at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.6/Dates/src/types.jl:423
-  ...</code></pre><h3 id="B-spline-curve"><a class="docs-heading-anchor" href="#B-spline-curve">B-spline curve</a><a id="B-spline-curve-1"></a><a class="docs-heading-anchor-permalink" href="#B-spline-curve" title="Permalink"></a></h3><pre><code class="language-julia-repl">julia&gt; using BasicBSpline
-
-julia&gt; ## 1-dim B-spline manifold
-       p = 2 # degree of polynomial
-2
-
-julia&gt; k = Knots(1:12) # knot vector
-Knots([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0])
-
-julia&gt; P = FastBSplineSpace(p, k) # B-spline space
-FastBSplineSpace{2}(Knots([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0]))
-
-julia&gt; a = [[i-5, 3*sin(i^2)] for i in 1:dim(P)] # control points
-9-element Vector{Vector{Float64}}:
+  zero(!Matched::Static.NDIndex{N, I} where I&lt;:Tuple{Vararg{Union{Int64, Static.StaticInt}, N}}) where N at /home/runner/.julia/packages/Static/lCOFN/src/ndindex.jl:83
+  zero(!Matched::SparseArrays.AbstractSparseArray) at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.6/SparseArrays/src/SparseArrays.jl:55
+  ...</code></pre><h3 id="B-spline-curve"><a class="docs-heading-anchor" href="#B-spline-curve">B-spline curve</a><a id="B-spline-curve-1"></a><a class="docs-heading-anchor-permalink" href="#B-spline-curve" title="Permalink"></a></h3><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; using BasicBSpline</code><code class="nohighlight hljs ansi" style="display:block;"></code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; ## 1-dim B-spline manifold
+       p = 2 # degree of polynomial</code><code class="nohighlight hljs ansi" style="display:block;">2</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; k = Knots(1:12) # knot vector</code><code class="nohighlight hljs ansi" style="display:block;">Knots([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0])</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P = FastBSplineSpace(p, k) # B-spline space</code><code class="nohighlight hljs ansi" style="display:block;">FastBSplineSpace{2}(Knots([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0]))</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; a = [[i-5, 3*sin(i^2)] for i in 1:dim(P)] # control points</code><code class="nohighlight hljs ansi" style="display:block;">9-element Vector{Vector{Float64}}:
  [-4.0, 2.5244129544236893]
  [-3.0, -2.2704074859237844]
  [-2.0, 1.2363554557252698]
@@ -365,123 +137,30 @@ julia&gt; a = [[i-5, 3*sin(i^2)] for i in 1:dim(P)] # control points
  [1.0, -2.9753365603293473]
  [2.0, -2.8612579582784154]
  [3.0, 2.7600781145903723]
- [4.0, -1.8896639828233615]
-
-julia&gt; M = BSplineCurve([P], a) # Define B-spline manifold
-ERROR: MethodError: no method matching BSplineCurve(::Vector{FastBSplineSpace{2}}, ::Vector{Vector{Float64}})
+ [4.0, -1.8896639828233615]</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; M = BSplineCurve([P], a) # Define B-spline manifold</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: MethodError: no method matching BSplineCurve(::Vector{FastBSplineSpace{2}}, ::Vector{Vector{Float64}})
 Closest candidates are:
   BSplineCurve(::AbstractVector{var&quot;#s74&quot;} where var&quot;#s74&quot;&lt;:AbstractBSplineSpace, !Matched::AbstractVector{var&quot;#s73&quot;} where var&quot;#s73&quot;&lt;:Point) at /home/runner/work/BasicBSpline.jl/BasicBSpline.jl/src/_FastBSplineManifold.jl:33
-  BSplineCurve(!Matched::AbstractBSplineSpace, ::AbstractVector{T}) where T at /home/runner/work/BasicBSpline.jl/BasicBSpline.jl/src/_FastBSplineManifold.jl:24
-
-julia&gt; save_png(&quot;1dim.png&quot;, M, unitlength = 50)
-ERROR: UndefVarError: save_png not defined</code></pre><p><img src="../img/1dim.png" alt/></p><h3 id="B-spline-surface"><a class="docs-heading-anchor" href="#B-spline-surface">B-spline surface</a><a id="B-spline-surface-1"></a><a class="docs-heading-anchor-permalink" href="#B-spline-surface" title="Permalink"></a></h3><pre><code class="language-julia-repl">julia&gt; using BasicBSpline
-
-julia&gt; p = 2 # degree of polynomial
-2
-
-julia&gt; k = Knots(1:8) # knot vector
-Knots([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0])
-
-julia&gt; P = BSplineSpace(p,k) # B-spline space
-BSplineSpace(2, Knots([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]))
-
-julia&gt; rand_a = [rand(2) for i in 1:dim(P), j in 1:dim(P)]
-5×5 Matrix{Vector{Float64}}:
- [0.807835, 0.39944]   [0.474572, 0.568546]   …  [0.102152, 0.983994]
- [0.390844, 0.205547]  [0.351143, 0.412038]      [0.526577, 0.856089]
- [0.910711, 0.858832]  [0.212878, 0.128386]      [0.195993, 0.722425]
- [0.015306, 0.634381]  [0.0622156, 0.883302]     [0.0374688, 0.362803]
- [0.354258, 0.190444]  [0.923701, 0.254418]      [0.626852, 0.416579]
-
-julia&gt; a = [[2*i-6.5,2*j-6.5] for i in 1:dim(P), j in 1:dim(P)] + rand_a # random generated control points
-5×5 Matrix{Vector{Float64}}:
- [-3.69217, -4.10056]  [-4.02543, -1.93145]   …  [-4.39785, 4.48399]
- [-2.10916, -4.29445]  [-2.14886, -2.08796]      [-1.97342, 4.35609]
- [0.410711, -3.64117]  [-0.287122, -2.37161]     [-0.304007, 4.22243]
- [1.51531, -3.86562]   [1.56222, -1.6167]        [1.53747, 3.8628]
- [3.85426, -4.30956]   [4.4237, -2.24558]        [4.12685, 3.91658]
-
-julia&gt; M = BSplineManifold([P,P],a) # Define B-spline manifold
-ERROR: MethodError: no method matching zero(::Type{Vector{Float64}})
+  BSplineCurve(!Matched::AbstractBSplineSpace, ::AbstractVector{T}) where T at /home/runner/work/BasicBSpline.jl/BasicBSpline.jl/src/_FastBSplineManifold.jl:24</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; save_png(&quot;1dim.png&quot;, M, unitlength = 50)</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: save_png not defined</code></pre><p><img src="../img/1dim.png" alt/></p><h3 id="B-spline-surface"><a class="docs-heading-anchor" href="#B-spline-surface">B-spline surface</a><a id="B-spline-surface-1"></a><a class="docs-heading-anchor-permalink" href="#B-spline-surface" title="Permalink"></a></h3><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; using BasicBSpline</code><code class="nohighlight hljs ansi" style="display:block;"></code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; p = 2 # degree of polynomial</code><code class="nohighlight hljs ansi" style="display:block;">2</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; k = Knots(1:8) # knot vector</code><code class="nohighlight hljs ansi" style="display:block;">Knots([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0])</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P = BSplineSpace(p,k) # B-spline space</code><code class="nohighlight hljs ansi" style="display:block;">BSplineSpace(2, Knots([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]))</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; rand_a = [rand(2) for i in 1:dim(P), j in 1:dim(P)]</code><code class="nohighlight hljs ansi" style="display:block;">5×5 Matrix{Vector{Float64}}:
+ [0.461588, 0.49895]   [0.226153, 0.872967]   …  [0.846484, 0.887269]
+ [0.860972, 0.704861]  [0.377372, 0.682904]      [0.900449, 0.0916567]
+ [0.231943, 0.636923]  [0.106716, 0.990558]      [0.101078, 0.0513219]
+ [0.965431, 0.343898]  [0.755006, 0.0301006]     [0.659382, 0.433479]
+ [0.381338, 0.45505]   [0.852493, 0.99416]       [0.594777, 0.173813]</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; a = [[2*i-6.5,2*j-6.5] for i in 1:dim(P), j in 1:dim(P)] + rand_a # random generated control points</code><code class="nohighlight hljs ansi" style="display:block;">5×5 Matrix{Vector{Float64}}:
+ [-4.03841, -4.00105]   [-4.27385, -1.62703]   …  [-3.65352, 4.38727]
+ [-1.63903, -3.79514]   [-2.12263, -1.8171]       [-1.59955, 3.59166]
+ [-0.268057, -3.86308]  [-0.393284, -1.50944]     [-0.398922, 3.55132]
+ [2.46543, -4.1561]     [2.25501, -2.4699]        [2.15938, 3.93348]
+ [3.88134, -4.04495]    [4.35249, -1.50584]       [4.09478, 3.67381]</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; M = BSplineManifold([P,P],a) # Define B-spline manifold</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: MethodError: no method matching zero(::Type{Vector{Float64}})
 Closest candidates are:
   zero(!Matched::Union{Type{P}, P}) where P&lt;:Dates.Period at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.6/Dates/src/periods.jl:53
-  zero(!Matched::AbstractIrrational) at irrationals.jl:148
-  zero(!Matched::T) where T&lt;:Dates.TimeType at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.6/Dates/src/types.jl:423
-  ...
-
-julia&gt; save_png(&quot;2dim.png&quot;, M) # save image
-ERROR: UndefVarError: save_png not defined</code></pre><p><img src="../img/2dim.png" alt/></p><pre><code class="language-julia-repl">julia&gt; using BasicBSpline
-
-julia&gt; points = [M([u,v]) for u in range(3.0,6.0,length=50), v in range(3.0,6.0,length=50)]
-ERROR: UndefVarError: M not defined
-
-julia&gt; X = [point[1] for point in points]
-ERROR: UndefVarError: points not defined
-
-julia&gt; Y = [point[2] for point in points]
-ERROR: UndefVarError: points not defined
-
-julia&gt; scene = Scene(resolution=(1000,1000))
-ERROR: UndefVarError: Scene not defined
-
-julia&gt; Makie.surface!(X,Y)
-ERROR: UndefVarError: Makie not defined
-
-julia&gt; Makie.xlims!(-5,5)
-ERROR: UndefVarError: Makie not defined
-
-julia&gt; Makie.ylims!(-5,5)
-ERROR: UndefVarError: Makie not defined
-
-julia&gt; save(&quot;2dim_makie.png&quot;, scene)
-ERROR: UndefVarError: save not defined</code></pre><p><img src="../img/2dim_makie.png" alt/></p><h2 id="Affine-commutativity"><a class="docs-heading-anchor" href="#Affine-commutativity">Affine commutativity</a><a id="Affine-commutativity-1"></a><a class="docs-heading-anchor-permalink" href="#Affine-commutativity" title="Permalink"></a></h2><div class="admonition is-info"><header class="admonition-header">Thm.  Affine commutativity</header><div class="admonition-body"><p>If <span>$T$</span> is a affine transform <span>$\mathbb{R}^d\to\mathbb{R}^d$</span>, then the following equality holds.</p><p class="math-container">\[T(\bm{p}(t; \bm{a}))
-=\bm{p}(t; T(\bm{a}))\]</p></div></div><h2 id="Refinement"><a class="docs-heading-anchor" href="#Refinement">Refinement</a><a id="Refinement-1"></a><a class="docs-heading-anchor-permalink" href="#Refinement" title="Permalink"></a></h2><h3 id="h-refinemnet"><a class="docs-heading-anchor" href="#h-refinemnet">h-refinemnet</a><a id="h-refinemnet-1"></a><a class="docs-heading-anchor-permalink" href="#h-refinemnet" title="Permalink"></a></h3><p>Insert additional knots to knot vector.</p><pre><code class="language-julia-repl">julia&gt; using BasicBSpline
-
-julia&gt; k₊=[Knots(3.3,4.2),Knots(3.8,3.2,5.3)] # additional knots
-2-element Vector{Knots}:
+  zero(!Matched::Static.NDIndex{N, I} where I&lt;:Tuple{Vararg{Union{Int64, Static.StaticInt}, N}}) where N at /home/runner/.julia/packages/Static/lCOFN/src/ndindex.jl:83
+  zero(!Matched::SparseArrays.AbstractSparseArray) at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.6/SparseArrays/src/SparseArrays.jl:55
+  ...</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; save_png(&quot;2dim.png&quot;, M) # save image</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: save_png not defined</code></pre><p><img src="../img/2dim.png" alt/></p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; using BasicBSpline</code><code class="nohighlight hljs ansi" style="display:block;"></code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; points = [M([u,v]) for u in range(3.0,6.0,length=50), v in range(3.0,6.0,length=50)]</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: M not defined</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; X = [point[1] for point in points]</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: points not defined</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; Y = [point[2] for point in points]</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: points not defined</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; scene = Scene(resolution=(1000,1000))</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: Scene not defined</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; Makie.surface!(X,Y)</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: Makie not defined</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; Makie.xlims!(-5,5)</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: Makie not defined</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; Makie.ylims!(-5,5)</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: Makie not defined</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; save(&quot;2dim_makie.png&quot;, scene)</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: save not defined</code></pre><p><img src="../img/2dim_makie.png" alt/></p><h2 id="Affine-commutativity"><a class="docs-heading-anchor" href="#Affine-commutativity">Affine commutativity</a><a id="Affine-commutativity-1"></a><a class="docs-heading-anchor-permalink" href="#Affine-commutativity" title="Permalink"></a></h2><div class="admonition is-info"><header class="admonition-header">Thm.  Affine commutativity</header><div class="admonition-body"><p>If <span>$T$</span> is a affine transform <span>$\mathbb{R}^d\to\mathbb{R}^d$</span>, then the following equality holds.</p><p class="math-container">\[T(\bm{p}(t; \bm{a}))
+=\bm{p}(t; T(\bm{a}))\]</p></div></div><h2 id="Refinement"><a class="docs-heading-anchor" href="#Refinement">Refinement</a><a id="Refinement-1"></a><a class="docs-heading-anchor-permalink" href="#Refinement" title="Permalink"></a></h2><h3 id="h-refinemnet"><a class="docs-heading-anchor" href="#h-refinemnet">h-refinemnet</a><a id="h-refinemnet-1"></a><a class="docs-heading-anchor-permalink" href="#h-refinemnet" title="Permalink"></a></h3><p>Insert additional knots to knot vector.</p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; using BasicBSpline</code><code class="nohighlight hljs ansi" style="display:block;"></code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; k₊=[Knots(3.3,4.2),Knots(3.8,3.2,5.3)] # additional knots</code><code class="nohighlight hljs ansi" style="display:block;">2-element Vector{Knots}:
  Knots([3.3, 4.2])
- Knots([3.2, 3.8, 5.3])
-
-julia&gt; M′ = refinement(M,k₊=k₊) # refinement of B-spline manifold
-ERROR: UndefVarError: M not defined
-
-julia&gt; save_png(&quot;2dim_h-refinement.png&quot;, M′) # save image
-ERROR: UndefVarError: save_png not defined</code></pre><p><img src="../img/2dim_h-refinement.png" alt/></p><p>Note that this shape and the last shape are identical.</p><h3 id="p-refinemnet"><a class="docs-heading-anchor" href="#p-refinemnet">p-refinemnet</a><a id="p-refinemnet-1"></a><a class="docs-heading-anchor-permalink" href="#p-refinemnet" title="Permalink"></a></h3><p>Increase the polynomial degree of B-spline manifold.</p><pre><code class="language-julia-repl">julia&gt; using BasicBSpline
-
-julia&gt; p₊=[1,2] # additional degrees
-2-element Vector{Int64}:
+ Knots([3.2, 3.8, 5.3])</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; M′ = refinement(M,k₊=k₊) # refinement of B-spline manifold</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: M not defined</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; save_png(&quot;2dim_h-refinement.png&quot;, M′) # save image</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: save_png not defined</code></pre><p><img src="../img/2dim_h-refinement.png" alt/></p><p>Note that this shape and the last shape are identical.</p><h3 id="p-refinemnet"><a class="docs-heading-anchor" href="#p-refinemnet">p-refinemnet</a><a id="p-refinemnet-1"></a><a class="docs-heading-anchor-permalink" href="#p-refinemnet" title="Permalink"></a></h3><p>Increase the polynomial degree of B-spline manifold.</p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; using BasicBSpline</code><code class="nohighlight hljs ansi" style="display:block;"></code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; p₊=[1,2] # additional degrees</code><code class="nohighlight hljs ansi" style="display:block;">2-element Vector{Int64}:
  1
- 2
-
-julia&gt; M′ = refinement(M,p₊=p₊) # refinement of B-spline manifold
-ERROR: UndefVarError: M not defined
-
-julia&gt; save_png(&quot;2dim_p-refinement.png&quot;, M′) # save image
-ERROR: UndefVarError: save_png not defined</code></pre><p><img src="../img/2dim_p-refinement.png" alt/></p><p>Note that this shape and the last shape are identical.</p><h2 id="Fitting"><a class="docs-heading-anchor" href="#Fitting">Fitting</a><a id="Fitting-1"></a><a class="docs-heading-anchor-permalink" href="#Fitting" title="Permalink"></a></h2><p>Least squares method.</p><p><a href="https://www.desmos.com/calculator/2hm3b1fbdf">Try on Desmos graphing graphing calculator!</a></p><pre><code class="language-julia-repl">julia&gt; using BasicBSpline
-
-julia&gt; p1 = 2
-2
-
-julia&gt; p2 = 2
-2
-
-julia&gt; k1 = Knots(-10:10)+p1*Knots(-10,10)
-Knots([-10.0, -10.0, -10.0, -9.0, -8.0, -7.0, -6.0, -5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 10.0, 10.0])
-
-julia&gt; k2 = Knots(-10:10)+p2*Knots(-10,10)
-Knots([-10.0, -10.0, -10.0, -9.0, -8.0, -7.0, -6.0, -5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 10.0, 10.0])
-
-julia&gt; P1 = FastBSplineSpace(p1, k1)
-FastBSplineSpace{2}(Knots([-10.0, -10.0, -10.0, -9.0, -8.0, -7.0, -6.0, -5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 10.0, 10.0]))
-
-julia&gt; P2 = FastBSplineSpace(p2, k2)
-FastBSplineSpace{2}(Knots([-10.0, -10.0, -10.0, -9.0, -8.0, -7.0, -6.0, -5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 10.0, 10.0]))
-
-julia&gt; f(u1, u2) = [2u1+sin(u1)+cos(u2)+u2/2, 3u2+sin(u2)+sin(u1)/2+u1^2/6]/5
-f (generic function with 1 method)
-
-julia&gt; a = fittingcontrolpoints(f, P1, P2)
-22×22 Matrix{Vector{Float64}}:
+ 2</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; M′ = refinement(M,p₊=p₊) # refinement of B-spline manifold</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: M not defined</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; save_png(&quot;2dim_p-refinement.png&quot;, M′) # save image</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: save_png not defined</code></pre><p><img src="../img/2dim_p-refinement.png" alt/></p><p>Note that this shape and the last shape are identical.</p><h2 id="Fitting"><a class="docs-heading-anchor" href="#Fitting">Fitting</a><a id="Fitting-1"></a><a class="docs-heading-anchor-permalink" href="#Fitting" title="Permalink"></a></h2><p>Least squares method.</p><p><a href="https://www.desmos.com/calculator/2hm3b1fbdf">Try on Desmos graphing graphing calculator!</a></p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; using BasicBSpline</code><code class="nohighlight hljs ansi" style="display:block;"></code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; p1 = 2</code><code class="nohighlight hljs ansi" style="display:block;">2</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; p2 = 2</code><code class="nohighlight hljs ansi" style="display:block;">2</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; k1 = Knots(-10:10)+p1*Knots(-10,10)</code><code class="nohighlight hljs ansi" style="display:block;">Knots([-10.0, -10.0, -10.0, -9.0, -8.0, -7.0, -6.0, -5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 10.0, 10.0])</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; k2 = Knots(-10:10)+p2*Knots(-10,10)</code><code class="nohighlight hljs ansi" style="display:block;">Knots([-10.0, -10.0, -10.0, -9.0, -8.0, -7.0, -6.0, -5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 10.0, 10.0])</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P1 = FastBSplineSpace(p1, k1)</code><code class="nohighlight hljs ansi" style="display:block;">FastBSplineSpace{2}(Knots([-10.0, -10.0, -10.0, -9.0, -8.0, -7.0, -6.0, -5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 10.0, 10.0]))</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P2 = FastBSplineSpace(p2, k2)</code><code class="nohighlight hljs ansi" style="display:block;">FastBSplineSpace{2}(Knots([-10.0, -10.0, -10.0, -9.0, -8.0, -7.0, -6.0, -5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 10.0, 10.0]))</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; f(u1, u2) = [2u1+sin(u1)+cos(u2)+u2/2, 3u2+sin(u2)+sin(u1)/2+u1^2/6]/5</code><code class="nohighlight hljs ansi" style="display:block;">f (generic function with 1 method)</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; a = fittingcontrolpoints(f, P1, P2)</code><code class="nohighlight hljs ansi" style="display:block;">22×22 Matrix{Vector{Float64}}:
  [-5.05588, -2.50058]    [-5.06536, -2.29557]    …  [-3.05588, 9.27797]
  [-4.95087, -2.88141]    [-4.96035, -2.6764]        [-2.95087, 8.89714]
  [-4.74724, -3.57959]    [-4.75671, -3.37459]       [-2.74724, 8.19896]
@@ -501,15 +180,9 @@ julia&gt; a = fittingcontrolpoints(f, P1, P2)
  [2.04641, -3.9161]      [2.03693, -3.7111]         [4.04641, 7.86245]
  [2.41403, -3.39896]     [2.40455, -3.19395]        [4.41403, 8.37959]
  [2.61767, -2.89714]     [2.60819, -2.69213]     …  [4.61767, 8.88141]
- [2.72267, -2.6113]      [2.71319, -2.4063]         [4.72267, 9.16724]
-
-julia&gt; M = BSplineManifold([P1,P2],a)
-ERROR: MethodError: no method matching zero(::Type{Vector{Float64}})
+ [2.72267, -2.6113]      [2.71319, -2.4063]         [4.72267, 9.16724]</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; M = BSplineManifold([P1,P2],a)</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: MethodError: no method matching zero(::Type{Vector{Float64}})
 Closest candidates are:
   zero(!Matched::Union{Type{P}, P}) where P&lt;:Dates.Period at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.6/Dates/src/periods.jl:53
-  zero(!Matched::AbstractIrrational) at irrationals.jl:148
-  zero(!Matched::T) where T&lt;:Dates.TimeType at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.6/Dates/src/types.jl:423
-  ...
-
-julia&gt; save_png(&quot;fitting.png&quot;, M, unitlength=50, up=10, down=-10, left=-10, right=10)
-ERROR: UndefVarError: save_png not defined</code></pre><p><img src="../img/fitting_desmos.png" alt/> <img src="../img/fitting.png" alt/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Home</a><a class="docs-footer-nextpage" href="../benchmark/">Benchmark »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Saturday 10 April 2021 03:40">Saturday 10 April 2021</span>. Using Julia version 1.6.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+  zero(!Matched::Static.NDIndex{N, I} where I&lt;:Tuple{Vararg{Union{Int64, Static.StaticInt}, N}}) where N at /home/runner/.julia/packages/Static/lCOFN/src/ndindex.jl:83
+  zero(!Matched::SparseArrays.AbstractSparseArray) at /buildworker/worker/package_linux64/build/usr/share/julia/stdlib/v1.6/SparseArrays/src/SparseArrays.jl:55
+  ...</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; save_png(&quot;fitting.png&quot;, M, unitlength=50, up=10, down=-10, left=-10, right=10)</code><code class="nohighlight hljs ansi" style="display:block;">ERROR: UndefVarError: save_png not defined</code></pre><p><img src="../img/fitting_desmos.png" alt/> <img src="../img/fitting.png" alt/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Home</a><a class="docs-footer-nextpage" href="../benchmark/">Benchmark »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.5 on <span class="colophon-date" title="Friday 13 August 2021 07:14">Friday 13 August 2021</span>. Using Julia version 1.6.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
