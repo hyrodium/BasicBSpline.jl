@@ -35,7 +35,7 @@ Knots([])
 ```
 """
 function Knots(knots::T...) where T<:Real
-    return unsafe_knots(T, sort!(collect(knots)))
+    return unsafe_knots(float(T), sort!(collect(knots)))
 end
 function Knots{T}(knots::Real...) where T<:Real
     return unsafe_knots(T, sort!(collect(knots)))
