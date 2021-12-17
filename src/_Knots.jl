@@ -50,7 +50,7 @@ function Base.show(io::IO, k::Knots)
     end
 end
 
-Base.zero(::Type{Knots}) = Knots()
+Base.zero(::Type{<:Knots}) = Knots()
 Base.:(==)(k₁::Knots, k₂::Knots) = (k₁.vector == k₂.vector)
 
 @doc raw"""
@@ -206,21 +206,21 @@ end
 """
 Find an index ``i`` such that ``k_{i} ≤ t < k_{i+1}``.
 """
-function _knotindex₊₀(k::Union{Knots, AbstractVector{<:Real}}, t::Real)
+function _knotindex₊₀(k::Union{<:Knots, AbstractVector{<:Real}}, t::Real)
     return searchsortedlast(k, t)
 end
 
 """
 Find an index ``i`` such that ``k_{i} < t ≤ k_{i+1}``.
 """
-function _knotindex₋₀(k::Union{Knots, AbstractVector{<:Real}}, t::Real)
+function _knotindex₋₀(k::Union{<:Knots, AbstractVector{<:Real}}, t::Real)
     return searchsortedfirst(k, t) - 1
 end
 
 """
 Find an index ``i`` such that ``k_{i} ≤ t < k_{i+1}`` or ``k_{i} < t = k_{i+1} = k_{\text{end}}``.
 """
-function _knotindex(k::Union{Knots, AbstractVector{<:Real}}, t::Real)
+function _knotindex(k::Union{<:Knots, AbstractVector{<:Real}}, t::Real)
     j = searchsortedlast(k, t)
     if j < length(k)
         return j
