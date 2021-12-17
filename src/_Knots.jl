@@ -1,36 +1,26 @@
 # Knots
 
-struct Knots
-    vector::Vector{Float64}
-    @doc raw"""
-    Construct knot vector from given array.
-    ```math
-    k=(k_1,\dots,k_l)
-    ```
-    
-    # Examples
-    ```jldoctest
-    julia> k = Knots([1,2,3])
-    Knots([1.0, 2.0, 3.0])
-    
-    julia> k = Knots(1:3)
-    Knots([1.0, 2.0, 3.0])
-    ```
-    """
-    function Knots(vector::AbstractVector{<:Real})
-        return new(sort(convert(Vector{Float64}, vector)))
-    end
-end
+@doc raw"""
+Construct knot vector from given array.
+```math
+k=(k_1,\dots,k_l)
+```
 
-function Knots(vector::AbstractVector)
-    if isempty(vector)
-        @warn "use Knots() or Knots(Float64[]), instead of Knots([])."
-        return Knots(Float64[])
-    else
-        @warn "the type $(typeof(vector)) is deprecated."
-        return Knots(convert(Vector{Float64}, vector))
-    end
+# Examples
+```jldoctest
+julia> k = Knots([1,2,3])
+Knots([1.0, 2.0, 3.0])
+
+julia> k = Knots(1:3)
+Knots([1.0, 2.0, 3.0])
+```
+"""
+struct Knots{T<:Real}
+    vector::Vector{T}
+    global unsafe_knots(::Type{T}, v) where T = new{T}(v)
 end
+Knots{T}(v::AbstractVector) where T = unsafe_knots(T,sort(v))
+Knots(v::AbstractVector{T}) where {T<:Real} = unsafe_knots(float(T),sort(v))
 
 @doc raw"""
 Construct knot vector from given real numbers.
@@ -44,9 +34,13 @@ julia> k = Knots()
 Knots([])
 ```
 """
-function Knots(knot::Real...)
-    return Knots(collect(knot))
+function Knots(knots::T...) where T<:Real
+    return unsafe_knots(T, sort!(collect(knots)))
 end
+function Knots{T}(knots::Real...) where T<:Real
+    return unsafe_knots(T, sort!(collect(knots)))
+end
+Knots() = unsafe_knots(Float64, Float64[])
 
 function Base.show(io::IO, k::Knots)
     if k.vector == Float64[]
@@ -56,7 +50,7 @@ function Base.show(io::IO, k::Knots)
     end
 end
 
-Base.zero(::Type{Knots}) = Knots(Float64[])
+Base.zero(::Type{Knots}) = Knots()
 Base.:(==)(k₁::Knots, k₂::Knots) = (k₁.vector == k₂.vector)
 
 @doc raw"""
@@ -82,7 +76,7 @@ julia> k1 + k2
 Knots([1.0, 2.0, 3.0, 4.0, 5.0, 5.0, 8.0])
 ```
 """
-Base.:+(k₁::Knots, k₂::Knots) = Knots(sort([k₁.vector..., k₂.vector...]))
+Base.:+(k1::Knots{T}, k2::Knots{T}) where T = unsafe_knots(T,sort!(vcat(k1.vector,k2.vector)))
 
 @doc raw"""
 Product of integer and knot vector
@@ -130,10 +124,6 @@ julia> length(k)
 """
 Base.length(k::Knots) = length(k.vector)
 
-function ♯(k::Knots)
-    @warn "BasicBSpline.♯ is deprecated. Use `length` instead."
-    return length(k::Knots)
-end
 Base.firstindex(k::Knots) = 1
 Base.lastindex(k::Knots) = length(k)
 
