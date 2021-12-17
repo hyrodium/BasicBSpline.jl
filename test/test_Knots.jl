@@ -4,10 +4,10 @@
     k3 = Knots([2,4,5])
     @testset "constructor" begin
         @test k1 isa Knots{Float64}
-        @test k1 == Knots(1:3)
-        @test k1 == Knots([1,3,2])
-        @test k1 == Knots(1,2,3)
-        @test k1 == Knots(1,3,2)
+        @test k1 == Knots(1:3)::Knots{Float64}
+        @test k1 == Knots([1,3,2])::Knots{Float64}
+        @test k1 == Knots(1,2,3)::Knots{Float64}
+        @test k1 == Knots(1,3,2)::Knots{Float64}
 
         @test Knots{Int}([1,2]) isa Knots{Int}
         @test Knots{Int}(1,2) isa Knots{Int}
