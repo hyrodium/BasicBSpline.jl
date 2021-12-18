@@ -62,7 +62,7 @@ Check inclusive relationship between B-spline spaces.
 \subseteq\mathcal{P}[p',k']
 ```
 """
-function Base.:⊆(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
+function Base.issubset(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
     p = degree(P)
     k = knots(P)
     p′ = degree(P′)
