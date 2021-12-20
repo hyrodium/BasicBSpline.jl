@@ -46,3 +46,6 @@ end
 function knots(P::FastBSplineSpace)
     return P.knots
 end
+
+lower(::Type{FastBSplineSpace{p}}) where p = FastBSplineSpace{p-1}
+lower(P::FastBSplineSpace{p}) where {p} = FastBSplineSpace{p-1}(knots(P))

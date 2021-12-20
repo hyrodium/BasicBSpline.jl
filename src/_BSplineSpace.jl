@@ -136,3 +136,10 @@ function bsplinesupport(P::AbstractBSplineSpace{p}) where p
     k = knots(P)
     return [k[i]..k[i+p+1] for i in 1:dim(P)]
 end
+
+
+lower(::Type{AbstractBSplineSpace{p}}) where p = AbstractBSplineSpace{p-1}
+lower(::Type{AbstractBSplineSpace{p,T}}) where {p,T} = AbstractBSplineSpace{p-1,T}
+lower(::Type{BSplineSpace{p}}) where p = BSplineSpace{p-1}
+lower(::Type{BSplineSpace{p,T}}) where {p,T} = BSplineSpace{p-1,T}
+lower(P::BSplineSpace{p,T}) where {p,T} = BSplineSpace{p-1}(knots(P))

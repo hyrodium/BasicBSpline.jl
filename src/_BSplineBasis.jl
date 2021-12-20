@@ -24,12 +24,14 @@ function bsplinebasis₊₀(P::BSplineSpace{p}, t::Real)::Vector{Float64} where 
     k = P.knots
 
     n = dim(P)
-    if p == 0
-        return [k[i] ≤ t < k[i+1] for i in 1:n]
-    end
     K = [ifelse(k[i+p] == k[i], 0, (t - k[i]) / (k[i+p] - k[i])) for i in 1:n+1]
-    B = bsplinebasis₊₀(BSplineSpace{p-1}(k), t)
+    B = bsplinebasis₊₀(lower(P), t)
     return [K[i] * B[i] + (1 - K[i+1]) * B[i+1] for i in 1:n]
+end
+function bsplinebasis₊₀(P::BSplineSpace{0}, t::Real)::Vector{Float64}
+    n = dim(P)
+    k = knots(P)
+    return [k[i] ≤ t < k[i+1] for i in 1:n]
 end
 
 @doc raw"""
@@ -58,8 +60,13 @@ function bsplinebasis₋₀(P::BSplineSpace{p}, t::Real)::Vector{Float64} where 
         return [k[i] < t ≤ k[i+1] for i in 1:n]
     end
     K = [ifelse(k[i+p] == k[i], 0, (t - k[i]) / (k[i+p] - k[i])) for i in 1:n+1]
-    B = bsplinebasis₋₀(BSplineSpace{p-1}(k), t)
+    B = bsplinebasis₋₀(lower(P), t)
     return [K[i] * B[i] + (1 - K[i+1]) * B[i+1] for i in 1:n]
+end
+function bsplinebasis₋₀(P::BSplineSpace{0}, t::Real)::Vector{Float64}
+    n = dim(P)
+    k = knots(P)
+    return [k[i] < t ≤ k[i+1] for i in 1:n]
 end
 
 @doc raw"""
@@ -89,8 +96,13 @@ function bsplinebasis(P::BSplineSpace{p}, t::Real)::Vector{Float64} where p
         return [k[i] ≤ t < k[i+1] || (k[i] ≠ k[i+1] == k[end] == t) for i in 1:n]
     end
     K = [ifelse(k[i+p] == k[i], 0, (t - k[i]) / (k[i+p] - k[i])) for i in 1:n+1]
-    B = bsplinebasis(BSplineSpace{p-1}(k), t)
+    B = bsplinebasis(lower(P), t)
     return [K[i] * B[i] + (1 - K[i+1]) * B[i+1] for i in 1:n]
+end
+function bsplinebasis(P::BSplineSpace{0}, t::Real)::Vector{Float64}
+    n = dim(P)
+    k = knots(P)
+    return [k[i] ≤ t < k[i+1] || (k[i] ≠ k[i+1] == k[end] == t) for i in 1:n]
 end
 
 """
@@ -158,14 +170,14 @@ Modified version.
 function bsplinebasis(P::BSplineSpace{p}, i::Integer, t::Real)::Float64 where p
     k = P.knots
 
-    if p == 0
-        return k[i] ≤ t < k[i+1] || (k[i] ≠ k[i+1] == k[end] == t)
-    else
-        return (
-            ((k[i+p] - k[i] ≠ 0) ? bsplinebasis(BSplineSpace{p-1}(k), i, t) * (t - k[i]) / (k[i+p] - k[i]) : 0) +
-            ((k[i+p+1] - k[i+1] ≠ 0) ? bsplinebasis(BSplineSpace{p-1}(k), i+1, t) * (k[i+p+1] - t) / (k[i+p+1] - k[i+1]) : 0)
-        )
-    end
+    return (
+        ((k[i+p] - k[i] ≠ 0) ? bsplinebasis(lower(P), i, t) * (t - k[i]) / (k[i+p] - k[i]) : 0) +
+        ((k[i+p+1] - k[i+1] ≠ 0) ? bsplinebasis(lower(P), i+1, t) * (k[i+p+1] - t) / (k[i+p+1] - k[i+1]) : 0)
+    )
+end
+function bsplinebasis(P::BSplineSpace{0}, i::Integer, t::Real)::Float64
+    k = knots(P)
+    return k[i] ≤ t < k[i+1] || (k[i] ≠ k[i+1] == k[end] == t)
 end
 
 @doc raw"""
@@ -180,12 +192,13 @@ function bsplinebasis′₊₀(P::BSplineSpace{p}, t)::Vector{Float64} where p
     k = P.knots
 
     n = dim(P)
-    if p == 0
-        return zeros(n)
-    end
     K = [ifelse(k[i+p] == k[i], 0, p / (k[i+p] - k[i])) for i in 1:n+1]
-    B = bsplinebasis₊₀(BSplineSpace{p-1}(k), t)
+    B = bsplinebasis₊₀(lower(P), t)
     return [K[i] * B[i] - K[i+1] * B[i+1] for i in 1:n]
+end
+function bsplinebasis′₊₀(P::BSplineSpace{0}, t)::Vector{Float64}
+    n = dim(P)
+    return zeros(n)
 end
 
 @doc raw"""
@@ -200,12 +213,13 @@ function bsplinebasis′₋₀(P::BSplineSpace{p}, t)::Vector{Float64} where p
     k = P.knots
 
     n = dim(P)
-    if p == 0
-        return zeros(n)
-    end
     K = [ifelse(k[i+p] == k[i], 0, p / (k[i+p] - k[i])) for i in 1:n+1]
-    B = bsplinebasis₋₀(BSplineSpace{p-1}(k), t)
+    B = bsplinebasis₋₀(lower(P), t)
     return [K[i] * B[i] - K[i+1] * B[i+1] for i in 1:n]
+end
+function bsplinebasis′₋₀(P::BSplineSpace{0}, t)::Vector{Float64}
+    n = dim(P)
+    return zeros(n)
 end
 
 @doc raw"""
@@ -222,20 +236,21 @@ function bsplinebasis′(P::BSplineSpace{p}, t)::Vector{Float64} where p
     k = P.knots
 
     n = dim(P)
-    if p == 0
-        return zeros(n)
-    end
     K = [ifelse(k[i+p] == k[i], 0, p / (k[i+p] - k[i])) for i in 1:n+1]
-    B = bsplinebasis(BSplineSpace{p-1}(k), t)
+    B = bsplinebasis(lower(P), t)
     return [K[i] * B[i] - K[i+1] * B[i+1] for i in 1:n]
+end
+function bsplinebasis′(P::BSplineSpace{0}, t)::Vector{Float64}
+    n = dim(P)
+    return zeros(n)
 end
 
 function bsplinebasis′₊₀(P::BSplineSpace{p}, i::Integer, t::Real)::Float64 where p
     k = P.knots
 
     return p * (
-        ((k[i+p] - k[i] ≠ 0) ? bsplinebasis₊₀(BSplineSpace{p-1}(k), i, t) / (k[i+p] - k[i]) : 0) -
-        ((k[i+p+1] - k[i+1] ≠ 0) ? bsplinebasis₊₀(BSplineSpace{p-1}(k), i+1, t) / (k[i+p+1] - k[i+1]) : 0)
+        ((k[i+p] - k[i] ≠ 0) ? bsplinebasis₊₀(lower(P), i, t) / (k[i+p] - k[i]) : 0) -
+        ((k[i+p+1] - k[i+1] ≠ 0) ? bsplinebasis₊₀(lower(P), i+1, t) / (k[i+p+1] - k[i+1]) : 0)
     )
 end
 
@@ -243,8 +258,8 @@ function bsplinebasis′₋₀(P::BSplineSpace{p}, i::Integer, t::Real)::Float64
     k = P.knots
 
     return p * (
-        ((k[i+p] - k[i] ≠ 0) ? bsplinebasis₋₀(BSplineSpace{p-1}(k), i, t) / (k[i+p] - k[i]) : 0) -
-        ((k[i+p+1] - k[i+1] ≠ 0) ? bsplinebasis₋₀(BSplineSpace{p-1}(k), i+1, t) / (k[i+p+1] - k[i+1]) : 0)
+        ((k[i+p] - k[i] ≠ 0) ? bsplinebasis₋₀(lower(P), i, t) / (k[i+p] - k[i]) : 0) -
+        ((k[i+p+1] - k[i+1] ≠ 0) ? bsplinebasis₋₀(lower(P), i+1, t) / (k[i+p+1] - k[i+1]) : 0)
     )
 end
 
@@ -252,8 +267,8 @@ function bsplinebasis′(P::BSplineSpace{p}, i::Integer, t::Real)::Float64 where
     k = P.knots
 
     return p * (
-        ((k[i+p] - k[i] ≠ 0) ? bsplinebasis(BSplineSpace{p-1}(k), i, t) / (k[i+p] - k[i]) : 0) -
-        ((k[i+p+1] - k[i+1] ≠ 0) ? bsplinebasis(BSplineSpace{p-1}(k), i+1, t) / (k[i+p+1] - k[i+1]) : 0)
+        ((k[i+p] - k[i] ≠ 0) ? bsplinebasis(lower(P), i, t) / (k[i+p] - k[i]) : 0) -
+        ((k[i+p+1] - k[i+1] ≠ 0) ? bsplinebasis(lower(P), i+1, t) / (k[i+p+1] - k[i+1]) : 0)
     )
 end
 

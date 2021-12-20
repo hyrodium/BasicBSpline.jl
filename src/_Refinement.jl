@@ -9,25 +9,23 @@ B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p',k')}
 Assumption:
 * ``P ⊆ P′``
 """
-function _changebasis_R(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)::Matrix{Float64}
-    p = degree(P)
+function _changebasis_R(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T})::Matrix{T} where {p,p′,T}
     k = knots(P)
-    p′ = degree(P′)
     k′ = knots(P′)
     p₊ = p′ - p
 
     if p == 0
         n = length(k) - 1
         n′ = length(k′) - p₊ - 1
-        A⁰ = Float64[bsplinesupport(typeof(P′)(p₊, k′), j) ⊆ bsplinesupport(typeof(P)(0, k), i) for i in 1:n, j in 1:n′]
+        A⁰ = Float64[bsplinesupport(BSplineSpace{p₊}(k′), j) ⊆ bsplinesupport(BSplineSpace{0}(k), i) for i in 1:n, j in 1:n′]
         A⁰[:, findall(iszeros(P′))] .= NaN
         return A⁰
     end
 
-    Aᵖ⁻¹ = _changebasis_R(typeof(P)(p-1, k), typeof(P′)(p′-1, k′)) # (n+1) × (n′+1) matrix
+    Aᵖ⁻¹ = _changebasis_R(lower(P), lower(P′)) # (n+1) × (n′+1) matrix
     n = dim(P)
     n′ = dim(P′)
-    Z = iszeros(typeof(P′)(p′-1, k′))
+    Z = iszeros(lower(P′))
     W = findall(Z)
     K′ = [k′[i+p′] - k′[i] for i in 1:n′+1]
     K = [ifelse(k[i+p] ≠ k[i], 1 / (k[i+p] - k[i]), 0.0) for i in 1:n+1]
@@ -140,19 +138,17 @@ B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p',k')}
 Assumption:
 * ``P ⊑ P′``
 """
-function _changebasis_I(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)::Matrix{Float64}
+function _changebasis_I(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T})::Matrix{T} where {p, p′, T}
     I = bsplineunity(P)
-    p = degree(P)
     k = knots(P)
-    p′ = degree(P′)
     k′ = knots(P′)
     p₊ = p′ - p
 
-    _P = typeof(P)(p, k[1+p:end-p] + p * Knots(k[1+p], k[end-p]))
+    _P = BSplineSpace{p}(k[1+p:end-p] + p * Knots(k[1+p], k[end-p]))
     # if dim(_P) ≠ dim(P)
     #     error("dim(_P)≠dim(P)")
     # end
-    _P′ = typeof(P′)(p′, k′[1+p′:end-p′] + p′ * Knots(k′[1+p′], k′[end-p′]))
+    _P′ = BSplineSpace{p′}(k′[1+p′:end-p′] + p′ * Knots(k′[1+p′], k′[end-p′]))
     # if dim(_P′) ≠ dim(P′)
     #     error("dim(_P′)≠dim(P′)")
     # end
@@ -164,7 +160,7 @@ function _changebasis_I(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)::Ma
     return A
 end
 
-function changebasis(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
+function changebasis(P::BSplineSpace, P′::BSplineSpace)
     if P ⊆ P′
         return _changebasis_R(P, P′)
     elseif P ⊑ P′
@@ -174,6 +170,9 @@ function changebasis(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
     end
 end
 
+function changebasis(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
+    changebasis(BSplineSpace(P),BSplineSpace(P′))
+end
 
 @doc raw"""
 Refinement of B-spline manifold with given B-spline spaces.
@@ -224,7 +223,7 @@ function refinement(M::AbstractBSplineManifold; p₊::Union{Nothing,AbstractVect
     p = degree(P);
     k = knots(P);
     k_unique = unique(k[1+p:end-p]);
-    typeof(P)(p + p₊[i], k + p₊[i] * k_unique + k₊[i])) for i in eachindex(Ps)]
+    typeof(P).name.wrapper{p + p₊[i]}(k + p₊[i] * k_unique + k₊[i])) for i in eachindex(Ps)]
 
     return refinement(M, Ps′)
 end
