@@ -7,7 +7,7 @@ B-spline space for lower polynomial degree
 ```
 This type `FastBSplineSpace` is faster than `BSplineSpace`, but the degree must be equal or less than `MAX_DEGREE`.
 """
-struct FastBSplineSpace{p} <: AbstractBSplineSpace
+struct FastBSplineSpace{p} <: AbstractBSplineSpace{p}
     knots::Knots
     function FastBSplineSpace(p::Integer, knots::Knots)
         if p < 0
