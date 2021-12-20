@@ -78,6 +78,8 @@ Knots([1.0, 2.0, 3.0, 4.0, 5.0, 5.0, 8.0])
 """
 Base.:+(k1::Knots{T}, k2::Knots{T}) where T = unsafe_knots(T,sort!(vcat(k1.vector,k2.vector)))
 
+# TODO: add a method for Knots{Int} + Knots{Float64}
+
 @doc raw"""
 Product of integer and knot vector
 

@@ -101,7 +101,7 @@ function bsplinebasis′(P::FastBSplineSpace, i::Integer, t::Real)::Float64
     p = degree(P)
     k = knots(P)
 
-    B_1, B_2 = bsplinebasis(FastBSplineSpace(p-1, k), i, t), bsplinebasis(FastBSplineSpace(p-1, k), i+1, t)
+    B_1, B_2 = bsplinebasis(lower(P), i, t), bsplinebasis(lower(P), i+1, t)
 
     K_1, K_2 = 1 ÷ (k[i+p] - k[i]), 1 ÷ (k[i+p+1] - k[i+1])
     B_1 = p * (K_1 * B_1 - K_2 * B_2)

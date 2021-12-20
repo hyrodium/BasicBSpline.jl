@@ -1,3 +1,4 @@
+# TODO: remove these tests
 @testset "FastBSplineSpace" begin
     P1 = FastBSplineSpace(2, Knots([1, 3, 5, 6, 8, 9]))
     @test bsplinesupport(P1, 2) == 3..8

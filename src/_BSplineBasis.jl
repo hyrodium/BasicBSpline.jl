@@ -1,4 +1,4 @@
-# B-spline basis function
+# B-Spline Basis Function
 
 @inline _d(a::T,b::T) where T = ifelse(iszero(b), zero(T), T(a/b))
 
@@ -232,7 +232,7 @@ Modified version.
 """
 bsplinebasis′
 
-function bsplinebasis′(P::BSplineSpace{p}, t)::Vector{Float64} where p
+function bsplinebasis′(P::BSplineSpace{p}, t::Real)::Vector{Float64} where p
     k = P.knots
 
     n = dim(P)
@@ -240,44 +240,40 @@ function bsplinebasis′(P::BSplineSpace{p}, t)::Vector{Float64} where p
     B = bsplinebasis(lower(P), t)
     return [K[i] * B[i] - K[i+1] * B[i+1] for i in 1:n]
 end
-function bsplinebasis′(P::BSplineSpace{0}, t)::Vector{Float64}
+function bsplinebasis′(P::BSplineSpace{0}, ::Real)::Vector{Float64}
     n = dim(P)
     return zeros(n)
 end
 
 function bsplinebasis′₊₀(P::BSplineSpace{p}, i::Integer, t::Real)::Float64 where p
     k = P.knots
-
     return p * (
         ((k[i+p] - k[i] ≠ 0) ? bsplinebasis₊₀(lower(P), i, t) / (k[i+p] - k[i]) : 0) -
         ((k[i+p+1] - k[i+1] ≠ 0) ? bsplinebasis₊₀(lower(P), i+1, t) / (k[i+p+1] - k[i+1]) : 0)
     )
 end
+function bsplinebasis′₊₀(P::BSplineSpace{0}, i::Integer, t::Real)::Float64
+    return 0.0
+end
 
 function bsplinebasis′₋₀(P::BSplineSpace{p}, i::Integer, t::Real)::Float64 where p
     k = P.knots
-
     return p * (
         ((k[i+p] - k[i] ≠ 0) ? bsplinebasis₋₀(lower(P), i, t) / (k[i+p] - k[i]) : 0) -
         ((k[i+p+1] - k[i+1] ≠ 0) ? bsplinebasis₋₀(lower(P), i+1, t) / (k[i+p+1] - k[i+1]) : 0)
     )
 end
+function bsplinebasis′₋₀(P::BSplineSpace{0}, i::Integer, t::Real)::Float64
+    return 0.0
+end
 
 function bsplinebasis′(P::BSplineSpace{p}, i::Integer, t::Real)::Float64 where p
     k = P.knots
-
     return p * (
         ((k[i+p] - k[i] ≠ 0) ? bsplinebasis(lower(P), i, t) / (k[i+p] - k[i]) : 0) -
         ((k[i+p+1] - k[i+1] ≠ 0) ? bsplinebasis(lower(P), i+1, t) / (k[i+p+1] - k[i+1]) : 0)
     )
 end
-
-
-# For compatibility
-bsplinebasis₊₀(i::Integer,P::AbstractBSplineSpace,t::Real) = bsplinebasis(P,i,t)
-bsplinebasis₋₀(i::Integer,P::AbstractBSplineSpace,t::Real) = bsplinebasis(P,i,t)
-bsplinebasis(i::Integer,P::AbstractBSplineSpace,t::Real) = bsplinebasis(P,i,t)
-bsplinebasis′₊₀(i::Integer,P::AbstractBSplineSpace,t::Real) = bsplinebasis(P,i,t)
-bsplinebasis′₋₀(i::Integer,P::AbstractBSplineSpace,t::Real) = bsplinebasis(P,i,t)
-bsplinebasis′(i::Integer,P::AbstractBSplineSpace,t::Real) = bsplinebasis(P,i,t)
-bsplinesupport(i::Integer,P::AbstractBSplineSpace) = bsplinesupport(P,i)
+function bsplinebasis′(P::BSplineSpace{0}, i::Integer, t::Real)::Float64
+    return 0.0
+end

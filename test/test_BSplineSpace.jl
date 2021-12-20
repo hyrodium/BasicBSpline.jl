@@ -30,15 +30,6 @@
     @test P1 ⊆ P3
     @test P2 ⊈ P3
 
-    # TODO: move these tests to test_Refinement.jl
-    # n1, n2, n3 = dim(P1), dim(P2), dim(P3)
-    # A12 = changebasis(P1, P2)
-    # A13 = changebasis(P1, P3)
-    # Δ12 = [bsplinebasis(P1, i, t) - sum(A12[i, j] * bsplinebasis(P2, j, t) for j in 1:n2) for i in 1:n1, t in 8 * rand(10)]
-    # Δ13 = [bsplinebasis(P1, i, t) - sum(A13[i, j] * bsplinebasis(P3, j, t) for j in 1:n3) for i in 1:n1, t in 8 * rand(10)]
-    # @test norm(Δ12) < 1e-14
-    # @test norm(Δ13) < 1e-14
-
     P4 = BSplineSpace{1}(Knots([1, 2, 3, 4, 5]))
     P5 = BSplineSpace{2}(Knots([-1, 0.3, 2, 3, 3, 4, 5.2, 6]))
     @test P4 ⊑ P4
@@ -51,9 +42,4 @@
     P5_ = BSplineSpace{degree(P5)-1}(knots(P5)[2:end-1])
     @test P4_ ⊑ P5_
 
-    # TODO: move these tests to test_Refinement.jl
-    # n4, n5 = dim(P4), dim(P5)
-    # A45 = changebasis(P4, P5)
-    # Δ45 = [bsplinebasis(P4, i, t) - sum(A45[i, j] * bsplinebasis(P5, j, t) for j in 1:n5) for i in 1:n1, t in 2 * rand(10) .+ 2]
-    # @test norm(Δ45) < 1e-14
 end
