@@ -277,13 +277,3 @@ end
 function bsplinebasis′(P::BSplineSpace{0}, i::Integer, t::Real)::Float64
     return 0.0
 end
-
-
-# For compatibility
-bsplinebasis₊₀(i::Integer,P::AbstractBSplineSpace,t::Real) = bsplinebasis(P,i,t)
-bsplinebasis₋₀(i::Integer,P::AbstractBSplineSpace,t::Real) = bsplinebasis(P,i,t)
-bsplinebasis(i::Integer,P::AbstractBSplineSpace,t::Real) = bsplinebasis(P,i,t)
-bsplinebasis′₊₀(i::Integer,P::AbstractBSplineSpace,t::Real) = bsplinebasis(P,i,t)
-bsplinebasis′₋₀(i::Integer,P::AbstractBSplineSpace,t::Real) = bsplinebasis(P,i,t)
-bsplinebasis′(i::Integer,P::AbstractBSplineSpace,t::Real) = bsplinebasis(P,i,t)
-bsplinesupport(i::Integer,P::AbstractBSplineSpace) = bsplinesupport(P,i)
