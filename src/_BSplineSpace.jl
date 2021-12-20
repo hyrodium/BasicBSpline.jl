@@ -99,7 +99,7 @@ const ⊑ = issqsubset
 ⋢(l, r) = !⊑(l, r)
 ⋣(l, r) = r ⋢ l
 
-≃(P1::AbstractBSplineSpace, P2::AbstractBSplineSpace) = (P1 ⊑ P2)&(P2 ⊑ P1)
+≃(P1::AbstractBSplineSpace, P2::AbstractBSplineSpace) = (P1 ⊑ P2) & (P2 ⊑ P1)
 
 function iszeros(P::AbstractBSplineSpace{p}) where p
     k = knots(P)
@@ -108,7 +108,7 @@ function iszeros(P::AbstractBSplineSpace{p}) where p
 end
 
 function isproper(P::AbstractBSplineSpace)
-    return !|(iszeros(P)...)
+    return !any(iszeros(P))
 end
 
 function properdim(P::AbstractBSplineSpace)
