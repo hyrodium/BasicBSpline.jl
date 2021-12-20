@@ -1,6 +1,6 @@
 # B-spline space
 
-abstract type AbstractBSplineSpace end
+abstract type AbstractBSplineSpace{p,T} end
 
 @doc raw"""
 Construct B-spline space from given polynominal degree and knot vector.
@@ -9,29 +9,28 @@ Construct B-spline space from given polynominal degree and knot vector.
 ```
 This type `BSplineSpace` is slower than `FastBSplineSpace`, but this type is not limited with degree.
 """
-struct BSplineSpace <: AbstractBSplineSpace
-    degree::Int
-    knots::Knots
-    function BSplineSpace(degree::Integer, knots::Knots)
-        if degree < 0
-            throw(DomainError(p, "degree of polynominal must be non-negative"))
-        end
-        new(degree, knots)
-    end
+struct BSplineSpace{p, T<:Real} <: AbstractBSplineSpace{p,T}
+    knots::Knots{T}
+    global unsafe_bsplinespace(::Type{Val{p}}, k::Knots{T}) where {p,T} = new{p,T}(k)
+end
+function BSplineSpace{p}(k::Knots) where p
+    # TOOD: add error handling like this:
+    # throw(DomainError(p, "degree of polynominal must be non-negative"))
+    unsafe_bsplinespace(Val{p}, k)
 end
 
 """
 convert AbstractBSplineSpace to BSplineSpace
 """
-function BSplineSpace(P::AbstractBSplineSpace)
-    return BSplineSpace(degree(P), knots(P))
+function BSplineSpace(P::AbstractBSplineSpace{p}) where p
+    return BSplineSpace{degree(P)}(knots(P))
 end
 
-function degree(P::BSplineSpace)
-    return P.degree
+@inline function degree(::BSplineSpace{p}) where p
+    return p
 end
 
-function knots(P::BSplineSpace)
+@inline function knots(P::BSplineSpace)
     return P.knots
 end
 
@@ -41,7 +40,6 @@ function bsplineunity(P::AbstractBSplineSpace)
     return k[1+p]..k[end-p]
 end
 
-
 @doc raw"""
 Return dimention of a B-spline space.
 ```math
@@ -49,8 +47,7 @@ Return dimention of a B-spline space.
 =\sharp k - p -1
 ```
 """
-function dim(bsplinespace::AbstractBSplineSpace)
-    p = degree(bsplinespace)
+function dim(bsplinespace::AbstractBSplineSpace{p}) where p
     k = knots(bsplinespace)
     return length(k) - p - 1
 end
@@ -62,10 +59,8 @@ Check inclusive relationship between B-spline spaces.
 \subseteq\mathcal{P}[p',k']
 ```
 """
-function Base.:⊆(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
-    p = degree(P)
+function Base.issubset(P::AbstractBSplineSpace{p}, P′::AbstractBSplineSpace{p′}) where {p, p′}
     k = knots(P)
-    p′ = degree(P′)
     k′ = knots(P′)
     p₊ = p′ - p
 
@@ -82,10 +77,8 @@ Check inclusive relationship between B-spline spaces.
 \subseteq\mathcal{P}[p',k']|_{[\sharp k'_{p'+1},k'_{\sharp k'-p'}]}
 ```
 """
-function issqsubset(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
-    p = degree(P)
+function issqsubset(P::AbstractBSplineSpace{p}, P′::AbstractBSplineSpace{p′}) where {p, p′}
     k = knots(P)
-    p′ = degree(P′)
     k′ = knots(P′)
     p₊ = p′ - p
 
@@ -108,8 +101,7 @@ const ⊑ = issqsubset
 
 ≃(P1::AbstractBSplineSpace, P2::AbstractBSplineSpace) = (P1 ⊑ P2)&(P2 ⊑ P1)
 
-function iszeros(P::AbstractBSplineSpace)
-    p = degree(P)
+function iszeros(P::AbstractBSplineSpace{p}) where p
     k = knots(P)
     n = dim(P)
     return [k[i] == k[i+p+1] for i in 1:n]
@@ -123,9 +115,31 @@ function properdim(P::AbstractBSplineSpace)
     return dim(P) - sum(iszeros(P))
 end
 
-function _knotindex(P,t)
-    p = degree(P)
+function _knotindex(P::AbstractBSplineSpace{p},t) where p
     k = knots(P)
     l = length(k)
     return _knotindex(view(k.vector, 1+p:l-p), t) + p
 end
+
+@doc raw"""
+Return the support of ``i``-th B-spline basis function.
+```math
+\operatorname{supp}(B_{(i,p,k)})=[k_{i},k_{i+p+1}]
+```
+"""
+function bsplinesupport(P::AbstractBSplineSpace{p}, i::Integer) where p
+    k = knots(P)
+    return k[i]..k[i+p+1]
+end
+
+function bsplinesupport(P::AbstractBSplineSpace{p}) where p
+    k = knots(P)
+    return [k[i]..k[i+p+1] for i in 1:dim(P)]
+end
+
+
+lower(::Type{AbstractBSplineSpace{p}}) where p = AbstractBSplineSpace{p-1}
+lower(::Type{AbstractBSplineSpace{p,T}}) where {p,T} = AbstractBSplineSpace{p-1,T}
+lower(::Type{BSplineSpace{p}}) where p = BSplineSpace{p-1}
+lower(::Type{BSplineSpace{p,T}}) where {p,T} = BSplineSpace{p-1,T}
+lower(P::BSplineSpace{p,T}) where {p,T} = BSplineSpace{p-1}(knots(P))

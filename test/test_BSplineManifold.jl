@@ -3,13 +3,13 @@
         @testset "BSplineManifold-1dim" begin
             Random.seed!(42)
 
-            P1 = BSplineSpace(1, Knots([0, 0, 1, 1]))
+            P1 = BSplineSpace{1}(Knots([0, 0, 1, 1]))
             n1 = dim(P1) # 2
             a = [Point(i, rand()) for i in 1:n1]  # n1 × n2 array of d̂-dim vector.
             M = BSplineManifold([P1], a)
             @test dim(M) == 1
 
-            P1′ = BSplineSpace(2, Knots([-2, 0, 0, 1, 1, 2]))
+            P1′ = BSplineSpace{2}(Knots([-2, 0, 0, 1, 1, 2]))
             p₊ = [1]
             k₊ = [Knots()]
 
@@ -77,16 +77,16 @@
         @testset "BSplineManifold-2dim" begin
             Random.seed!(42)
 
-            P1 = BSplineSpace(1, Knots([0, 0, 1, 1]))
-            P2 = BSplineSpace(1, Knots([1, 1, 2, 3, 3]))
+            P1 = BSplineSpace{1}(Knots([0, 0, 1, 1]))
+            P2 = BSplineSpace{1}(Knots([1, 1, 2, 3, 3]))
             n1 = dim(P1) # 2
             n2 = dim(P2) # 3
             a = [Point(i, j) for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂-dim vector.
             M = BSplineManifold([P1, P2], a)
             @test dim(M) == 2
 
-            P1′ = BSplineSpace(2, Knots([-2, 0, 0, 1, 1, 2]))
-            P2′ = BSplineSpace(1, Knots([-3, 1, 2, 1.45, 3, 4]))
+            P1′ = BSplineSpace{2}(Knots([-2, 0, 0, 1, 1, 2]))
+            P2′ = BSplineSpace{1}(Knots([-3, 1, 2, 1.45, 3, 4]))
             p₊ = [1, 0]
             k₊ = [Knots(), Knots(1.45)]
 

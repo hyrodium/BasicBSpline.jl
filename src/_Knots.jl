@@ -133,7 +133,7 @@ Unique elements of knot vector.
 ```math
 \begin{aligned}
 \widehat{k}
-&=(\text{remove duplicates of} \  k) \\
+&=(\text{unique knot elements of} \  k) \\
 \end{aligned}
 ```
 
@@ -175,7 +175,7 @@ function Base.issubset(k::Knots, k′::Knots)
 end
 
 @doc raw"""
-For Given knot vector ``k``, the following function ``\mathfrak{n}_k:\mathbb{R}\to\mathbb{Z}`` represents the number of knots that duplicate the knot vector ``k``.
+For given knot vector ``k``, the following function ``\mathfrak{n}_k:\mathbb{R}\to\mathbb{Z}`` represents the number of knots that duplicate the knot vector ``k``.
 
 ```math
 \mathfrak{n}_k(t) = \sharp\{i \mid k_i=t \}
