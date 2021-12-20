@@ -20,7 +20,7 @@ end
         p = 0
         v = rand(10)
         k = Knots(v) + (p+1)*Knots(0, 1) + Knots(v[2], v[3])
-        P = BSplineSpace(p, k)
+        P = BSplineSpace{p}(k)
         fP = FastBSplineSpace(p, k)
         n = dim(P)
 
@@ -85,7 +85,7 @@ end
         p = 1
         v = rand(10)
         k = Knots(v) + (p+1)*Knots(0, 1) + Knots(v[2], v[3])
-        P = BSplineSpace(p, k)
+        P = BSplineSpace{p}(k)
         fP = FastBSplineSpace(p, k)
         n = dim(P)
 
@@ -150,7 +150,7 @@ end
         p = 2
         v = rand(10)
         k = Knots(v) + (p+1)*Knots(0, 1) + Knots(v[2], v[3])
-        P = BSplineSpace(p, k)
+        P = BSplineSpace{p}(k)
         fP = FastBSplineSpace(p, k)
         n = dim(P)
 
@@ -215,7 +215,7 @@ end
         p = 3
         v = rand(10)
         k = Knots(v) + (p+1)*Knots(0, 1) + Knots(v[2], v[3])
-        P = BSplineSpace(p, k)
+        P = BSplineSpace{p}(k)
         fP = FastBSplineSpace(p, k)
         n = dim(P)
 
@@ -280,76 +280,11 @@ end
         p = 4
         v = rand(10)
         k = Knots(v) + (p+1)*Knots(0, 1) + Knots(v[2], v[3])
-        P = BSplineSpace(p, k)
+        P = BSplineSpace{p}(k)
         fP = FastBSplineSpace(p, k)
         n = dim(P)
 
         @test degree(P) == degree(fP) == 4
-
-        # Check the values of B-spline basis funcitons
-        for i in 1:n, t in rand(5)
-            for t in rand(5)
-                @test (bsplinebasis₊₀(P, i, t)
-                     ≈ bsplinebasis₊₀(fP, i, t)
-                     ≈ bsplinebasis₋₀(P, i, t)
-                     ≈ bsplinebasis₋₀(fP, i, t)
-                     ≈ bsplinebasis(P, i, t)
-                     ≈ bsplinebasis(fP, i, t))
-            end
-            for t in k
-                t₊₀ = nextfloat(t)
-                t₋₀ = prevfloat(t)
-                @test bsplinebasis₊₀(P, i, t) ≈ bsplinebasis₊₀(fP, i, t) ≒ bsplinebasis₊₀(P, i, t₊₀) ≒ bsplinebasis₊₀(fP, i, t₊₀)
-                @test bsplinebasis₋₀(P, i, t) ≈ bsplinebasis₋₀(fP, i, t) ≒ bsplinebasis₋₀(P, i, t₋₀) ≒ bsplinebasis₋₀(fP, i, t₋₀)
-                @test bsplinebasis(P, i, t) ≈ bsplinebasis(fP, i, t)
-            end
-        end
-
-        # Check the values of the derivative of B-spline basis funcitons
-        for i in 1:n
-            for t in rand(5)
-                @test (bsplinebasis′₊₀(P, i, t)
-                     ≈ bsplinebasis′₊₀(fP, i, t)
-                     ≈ bsplinebasis′₋₀(P, i, t)
-                     ≈ bsplinebasis′₋₀(fP, i, t)
-                     ≈ bsplinebasis′(P, i, t)
-                     ≈ bsplinebasis′(fP, i, t))
-            end
-            for t in k
-                t₊₀ = nextfloat(t)
-                t₋₀ = prevfloat(t)
-                @test bsplinebasis′₊₀(P, i, t) ≈ bsplinebasis′₊₀(fP, i, t) ≒ bsplinebasis′₊₀(P, i, t₊₀) ≒ bsplinebasis′₊₀(fP, i, t₊₀)
-                @test bsplinebasis′₋₀(P, i, t) ≈ bsplinebasis′₋₀(fP, i, t) ≒ bsplinebasis′₋₀(P, i, t₋₀) ≒ bsplinebasis′₋₀(fP, i, t₋₀)
-                @test bsplinebasis′(P, i, t) ≈ bsplinebasis′(fP, i, t)
-            end
-        end
-
-        # Check the derivative
-        @testset "derivative" begin
-            Random.seed!(57)
-            for i in 1:n, t in rand(5)
-                b′₊₀ = bsplinebasis′₊₀(fP, i, t)
-                b′₋₀ = bsplinebasis′₋₀(fP, i, t)
-                b′   = bsplinebasis′(fP, i, t)
-                a′₊₀ = (bsplinebasis₊₀(fP, i, t+Δt) - bsplinebasis₊₀(fP, i, t-Δt)) / 2Δt
-                a′₋₀ = (bsplinebasis₋₀(fP, i, t+Δt) - bsplinebasis₋₀(fP, i, t-Δt)) / 2Δt
-                a′   = (bsplinebasis(fP, i, t+Δt) - bsplinebasis(fP, i, t-Δt)) / 2Δt
-                @test b′₊₀ ≈ b′₋₀ ≈ b′ ≈ a′₊₀ ≈ a′₋₀ ≈ a′
-            end
-        end
-    end
-
-    @testset "5th degree basis" begin
-        Random.seed!(42)
-
-        p = 5
-        v = rand(10)
-        k = Knots(v) + (p+1)*Knots(0, 1) + Knots(v[2], v[3])
-        P = BSplineSpace(p, k)
-        fP = FastBSplineSpace(p, k)
-        n = dim(P)
-
-        @test degree(P) == degree(fP) == 5
 
         # Check the values of B-spline basis funcitons
         for i in 1:n, t in rand(5)
@@ -412,7 +347,7 @@ end
 
         for p in 0:BasicBSpline.MAX_DEGREE
             fP = FastBSplineSpace(p,k)
-            P = BSplineSpace(p,k)
+            P = BSplineSpace{p}(k)
             for t in ts
                 j = BasicBSpline._knotindex(fP,t)
                 _B = BasicBSpline._bsplinebasis(fP,t,j)
