@@ -137,6 +137,13 @@ function bsplinesupport(P::AbstractBSplineSpace{p}) where p
     return [k[i]..k[i+p+1] for i in 1:dim(P)]
 end
 
+@doc raw"""
+Return a B-spline space of one degree lower.
+```math
+\mathcal{P}[p,k] \mapsto \mathcal{P}[p-1,k]
+```
+"""
+lower
 
 lower(::Type{AbstractBSplineSpace{p}}) where p = AbstractBSplineSpace{p-1}
 lower(::Type{AbstractBSplineSpace{p,T}}) where {p,T} = AbstractBSplineSpace{p-1,T}

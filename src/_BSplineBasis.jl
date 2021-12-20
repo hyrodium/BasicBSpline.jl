@@ -1,4 +1,4 @@
-# B-spline basis function
+# B-Spline Basis Function
 
 @inline _d(a::T,b::T) where T = ifelse(iszero(b), zero(T), T(a/b))
 
