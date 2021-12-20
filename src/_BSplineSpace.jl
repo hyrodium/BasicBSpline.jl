@@ -1,6 +1,6 @@
 # B-spline space
 
-abstract type AbstractBSplineSpace{p} end
+abstract type AbstractBSplineSpace{p,T} end
 
 @doc raw"""
 Construct B-spline space from given polynominal degree and knot vector.
@@ -9,7 +9,7 @@ Construct B-spline space from given polynominal degree and knot vector.
 ```
 This type `BSplineSpace` is slower than `FastBSplineSpace`, but this type is not limited with degree.
 """
-struct BSplineSpace{p, T<:Real} <: AbstractBSplineSpace{p}
+struct BSplineSpace{p, T<:Real} <: AbstractBSplineSpace{p,T}
     knots::Knots{T}
     global unsafe_bsplinespace(::Type{Val{p}}, k::Knots{T}) where {p,T} = new{p,T}(k)
 end
