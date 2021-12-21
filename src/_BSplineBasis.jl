@@ -277,3 +277,41 @@ end
 function bsplinebasis′(P::BSplineSpace{0}, i::Integer, t::Real)::Float64
     return 0.0
 end
+
+
+"""
+TODO: Add docstring
+"""
+bsplinebasisall
+
+# TODO: faster implementation
+# TODO: use @generated macro
+function bsplinebasisall(P::BSplineSpace{0,T},i::Integer,t::Real) where T
+    (one(T),)
+end
+
+function bsplinebasisall(P::BSplineSpace{1},i::Integer,t::Real)
+    bsplinebasis(P,i,t),
+    bsplinebasis(P,i+1,t)
+end
+
+function bsplinebasisall(P::BSplineSpace{2},i::Integer,t::Real)
+    bsplinebasis(P,i,t),
+    bsplinebasis(P,i+1,t),
+    bsplinebasis(P,i+2,t)
+end
+
+function bsplinebasisall(P::BSplineSpace{3},i::Integer,t::Real)
+    bsplinebasis(P,i,t),
+    bsplinebasis(P,i+1,t),
+    bsplinebasis(P,i+2,t),
+    bsplinebasis(P,i+3,t)
+end
+
+function bsplinebasisall(P::BSplineSpace{4},i::Integer,t::Real)
+    bsplinebasis(P,i,t),
+    bsplinebasis(P,i+1,t),
+    bsplinebasis(P,i+2,t),
+    bsplinebasis(P,i+3,t),
+    bsplinebasis(P,i+4,t)
+end
