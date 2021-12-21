@@ -81,3 +81,5 @@ end
         :(return v)
     )
 end
+
+# TODO add mappings higher dimensionnal B-spline manifold with @generated macro
