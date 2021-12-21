@@ -4,23 +4,24 @@
 B-spline manifold for lower polynomial degree
 TODO: make the field `bsplinespaces` to be conposite type, not abstract type, for performance
 """
-struct FastBSplineManifold{T} <: AbstractBSplineManifold
+struct FastBSplineManifold{Dim,T} <: AbstractBSplineManifold{Dim}
     bsplinespaces::Vector{<:FastBSplineSpace}
-    controlpoints::Array{T} where T<:Point
+    controlpoints::Array{T,Dim} where T<:Point
     function FastBSplineManifold(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{T}) where T
         Ps = FastBSplineSpace.(Ps)
+        Dim = length(Ps)
         if collect(size(a)) ≠ dim.(Ps)
             throw(DimensionMismatch())
         else
             P = convert(Vector{FastBSplineSpace}, Ps)
-            new{T}(P, float(a))
+            new{Dim,T}(P, float(a))
         end
     end
 end
 
-struct BSplineCurve{p1,T} <: AbstractBSplineManifold
+struct BSplineCurve{p1,T<:Point} <: AbstractBSplineManifold{1}
     bsplinespace1::FastBSplineSpace{p1}
-    controlpoints::Array{T,1} where T<:Point
+    controlpoints::Array{T,1}
     function BSplineCurve(P1::AbstractBSplineSpace, a::AbstractArray{T,1}) where T
         p1 = degree(P1)
         if size(a) ≠ (dim(P1),)
@@ -38,10 +39,10 @@ function BSplineCurve(P::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArra
     end
 end
 
-struct BSplineSurface{p1,p2,T} <: AbstractBSplineManifold
+struct BSplineSurface{p1,p2,T<:Point} <: AbstractBSplineManifold{2}
     bsplinespace1::FastBSplineSpace{p1}
     bsplinespace2::FastBSplineSpace{p2}
-    controlpoints::Array{T,2} where T<:Point
+    controlpoints::Array{T,2}
     function BSplineSurface(P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, a::AbstractArray{T,2}) where T
         p1, p2 = degree(P1), degree(P2)
         if size(a) ≠ (dim(P1), dim(P2))
@@ -59,11 +60,11 @@ function BSplineSurface(P::AbstractVector{<:AbstractBSplineSpace}, a::AbstractAr
     end
 end
 
-struct BSplineSolid{p1,p2,p3,T} <: AbstractBSplineManifold
+struct BSplineSolid{p1,p2,p3,T<:Point} <: AbstractBSplineManifold{3}
     bsplinespace1::FastBSplineSpace{p1}
     bsplinespace2::FastBSplineSpace{p2}
     bsplinespace3::FastBSplineSpace{p3}
-    controlpoints::Array{T,3} where T<:Point
+    controlpoints::Array{T,3}
     function BSplineSolid(P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, P3::AbstractBSplineSpace, a::AbstractArray{T,3}) where T
         p1, p2, p3 = degree(P1), degree(P2), degree(P3)
         if size(a) ≠ (dim(P1), dim(P2), dim(P3))
@@ -81,27 +82,6 @@ function BSplineSolid(P::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArra
     end
 end
 
-function BSplineManifold(M::BSplineCurve{p1}) where {p1}
-    P1 = M.bsplinespace1
-    a = M.controlpoints
-    return BSplineManifold([P1], a)
-end
-
-function BSplineManifold(M::BSplineSurface{p1,p2}) where {p1} where {p2}
-    k1 = M.bsplinespace1
-    P2 = M.bsplinespace2
-    a = M.controlpoints
-    return BSplineManifold([P1, P2], a)
-end
-
-function BSplineManifold(M::BSplineSolid{p1,p2,p3}) where {p1} where {p2} where {p3}
-    P1 = M.bsplinespace1
-    P2 = M.bsplinespace2
-    P3 = M.bsplinespace3
-    a = M.controlpoints
-    return BSplineManifold([P1, P2, P3], a)
-end
-
 """
 convert AbstractBSplineManifold to FastBSplineManifold
 """
@@ -109,9 +89,28 @@ function FastBSplineManifold(M::AbstractBSplineManifold)
     return FastBSplineManifold(BSplineSpace.(M.bsplinespaces), M.controlpoints)
 end
 
-function (M::FastBSplineManifold)(t::AbstractVector{<:Real})
-    # TODO: faster
-    return BSplineManifold(M)(t)
+function (M::FastBSplineManifold)(t1::Real)
+    P = bsplinespaces(M)
+    a = controlpoints(M)
+    P1 = P[1]
+    n1 = dim(P1)
+    sum([bsplinebasis(P1,i1,t1)*a[i1] for i1 in 1:n1])
+end
+
+function (M::FastBSplineManifold)(t1::Real, t2::Real)
+    P = bsplinespaces(M)
+    a = controlpoints(M)
+    P1, P2 = P[1], P[2]
+    n1, n2 = dim.(P)
+    sum([bsplinebasis(P1,i1,t1)*bsplinebasis(P2,i2,t2)*a[i1] for i1 in 1:n1, i2 in 1:n2])
+end
+
+function (M::FastBSplineManifold)(t1::Real, t2::Real, t3::Real)
+    P = bsplinespaces(M)
+    a = controlpoints(M)
+    P1, P2, P3 = P
+    n1, n2, n2 = dim.(P)
+    sum([bsplinebasis(P1,i1,t1)*bsplinebasis(P2,i2,t2)*bsplinebasis(P3,i3,t3)*a[i1] for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3])
 end
 
 function (M::BSplineCurve{p1})(t1::Real) where {p1}

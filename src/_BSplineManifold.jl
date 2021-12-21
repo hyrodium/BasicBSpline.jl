@@ -1,6 +1,6 @@
 # B-spline manifold
 
-abstract type AbstractBSplineManifold end
+abstract type AbstractBSplineManifold{Dim} end
 
 function ⊗(X::AbstractArray{<:Real}, Y::AbstractArray{<:Real})
     # TODO: remove this function and use Tensor.jl
@@ -19,30 +19,6 @@ function tensorprod(X::AbstractArray)
     return Y
 end
 
-"""
-B-spline manifold for general polynomial degree
-"""
-struct BSplineManifold{T} <: AbstractBSplineManifold
-    bsplinespaces::Vector{BSplineSpace}
-    controlpoints::Array{T} where T<:Point
-    function BSplineManifold(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{T}) where T
-        Ps = BSplineSpace.(Ps)
-        if collect(size(a)) ≠ dim.(Ps)
-            throw(DimensionMismatch())
-        else
-            P = convert(Vector{BSplineSpace}, Ps)
-            a′ = float(a)
-            new{T}(P, a′)
-        end
-    end
-end
-
-"""
-convert AbstractBSplineManifold to BSplineManifold
-"""
-function BSplineManifold(M::AbstractBSplineManifold)
-    BSplineManifold(BSplineSpace.(M.bsplinespaces), M.controlpoints)
-end
 
 @doc raw"""
 Multi-dimensional B-spline basis function.
@@ -78,35 +54,8 @@ function bsplinesupport(I::CartesianIndex, Ps::AbstractVector{BSplineSpace})
 end
 
 @doc raw"""
-Calculate the mapping of B-spline manifold for given parameter.
-```math
-\bm{p}(t^1,\dots,t^d)
-=\sum_{i^1,\dots,i^d}B_{i^1,\dots,i^d}(t^1,\dots,t^d) \bm{a}_{i^1,\dots,i^d}
-```
-"""
-function (M::BSplineManifold)(t::AbstractVector{<:Real})
-    Ps = M.bsplinespaces
-    a = M.controlpoints
-    d = length(Ps)
-    N = prod(dim.(Ps))
-
-    B = bsplinebasis(Ps, t)
-    B_flat = reshape(B,N)
-    a_flat = reshape(a,N)
-    return sum(B_flat .* a_flat[:])
-end
-
-@doc raw"""
 Calculate the dimension of B-spline manifold.
 """
 dim
 
 dim(M::AbstractBSplineManifold) = length(M.bsplinespaces)
-
-function bsplinespaces(M::BSplineManifold)
-    return M.bsplinespaces
-end
-
-function controlpoints(M::BSplineManifold)
-    return M.controlpoints
-end
