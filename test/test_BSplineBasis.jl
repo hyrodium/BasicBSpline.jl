@@ -350,28 +350,30 @@ end
             P = BSplineSpace{p}(k)
             for t in ts
                 j = BasicBSpline._knotindex(fP,t)
+                J = intervalindex(P,t)
                 _B = BasicBSpline._bsplinebasis(fP,t,j)
+                _b = bsplinebasisall(P,J,t)
                 # _B′ = BasicBSpline._bsplinebasis′(fP,t,j)
                 B = [bsplinebasis(fP,i,t) for i in j-p:j]
                 B′ = [bsplinebasis′(fP,i,t) for i in j-p:j]
                 @test norm(collect(_B) - B) < ε
 
-                _B = bsplinebasis(P,t)[j-p:j]
+                _B = [bsplinebasis(P,i,t) for i in j-p:j]
                 @test norm(_B - B) < ε
 
-                _B = bsplinebasis₊₀(P,t)[j-p:j]
+                _B = [bsplinebasis₊₀(P,i,t) for i in j-p:j]
                 @test norm(_B - B) < ε
 
-                _B = bsplinebasis₋₀(P,t)[j-p:j]
+                _B = [bsplinebasis₋₀(P,i,t) for i in j-p:j]
                 @test norm(_B - B) < ε
 
-                _B′ = bsplinebasis′(P,t)[j-p:j]
+                _B′ =[ bsplinebasis′(P,i,t) for i in j-p:j]
                 @test norm(_B′ - B′) < ε
 
-                _B′ = bsplinebasis′₊₀(P,t)[j-p:j]
+                _B′ =[ bsplinebasis′₊₀(P,i,t) for i in j-p:j]
                 @test norm(_B′ - B′) < ε
 
-                _B′ = bsplinebasis′₋₀(P,t)[j-p:j]
+                _B′ =[ bsplinebasis′₋₀(P,i,t) for i in j-p:j]
                 @test norm(_B′ - B′) < ε
             end
         end

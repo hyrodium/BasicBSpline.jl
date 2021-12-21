@@ -3,7 +3,7 @@
 @inline _d(a::T,b::T) where T = ifelse(iszero(b), zero(T), T(a/b))
 
 @doc raw"""
-B-spline basis function.
+``i``-th B-spline basis function.
 Right-sided limit version.
 ```math
 \begin{aligned}
@@ -18,96 +18,6 @@ Right-sided limit version.
     &0\quad (\text{otherwise})
 \end{cases}
 \end{aligned}
-```
-"""
-function bsplinebasis₊₀(P::BSplineSpace{p}, t::Real)::Vector{Float64} where p
-    k = P.knots
-
-    n = dim(P)
-    K = [ifelse(k[i+p] == k[i], 0, (t - k[i]) / (k[i+p] - k[i])) for i in 1:n+1]
-    B = bsplinebasis₊₀(lower(P), t)
-    return [K[i] * B[i] + (1 - K[i+1]) * B[i+1] for i in 1:n]
-end
-function bsplinebasis₊₀(P::BSplineSpace{0}, t::Real)::Vector{Float64}
-    n = dim(P)
-    k = knots(P)
-    return [k[i] ≤ t < k[i+1] for i in 1:n]
-end
-
-@doc raw"""
-B-spline basis function.
-Left-sided limit version.
-```math
-\begin{aligned}
-{B}_{(i,p,k)}(t)
-&=
-\frac{t-k_{i}}{k_{i+p}-k_{i}}{B}_{(i,p-1,k)}(t)
-+\frac{k_{i+p+1}-t}{k_{i+p+1}-k_{i+1}}{B}_{(i+1,p-1,k)}(t) \\
-{B}_{(i,0,k)}(t)
-&=
-\begin{cases}
-    &1\quad (k_{i}< t\le k_{i+1})\\
-    &0\quad (\text{otherwise})
-\end{cases}
-\end{aligned}
-```
-"""
-function bsplinebasis₋₀(P::BSplineSpace{p}, t::Real)::Vector{Float64} where p
-    k = P.knots
-
-    n = dim(P)
-    if p == 0
-        return [k[i] < t ≤ k[i+1] for i in 1:n]
-    end
-    K = [ifelse(k[i+p] == k[i], 0, (t - k[i]) / (k[i+p] - k[i])) for i in 1:n+1]
-    B = bsplinebasis₋₀(lower(P), t)
-    return [K[i] * B[i] + (1 - K[i+1]) * B[i+1] for i in 1:n]
-end
-function bsplinebasis₋₀(P::BSplineSpace{0}, t::Real)::Vector{Float64}
-    n = dim(P)
-    k = knots(P)
-    return [k[i] < t ≤ k[i+1] for i in 1:n]
-end
-
-@doc raw"""
-B-spline basis function.
-Modified version.
-```math
-\begin{aligned}
-{B}_{(i,p,k)}(t)
-&=
-\frac{t-k_{i}}{k_{i+p}-k_{i}}{B}_{(i,p-1,k)}(t)
-+\frac{k_{i+p+1}-t}{k_{i+p+1}-k_{i+1}}{B}_{(i+1,p-1,k)}(t) \\
-{B}_{(i,0,k)}(t)
-&=
-\begin{cases}
-    &1\quad (k_{i}\le t<k_{i+1}<k_{l})\\
-    &1\quad (k_{i}\le t\le k_{i+1}=k_{l})\\
-    &0\quad (\text{otherwise})
-\end{cases}
-\end{aligned}
-```
-"""
-function bsplinebasis(P::BSplineSpace{p}, t::Real)::Vector{Float64} where p
-    k = P.knots
-
-    n = dim(P)
-    if p == 0
-        return [k[i] ≤ t < k[i+1] || (k[i] ≠ k[i+1] == k[end] == t) for i in 1:n]
-    end
-    K = [ifelse(k[i+p] == k[i], 0, (t - k[i]) / (k[i+p] - k[i])) for i in 1:n+1]
-    B = bsplinebasis(lower(P), t)
-    return [K[i] * B[i] + (1 - K[i+1]) * B[i+1] for i in 1:n]
-end
-function bsplinebasis(P::BSplineSpace{0}, t::Real)::Vector{Float64}
-    n = dim(P)
-    k = knots(P)
-    return [k[i] ≤ t < k[i+1] || (k[i] ≠ k[i+1] == k[end] == t) for i in 1:n]
-end
-
-"""
-``i``-th B-spline basis function.
-Right-sided limit version.
 """
 @generated function bsplinebasis₊₀(P::BSplineSpace{p,T}, i::Integer, t::Real) where {p, T}
     ks = [Symbol(:k,i) for i in 1:p+2]
@@ -134,9 +44,22 @@ Right-sided limit version.
     )
 end
 
-"""
+@doc raw"""
 ``i``-th B-spline basis function.
 Left-sided limit version.
+```math
+\begin{aligned}
+{B}_{(i,p,k)}(t)
+&=
+\frac{t-k_{i}}{k_{i+p}-k_{i}}{B}_{(i,p-1,k)}(t)
++\frac{k_{i+p+1}-t}{k_{i+p+1}-k_{i+1}}{B}_{(i+1,p-1,k)}(t) \\
+{B}_{(i,0,k)}(t)
+&=
+\begin{cases}
+    &1\quad (k_{i}< t\le k_{i+1})\\
+    &0\quad (\text{otherwise})
+\end{cases}
+\end{aligned}
 """
 @generated function bsplinebasis₋₀(P::BSplineSpace{p,T}, i::Integer, t::Real) where {p, T}
     ks = [Symbol(:k,i) for i in 1:p+2]
@@ -163,11 +86,26 @@ Left-sided limit version.
     )
 end
 
-"""
+@doc raw"""
 ``i``-th B-spline basis function.
 Modified version.
+```math
+\begin{aligned}
+{B}_{(i,p,k)}(t)
+&=
+\frac{t-k_{i}}{k_{i+p}-k_{i}}{B}_{(i,p-1,k)}(t)
++\frac{k_{i+p+1}-t}{k_{i+p+1}-k_{i+1}}{B}_{(i+1,p-1,k)}(t) \\
+{B}_{(i,0,k)}(t)
+&=
+\begin{cases}
+    &1\quad (k_{i}\le t<k_{i+1}<k_{l})\\
+    &1\quad (k_{i}\le t\le k_{i+1}=k_{l})\\
+    &0\quad (\text{otherwise})
+\end{cases}
+\end{aligned}
 """
 function bsplinebasis(P::BSplineSpace{p}, i::Integer, t::Real)::Float64 where p
+    # TODO: use @generated macro
     k = P.knots
 
     return (
@@ -314,4 +252,13 @@ function bsplinebasisall(P::BSplineSpace{4},i::Integer,t::Real)
     bsplinebasis(P,i+2,t),
     bsplinebasis(P,i+3,t),
     bsplinebasis(P,i+4,t)
+end
+
+function bsplinebasisall(P::BSplineSpace{5},i::Integer,t::Real)
+    bsplinebasis(P,i,t),
+    bsplinebasis(P,i+1,t),
+    bsplinebasis(P,i+2,t),
+    bsplinebasis(P,i+3,t),
+    bsplinebasis(P,i+4,t),
+    bsplinebasis(P,i+5,t)
 end
