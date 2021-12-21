@@ -1,5 +1,7 @@
 # Knots
 
+abstract type AbstractKnots{T<:Real} end
+
 @doc raw"""
 Construct knot vector from given array.
 ```math
@@ -15,7 +17,7 @@ julia> k = Knots(1:3)
 Knots([1.0, 2.0, 3.0])
 ```
 """
-struct Knots{T<:Real}
+struct Knots{T} <: AbstractKnots{T}
     vector::Vector{T}
     global unsafe_knots(::Type{T}, v) where T = new{T}(v)
 end
