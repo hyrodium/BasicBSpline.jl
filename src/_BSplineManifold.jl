@@ -1,112 +1,85 @@
 # B-spline manifold
 
-abstract type AbstractBSplineManifold end
+# TODO add more type parameter Deg, T
+abstract type AbstractBSplineManifold{Dim} end
 
-function ⊗(X::AbstractArray{<:Real}, Y::AbstractArray{<:Real})
-    # TODO: remove this function and use Tensor.jl
-    m = size(X)
-    n = size(Y)
-    reshape(reshape(X, length(X)) * reshape(Y, length(Y))', m..., n...)
-end
+dim(M::AbstractBSplineManifold{Dim}) where Dim = Dim
 
-function tensorprod(X::AbstractArray)
-    n = length(X)
-    # X[1] ⊗ … ⊗ X[n]
-    Y = X[1]
-    for i in 2:n
-        Y = Y ⊗ X[i]
-    end
-    return Y
-end
-
-"""
-B-spline manifold for general polynomial degree
-"""
-struct BSplineManifold{T} <: AbstractBSplineManifold
-    bsplinespaces::Vector{BSplineSpace}
-    controlpoints::Array{T} where T<:Point
-    function BSplineManifold(Ps::AbstractVector{<:AbstractBSplineSpace}, a::AbstractArray{T}) where T
-        Ps = BSplineSpace.(Ps)
-        if collect(size(a)) ≠ dim.(Ps)
-            throw(DimensionMismatch())
-        else
-            P = convert(Vector{BSplineSpace}, Ps)
-            a′ = float(a)
-            new{T}(P, a′)
+# struct BSplineManifold{Dim,Deg,T,S<:Tuple,Dim₊₁} <: AbstractBSplineManifold{Dim,Deg,T}
+struct BSplineManifold{Dim,Deg,T,S<:Tuple,Dim₊₁} <: AbstractBSplineManifold{Dim}
+    bsplinespaces::S
+    controlpoints::Array{T,Dim₊₁}
+    function BSplineManifold(Ps::S,a::Array{T,Dim₊₁}) where {S<:Tuple,Dim₊₁,T<:Real}
+        if !all(isa.(Ps,AbstractBSplineSpace))
+            # TODO: update error message
+            error("invalid")
         end
+        if size(a)[1:Dim₊₁-1] != dim.(Ps)
+            # TODO: update error message
+            error("invalid")
+        end
+        d = length(Ps)
+        p = degree.(Ps)
+        new{d,p,T,S,d+1}(Ps,a)
     end
 end
 
-"""
-convert AbstractBSplineManifold to BSplineManifold
-"""
-function BSplineManifold(M::AbstractBSplineManifold)
-    BSplineManifold(BSplineSpace.(M.bsplinespaces), M.controlpoints)
+bsplinespaces(M::BSplineManifold) = M.bsplinespaces
+controlpoints(M::BSplineManifold) = M.controlpoints
+
+@generated function (M::BSplineManifold{1,Deg,S,T})(t1::Real) where {Deg,S,T}
+    p1, = Deg
+    exs = Expr[]
+    for j1 in 1:p1
+        push!(exs, :(v .+= b1[$(1+j1)]*view(a,i1+$(j1),:)))
+    end
+    Expr(:block,
+        :((P1,) = bsplinespaces(M)),
+        :(a = controlpoints(M)),
+        :(i1 = intervalindex(P1,t1)),
+        :(b1 = bsplinebasisall(P1,i1,t1)),
+        :(v = b1[1]*view(a,i1,:)),
+        exs...,
+        :(return v)
+    )
 end
 
-@doc raw"""
-Multi-dimensional B-spline basis function.
-```math
-B_{i^1,\dots,i^d}(t^1,\dots,t^d)
-=B_{(i^1,p^1,k^1)}(t^1)\cdots B_{(i^d,p^d,k^d)}(t^d)
-```
-"""
-function bsplinebasis(Ps::AbstractVector{BSplineSpace}, t::AbstractVector{<:Real})
-    d = length(t)
-    Bs = [bsplinebasis(Ps[i], t[i]) for i in 1:d]
-    return tensorprod(Bs)
+@generated function (M::BSplineManifold{2,Deg,S,T})(t1,t2) where {Deg,S,T}
+    p1, p2 = Deg
+    exs = Expr[]
+    for j2 in 1:p2+1, j1 in 1:p1+1
+        push!(exs, :(v .+= b1[$(j1)]*b2[$(j2)]*view(a,i1+$(j1-1),i2+$(j2-1),:)))
+    end
+    deleteat!(exs,1)
+    Expr(
+        :block,
+        :((P1, P2) = bsplinespaces(M)),
+        :(a = controlpoints(M)),
+        :((i1, i2) = (intervalindex(P1,t1), intervalindex(P2,t2))),
+        :((b1, b2) = (bsplinebasisall(P1,i1,t1), bsplinebasisall(P2,i2,t2))),
+        :(v = b1[1]*b2[1]*view(a,i1,i2,:)),
+        exs...,
+        :(return v)
+    )
 end
 
-@doc raw"""
-Multi-dimensional B-spline basis function.
-```math
-B_{i^1,\dots,i^d}(t^1,\dots,t^d)
-=B_{(i^1,p^1,k^1)}(t^1)\cdots B_{(i^d,p^d,k^d)}(t^d)
-```
-"""
-function bsplinebasis(I::CartesianIndex, Ps::AbstractVector{BSplineSpace}, t::AbstractVector{<:Real})
-    @warn "The method `bsplinebasis(I::CartesianIndex, Ps::AbstractVector{BSplineSpace}, t::AbstractVector{<:Real})` will be deprecated."
-    d = length(Ps)
-    Bs = prod(bsplinebasis(I[i], Ps[i], t[i]) for i in 1:d)
-    return tensorprod(Bs)
+@generated function (M::BSplineManifold{3,Deg,S,T})(t1,t2,t3) where {Deg,S,T}
+    p1, p2, p3 = Deg
+    exs = Expr[]
+    for j3 in 1:p3+1, j2 in 1:p2+1, j1 in 1:p1+1
+        push!(exs, :(v .+= b1[$(j1)]*b2[$(j2)]*b3[$(j3)]*view(a,i1+$(j1-1),i2+$(j2-1),i3+$(j3-1),:)))
+    end
+    deleteat!(exs,1)
+    Expr(
+        :block,
+        :((P1, P2, P3) = bsplinespaces(M)),
+        :(a = controlpoints(M)),
+        :((i1, i2, i3) = (intervalindex(P1,t1), intervalindex(P2,t2), intervalindex(P3,t3))),
+        :((b1, b2, b3) = (bsplinebasisall(P1,i1,t1), bsplinebasisall(P2,i2,t2), bsplinebasisall(P3,i3,t3))),
+        :(v = b1[1]*b2[1]*b3[1]*view(a,i1,i2,i3,:)),
+        exs...,
+        :(return v)
+    )
 end
 
-function bsplinesupport(I::CartesianIndex, Ps::AbstractVector{BSplineSpace})
-    @warn "The method `bsplinesupport(I::CartesianIndex, Ps::AbstractVector{BSplineSpace})` will be deprecated."
-    d = length(Ps)
-    return [bsplinesupport(I[i], Ps[i]) for i in 1:d]
-end
-
-@doc raw"""
-Calculate the mapping of B-spline manifold for given parameter.
-```math
-\bm{p}(t^1,\dots,t^d)
-=\sum_{i^1,\dots,i^d}B_{i^1,\dots,i^d}(t^1,\dots,t^d) \bm{a}_{i^1,\dots,i^d}
-```
-"""
-function (M::BSplineManifold)(t::AbstractVector{<:Real})
-    Ps = M.bsplinespaces
-    a = M.controlpoints
-    d = length(Ps)
-    N = prod(dim.(Ps))
-
-    B = bsplinebasis(Ps, t)
-    B_flat = reshape(B,N)
-    a_flat = reshape(a,N)
-    return sum(B_flat .* a_flat[:])
-end
-
-@doc raw"""
-Calculate the dimension of B-spline manifold.
-"""
-dim
-
-dim(M::AbstractBSplineManifold) = length(M.bsplinespaces)
-
-function bsplinespaces(M::BSplineManifold)
-    return M.bsplinespaces
-end
-
-function controlpoints(M::BSplineManifold)
-    return M.controlpoints
-end
+# TODO add mappings higher dimensionnal B-spline manifold with @generated macro

@@ -150,3 +150,13 @@ lower(::Type{AbstractBSplineSpace{p,T}}) where {p,T} = AbstractBSplineSpace{p-1,
 lower(::Type{BSplineSpace{p}}) where p = BSplineSpace{p-1}
 lower(::Type{BSplineSpace{p,T}}) where {p,T} = BSplineSpace{p-1,T}
 lower(P::BSplineSpace{p,T}) where {p,T} = BSplineSpace{p-1}(knots(P))
+
+"""
+TODO: add docstring
+"""
+function intervalindex(P::AbstractBSplineSpace{p},t::Real) where p
+    k = knots(P)
+    l = length(k)
+    v = view(k.vector,2+p:l-p-1)
+    return searchsortedlast(v,t)+1
+end

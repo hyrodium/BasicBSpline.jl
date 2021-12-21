@@ -7,10 +7,12 @@ using GeometryBasics
 
 export Point
 export Knots, ♯, BSplineSpace, dim, ⊑, ⊒, ⋢, ⋣, ≃
+export BSplineManifold
 export bsplinebasis₊₀, bsplinebasis₋₀, bsplinebasis
 export bsplinebasis′₊₀, bsplinebasis′₋₀, bsplinebasis′
 export bsplinesupport, bsplineunity, changebasis, lower
-export BSplineManifold, refinement, bsplinespaces, controlpoints
+export bsplinebasisall, intervalindex
+export refinement, bsplinespaces, controlpoints
 export isproper, properdim
 export degree, knots
 export 𝔫
