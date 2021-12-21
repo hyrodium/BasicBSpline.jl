@@ -2,10 +2,13 @@
 
 # TODO: general dimension
 
+
+refinement(M::BSplineManifold, Ps′::Tuple) = refinement(M, Ps′...)
+
 @doc raw"""
 Refinement of B-spline manifold with given B-spline spaces.
 """
-function refinement(M::BSplineManifold{1}, Ps′::Tuple{<:AbstractBSplineSpace})
+function refinement(M::BSplineManifold{1}, Ps′::AbstractBSplineSpace...)
     Ps = bsplinespaces(M)
     a = controlpoints(M)
     n = dim.(Ps)
@@ -14,6 +17,21 @@ function refinement(M::BSplineManifold{1}, Ps′::Tuple{<:AbstractBSplineSpace})
 
     A = changebasis.(Ps, Ps′)
     a′ = [sum(A[1][I₁, J₁] * a[I₁,i] for I₁ in 1:n[1]) for J₁ in 1:n′[1], i in 1:d]
+    return BSplineManifold(Ps′, a′)
+end
+
+@doc raw"""
+Refinement of B-spline manifold with given B-spline spaces.
+"""
+function refinement(M::BSplineManifold{2}, Ps′::AbstractBSplineSpace...)
+    Ps = bsplinespaces(M)
+    a = controlpoints(M)
+    n = dim.(Ps)
+    n′ = dim.(Ps′)
+    d = size(a,3)  # 3 == Dim+1
+
+    A = changebasis.(Ps, Ps′)
+    a′ = [sum(A[1][I₁, J₁] * A[2][I₂, J₂] * a[I₁, I₂,i] for I₁ in 1:n[1], I₂ in 1:n[2]) for J₁ in 1:n′[1], J₂ in 1:n′[2], i in 1:d]
     return BSplineManifold(Ps′, a′)
 end
 
