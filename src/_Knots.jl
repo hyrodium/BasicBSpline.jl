@@ -152,6 +152,7 @@ Knots([1.0, 2.0, 3.0])
 ```
 """
 Base.unique(k::Knots) = Knots(unique(k.vector))
+Base.unique!(k::Knots) = Knots(unique!(k.vector))
 Base.iterate(k::Knots) = iterate(k.vector)
 Base.iterate(k::Knots, i::Integer) = iterate(k.vector, i)
 Base.searchsortedfirst(k::Knots,t) = searchsortedfirst(k.vector,t)
