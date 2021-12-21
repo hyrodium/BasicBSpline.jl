@@ -7,6 +7,7 @@ using GeometryBasics
 
 export Point
 export Knots, ♯, BSplineSpace, dim, ⊑, ⊒, ⋢, ⋣, ≃
+export BSplineManifold
 export bsplinebasis₊₀, bsplinebasis₋₀, bsplinebasis
 export bsplinebasis′₊₀, bsplinebasis′₋₀, bsplinebasis′
 export bsplinesupport, bsplineunity, changebasis, lower
