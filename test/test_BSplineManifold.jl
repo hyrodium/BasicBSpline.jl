@@ -1,5 +1,5 @@
 @testset "BSplineManifold" begin
-    function arrayofvector2array(a::AbstractArray{<:AbstractVector{R}, d})::Array{R,d+1} where {d, R<:Real}
+    function arrayofvector2array(a::AbstractArray{<:AbstractVector{T},d})::Array{T,d+1} where {d, T<:Real}
         d̂ = length(a[1])
         s = size(a)
         N = prod(s)
@@ -8,7 +8,7 @@
         return a′
     end
 
-    function array2arrayofvector(a::AbstractArray{R,d})::Array{Vector{R}, d-1} where {d, R<:Real}
+    function array2arrayofvector(a::AbstractArray{T,d})::Array{Vector{T},d-1} where {d, T<:Real}
         s = size(a)
         d̂ = s[end]
         N = s[1:end-1]

@@ -37,7 +37,7 @@ controlpoints(M::BSplineManifold) = M.controlpoints
         :((P1,) = bsplinespaces(M)),
         :(a = controlpoints(M)),
         :(i1 = intervalindex(P1,t1)),
-        :(b1 = bsplinebasisall(P1, i1, t1)),
+        :(b1 = bsplinebasisall(P1,i1,t1)),
         :(v = b1[1]*view(a,i1,:)),
         exs...,
         :(return v)
@@ -56,7 +56,7 @@ end
         :((P1, P2) = bsplinespaces(M)),
         :(a = controlpoints(M)),
         :((i1, i2) = (intervalindex(P1,t1), intervalindex(P2,t2))),
-        :((b1, b2) = (bsplinebasisall(P1, i1, t1), bsplinebasisall(P2, i2, t2))),
+        :((b1, b2) = (bsplinebasisall(P1,i1,t1), bsplinebasisall(P2,i2,t2))),
         :(v = b1[1]*b2[1]*view(a,i1,i2,:)),
         exs...,
         :(return v)
