@@ -1,28 +1,30 @@
 @testset "BSplineManifold" begin
     @testset "1dim" begin
-        # @testset "BSplineManifold-1dim" begin
-        #     Random.seed!(42)
+        @testset "BSplineManifold-1dim" begin
+            Random.seed!(42)
 
-        #     P1 = BSplineSpace{1}(Knots([0, 0, 1, 1]))
-        #     n1 = dim(P1) # 2
-        #     a = [Point(i, rand()) for i in 1:n1]  # n1 × n2 array of d̂-dim vector.
-        #     M = BSplineManifold([P1], a)
-        #     @test dim(M) == 1
+            P1 = BSplineSpace{1}(Knots([0, 0, 1, 1]))
+            n1 = dim(P1) # 2
+            ax = [i for i in 1:n1]
+            ay = [rand() for i in 1:n1]
+            a = hcat(ax,ay)  # n1 × 2 array of d̂-dim vector.
+            M = BSplineManifold((P1,), a)
+            @test dim(M) == 1
 
-        #     P1′ = BSplineSpace{2}(Knots([-2, 0, 0, 1, 1, 2]))
-        #     p₊ = [1]
-        #     k₊ = [Knots()]
+            P1′ = BSplineSpace{2}(Knots([-2, 0, 0, 1, 1, 2]))
+            p₊ = (1,)
+            k₊ = (Knots(0.3),)
 
-        #     @test P1 ⊑ P1′
+            @test P1 ⊑ P1′
 
-        #     M′ = refinement(M, [P1′])
-        #     M′′ = refinement(M, p₊=p₊, k₊=k₊)
-        #     ts = [[rand()] for _ in 1:10]
-        #     for t in ts
-        #         @test M(t) ≈ M′(t)
-        #         @test M(t) ≈ M′′(t)
-        #     end
-        # end
+            M′ = refinement(M, (P1′,))
+            M′′ = refinement(M, p₊=p₊, k₊=k₊)
+            ts = [rand() for _ in 1:10]
+            for t in ts
+                @test M(t) ≈ M′(t)
+                @test M(t) ≈ M′′(t)
+            end
+        end
 
         @testset "FastBSplineManifold-1dim" begin
             Random.seed!(42)
