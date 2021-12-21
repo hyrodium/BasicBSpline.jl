@@ -44,20 +44,21 @@ controlpoints(M::BSplineManifold) = M.controlpoints
     )
 end
 
-# TODO use @generated macro
-function (M::BSplineManifold{2,(2,2),S,T})(t1,t2) where {S,T}
-    P1, P2 = bsplinespaces(M)
-    a = controlpoints(M)
-    i1, i2 = intervalindex(P1,t1), intervalindex(P2,t2)
-    b1, b2 = bsplinebasisall(P1, i1, t1), bsplinebasisall(P2, i2, t2)
-    v = b1[1]*b2[1]*view(a,i1,i2,:)
-    v .+= b1[2]*b2[1]*view(a,i1+1,i2,:)
-    v .+= b1[3]*b2[1]*view(a,i1+2,i2,:)
-    v .+= b1[1]*b2[2]*view(a,i1,i2+1,:)
-    v .+= b1[2]*b2[2]*view(a,i1+1,i2+1,:)
-    v .+= b1[3]*b2[2]*view(a,i1+2,i2+1,:)
-    v .+= b1[1]*b2[3]*view(a,i1,i2+2,:)
-    v .+= b1[2]*b2[3]*view(a,i1+1,i2+2,:)
-    v .+= b1[3]*b2[3]*view(a,i1+2,i2+2,:)
-    v
+@generated function (M::BSplineManifold{2,Deg,S,T})(t1,t2) where {Deg,S,T}
+    p1, p2 = Deg
+    exs = Expr[]
+    for j2 in 1:p2+1, j1 in 1:p1+1
+        push!(exs, :(v .+= b1[$(j1)]*b2[$(j2)]*view(a,i1+$(j1-1),i2+$(j2-1),:)))
+    end
+    deleteat!(exs,1)
+    Expr(
+        :block,
+        :((P1, P2) = bsplinespaces(M)),
+        :(a = controlpoints(M)),
+        :((i1, i2) = (intervalindex(P1,t1), intervalindex(P2,t2))),
+        :((b1, b2) = (bsplinebasisall(P1, i1, t1), bsplinebasisall(P2, i2, t2))),
+        :(v = b1[1]*b2[1]*view(a,i1,i2,:)),
+        exs...,
+        :(return v)
+    )
 end
