@@ -14,7 +14,6 @@ export refinement, bsplinespaces, controlpoints
 export isproper, properdim
 export degree, knots
 export 𝔫
-export BSplineCurve, BSplineSurface, BSplineSolid
 export AbstractBSplineManifold, AbstractBSplineSpace
 export fittingcontrolpoints
 
