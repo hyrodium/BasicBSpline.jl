@@ -18,8 +18,6 @@ export BSplineCurve, BSplineSurface, BSplineSolid
 export AbstractBSplineManifold, AbstractBSplineSpace
 export fittingcontrolpoints
 
-const MAX_DEGREE = 5
-
 include("_Knots.jl")
 include("_BSplineSpace.jl")
 include("_BSplineBasis.jl")

@@ -300,7 +300,7 @@ end
         k = Knots(rand(10).-1) + Knots(rand(10)) + Knots(rand(10).+1)
         ts = rand(10)
 
-        for p in 0:BasicBSpline.MAX_DEGREE
+        for p in 0:5
             P = BSplineSpace{p}(k)
             for t in ts
                 j = intervalindex(P,t)
