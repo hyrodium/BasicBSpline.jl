@@ -104,9 +104,7 @@ Refinement of B-spline manifold with additional degree and knots.
 """
 function refinement(M::CustomBSplineManifold; p₊::Union{Nothing,NTuple{Dim,Int}}=nothing, k₊::Union{Nothing,NTuple{Dim,Knots{T}}}=nothing) where {Dim, T}
     Ps = collect(bsplinespaces(M))
-    𝒂 = controlpoints(M)
     d = length(Ps)
-    n = dim.(Ps)
     if isnothing(p₊)
         p₊ = zeros(Int, d)
     elseif length(Ps) ≠ length(p₊)
