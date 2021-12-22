@@ -170,19 +170,6 @@ Modified version.
 """
 bsplinebasis′
 
-function bsplinebasis′(P::BSplineSpace{p}, t::Real)::Vector{Float64} where p
-    k = P.knots
-
-    n = dim(P)
-    K = [ifelse(k[i+p] == k[i], 0, p / (k[i+p] - k[i])) for i in 1:n+1]
-    B = bsplinebasis(lower(P), t)
-    return [K[i] * B[i] - K[i+1] * B[i+1] for i in 1:n]
-end
-function bsplinebasis′(P::BSplineSpace{0}, ::Real)::Vector{Float64}
-    n = dim(P)
-    return zeros(n)
-end
-
 function bsplinebasis′₊₀(P::BSplineSpace{p}, i::Integer, t::Real)::Float64 where p
     k = P.knots
     return p * (
