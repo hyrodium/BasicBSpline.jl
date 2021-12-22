@@ -9,7 +9,6 @@ using Random
     include("test_BSplineSpace.jl")
     include("test_BSplineBasis.jl")
     include("test_ChangeBasis.jl")
-    include("test_FastBSplineSpace.jl")
     include("test_BSplineManifold.jl")
     include("test_Integral.jl")
     include("test_Fitting.jl")
