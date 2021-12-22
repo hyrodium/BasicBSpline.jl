@@ -11,12 +11,12 @@ This type `BSplineSpace` is slower than `FastBSplineSpace`, but this type is not
 """
 struct BSplineSpace{p, T<:Real} <: AbstractBSplineSpace{p,T}
     knots::Knots{T}
-    global unsafe_bsplinespace(::Type{Val{p}}, k::Knots{T}) where {p,T} = new{p,T}(k)
+    global unsafe_bsplinespace(::Val{p}, k::Knots{T}) where {p,T} = new{p,T}(k)
 end
 function BSplineSpace{p}(k::Knots) where p
     # TOOD: add error handling like this:
     # throw(DomainError(p, "degree of polynominal must be non-negative"))
-    unsafe_bsplinespace(Val{p}, k)
+    unsafe_bsplinespace(Val{p}(), k)
 end
 
 """

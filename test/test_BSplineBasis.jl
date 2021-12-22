@@ -21,27 +21,22 @@ end
         v = rand(10)
         k = Knots(v) + (p+1)*Knots(0, 1) + Knots(v[2], v[3])
         P = BSplineSpace{p}(k)
-        fP = FastBSplineSpace(p, k)
         n = dim(P)
 
-        @test degree(P) == degree(fP) == 0
+        @test degree(P) == 0
 
         # Check the values of B-spline basis funcitons
         for i in 1:n, t in rand(5)
             for t in rand(5)
                 @test (bsplinebasis₊₀(P, i, t)
-                     ≈ bsplinebasis₊₀(fP, i, t)
                      ≈ bsplinebasis₋₀(P, i, t)
-                     ≈ bsplinebasis₋₀(fP, i, t)
-                     ≈ bsplinebasis(P, i, t)
-                     ≈ bsplinebasis(fP, i, t))
+                     ≈ bsplinebasis(P, i, t))
             end
             for t in k
                 t₊₀ = nextfloat(t)
                 t₋₀ = prevfloat(t)
-                @test bsplinebasis₊₀(P, i, t) ≈ bsplinebasis₊₀(fP, i, t) ≒ bsplinebasis₊₀(P, i, t₊₀) ≒ bsplinebasis₊₀(fP, i, t₊₀)
-                @test bsplinebasis₋₀(P, i, t) ≈ bsplinebasis₋₀(fP, i, t) ≒ bsplinebasis₋₀(P, i, t₋₀) ≒ bsplinebasis₋₀(fP, i, t₋₀)
-                @test bsplinebasis(P, i, t) ≈ bsplinebasis(fP, i, t)
+                @test bsplinebasis₊₀(P, i, t) ≒ bsplinebasis₊₀(P, i, t₊₀)
+                @test bsplinebasis₋₀(P, i, t) ≒ bsplinebasis₋₀(P, i, t₋₀)
             end
         end
 
@@ -49,18 +44,14 @@ end
         for i in 1:n
             for t in rand(5)
                 @test (bsplinebasis′₊₀(P, i, t)
-                     ≈ bsplinebasis′₊₀(fP, i, t)
                      ≈ bsplinebasis′₋₀(P, i, t)
-                     ≈ bsplinebasis′₋₀(fP, i, t)
-                     ≈ bsplinebasis′(P, i, t)
-                     ≈ bsplinebasis′(fP, i, t))
+                     ≈ bsplinebasis′(P, i, t))
             end
             for t in k
                 t₊₀ = nextfloat(t)
                 t₋₀ = prevfloat(t)
-                @test bsplinebasis′₊₀(P, i, t) ≈ bsplinebasis′₊₀(fP, i, t) ≒ bsplinebasis′₊₀(P, i, t₊₀) ≒ bsplinebasis′₊₀(fP, i, t₊₀)
-                @test bsplinebasis′₋₀(P, i, t) ≈ bsplinebasis′₋₀(fP, i, t) ≒ bsplinebasis′₋₀(P, i, t₋₀) ≒ bsplinebasis′₋₀(fP, i, t₋₀)
-                @test bsplinebasis′(P, i, t) ≈ bsplinebasis′(fP, i, t)
+                @test bsplinebasis′₊₀(P, i, t) ≒ bsplinebasis′₊₀(P, i, t₊₀)
+                @test bsplinebasis′₋₀(P, i, t) ≒ bsplinebasis′₋₀(P, i, t₋₀)
             end
         end
 
@@ -68,12 +59,12 @@ end
         @testset "derivative" begin
             Random.seed!(57)
             for i in 1:n, t in rand(5)
-                b′₊₀ = bsplinebasis′₊₀(fP, i, t)
-                b′₋₀ = bsplinebasis′₋₀(fP, i, t)
-                b′   = bsplinebasis′(fP, i, t)
-                a′₊₀ = (bsplinebasis₊₀(fP, i, t+Δt) - bsplinebasis₊₀(fP, i, t-Δt)) / 2Δt
-                a′₋₀ = (bsplinebasis₋₀(fP, i, t+Δt) - bsplinebasis₋₀(fP, i, t-Δt)) / 2Δt
-                a′   = (bsplinebasis(fP, i, t+Δt) - bsplinebasis(fP, i, t-Δt)) / 2Δt
+                b′₊₀ = bsplinebasis′₊₀(P, i, t)
+                b′₋₀ = bsplinebasis′₋₀(P, i, t)
+                b′   = bsplinebasis′(P, i, t)
+                a′₊₀ = (bsplinebasis₊₀(P, i, t+Δt) - bsplinebasis₊₀(P, i, t-Δt)) / 2Δt
+                a′₋₀ = (bsplinebasis₋₀(P, i, t+Δt) - bsplinebasis₋₀(P, i, t-Δt)) / 2Δt
+                a′   = (bsplinebasis(P, i, t+Δt) - bsplinebasis(P, i, t-Δt)) / 2Δt
                 @test b′₊₀ ≈ b′₋₀ ≈ b′ ≈ a′₊₀ ≈ a′₋₀ ≈ a′
             end
         end
@@ -86,27 +77,22 @@ end
         v = rand(10)
         k = Knots(v) + (p+1)*Knots(0, 1) + Knots(v[2], v[3])
         P = BSplineSpace{p}(k)
-        fP = FastBSplineSpace(p, k)
         n = dim(P)
 
-        @test degree(P) == degree(fP) == 1
+        @test degree(P) == 1
 
         # Check the values of B-spline basis funcitons
         for i in 1:n, t in rand(5)
             for t in rand(5)
                 @test (bsplinebasis₊₀(P, i, t)
-                     ≈ bsplinebasis₊₀(fP, i, t)
                      ≈ bsplinebasis₋₀(P, i, t)
-                     ≈ bsplinebasis₋₀(fP, i, t)
-                     ≈ bsplinebasis(P, i, t)
-                     ≈ bsplinebasis(fP, i, t))
+                     ≈ bsplinebasis(P, i, t))
             end
             for t in k
                 t₊₀ = nextfloat(t)
                 t₋₀ = prevfloat(t)
-                @test bsplinebasis₊₀(P, i, t) ≈ bsplinebasis₊₀(fP, i, t) ≒ bsplinebasis₊₀(P, i, t₊₀) ≒ bsplinebasis₊₀(fP, i, t₊₀)
-                @test bsplinebasis₋₀(P, i, t) ≈ bsplinebasis₋₀(fP, i, t) ≒ bsplinebasis₋₀(P, i, t₋₀) ≒ bsplinebasis₋₀(fP, i, t₋₀)
-                @test bsplinebasis(P, i, t) ≈ bsplinebasis(fP, i, t)
+                @test bsplinebasis₊₀(P, i, t) ≒ bsplinebasis₊₀(P, i, t₊₀)
+                @test bsplinebasis₋₀(P, i, t)≒ bsplinebasis₋₀(P, i, t₋₀)
             end
         end
 
@@ -114,18 +100,14 @@ end
         for i in 1:n
             for t in rand(5)
                 @test (bsplinebasis′₊₀(P, i, t)
-                     ≈ bsplinebasis′₊₀(fP, i, t)
                      ≈ bsplinebasis′₋₀(P, i, t)
-                     ≈ bsplinebasis′₋₀(fP, i, t)
-                     ≈ bsplinebasis′(P, i, t)
-                     ≈ bsplinebasis′(fP, i, t))
+                     ≈ bsplinebasis′(P, i, t))
             end
             for t in k
                 t₊₀ = nextfloat(t)
                 t₋₀ = prevfloat(t)
-                @test bsplinebasis′₊₀(P, i, t) ≈ bsplinebasis′₊₀(fP, i, t) ≒ bsplinebasis′₊₀(P, i, t₊₀) ≒ bsplinebasis′₊₀(fP, i, t₊₀)
-                @test bsplinebasis′₋₀(P, i, t) ≈ bsplinebasis′₋₀(fP, i, t) ≒ bsplinebasis′₋₀(P, i, t₋₀) ≒ bsplinebasis′₋₀(fP, i, t₋₀)
-                @test bsplinebasis′(P, i, t) ≈ bsplinebasis′(fP, i, t)
+                @test bsplinebasis′₊₀(P, i, t) ≒ bsplinebasis′₊₀(P, i, t₊₀)
+                @test bsplinebasis′₋₀(P, i, t) ≒ bsplinebasis′₋₀(P, i, t₋₀)
             end
         end
 
@@ -133,12 +115,12 @@ end
         @testset "derivative" begin
             Random.seed!(57)
             for i in 1:n, t in rand(5)
-                b′₊₀ = bsplinebasis′₊₀(fP, i, t)
-                b′₋₀ = bsplinebasis′₋₀(fP, i, t)
-                b′   = bsplinebasis′(fP, i, t)
-                a′₊₀ = (bsplinebasis₊₀(fP, i, t+Δt) - bsplinebasis₊₀(fP, i, t-Δt)) / 2Δt
-                a′₋₀ = (bsplinebasis₋₀(fP, i, t+Δt) - bsplinebasis₋₀(fP, i, t-Δt)) / 2Δt
-                a′   = (bsplinebasis(fP, i, t+Δt) - bsplinebasis(fP, i, t-Δt)) / 2Δt
+                b′₊₀ = bsplinebasis′₊₀(P, i, t)
+                b′₋₀ = bsplinebasis′₋₀(P, i, t)
+                b′   = bsplinebasis′(P, i, t)
+                a′₊₀ = (bsplinebasis₊₀(P, i, t+Δt) - bsplinebasis₊₀(P, i, t-Δt)) / 2Δt
+                a′₋₀ = (bsplinebasis₋₀(P, i, t+Δt) - bsplinebasis₋₀(P, i, t-Δt)) / 2Δt
+                a′   = (bsplinebasis(P, i, t+Δt) - bsplinebasis(P, i, t-Δt)) / 2Δt
                 @test b′₊₀ ≈ b′₋₀ ≈ b′ ≈ a′₊₀ ≈ a′₋₀ ≈ a′
             end
         end
@@ -151,27 +133,22 @@ end
         v = rand(10)
         k = Knots(v) + (p+1)*Knots(0, 1) + Knots(v[2], v[3])
         P = BSplineSpace{p}(k)
-        fP = FastBSplineSpace(p, k)
         n = dim(P)
 
-        @test degree(P) == degree(fP) == 2
+        @test degree(P) == 2
 
         # Check the values of B-spline basis funcitons
         for i in 1:n, t in rand(5)
             for t in rand(5)
                 @test (bsplinebasis₊₀(P, i, t)
-                     ≈ bsplinebasis₊₀(fP, i, t)
                      ≈ bsplinebasis₋₀(P, i, t)
-                     ≈ bsplinebasis₋₀(fP, i, t)
-                     ≈ bsplinebasis(P, i, t)
-                     ≈ bsplinebasis(fP, i, t))
+                     ≈ bsplinebasis(P, i, t))
             end
             for t in k
                 t₊₀ = nextfloat(t)
                 t₋₀ = prevfloat(t)
-                @test bsplinebasis₊₀(P, i, t) ≈ bsplinebasis₊₀(fP, i, t) ≒ bsplinebasis₊₀(P, i, t₊₀) ≒ bsplinebasis₊₀(fP, i, t₊₀)
-                @test bsplinebasis₋₀(P, i, t) ≈ bsplinebasis₋₀(fP, i, t) ≒ bsplinebasis₋₀(P, i, t₋₀) ≒ bsplinebasis₋₀(fP, i, t₋₀)
-                @test bsplinebasis(P, i, t) ≈ bsplinebasis(fP, i, t)
+                @test bsplinebasis₊₀(P, i, t) ≒ bsplinebasis₊₀(P, i, t₊₀)
+                @test bsplinebasis₋₀(P, i, t)≒ bsplinebasis₋₀(P, i, t₋₀)
             end
         end
 
@@ -179,18 +156,14 @@ end
         for i in 1:n
             for t in rand(5)
                 @test (bsplinebasis′₊₀(P, i, t)
-                     ≈ bsplinebasis′₊₀(fP, i, t)
                      ≈ bsplinebasis′₋₀(P, i, t)
-                     ≈ bsplinebasis′₋₀(fP, i, t)
-                     ≈ bsplinebasis′(P, i, t)
-                     ≈ bsplinebasis′(fP, i, t))
+                     ≈ bsplinebasis′(P, i, t))
             end
             for t in k
                 t₊₀ = nextfloat(t)
                 t₋₀ = prevfloat(t)
-                @test bsplinebasis′₊₀(P, i, t) ≈ bsplinebasis′₊₀(fP, i, t) ≒ bsplinebasis′₊₀(P, i, t₊₀) ≒ bsplinebasis′₊₀(fP, i, t₊₀)
-                @test bsplinebasis′₋₀(P, i, t) ≈ bsplinebasis′₋₀(fP, i, t) ≒ bsplinebasis′₋₀(P, i, t₋₀) ≒ bsplinebasis′₋₀(fP, i, t₋₀)
-                @test bsplinebasis′(P, i, t) ≈ bsplinebasis′(fP, i, t)
+                @test bsplinebasis′₊₀(P, i, t) ≒ bsplinebasis′₊₀(P, i, t₊₀)
+                @test bsplinebasis′₋₀(P, i, t) ≒ bsplinebasis′₋₀(P, i, t₋₀)
             end
         end
 
@@ -198,12 +171,12 @@ end
         @testset "derivative" begin
             Random.seed!(57)
             for i in 1:n, t in rand(5)
-                b′₊₀ = bsplinebasis′₊₀(fP, i, t)
-                b′₋₀ = bsplinebasis′₋₀(fP, i, t)
-                b′   = bsplinebasis′(fP, i, t)
-                a′₊₀ = (bsplinebasis₊₀(fP, i, t+Δt) - bsplinebasis₊₀(fP, i, t-Δt)) / 2Δt
-                a′₋₀ = (bsplinebasis₋₀(fP, i, t+Δt) - bsplinebasis₋₀(fP, i, t-Δt)) / 2Δt
-                a′   = (bsplinebasis(fP, i, t+Δt) - bsplinebasis(fP, i, t-Δt)) / 2Δt
+                b′₊₀ = bsplinebasis′₊₀(P, i, t)
+                b′₋₀ = bsplinebasis′₋₀(P, i, t)
+                b′   = bsplinebasis′(P, i, t)
+                a′₊₀ = (bsplinebasis₊₀(P, i, t+Δt) - bsplinebasis₊₀(P, i, t-Δt)) / 2Δt
+                a′₋₀ = (bsplinebasis₋₀(P, i, t+Δt) - bsplinebasis₋₀(P, i, t-Δt)) / 2Δt
+                a′   = (bsplinebasis(P, i, t+Δt) - bsplinebasis(P, i, t-Δt)) / 2Δt
                 @test b′₊₀ ≈ b′₋₀ ≈ b′ ≈ a′₊₀ ≈ a′₋₀ ≈ a′
             end
         end
@@ -216,27 +189,22 @@ end
         v = rand(10)
         k = Knots(v) + (p+1)*Knots(0, 1) + Knots(v[2], v[3])
         P = BSplineSpace{p}(k)
-        fP = FastBSplineSpace(p, k)
         n = dim(P)
 
-        @test degree(P) == degree(fP) == 3
+        @test degree(P) == 3
 
         # Check the values of B-spline basis funcitons
         for i in 1:n, t in rand(5)
             for t in rand(5)
                 @test (bsplinebasis₊₀(P, i, t)
-                     ≈ bsplinebasis₊₀(fP, i, t)
                      ≈ bsplinebasis₋₀(P, i, t)
-                     ≈ bsplinebasis₋₀(fP, i, t)
-                     ≈ bsplinebasis(P, i, t)
-                     ≈ bsplinebasis(fP, i, t))
+                     ≈ bsplinebasis(P, i, t))
             end
             for t in k
                 t₊₀ = nextfloat(t)
                 t₋₀ = prevfloat(t)
-                @test bsplinebasis₊₀(P, i, t) ≈ bsplinebasis₊₀(fP, i, t) ≒ bsplinebasis₊₀(P, i, t₊₀) ≒ bsplinebasis₊₀(fP, i, t₊₀)
-                @test bsplinebasis₋₀(P, i, t) ≈ bsplinebasis₋₀(fP, i, t) ≒ bsplinebasis₋₀(P, i, t₋₀) ≒ bsplinebasis₋₀(fP, i, t₋₀)
-                @test bsplinebasis(P, i, t) ≈ bsplinebasis(fP, i, t)
+                @test bsplinebasis₊₀(P, i, t) ≒ bsplinebasis₊₀(P, i, t₊₀)
+                @test bsplinebasis₋₀(P, i, t)≒ bsplinebasis₋₀(P, i, t₋₀)
             end
         end
 
@@ -244,18 +212,14 @@ end
         for i in 1:n
             for t in rand(5)
                 @test (bsplinebasis′₊₀(P, i, t)
-                     ≈ bsplinebasis′₊₀(fP, i, t)
                      ≈ bsplinebasis′₋₀(P, i, t)
-                     ≈ bsplinebasis′₋₀(fP, i, t)
-                     ≈ bsplinebasis′(P, i, t)
-                     ≈ bsplinebasis′(fP, i, t))
+                     ≈ bsplinebasis′(P, i, t))
             end
             for t in k
                 t₊₀ = nextfloat(t)
                 t₋₀ = prevfloat(t)
-                @test bsplinebasis′₊₀(P, i, t) ≈ bsplinebasis′₊₀(fP, i, t) ≒ bsplinebasis′₊₀(P, i, t₊₀) ≒ bsplinebasis′₊₀(fP, i, t₊₀)
-                @test bsplinebasis′₋₀(P, i, t) ≈ bsplinebasis′₋₀(fP, i, t) ≒ bsplinebasis′₋₀(P, i, t₋₀) ≒ bsplinebasis′₋₀(fP, i, t₋₀)
-                @test bsplinebasis′(P, i, t) ≈ bsplinebasis′(fP, i, t)
+                @test bsplinebasis′₊₀(P, i, t) ≒ bsplinebasis′₊₀(P, i, t₊₀)
+                @test bsplinebasis′₋₀(P, i, t) ≒ bsplinebasis′₋₀(P, i, t₋₀)
             end
         end
 
@@ -263,12 +227,12 @@ end
         @testset "derivative" begin
             Random.seed!(57)
             for i in 1:n, t in rand(5)
-                b′₊₀ = bsplinebasis′₊₀(fP, i, t)
-                b′₋₀ = bsplinebasis′₋₀(fP, i, t)
-                b′   = bsplinebasis′(fP, i, t)
-                a′₊₀ = (bsplinebasis₊₀(fP, i, t+Δt) - bsplinebasis₊₀(fP, i, t-Δt)) / 2Δt
-                a′₋₀ = (bsplinebasis₋₀(fP, i, t+Δt) - bsplinebasis₋₀(fP, i, t-Δt)) / 2Δt
-                a′   = (bsplinebasis(fP, i, t+Δt) - bsplinebasis(fP, i, t-Δt)) / 2Δt
+                b′₊₀ = bsplinebasis′₊₀(P, i, t)
+                b′₋₀ = bsplinebasis′₋₀(P, i, t)
+                b′   = bsplinebasis′(P, i, t)
+                a′₊₀ = (bsplinebasis₊₀(P, i, t+Δt) - bsplinebasis₊₀(P, i, t-Δt)) / 2Δt
+                a′₋₀ = (bsplinebasis₋₀(P, i, t+Δt) - bsplinebasis₋₀(P, i, t-Δt)) / 2Δt
+                a′   = (bsplinebasis(P, i, t+Δt) - bsplinebasis(P, i, t-Δt)) / 2Δt
                 @test b′₊₀ ≈ b′₋₀ ≈ b′ ≈ a′₊₀ ≈ a′₋₀ ≈ a′
             end
         end
@@ -281,27 +245,22 @@ end
         v = rand(10)
         k = Knots(v) + (p+1)*Knots(0, 1) + Knots(v[2], v[3])
         P = BSplineSpace{p}(k)
-        fP = FastBSplineSpace(p, k)
         n = dim(P)
 
-        @test degree(P) == degree(fP) == 4
+        @test degree(P) == 4
 
         # Check the values of B-spline basis funcitons
         for i in 1:n, t in rand(5)
             for t in rand(5)
                 @test (bsplinebasis₊₀(P, i, t)
-                     ≈ bsplinebasis₊₀(fP, i, t)
                      ≈ bsplinebasis₋₀(P, i, t)
-                     ≈ bsplinebasis₋₀(fP, i, t)
-                     ≈ bsplinebasis(P, i, t)
-                     ≈ bsplinebasis(fP, i, t))
+                     ≈ bsplinebasis(P, i, t))
             end
             for t in k
                 t₊₀ = nextfloat(t)
                 t₋₀ = prevfloat(t)
-                @test bsplinebasis₊₀(P, i, t) ≈ bsplinebasis₊₀(fP, i, t) ≒ bsplinebasis₊₀(P, i, t₊₀) ≒ bsplinebasis₊₀(fP, i, t₊₀)
-                @test bsplinebasis₋₀(P, i, t) ≈ bsplinebasis₋₀(fP, i, t) ≒ bsplinebasis₋₀(P, i, t₋₀) ≒ bsplinebasis₋₀(fP, i, t₋₀)
-                @test bsplinebasis(P, i, t) ≈ bsplinebasis(fP, i, t)
+                @test bsplinebasis₊₀(P, i, t) ≒ bsplinebasis₊₀(P, i, t₊₀)
+                @test bsplinebasis₋₀(P, i, t)≒ bsplinebasis₋₀(P, i, t₋₀)
             end
         end
 
@@ -309,18 +268,14 @@ end
         for i in 1:n
             for t in rand(5)
                 @test (bsplinebasis′₊₀(P, i, t)
-                     ≈ bsplinebasis′₊₀(fP, i, t)
                      ≈ bsplinebasis′₋₀(P, i, t)
-                     ≈ bsplinebasis′₋₀(fP, i, t)
-                     ≈ bsplinebasis′(P, i, t)
-                     ≈ bsplinebasis′(fP, i, t))
+                     ≈ bsplinebasis′(P, i, t))
             end
             for t in k
                 t₊₀ = nextfloat(t)
                 t₋₀ = prevfloat(t)
-                @test bsplinebasis′₊₀(P, i, t) ≈ bsplinebasis′₊₀(fP, i, t) ≒ bsplinebasis′₊₀(P, i, t₊₀) ≒ bsplinebasis′₊₀(fP, i, t₊₀)
-                @test bsplinebasis′₋₀(P, i, t) ≈ bsplinebasis′₋₀(fP, i, t) ≒ bsplinebasis′₋₀(P, i, t₋₀) ≒ bsplinebasis′₋₀(fP, i, t₋₀)
-                @test bsplinebasis′(P, i, t) ≈ bsplinebasis′(fP, i, t)
+                @test bsplinebasis′₊₀(P, i, t) ≒ bsplinebasis′₊₀(P, i, t₊₀)
+                @test bsplinebasis′₋₀(P, i, t) ≒ bsplinebasis′₋₀(P, i, t₋₀)
             end
         end
 
@@ -328,12 +283,12 @@ end
         @testset "derivative" begin
             Random.seed!(57)
             for i in 1:n, t in rand(5)
-                b′₊₀ = bsplinebasis′₊₀(fP, i, t)
-                b′₋₀ = bsplinebasis′₋₀(fP, i, t)
-                b′   = bsplinebasis′(fP, i, t)
-                a′₊₀ = (bsplinebasis₊₀(fP, i, t+Δt) - bsplinebasis₊₀(fP, i, t-Δt)) / 2Δt
-                a′₋₀ = (bsplinebasis₋₀(fP, i, t+Δt) - bsplinebasis₋₀(fP, i, t-Δt)) / 2Δt
-                a′   = (bsplinebasis(fP, i, t+Δt) - bsplinebasis(fP, i, t-Δt)) / 2Δt
+                b′₊₀ = bsplinebasis′₊₀(P, i, t)
+                b′₋₀ = bsplinebasis′₋₀(P, i, t)
+                b′   = bsplinebasis′(P, i, t)
+                a′₊₀ = (bsplinebasis₊₀(P, i, t+Δt) - bsplinebasis₊₀(P, i, t-Δt)) / 2Δt
+                a′₋₀ = (bsplinebasis₋₀(P, i, t+Δt) - bsplinebasis₋₀(P, i, t-Δt)) / 2Δt
+                a′   = (bsplinebasis(P, i, t+Δt) - bsplinebasis(P, i, t-Δt)) / 2Δt
                 @test b′₊₀ ≈ b′₋₀ ≈ b′ ≈ a′₊₀ ≈ a′₋₀ ≈ a′
             end
         end
@@ -346,34 +301,30 @@ end
         ts = rand(10)
 
         for p in 0:BasicBSpline.MAX_DEGREE
-            fP = FastBSplineSpace(p,k)
             P = BSplineSpace{p}(k)
             for t in ts
-                j = BasicBSpline._knotindex(fP,t)
-                J = intervalindex(P,t)
-                _B = BasicBSpline._bsplinebasis(fP,t,j)
-                _b = bsplinebasisall(P,J,t)
-                # _B′ = BasicBSpline._bsplinebasis′(fP,t,j)
-                B = [bsplinebasis(fP,i,t) for i in j-p:j]
-                B′ = [bsplinebasis′(fP,i,t) for i in j-p:j]
+                j = intervalindex(P,t)
+                _B = bsplinebasisall(P,j,t)
+                B = [bsplinebasis(P,i,t) for i in j:j+p]
+                B′ = [bsplinebasis′(P,i,t) for i in j:j+p]
                 @test norm(collect(_B) - B) < ε
 
-                _B = [bsplinebasis(P,i,t) for i in j-p:j]
+                _B = [bsplinebasis(P,i,t) for i in j:j+p]
                 @test norm(_B - B) < ε
 
-                _B = [bsplinebasis₊₀(P,i,t) for i in j-p:j]
+                _B = [bsplinebasis₊₀(P,i,t) for i in j:j+p]
                 @test norm(_B - B) < ε
 
-                _B = [bsplinebasis₋₀(P,i,t) for i in j-p:j]
+                _B = [bsplinebasis₋₀(P,i,t) for i in j:j+p]
                 @test norm(_B - B) < ε
 
-                _B′ =[ bsplinebasis′(P,i,t) for i in j-p:j]
+                _B′ =[ bsplinebasis′(P,i,t) for i in j:j+p]
                 @test norm(_B′ - B′) < ε
 
-                _B′ =[ bsplinebasis′₊₀(P,i,t) for i in j-p:j]
+                _B′ =[ bsplinebasis′₊₀(P,i,t) for i in j:j+p]
                 @test norm(_B′ - B′) < ε
 
-                _B′ =[ bsplinebasis′₋₀(P,i,t) for i in j-p:j]
+                _B′ =[ bsplinebasis′₋₀(P,i,t) for i in j:j+p]
                 @test norm(_B′ - B′) < ε
             end
         end

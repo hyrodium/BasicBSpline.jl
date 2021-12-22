@@ -7,7 +7,7 @@ using GeometryBasics
 
 export Point
 export Knots, ♯, BSplineSpace, dim, ⊑, ⊒, ⋢, ⋣, ≃
-export BSplineManifold
+export BSplineManifold, CustomBSplineManifold
 export bsplinebasis₊₀, bsplinebasis₋₀, bsplinebasis
 export bsplinebasis′₊₀, bsplinebasis′₋₀, bsplinebasis′
 export bsplinesupport, bsplineunity, changebasis, lower
@@ -16,7 +16,6 @@ export refinement, bsplinespaces, controlpoints
 export isproper, properdim
 export degree, knots
 export 𝔫
-export FastBSplineSpace, FastBSplineManifold
 export BSplineCurve, BSplineSurface, BSplineSolid
 export AbstractBSplineManifold, AbstractBSplineSpace
 export fittingcontrolpoints
@@ -29,9 +28,6 @@ include("_BSplineBasis.jl")
 include("_ChangeBasis.jl")
 include("_BSplineManifold.jl")
 include("_CustomBSplineManifold.jl")
-include("_FastBSplineSpace.jl")  # TODO: remove this
-include("_FastBSplineBasis.jl")  # TODO: remove this
-include("_FastBSplineManifold.jl")  # TODO: remove this
 include("_Refinement.jl")
 include("_Integral.jl")
 include("_Fitting.jl")
