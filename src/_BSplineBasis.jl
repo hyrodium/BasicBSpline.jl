@@ -126,18 +126,8 @@ Right-sided limit version.
 =p\left(\frac{1}{k_{i+p}-k_{i}}B_{(i,p-1,k)}(t)-\frac{1}{k_{i+p+1}-k_{i+1}}B_{(i+1,p-1,k)}(t)\right)
 ```
 """
-function bsplinebasis′₊₀(P::BSplineSpace{p}, t)::Vector{Float64} where p
-    k = P.knots
+bsplinebasis′₊₀
 
-    n = dim(P)
-    K = [ifelse(k[i+p] == k[i], 0, p / (k[i+p] - k[i])) for i in 1:n+1]
-    B = bsplinebasis₊₀(lower(P), t)
-    return [K[i] * B[i] - K[i+1] * B[i+1] for i in 1:n]
-end
-function bsplinebasis′₊₀(P::BSplineSpace{0}, t)::Vector{Float64}
-    n = dim(P)
-    return zeros(n)
-end
 
 @doc raw"""
 1st derivative of B-spline basis function.
@@ -147,18 +137,7 @@ Left-sided limit version.
 =p\left(\frac{1}{k_{i+p}-k_{i}}B_{(i,p-1,k)}(t)-\frac{1}{k_{i+p+1}-k_{i+1}}B_{(i+1,p-1,k)}(t)\right)
 ```
 """
-function bsplinebasis′₋₀(P::BSplineSpace{p}, t)::Vector{Float64} where p
-    k = P.knots
-
-    n = dim(P)
-    K = [ifelse(k[i+p] == k[i], 0, p / (k[i+p] - k[i])) for i in 1:n+1]
-    B = bsplinebasis₋₀(lower(P), t)
-    return [K[i] * B[i] - K[i+1] * B[i+1] for i in 1:n]
-end
-function bsplinebasis′₋₀(P::BSplineSpace{0}, t)::Vector{Float64}
-    n = dim(P)
-    return zeros(n)
-end
+bsplinebasis′₋₀
 
 @doc raw"""
 1st derivative of B-spline basis function.
