@@ -190,41 +190,69 @@ bsplinebasisall
 
 # TODO: faster implementation
 # TODO: use @generated macro
-function bsplinebasisall(P::BSplineSpace{0,T},i::Integer,t::Real) where T
+function bsplinebasisall(P::BSplineSpace{0,T},i::Integer,t::T) where T
     (one(T),)
 end
 
-function bsplinebasisall(P::BSplineSpace{1},i::Integer,t::Real)
-    bsplinebasis(P,i,t),
-    bsplinebasis(P,i+1,t)
+function bsplinebasisall(P::BSplineSpace{1,T}, i::Integer, t::T) where T
+    k = knots(P)
+    B1 = (k[i+2]-t)/(k[i+2]-k[i+1])
+    B2 = (t-k[i+1])/(k[i+2]-k[i+1])
+    return (B1, B2)
 end
 
-function bsplinebasisall(P::BSplineSpace{2},i::Integer,t::Real)
-    bsplinebasis(P,i,t),
-    bsplinebasis(P,i+1,t),
-    bsplinebasis(P,i+2,t)
+function bsplinebasisall(P::BSplineSpace{2,T}, i::Integer, t::T) where T
+    k = knots(P)
+    B = bsplinebasisall(lower(P),i+1,t)
+
+    B1 = (k[i+3]-t)/(k[i+3]-k[i+1]) * B[1]
+    B2 = (t-k[i+1])/(k[i+3]-k[i+1]) * B[1] +
+         (k[i+4]-t)/(k[i+4]-k[i+2]) * B[2]
+    B3 = (t-k[i+2])/(k[i+4]-k[i+2]) * B[2]
+    return B1, B2, B3
 end
 
-function bsplinebasisall(P::BSplineSpace{3},i::Integer,t::Real)
-    bsplinebasis(P,i,t),
-    bsplinebasis(P,i+1,t),
-    bsplinebasis(P,i+2,t),
-    bsplinebasis(P,i+3,t)
+function bsplinebasisall(P::BSplineSpace{3,T}, i::Integer, t::T) where T
+    k = knots(P)
+    B = bsplinebasisall(lower(P),i+1,t)
+
+    B1 = (k[i+4]-t)/(k[i+4]-k[i+1]) * B[1]
+    B2 = (t-k[i+1])/(k[i+4]-k[i+1]) * B[1] +
+         (k[i+5]-t)/(k[i+5]-k[i+2]) * B[2]
+    B3 = (t-k[i+2])/(k[i+5]-k[i+2]) * B[2] +
+         (k[i+6]-t)/(k[i+6]-k[i+3]) * B[3]
+    B4 = (t-k[i+3])/(k[i+6]-k[i+3]) * B[3]
+    return B1, B2, B3, B4
 end
 
-function bsplinebasisall(P::BSplineSpace{4},i::Integer,t::Real)
-    bsplinebasis(P,i,t),
-    bsplinebasis(P,i+1,t),
-    bsplinebasis(P,i+2,t),
-    bsplinebasis(P,i+3,t),
-    bsplinebasis(P,i+4,t)
+function bsplinebasisall(P::BSplineSpace{4,T}, i::Integer, t::T) where T
+    k = knots(P)
+    B = bsplinebasisall(lower(P),i+1,t)
+
+    B1 = (k[i+5]-t)/(k[i+5]-k[i+1]) * B[1]
+    B2 = (t-k[i+1])/(k[i+5]-k[i+1]) * B[1] +
+         (k[i+6]-t)/(k[i+6]-k[i+2]) * B[2]
+    B3 = (t-k[i+2])/(k[i+6]-k[i+2]) * B[2] +
+         (k[i+7]-t)/(k[i+7]-k[i+3]) * B[3]
+    B4 = (t-k[i+3])/(k[i+7]-k[i+3]) * B[3] +
+         (k[i+8]-t)/(k[i+8]-k[i+4]) * B[4]
+    B5 = (t-k[i+4])/(k[i+8]-k[i+4]) * B[4]
+    return B1, B2, B3, B4, B5
 end
 
-function bsplinebasisall(P::BSplineSpace{5},i::Integer,t::Real)
-    bsplinebasis(P,i,t),
-    bsplinebasis(P,i+1,t),
-    bsplinebasis(P,i+2,t),
-    bsplinebasis(P,i+3,t),
-    bsplinebasis(P,i+4,t),
-    bsplinebasis(P,i+5,t)
+function bsplinebasisall(P::BSplineSpace{5,T}, i::Integer, t::T) where T
+    k = knots(P)
+    B = bsplinebasisall(lower(P),i+1,t)
+
+    B1 = (k[i+6]-t)/(k[i+6]-k[i+1]) * B[1]
+    B2 = (t-k[i+1])/(k[i+6]-k[i+1]) * B[1] +
+         (k[i+7]-t)/(k[i+7]-k[i+2]) * B[2]
+    B3 = (t-k[i+2])/(k[i+7]-k[i+2]) * B[2] +
+         (k[i+8]-t)/(k[i+8]-k[i+3]) * B[3]
+    B4 = (t-k[i+3])/(k[i+8]-k[i+3]) * B[3] +
+         (k[i+9]-t)/(k[i+9]-k[i+4]) * B[4]
+    B5 = (t-k[i+4])/(k[i+9]-k[i+4]) * B[4] +
+         (k[i+10]-t)/(k[i+10]-k[i+5]) * B[5]
+    B6 = (t-k[i+5])/(k[i+10]-k[i+5]) * B[5]
+    return B1, B2, B3, B4, B5, B6
 end
