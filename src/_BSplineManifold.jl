@@ -1,12 +1,11 @@
 # B-spline manifold
 
-# TODO add more type parameter Deg, T
-abstract type AbstractBSplineManifold{Dim} end
+abstract type AbstractBSplineManifold{Dim, Deg} end
 
-dim(M::AbstractBSplineManifold{Dim}) where Dim = Dim
+dim(::AbstractBSplineManifold{Dim}) where Dim = Dim
 
 # struct BSplineManifold{Dim,Deg,T,S<:Tuple,Dim₊₁} <: AbstractBSplineManifold{Dim,Deg,T}
-struct BSplineManifold{Dim,Deg,T,S<:Tuple,Dim₊₁} <: AbstractBSplineManifold{Dim}
+struct BSplineManifold{Dim,Deg,T,S<:Tuple,Dim₊₁} <: AbstractBSplineManifold{Dim,Deg}
     bsplinespaces::S
     controlpoints::Array{T,Dim₊₁}
     function BSplineManifold(Ps::S,a::Array{T,Dim₊₁}) where {S<:Tuple,Dim₊₁,T<:Real}

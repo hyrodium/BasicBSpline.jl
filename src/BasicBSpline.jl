@@ -3,9 +3,7 @@ module BasicBSpline
 using LinearAlgebra
 using IntervalSets
 using FastGaussQuadrature
-using GeometryBasics
 
-export Point
 export Knots, ♯, BSplineSpace, dim, ⊑, ⊒, ⋢, ⋣, ≃
 export BSplineManifold, CustomBSplineManifold
 export bsplinebasis₊₀, bsplinebasis₋₀, bsplinebasis
@@ -16,11 +14,8 @@ export refinement, bsplinespaces, controlpoints
 export isproper, properdim
 export degree, knots
 export 𝔫
-export BSplineCurve, BSplineSurface, BSplineSolid
 export AbstractBSplineManifold, AbstractBSplineSpace
 export fittingcontrolpoints
-
-const MAX_DEGREE = 5
 
 include("_Knots.jl")
 include("_BSplineSpace.jl")

@@ -1,7 +1,6 @@
 # B-spline manifold
 
-# struct BSplineManifold{Dim,Deg,T,S<:Tuple,Dim₊₁} <: AbstractBSplineManifold{Dim,Deg,T}
-struct CustomBSplineManifold{Dim,Deg,C,S<:Tuple} <: AbstractBSplineManifold{Dim}
+struct CustomBSplineManifold{Dim,Deg,C,S<:Tuple} <: AbstractBSplineManifold{Dim,Deg}
     bsplinespaces::S
     controlpoints::Array{C,Dim}
     function CustomBSplineManifold(Ps::S,a::Array{C,Dim}) where {S<:Tuple,C,Dim}
