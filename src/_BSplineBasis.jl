@@ -104,18 +104,30 @@ Modified version.
 \end{cases}
 \end{aligned}
 """
-function bsplinebasis(P::BSplineSpace{p}, i::Integer, t::Real)::Float64 where p
-    # TODO: use @generated macro
-    k = P.knots
-
-    return (
-        ((k[i+p] - k[i] ≠ 0) ? bsplinebasis(lower(P), i, t) * (t - k[i]) / (k[i+p] - k[i]) : 0) +
-        ((k[i+p+1] - k[i+1] ≠ 0) ? bsplinebasis(lower(P), i+1, t) * (k[i+p+1] - t) / (k[i+p+1] - k[i+1]) : 0)
+@generated function bsplinebasis(P::BSplineSpace{p,T}, i::Integer, t::Real) where {p, T}
+    ks = [Symbol(:k,i) for i in 1:p+2]
+    Ks = [Symbol(:K,i) for i in 1:p+1]
+    Bs = [Symbol(:B,i) for i in 1:p+1]
+    k_l = Expr(:tuple, ks...)
+    k_r = Expr(:tuple, :(v[i]), (:(v[i+$j]) for j in 1:p+1)...)
+    K_l(n) = Expr(:tuple, Ks[1:n]...)
+    B_l(n) = Expr(:tuple, Bs[1:n]...)
+    A_r(n) = Expr(:tuple, [:(T($(ks[i])≤t<$(ks[i+1]))) for i in 1:n]...)
+    K_r(m,n) = Expr(:tuple, [:(_d(t-$(ks[i]),$(ks[i+m])-$(ks[i]))) for i in 1:n]...)
+    B_r(n) = Expr(:tuple, [:($(Ks[i])*$(Bs[i])+(1-$(Ks[i+1]))*$(Bs[i+1])) for i in 1:n]...)
+    exs = Expr[]
+    for i in 1:p
+        push!(exs, :($(K_l(p+2-i)) = $(K_r(i,p+2-i))))
+        push!(exs, :($(B_l(p+1-i)) = $(B_r(p+1-i))))
+    end
+    Expr(:block,
+        :(v = knots(P).vector),
+        :($k_l = $k_r),
+        :($(B_l(p+1)) = $(A_r(p+1))),
+        :($(Bs[end]) += $(T)(t == $(ks[end]) == v[end])),
+        exs...,
+        :(return B1)
     )
-end
-function bsplinebasis(P::BSplineSpace{0}, i::Integer, t::Real)::Float64
-    k = knots(P)
-    return k[i] ≤ t < k[i+1] || (k[i] ≠ k[i+1] == k[end] == t)
 end
 
 @doc raw"""
@@ -190,69 +202,32 @@ bsplinebasisall
 
 # TODO: faster implementation
 # TODO: use @generated macro
-function bsplinebasisall(P::BSplineSpace{0,T},i::Integer,t::T) where T
+@inline function bsplinebasisall(P::BSplineSpace{0,T},i::Integer,t::T) where T
     (one(T),)
 end
 
-function bsplinebasisall(P::BSplineSpace{1,T}, i::Integer, t::T) where T
+@inline function bsplinebasisall(P::BSplineSpace{1,T}, i::Integer, t::T) where T
     k = knots(P)
     B1 = (k[i+2]-t)/(k[i+2]-k[i+1])
     B2 = (t-k[i+1])/(k[i+2]-k[i+1])
     return (B1, B2)
 end
 
-function bsplinebasisall(P::BSplineSpace{2,T}, i::Integer, t::T) where T
-    k = knots(P)
-    B = bsplinebasisall(lower(P),i+1,t)
-
-    B1 = (k[i+3]-t)/(k[i+3]-k[i+1]) * B[1]
-    B2 = (t-k[i+1])/(k[i+3]-k[i+1]) * B[1] +
-         (k[i+4]-t)/(k[i+4]-k[i+2]) * B[2]
-    B3 = (t-k[i+2])/(k[i+4]-k[i+2]) * B[2]
-    return B1, B2, B3
-end
-
-function bsplinebasisall(P::BSplineSpace{3,T}, i::Integer, t::T) where T
-    k = knots(P)
-    B = bsplinebasisall(lower(P),i+1,t)
-
-    B1 = (k[i+4]-t)/(k[i+4]-k[i+1]) * B[1]
-    B2 = (t-k[i+1])/(k[i+4]-k[i+1]) * B[1] +
-         (k[i+5]-t)/(k[i+5]-k[i+2]) * B[2]
-    B3 = (t-k[i+2])/(k[i+5]-k[i+2]) * B[2] +
-         (k[i+6]-t)/(k[i+6]-k[i+3]) * B[3]
-    B4 = (t-k[i+3])/(k[i+6]-k[i+3]) * B[3]
-    return B1, B2, B3, B4
-end
-
-function bsplinebasisall(P::BSplineSpace{4,T}, i::Integer, t::T) where T
-    k = knots(P)
-    B = bsplinebasisall(lower(P),i+1,t)
-
-    B1 = (k[i+5]-t)/(k[i+5]-k[i+1]) * B[1]
-    B2 = (t-k[i+1])/(k[i+5]-k[i+1]) * B[1] +
-         (k[i+6]-t)/(k[i+6]-k[i+2]) * B[2]
-    B3 = (t-k[i+2])/(k[i+6]-k[i+2]) * B[2] +
-         (k[i+7]-t)/(k[i+7]-k[i+3]) * B[3]
-    B4 = (t-k[i+3])/(k[i+7]-k[i+3]) * B[3] +
-         (k[i+8]-t)/(k[i+8]-k[i+4]) * B[4]
-    B5 = (t-k[i+4])/(k[i+8]-k[i+4]) * B[4]
-    return B1, B2, B3, B4, B5
-end
-
-function bsplinebasisall(P::BSplineSpace{5,T}, i::Integer, t::T) where T
-    k = knots(P)
-    B = bsplinebasisall(lower(P),i+1,t)
-
-    B1 = (k[i+6]-t)/(k[i+6]-k[i+1]) * B[1]
-    B2 = (t-k[i+1])/(k[i+6]-k[i+1]) * B[1] +
-         (k[i+7]-t)/(k[i+7]-k[i+2]) * B[2]
-    B3 = (t-k[i+2])/(k[i+7]-k[i+2]) * B[2] +
-         (k[i+8]-t)/(k[i+8]-k[i+3]) * B[3]
-    B4 = (t-k[i+3])/(k[i+8]-k[i+3]) * B[3] +
-         (k[i+9]-t)/(k[i+9]-k[i+4]) * B[4]
-    B5 = (t-k[i+4])/(k[i+9]-k[i+4]) * B[4] +
-         (k[i+10]-t)/(k[i+10]-k[i+5]) * B[5]
-    B6 = (t-k[i+5])/(k[i+10]-k[i+5]) * B[5]
-    return B1, B2, B3, B4, B5, B6
+@generated function bsplinebasisall(P::BSplineSpace{p,T}, i::Integer, t::T) where {p, T}
+    bs = [Symbol(:b,i) for i in 1:p]
+    Bs = [Symbol(:B,i) for i in 1:p+1]
+    Ks = [:((t-k[i+$(j)])/(k[i+$(p+j)]-k[i+$(j)])) for j in 1:p]
+    Ls = [:((k[i+$(p+j)]-t)/(k[i+$(p+j)]-k[i+$(j)])) for j in 1:p]
+    b = Expr(:tuple, bs...)
+    B = Expr(:tuple, Bs...)
+    exs = [:($(Bs[j+1]) = ($(Ls[j+1])*$(bs[j+1]) + $(Ks[j])*$(bs[j]))) for j in 1:p-1]
+    Expr(:block,
+        :($(Expr(:meta, :inline))),
+        :(k = knots(P)),
+        :($b = bsplinebasisall(lower(P),i+1,t)),
+        :($(Bs[1]) = $(Ls[1])*$(bs[1])),
+        exs...,
+        :($(Bs[p+1]) = $(Ks[p])*$(bs[p])),
+        :(return $(B))
+    )
 end
