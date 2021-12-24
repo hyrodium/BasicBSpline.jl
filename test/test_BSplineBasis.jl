@@ -54,6 +54,26 @@ end
             end
         end
 
+        # Check the values of the derivative of B-spline basis funcitons
+        for t in k
+            s = sum([bsplinebasis(P, i, t) for i in 1:n])
+            s₊₀ = sum([bsplinebasis₊₀(P, i, t) for i in 1:n])
+            s₋₀ = sum([bsplinebasis₋₀(P, i, t) for i in 1:n])
+            if t == k[1]
+                @test s ≈ 1
+                @test s₊₀ ≈ 1
+                @test s₋₀ == 0
+            elseif t == k[end]
+                @test s ≈ 1
+                @test s₊₀ == 0
+                @test s₋₀ ≈ 1
+            else
+                @test s ≈ 1
+                @test s₊₀ ≈ 1
+                @test s₋₀ ≈ 1
+            end
+        end
+
         # Check the derivative
         @testset "derivative" begin
             Random.seed!(57)
