@@ -104,18 +104,30 @@ Modified version.
 \end{cases}
 \end{aligned}
 """
-function bsplinebasis(P::BSplineSpace{p}, i::Integer, t::Real)::Float64 where p
-    # TODO: use @generated macro
-    k = P.knots
-
-    return (
-        ((k[i+p] - k[i] ≠ 0) ? bsplinebasis(lower(P), i, t) * (t - k[i]) / (k[i+p] - k[i]) : 0) +
-        ((k[i+p+1] - k[i+1] ≠ 0) ? bsplinebasis(lower(P), i+1, t) * (k[i+p+1] - t) / (k[i+p+1] - k[i+1]) : 0)
+@generated function bsplinebasis(P::BSplineSpace{p,T}, i::Integer, t::Real) where {p, T}
+    ks = [Symbol(:k,i) for i in 1:p+2]
+    Ks = [Symbol(:K,i) for i in 1:p+1]
+    Bs = [Symbol(:B,i) for i in 1:p+1]
+    k_l = Expr(:tuple, ks...)
+    k_r = Expr(:tuple, :(v[i]), (:(v[i+$j]) for j in 1:p+1)...)
+    K_l(n) = Expr(:tuple, Ks[1:n]...)
+    B_l(n) = Expr(:tuple, Bs[1:n]...)
+    A_r(n) = Expr(:tuple, [:(T($(ks[i])≤t<$(ks[i+1]))) for i in 1:n]...)
+    K_r(m,n) = Expr(:tuple, [:(_d(t-$(ks[i]),$(ks[i+m])-$(ks[i]))) for i in 1:n]...)
+    B_r(n) = Expr(:tuple, [:($(Ks[i])*$(Bs[i])+(1-$(Ks[i+1]))*$(Bs[i+1])) for i in 1:n]...)
+    exs = Expr[]
+    for i in 1:p
+        push!(exs, :($(K_l(p+2-i)) = $(K_r(i,p+2-i))))
+        push!(exs, :($(B_l(p+1-i)) = $(B_r(p+1-i))))
+    end
+    Expr(:block,
+        :(v = knots(P).vector),
+        :($k_l = $k_r),
+        :($(B_l(p+1)) = $(A_r(p+1))),
+        :($(Bs[end]) += $(T)(t == $(ks[end]) == v[end])),
+        exs...,
+        :(return B1)
     )
-end
-function bsplinebasis(P::BSplineSpace{0}, i::Integer, t::Real)::Float64
-    k = knots(P)
-    return k[i] ≤ t < k[i+1] || (k[i] ≠ k[i+1] == k[end] == t)
 end
 
 @doc raw"""
