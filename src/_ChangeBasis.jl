@@ -17,7 +17,7 @@ function _changebasis_R(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T})::Matri
     if p == 0
         n = length(k) - 1
         n′ = length(k′) - p₊ - 1
-        A⁰ = Float64[bsplinesupport(BSplineSpace{p₊}(k′), j) ⊆ bsplinesupport(BSplineSpace{0}(k), i) for i in 1:n, j in 1:n′]
+        A⁰ = T[bsplinesupport(BSplineSpace{p₊}(k′), j) ⊆ bsplinesupport(BSplineSpace{0}(k), i) for i in 1:n, j in 1:n′]
         A⁰[:, findall(iszeros(P′))] .= NaN
         return A⁰
     end
@@ -54,7 +54,7 @@ function _changebasis_R(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T})::Matri
         if Λ[ȷ] ≥ 2
             t = k′[W[ȷ]]
             for i in 1:n
-                Ãᵖ[ȷ][i, end] = bsplinebasis₋₀(P, i, t)
+                Ãᵖ[ȷ][i, end] = bsplinebasis₋₀(P,i,t)
             end
         end
     end
@@ -62,7 +62,7 @@ function _changebasis_R(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T})::Matri
         if Λ[ȷ] ≥ 2
             t = k′[W[ȷ-1]+p]
             for i in 1:n
-                Ãᵖ[ȷ][i, 1] = bsplinebasis₊₀(P, i, t)
+                Ãᵖ[ȷ][i, 1] = bsplinebasis₊₀(P,i,t)
             end
         end
     end
@@ -79,7 +79,7 @@ function _changebasis_R(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T})::Matri
         end
     end
     Aᵖ = hcat(Ãᵖ...) # n × n′ matrix
-    return Aᵖ .* Float64[bsplinesupport(P′,j) ⊆ bsplinesupport(P,i) for i in 1:n, j in 1:n′]
+    return Aᵖ .* T[bsplinesupport(P′,j) ⊆ bsplinesupport(P,i) for i in 1:n, j in 1:n′]
 end
 
 @doc raw"""
@@ -92,7 +92,7 @@ Assumption:
 * ``P1 ⊑ P2``
 * ``P2 ⊑ P1``
 """
-function _changebasis_sim(P1::AbstractBSplineSpace, P2::AbstractBSplineSpace)
+function _changebasis_sim(P1::BSplineSpace{p1,T}, P2::BSplineSpace{p2,T}) where {p1,p2,T}
     # if P1 ⋢ P2
     #     error("P1 ⋢ P2")
     # end
@@ -100,26 +100,25 @@ function _changebasis_sim(P1::AbstractBSplineSpace, P2::AbstractBSplineSpace)
     #     error("P2 ⋢ P1")
     # end
     n = dim(P1)
-    p = degree(P1)
-    v = (knots(P1).vector)[p+1:end-p]
+    v = (knots(P1).vector)[p1+1:end-p1]
 
-    if length(v) > p
-        A = Matrix{Float64}(I, n, n)
+    if length(v) > p1
+        A = Matrix{T}(I, n, n)
         # TODO: Fix below
-        vvv = [v[1] * (p - i + 1) / (p + 1) + v[i+1] * (i) / (p + 1) for i in 1:p]
-        A1 = [bsplinebasis₊₀(P1, i, t) for i in 1:p, t in vvv]
-        A2 = [bsplinebasis₊₀(P2, i, t) for i in 1:p, t in vvv]
-        A[1:p, 1:p] = A1 * inv(A2)
-        vvv = [v[end-p+i-1] * (p - i + 1) / (p + 1) + v[end] * (i) / (p + 1) for i in 1:p]
-        A1 = [bsplinebasis₋₀(P1, i, t) for i in n-p+1:n, t in vvv]
-        A2 = [bsplinebasis₋₀(P2, i, t) for i in n-p+1:n, t in vvv]
-        A[n-p+1:n, n-p+1:n] = A1 * inv(A2)
+        vvv = [v[1] * (p1-i+1) / (p1+1) + v[i+1] * (i) / (p1+1) for i in 1:p1]
+        A1 = [bsplinebasis₊₀(P1,i,t) for i in 1:p1, t in vvv]
+        A2 = [bsplinebasis₊₀(P2,i,t) for i in 1:p1, t in vvv]
+        A[1:p1, 1:p1] = A1 * inv(A2)
+        vvv = [v[end-p1+i-1] * (p1-i+1) / (p1+1) + v[end] * (i) / (p1+1) for i in 1:p1]
+        A1 = [bsplinebasis₋₀(P1,i,t) for i in n-p1+1:n, t in vvv]
+        A2 = [bsplinebasis₋₀(P2,i,t) for i in n-p1+1:n, t in vvv]
+        A[n-p1+1:n, n-p1+1:n] = A1 * inv(A2)
         # TODO: Fix above
     else
         # TODO: Fix below
         vvv = [v[1] * (n - i + 1) / (n + 1) + v[end] * (i) / (n + 1) for i in 1:n]
-        A1 = [bsplinebasis₋₀(P1, i, t) for i in 1:n, t in vvv]
-        A2 = [bsplinebasis₋₀(P2, i, t) for i in 1:n, t in vvv]
+        A1 = [bsplinebasis₋₀(P1,i,t) for i in 1:n, t in vvv]
+        A2 = [bsplinebasis₋₀(P2,i,t) for i in 1:n, t in vvv]
         A = A1 * inv(A2)
         # TODO: Fix above
     end
