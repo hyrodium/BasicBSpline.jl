@@ -5,6 +5,7 @@ using IntervalSets
 using FastGaussQuadrature
 
 export Knots, BSplineSpace, dim, ⊑, ⊒, ⋢, ⋣, ≃
+export BSplineDerivativeSpace
 export BSplineManifold, CustomBSplineManifold
 export bsplinebasis₊₀, bsplinebasis₋₀, bsplinebasis
 export bsplinebasis′₊₀, bsplinebasis′₋₀, bsplinebasis′
@@ -20,6 +21,7 @@ export fittingcontrolpoints
 include("_Knots.jl")
 include("_BSplineSpace.jl")
 include("_BSplineBasis.jl")
+include("_Derivative.jl")
 include("_ChangeBasis.jl")
 include("_BSplineManifold.jl")
 include("_CustomBSplineManifold.jl")
