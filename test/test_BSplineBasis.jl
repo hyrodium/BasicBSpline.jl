@@ -60,7 +60,7 @@ end
         end
     end
 
-    @testset "_bsplinebasis" begin
+    @testset "bsplinebasisall" begin
         Random.seed!(42)
 
         k = Knots(rand(10).-1) + Knots(rand(10)) + Knots(rand(10).+1)

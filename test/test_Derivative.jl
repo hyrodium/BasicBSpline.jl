@@ -57,4 +57,35 @@
             end
         end
     end
+
+    @testset "bsplinebasisall" begin
+        Random.seed!(42)
+
+        k = Knots(rand(10).-1) + Knots(rand(10)) + Knots(rand(10).+1)
+        ts = rand(10)
+
+        for p in 0:5
+            P = BSplineSpace{p}(k)
+
+            for r in 0:5
+                dP = BSplineDerivativeSpace{r}(P)
+
+                for t in ts
+                    j = intervalindex(dP,t)
+                    B = collect(bsplinebasisall(dP,j,t))
+                    _B = [bsplinebasis(dP,i,t) for i in j:j+p]
+                    @test _B ≈ B
+
+                    _B = [bsplinebasis(dP,i,t) for i in j:j+p]
+                    @test _B ≈ B
+
+                    _B = [bsplinebasis₊₀(dP,i,t) for i in j:j+p]
+                    @test _B ≈ B
+
+                    _B = [bsplinebasis₋₀(dP,i,t) for i in j:j+p]
+                    @test _B ≈ B
+                end
+            end
+        end
+    end
 end
