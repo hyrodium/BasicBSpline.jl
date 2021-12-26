@@ -189,7 +189,7 @@ end
     end
 end
 
-function bsplinebasisall(dP::BSplineDerivativeSpace{0,BSplineSpace{p,T}}, i::Integer, t::Real) where {p, T}
+@inline function bsplinebasisall(dP::BSplineDerivativeSpace{0,BSplineSpace{p,T}}, i::Integer, t::Real) where {p, T}
     P = bsplinespace(dP)
     bsplinebasisall(P,i,t)
 end
