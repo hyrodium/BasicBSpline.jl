@@ -169,3 +169,5 @@ end
 function changebasis(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
     changebasis(BSplineSpace(P),BSplineSpace(P′))
 end
+
+# TODO: Add changebasis(::BSplineDerivativeSpace, )
