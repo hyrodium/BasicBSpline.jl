@@ -11,11 +11,8 @@ bsplinespace(dP::BSplineDerivativeSpace) = dP.bsplinespace
 knots(dP::BSplineDerivativeSpace) = knots(bsplinespace(dP))
 degree(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}) where {r,p} = p - r
 dim(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}) where {r,p} = dim(bsplinespace(dP)) - r
-
-function _lower(dP::BSplineDerivativeSpace{r}) where r
-    P = bsplinespace(dP)
-    BSplineDerivativeSpace{r-1}(_lower(P))
-end
+intervalindex(dP::BSplineDerivativeSpace,t::Real) = intervalindex(bsplinespace(dP),t)
+_lower(dP::BSplineDerivativeSpace{r}) where r = BSplineDerivativeSpace{r-1}(_lower(bsplinespace(dP)))
 
 @generated function bsplinebasis₊₀(P::BSplineDerivativeSpace{r,BSplineSpace{p,T}}, i::Integer, t::Real) where {r, p, T}
     ks = [Symbol(:k,i) for i in 1:p+2]
