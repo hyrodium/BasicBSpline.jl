@@ -40,8 +40,9 @@
 
         for r in 1:p_max
             P1 = BSplineDerivativeSpace{r-1}(P)
-            P2 = BSplineDerivativeSpace{r}(P)        
+            P2 = BSplineDerivativeSpace{r}(P)
             @test degree(P2) == p-r
+            @test dim(P2) == dim(P)-r
             for t in ts, i in 1:dim(P)
                 d1 = (bsplinebasis(P1,i,t+dt) - bsplinebasis(P1,i,t-dt))/2dt
                 d2 = bsplinebasis(P2,i,t)
