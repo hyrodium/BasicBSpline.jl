@@ -7,13 +7,15 @@ struct BSplineDerivativeSpace{r, T<:AbstractBSplineSpace}
     end
 end
 
-bsplinespace(P::BSplineDerivativeSpace) = P.bsplinespace
+bsplinespace(dP::BSplineDerivativeSpace) = dP.bsplinespace
+knots(dP::BSplineDerivativeSpace) = knots(bsplinespace(dP))
+degree(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}) where {r,p} = p - r
+dim(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}) where {r,p} = dim(bsplinespace(dP)) - r
 
-knots(P::BSplineDerivativeSpace) = knots(bsplinespace(P))
-
-degree(P::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}) where {r,p} = p - r
-
-dim(P::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}) where {r,p} = dim(bsplinespace(P)) - r
+function _lower(dP::BSplineDerivativeSpace{r}) where r
+    P = bsplinespace(dP)
+    BSplineDerivativeSpace{r-1}(_lower(P))
+end
 
 @generated function bsplinebasis₊₀(P::BSplineDerivativeSpace{r,BSplineSpace{p,T}}, i::Integer, t::Real) where {r, p, T}
     ks = [Symbol(:k,i) for i in 1:p+2]
@@ -164,6 +166,34 @@ for suffix in ("", "₋₀", "₊₀")
     end
 end
 
-# TODO: Add bsplinebasisall(::BSplineDerivativeSpace, i, t)
+@generated function bsplinebasisall(P::BSplineDerivativeSpace{r,BSplineSpace{p,T}}, i::Integer, t::Real) where {r, p, T}
+    bs = [Symbol(:b,i) for i in 1:p]
+    Bs = [Symbol(:B,i) for i in 1:p+1]
+    K1s = [:($(p)/(k[i+$(j)]-k[i+$(p+j)])) for j in 1:p]
+    K2s = [:($(p)/(k[i+$(p+j)]-k[i+$(j)])) for j in 1:p]
+    b = Expr(:tuple, bs...)
+    B = Expr(:tuple, Bs...)
+    exs = [:($(Bs[j+1]) = ($(K1s[j+1])*$(bs[j+1]) + $(K2s[j])*$(bs[j]))) for j in 1:p-1]
+    if r ≤ p
+        Expr(:block,
+            :($(Expr(:meta, :inline))),
+            :(k = knots(P)),
+            :($b = bsplinebasisall(_lower(P),i+1,t)),
+            :($(Bs[1]) = $(K1s[1])*$(bs[1])),
+            exs...,
+            :($(Bs[p+1]) = $(K2s[p])*$(bs[p])),
+            :(return $(B))
+        )
+    else
+        Z = Expr(:tuple, [:(zero($T)) for i in 1:p+1]...)
+        :(return $(Z))
+    end
+end
+
+function bsplinebasisall(dP::BSplineDerivativeSpace{0,BSplineSpace{p,T}}, i::Integer, t::Real) where {p, T}
+    P = bsplinespace(dP)
+    bsplinebasisall(P,i,t)
+end
+
 # TODO: Add issubset(::BSplineDerivativeSpace, i, t)
 # TODO: Add bsplineunity(::BSplineDerivativeSpace)
