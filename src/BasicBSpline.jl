@@ -5,6 +5,7 @@ using IntervalSets
 using FastGaussQuadrature
 
 export Knots, BSplineSpace, dim, ⊑, ⊒, ⋢, ⋣, ≃
+export BSplineDerivativeSpace
 export BSplineManifold, CustomBSplineManifold
 export bsplinebasis₊₀, bsplinebasis₋₀, bsplinebasis
 export bsplinebasis′₊₀, bsplinebasis′₋₀, bsplinebasis′
