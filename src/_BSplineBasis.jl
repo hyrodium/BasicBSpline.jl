@@ -19,7 +19,7 @@ Right-sided limit version.
 \end{cases}
 \end{aligned}
 """
-@generated function bsplinebasis₊₀(P::BSplineSpace{p,T}, i::Integer, t::Real) where {p, T}
+@generated function bsplinebasis₊₀(P::BSplineSpace{p,T}, i::Integer, t::T) where {p, T}
     ks = [Symbol(:k,i) for i in 1:p+2]
     Ks = [Symbol(:K,i) for i in 1:p+1]
     Bs = [Symbol(:B,i) for i in 1:p+1]
@@ -61,7 +61,7 @@ Left-sided limit version.
 \end{cases}
 \end{aligned}
 """
-@generated function bsplinebasis₋₀(P::BSplineSpace{p,T}, i::Integer, t::Real) where {p, T}
+@generated function bsplinebasis₋₀(P::BSplineSpace{p,T}, i::Integer, t::T) where {p, T}
     ks = [Symbol(:k,i) for i in 1:p+2]
     Ks = [Symbol(:K,i) for i in 1:p+1]
     Bs = [Symbol(:B,i) for i in 1:p+1]
@@ -104,7 +104,7 @@ Modified version.
 \end{cases}
 \end{aligned}
 """
-@generated function bsplinebasis(P::BSplineSpace{p,T}, i::Integer, t::Real) where {p, T}
+@generated function bsplinebasis(P::BSplineSpace{p,T}, i::Integer, t::T) where {p, T}
     ks = [Symbol(:k,i) for i in 1:p+2]
     Ks = [Symbol(:K,i) for i in 1:p+1]
     Bs = [Symbol(:B,i) for i in 1:p+1]
