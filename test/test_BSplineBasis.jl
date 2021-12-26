@@ -70,18 +70,18 @@ end
             P = BSplineSpace{p}(k)
             for t in ts
                 j = intervalindex(P,t)
-                _B = bsplinebasisall(P,j,t)
-                B = [bsplinebasis(P,i,t) for i in j:j+p]
-                @test norm(collect(_B) - B) < ε
+                B = collect(bsplinebasisall(P,j,t))
+                _B = [bsplinebasis(P,i,t) for i in j:j+p]
+                @test _B ≈ B
 
                 _B = [bsplinebasis(P,i,t) for i in j:j+p]
-                @test norm(_B - B) < ε
+                @test _B ≈ B
 
                 _B = [bsplinebasis₊₀(P,i,t) for i in j:j+p]
-                @test norm(_B - B) < ε
+                @test _B ≈ B
 
                 _B = [bsplinebasis₋₀(P,i,t) for i in j:j+p]
-                @test norm(_B - B) < ε
+                @test _B ≈ B
             end
         end
     end
