@@ -11,6 +11,8 @@ bsplinespace(P::BSplineDerivativeSpace) = P.bsplinespace
 
 knots(P::BSplineDerivativeSpace) = knots(bsplinespace(P))
 
+degree(P::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}) where {r,p} = p - r
+
 @generated function bsplinebasis₊₀(P::BSplineDerivativeSpace{r,BSplineSpace{p,T}}, i::Integer, t::Real) where {r, p, T}
     ks = [Symbol(:k,i) for i in 1:p+2]
     Ks = [Symbol(:K,i) for i in 1:p+1]
