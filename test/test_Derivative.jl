@@ -38,15 +38,22 @@
             end
         end
 
+        P1 = BSplineDerivativeSpace{1}(P)
+        for t in ts, i in 1:dim(P)
+            @test bsplinebasis′(P,i,t) == bsplinebasis(P1,i,t)
+        end
+
         for r in 1:p_max
-            P1 = BSplineDerivativeSpace{r-1}(P)
-            P2 = BSplineDerivativeSpace{r}(P)
-            @test degree(P2) == p-r
-            @test dim(P2) == dim(P)-r
+            Pa = BSplineDerivativeSpace{r}(P)
+            Pb = BSplineDerivativeSpace{r-1}(P)
+            @test degree(Pa) == p-r
+            @test dim(Pa) == dim(P)-r
             for t in ts, i in 1:dim(P)
-                d1 = (bsplinebasis(P1,i,t+dt) - bsplinebasis(P1,i,t-dt))/2dt
-                d2 = bsplinebasis(P2,i,t)
+                d1 = bsplinebasis(Pa,i,t)
+                d2 = (bsplinebasis(Pb,i,t+dt) - bsplinebasis(Pb,i,t-dt))/2dt
+                d3 = bsplinebasis′(Pb,i,t)
                 @test d1 ≈ d2
+                @test d1 == d3
             end
         end
     end
