@@ -143,13 +143,13 @@ Return a B-spline space of one degree lower.
 \mathcal{P}[p,k] \mapsto \mathcal{P}[p-1,k]
 ```
 """
-lower
+_lower
 
-lower(::Type{AbstractBSplineSpace{p}}) where p = AbstractBSplineSpace{p-1}
-lower(::Type{AbstractBSplineSpace{p,T}}) where {p,T} = AbstractBSplineSpace{p-1,T}
-lower(::Type{BSplineSpace{p}}) where p = BSplineSpace{p-1}
-lower(::Type{BSplineSpace{p,T}}) where {p,T} = BSplineSpace{p-1,T}
-lower(P::BSplineSpace{p,T}) where {p,T} = BSplineSpace{p-1}(knots(P))
+_lower(::Type{AbstractBSplineSpace{p}}) where p = AbstractBSplineSpace{p-1}
+_lower(::Type{AbstractBSplineSpace{p,T}}) where {p,T} = AbstractBSplineSpace{p-1,T}
+_lower(::Type{BSplineSpace{p}}) where p = BSplineSpace{p-1}
+_lower(::Type{BSplineSpace{p,T}}) where {p,T} = BSplineSpace{p-1,T}
+_lower(P::BSplineSpace{p,T}) where {p,T} = BSplineSpace{p-1}(knots(P))
 
 """
 TODO: add docstring

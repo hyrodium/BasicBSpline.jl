@@ -130,71 +130,6 @@ Modified version.
     )
 end
 
-@doc raw"""
-1st derivative of B-spline basis function.
-Right-sided limit version.
-```math
-\dot{B}_{(i,p,k)}(t)
-=p\left(\frac{1}{k_{i+p}-k_{i}}B_{(i,p-1,k)}(t)-\frac{1}{k_{i+p+1}-k_{i+1}}B_{(i+1,p-1,k)}(t)\right)
-```
-"""
-bsplinebasis′₊₀
-
-
-@doc raw"""
-1st derivative of B-spline basis function.
-Left-sided limit version.
-```math
-\dot{B}_{(i,p,k)}(t)
-=p\left(\frac{1}{k_{i+p}-k_{i}}B_{(i,p-1,k)}(t)-\frac{1}{k_{i+p+1}-k_{i+1}}B_{(i+1,p-1,k)}(t)\right)
-```
-"""
-bsplinebasis′₋₀
-
-@doc raw"""
-1st derivative of B-spline basis function.
-Modified version.
-```math
-\dot{B}_{(i,p,k)}(t)
-=p\left(\frac{1}{k_{i+p}-k_{i}}B_{(i,p-1,k)}(t)-\frac{1}{k_{i+p+1}-k_{i+1}}B_{(i+1,p-1,k)}(t)\right)
-```
-"""
-bsplinebasis′
-
-function bsplinebasis′₊₀(P::BSplineSpace{p}, i::Integer, t::Real)::Float64 where p
-    k = P.knots
-    return p * (
-        ((k[i+p] - k[i] ≠ 0) ? bsplinebasis₊₀(lower(P), i, t) / (k[i+p] - k[i]) : 0) -
-        ((k[i+p+1] - k[i+1] ≠ 0) ? bsplinebasis₊₀(lower(P), i+1, t) / (k[i+p+1] - k[i+1]) : 0)
-    )
-end
-function bsplinebasis′₊₀(P::BSplineSpace{0}, i::Integer, t::Real)::Float64
-    return 0.0
-end
-
-function bsplinebasis′₋₀(P::BSplineSpace{p}, i::Integer, t::Real)::Float64 where p
-    k = P.knots
-    return p * (
-        ((k[i+p] - k[i] ≠ 0) ? bsplinebasis₋₀(lower(P), i, t) / (k[i+p] - k[i]) : 0) -
-        ((k[i+p+1] - k[i+1] ≠ 0) ? bsplinebasis₋₀(lower(P), i+1, t) / (k[i+p+1] - k[i+1]) : 0)
-    )
-end
-function bsplinebasis′₋₀(P::BSplineSpace{0}, i::Integer, t::Real)::Float64
-    return 0.0
-end
-
-function bsplinebasis′(P::BSplineSpace{p}, i::Integer, t::Real)::Float64 where p
-    k = P.knots
-    return p * (
-        ((k[i+p] - k[i] ≠ 0) ? bsplinebasis(lower(P), i, t) / (k[i+p] - k[i]) : 0) -
-        ((k[i+p+1] - k[i+1] ≠ 0) ? bsplinebasis(lower(P), i+1, t) / (k[i+p+1] - k[i+1]) : 0)
-    )
-end
-function bsplinebasis′(P::BSplineSpace{0}, i::Integer, t::Real)::Float64
-    return 0.0
-end
-
-
 """
 TODO: Add docstring
 """
@@ -216,18 +151,18 @@ end
 @generated function bsplinebasisall(P::BSplineSpace{p,T}, i::Integer, t::T) where {p, T}
     bs = [Symbol(:b,i) for i in 1:p]
     Bs = [Symbol(:B,i) for i in 1:p+1]
-    Ks = [:((t-k[i+$(j)])/(k[i+$(p+j)]-k[i+$(j)])) for j in 1:p]
-    Ls = [:((k[i+$(p+j)]-t)/(k[i+$(p+j)]-k[i+$(j)])) for j in 1:p]
+    K1s = [:((k[i+$(p+j)]-t)/(k[i+$(p+j)]-k[i+$(j)])) for j in 1:p]
+    K2s = [:((t-k[i+$(j)])/(k[i+$(p+j)]-k[i+$(j)])) for j in 1:p]
     b = Expr(:tuple, bs...)
     B = Expr(:tuple, Bs...)
-    exs = [:($(Bs[j+1]) = ($(Ls[j+1])*$(bs[j+1]) + $(Ks[j])*$(bs[j]))) for j in 1:p-1]
+    exs = [:($(Bs[j+1]) = ($(K1s[j+1])*$(bs[j+1]) + $(K2s[j])*$(bs[j]))) for j in 1:p-1]
     Expr(:block,
         :($(Expr(:meta, :inline))),
         :(k = knots(P)),
-        :($b = bsplinebasisall(lower(P),i+1,t)),
-        :($(Bs[1]) = $(Ls[1])*$(bs[1])),
+        :($b = bsplinebasisall(_lower(P),i+1,t)),
+        :($(Bs[1]) = $(K1s[1])*$(bs[1])),
         exs...,
-        :($(Bs[p+1]) = $(Ks[p])*$(bs[p])),
+        :($(Bs[p+1]) = $(K2s[p])*$(bs[p])),
         :(return $(B))
     )
 end
