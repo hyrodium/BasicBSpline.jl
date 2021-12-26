@@ -9,7 +9,7 @@ export BSplineDerivativeSpace
 export BSplineManifold, CustomBSplineManifold
 export bsplinebasis₊₀, bsplinebasis₋₀, bsplinebasis
 export bsplinebasis′₊₀, bsplinebasis′₋₀, bsplinebasis′
-export bsplinesupport, bsplineunity, changebasis
+export bsplinesupport, domain, changebasis
 export bsplinebasisall, intervalindex
 export refinement, bsplinespaces, controlpoints
 export isproper, properdim
