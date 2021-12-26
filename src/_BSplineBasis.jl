@@ -151,18 +151,18 @@ end
 @generated function bsplinebasisall(P::BSplineSpace{p,T}, i::Integer, t::T) where {p, T}
     bs = [Symbol(:b,i) for i in 1:p]
     Bs = [Symbol(:B,i) for i in 1:p+1]
-    Ks = [:((t-k[i+$(j)])/(k[i+$(p+j)]-k[i+$(j)])) for j in 1:p]
-    Ls = [:((k[i+$(p+j)]-t)/(k[i+$(p+j)]-k[i+$(j)])) for j in 1:p]
+    K1s = [:((k[i+$(p+j)]-t)/(k[i+$(p+j)]-k[i+$(j)])) for j in 1:p]
+    K2s = [:((t-k[i+$(j)])/(k[i+$(p+j)]-k[i+$(j)])) for j in 1:p]
     b = Expr(:tuple, bs...)
     B = Expr(:tuple, Bs...)
-    exs = [:($(Bs[j+1]) = ($(Ls[j+1])*$(bs[j+1]) + $(Ks[j])*$(bs[j]))) for j in 1:p-1]
+    exs = [:($(Bs[j+1]) = ($(K1s[j+1])*$(bs[j+1]) + $(K2s[j])*$(bs[j]))) for j in 1:p-1]
     Expr(:block,
         :($(Expr(:meta, :inline))),
         :(k = knots(P)),
         :($b = bsplinebasisall(lower(P),i+1,t)),
-        :($(Bs[1]) = $(Ls[1])*$(bs[1])),
+        :($(Bs[1]) = $(K1s[1])*$(bs[1])),
         exs...,
-        :($(Bs[p+1]) = $(Ks[p])*$(bs[p])),
+        :($(Bs[p+1]) = $(K2s[p])*$(bs[p])),
         :(return $(B))
     )
 end
