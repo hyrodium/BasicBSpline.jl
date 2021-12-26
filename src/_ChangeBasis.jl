@@ -135,7 +135,7 @@ Assumption:
 * ``P ⊑ P′``
 """
 function _changebasis_I(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T})::Matrix{T} where {p, p′, T}
-    I = bsplineunity(P)
+    I = domain(P)
     k = knots(P)
     k′ = knots(P′)
     p₊ = p′ - p

@@ -34,7 +34,7 @@ end
     return P.knots
 end
 
-function bsplineunity(P::AbstractBSplineSpace)
+function domain(P::AbstractBSplineSpace)
     p = degree(P)
     k = knots(P)
     return k[1+p]..k[end-p]
@@ -84,7 +84,7 @@ function issqsubset(P::AbstractBSplineSpace{p}, P′::AbstractBSplineSpace{p′}
 
     if p₊ < 0
         return false
-    elseif bsplineunity(P) ≠ bsplineunity(P′)
+    elseif domain(P) ≠ domain(P′)
         return false
     end
 
