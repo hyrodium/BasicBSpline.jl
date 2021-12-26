@@ -20,6 +20,7 @@ export fittingcontrolpoints
 include("_Knots.jl")
 include("_BSplineSpace.jl")
 include("_BSplineBasis.jl")
+include("_Derivative.jl")
 include("_ChangeBasis.jl")
 include("_BSplineManifold.jl")
 include("_CustomBSplineManifold.jl")
