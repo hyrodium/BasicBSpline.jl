@@ -12,6 +12,30 @@
         P0 = BSplineDerivativeSpace{0}(P)
         for t in ts, i in 1:dim(P)
             @test bsplinebasis(P,i,t) == bsplinebasis(P0,i,t)
+            @test bsplinebasis₋₀(P,i,t) == bsplinebasis₋₀(P0,i,t)
+            @test bsplinebasis₊₀(P,i,t) == bsplinebasis₊₀(P0,i,t)
+        end
+        @test dim(P) == dim(P0)
+
+        # Check the values of the derivative of B-spline basis funcitons
+        n = dim(P0)
+        for t in k
+            s = sum([bsplinebasis(P0, i, t) for i in 1:n])
+            s₊₀ = sum([bsplinebasis₊₀(P0, i, t) for i in 1:n])
+            s₋₀ = sum([bsplinebasis₋₀(P0, i, t) for i in 1:n])
+            if t == k[1]
+                @test s ≈ 1
+                @test s₊₀ ≈ 1
+                @test s₋₀ == 0
+            elseif t == k[end]
+                @test s ≈ 1
+                @test s₊₀ == 0
+                @test s₋₀ ≈ 1
+            else
+                @test s ≈ 1
+                @test s₊₀ ≈ 1
+                @test s₋₀ ≈ 1
+            end
         end
 
         for r in 1:p_max
