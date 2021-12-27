@@ -19,7 +19,7 @@ _lower(dP::BSplineDerivativeSpace{r}) where r = BSplineDerivativeSpace{r-1}(_low
 function Base.issubset(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}, P′::AbstractBSplineSpace) where {r,p}
     k = knots(dP)
     P = BSplineSpace{p-r}(k)
-    return bsplinespace(P) ⊆ bsplinespace(P′)
+    return P ⊆ P′
 end
 function Base.issubset(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}, dP′::BSplineDerivativeSpace{0}) where {r,p}
     P′ = bsplinespace(dP′)
@@ -30,14 +30,19 @@ function Base.issubset(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}, 
         P = bsplinespace(dP)
         P′ = bsplinespace(dP′)
         _dP = BSplineDerivativeSpace{r-r′}(P)
-        _dP′ = BSplineDerivativeSpace{0}(P′)
-        return _dP ⊆ _dP′
+        return _dP ⊆ P′
     elseif r == r′
         P = bsplinespace(dP)
         P′ = bsplinespace(dP′)
         return P ⊆ P′
     else
+        # This might not be correct.
         return false
     end
 end
+function Base.issubset(P::AbstractBSplineSpace, dP′::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}) where {r,p}
+    # This might not be correct.
+    return false
+end
+
 # TODO: Add issqsubset
