@@ -44,37 +44,6 @@
         @test Knots([1,2,3,5])   ⊉ Knots([1,2,2,3])
     end
 
-    @testset "knotindex for usual case" begin
-        k = Knots([1,2,2,3])
-        @test BasicBSpline._knotindex(k,1.5) == 1
-        @test BasicBSpline._knotindex(k,2.5) == 3
-        @test BasicBSpline._knotindex₋₀(k,1.5) == 1
-        @test BasicBSpline._knotindex₋₀(k,2.5) == 3
-        @test BasicBSpline._knotindex₊₀(k,1.5) == 1
-        @test BasicBSpline._knotindex₊₀(k,2.5) == 3
-    end
-
-    @testset "knotindex for corner case" begin
-        k = Knots([1,2,2,3])
-        @test BasicBSpline._knotindex(k,0) == 0
-        @test BasicBSpline._knotindex(k,1) == 1
-        @test BasicBSpline._knotindex(k,2) == 3
-        @test BasicBSpline._knotindex(k,3) == 3
-        @test BasicBSpline._knotindex(k,4) == 4
-
-        @test BasicBSpline._knotindex₋₀(k,0) == 0
-        @test BasicBSpline._knotindex₋₀(k,1) == 0
-        @test BasicBSpline._knotindex₋₀(k,2) == 1
-        @test BasicBSpline._knotindex₋₀(k,3) == 3
-        @test BasicBSpline._knotindex₋₀(k,4) == 4
-
-        @test BasicBSpline._knotindex₊₀(k,0) == 0
-        @test BasicBSpline._knotindex₊₀(k,1) == 1
-        @test BasicBSpline._knotindex₊₀(k,2) == 3
-        @test BasicBSpline._knotindex₊₀(k,3) == 4
-        @test BasicBSpline._knotindex₊₀(k,4) == 4
-    end
-
     @testset "string" begin
         k = Knots([1,2,2,3])
         @test string(k) == "Knots([1.0, 2.0, 2.0, 3.0])"

@@ -207,29 +207,3 @@ function 𝔫(k::Knots, t::Real)
     # for large case, this is faster
     return length(searchsorted(k,t))
 end
-
-"""
-Find an index ``i`` such that ``k_{i} ≤ t < k_{i+1}``.
-"""
-function _knotindex₊₀(k::Union{<:Knots, AbstractVector{<:Real}}, t::Real)
-    return searchsortedlast(k, t)
-end
-
-"""
-Find an index ``i`` such that ``k_{i} < t ≤ k_{i+1}``.
-"""
-function _knotindex₋₀(k::Union{<:Knots, AbstractVector{<:Real}}, t::Real)
-    return searchsortedfirst(k, t) - 1
-end
-
-"""
-Find an index ``i`` such that ``k_{i} ≤ t < k_{i+1}`` or ``k_{i} < t = k_{i+1} = k_{\text{end}}``.
-"""
-function _knotindex(k::Union{<:Knots, AbstractVector{<:Real}}, t::Real)
-    j = searchsortedlast(k, t)
-    if j < length(k)
-        return j
-    else
-        return searchsortedfirst(k, t) - 1
-    end
-end

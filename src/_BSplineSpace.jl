@@ -115,12 +115,6 @@ function properdim(P::AbstractBSplineSpace)
     return dim(P) - sum(iszeros(P))
 end
 
-function _knotindex(P::AbstractBSplineSpace{p},t) where p
-    k = knots(P)
-    l = length(k)
-    return _knotindex(view(k.vector, 1+p:l-p), t) + p
-end
-
 @doc raw"""
 Return the support of ``i``-th B-spline basis function.
 ```math
