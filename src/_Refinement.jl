@@ -69,7 +69,7 @@ function refinement(M::CustomBSplineManifold{3}, Ps′::Tuple{<:AbstractBSplineS
     (n1′,n2′,n3′) = dim.(Ps′)
     (A1,A2,A3) = changebasis.(Ps, Ps′)
 
-    a′ = [sum(A1[I₁,J₁] * A2[I₂,J₂]* A3[I₃,J₃] * a[I₁,I₂,I₃] for I₁ in 1:n1, I₂ in 1:n2, I₃ in 1:n3) for J₁ in 1:n1′, J₂ in 1:n2′, J₃ in 1:n3′]
+    a′ = [sum(A1[I₁,J₁] * A2[I₂,J₂] * A3[I₃,J₃] * a[I₁,I₂,I₃] for I₁ in 1:n1, I₂ in 1:n2, I₃ in 1:n3) for J₁ in 1:n1′, J₂ in 1:n2′, J₃ in 1:n3′]
     return CustomBSplineManifold(Ps′, a′)
 end
 
@@ -90,11 +90,7 @@ function refinement(M::BSplineManifold{Dim}; p₊::Union{Nothing,NTuple{Dim,Int}
         throw(DimensionMismatch())
     end
 
-    Ps′ = [(P = Ps[i];
-    p = degree(P);
-    k = knots(P);
-    k_unique = unique(k[1+p:end-p]);
-    BSplineSpace{p + p₊[i]}(k + p₊[i] * k_unique + k₊[i])) for i in 1:Dim]
+    Ps′ = [expandspace(Ps[i], p₊=p₊[i], k₊=k₊[i]) for i in 1:Dim]
 
     return refinement(M, tuple(Ps′...))
 end
@@ -116,11 +112,7 @@ function refinement(M::CustomBSplineManifold; p₊::Union{Nothing,NTuple{Dim,Int
         throw(DimensionMismatch())
     end
 
-    Ps′ = [(P = Ps[i];
-    p = degree(P);
-    k = knots(P);
-    k_unique = unique(k[1+p:end-p]);
-    BSplineSpace{p + p₊[i]}(k + p₊[i] * k_unique + k₊[i])) for i in 1:Dim]
+    Ps′ = [expandspace(Ps[i], p₊=p₊[i], k₊=k₊[i]) for i in 1:Dim]
 
     return refinement(M, tuple(Ps′...))
 end

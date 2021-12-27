@@ -1,4 +1,4 @@
-# B-spline manifold
+# B-spline manifold with given type as a type of control points
 
 struct CustomBSplineManifold{Dim,Deg,C,S<:Tuple} <: AbstractBSplineManifold{Dim,Deg}
     bsplinespaces::S

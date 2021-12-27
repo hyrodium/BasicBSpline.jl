@@ -11,12 +11,10 @@
         a_org = [Point(i1, rand()) for i1 in 1:n1]
         M = CustomBSplineManifold((P1,), a_org)
 
-        p1′ = p1 + 1
-        k1′ = k1 + unique(k1) + Knots(rand(2))
-        P1′ = BSplineSpace{p1′}(k1′)
+        P1′ = expandspace(P1, p₊=1, k₊=Knots(rand(2)))
 
         M′ = refinement(M, (P1′,))
-        a_ref = M′.controlpoints
+        a_ref = controlpoints(M′)
 
         a_fit = fittingcontrolpoints(M, (P1′,))
         @test norm(a_fit - a_ref) < ε
@@ -35,12 +33,10 @@
         a_org = [Point(i1, rand()) for i1 in 1:n1]
         M = CustomBSplineManifold((P1,), a_org)
 
-        p1′ = p1 + 1
-        k1′ = k1 + unique(k1[1+p1:end-p1]) + Knots(rand(2))
-        P1′ = BSplineSpace{p1′}(k1′)
+        P1′ = expandspace(P1, p₊=1, k₊=Knots(rand(2)))
 
         M′ = refinement(M, (P1′,))
-        a_ref = M′.controlpoints
+        a_ref = controlpoints(M′)
 
         a_fit = fittingcontrolpoints(M, (P1′,))
 
@@ -61,15 +57,11 @@
         a_org = [Point(i1, i2, rand()) for i1 in 1:n1, i2 in 1:n2]
         M = CustomBSplineManifold((P1, P2), a_org)
 
-        p1′ = p1 + 1
-        k1′ = k1 + unique(k1) + Knots(rand(2))
-        P1′ = BSplineSpace{p1′}(k1′)
-        p2′ = p2 + 1
-        k2′ = k2 + unique(k2) + Knots(rand(2))
-        P2′ = BSplineSpace{p2′}(k2′)
+        P1′ = expandspace(P1, p₊=1, k₊=Knots(rand(2)))
+        P2′ = expandspace(P2, p₊=1, k₊=Knots(rand(2)))
 
         M′ = refinement(M, (P1′, P2′))
-        a_ref = M′.controlpoints
+        a_ref = controlpoints(M′)
 
         a_fit = fittingcontrolpoints(M, (P1′, P2′))
         @test norm(a_fit - a_ref) < ε
@@ -92,15 +84,11 @@
         a_org = [Point(i1, i2, rand()) for i1 in 1:n1, i2 in 1:n2]
         M = CustomBSplineManifold((P1, P2), a_org)
 
-        p1′ = p1 + 1
-        k1′ = k1 + unique(k1[1+p1:end-p1]) + Knots(rand(2))
-        P1′ = BSplineSpace{p1′}(k1′)
-        p2′ = p2 + 1
-        k2′ = k2 + unique(k2[1+p2:end-p2]) + Knots(rand(2))
-        P2′ = BSplineSpace{p2′}(k2′)
+        P1′ = expandspace(P1, p₊=1, k₊=Knots(rand(2)))
+        P2′ = expandspace(P2, p₊=1, k₊=Knots(rand(2)))
 
         M′ = refinement(M, (P1′, P2′))
-        a_ref = M′.controlpoints
+        a_ref = controlpoints(M′)
 
         a_fit = fittingcontrolpoints(M, (P1′, P2′))
         @test norm(a_fit - a_ref) < ε
@@ -124,18 +112,12 @@
         a_org = [Point(i1, i2, i3, rand()) for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3]
         M = CustomBSplineManifold((P1, P2, P3), a_org)
 
-        p1′ = p1 + 1
-        k1′ = k1 + unique(k1) + Knots(rand(2))
-        P1′ = BSplineSpace{p1′}(k1′)
-        p2′ = p2 + 1
-        k2′ = k2 + unique(k2) + Knots(rand(2))
-        P2′ = BSplineSpace{p2′}(k2′)
-        p3′ = p3 + 1
-        k3′ = k3 + unique(k3) + Knots(rand(2))
-        P3′ = BSplineSpace{p3′}(k3′)
+        P1′ = expandspace(P1, p₊=1, k₊=Knots(rand(2)))
+        P2′ = expandspace(P2, p₊=1, k₊=Knots(rand(2)))
+        P3′ = expandspace(P3, p₊=1, k₊=Knots(rand(2)))
 
         M′ = refinement(M, (P1′, P2′, P3′))
-        a_ref = M′.controlpoints
+        a_ref = controlpoints(M′)
 
         a_fit = fittingcontrolpoints(M, (P1′, P2′, P3′))
         @test norm(a_fit - a_ref) < ε
@@ -162,18 +144,12 @@
         a_org = [Point(i1, i2, i3, rand()) for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3]
         M = CustomBSplineManifold((P1, P2, P3), a_org)
 
-        p1′ = p1 + 1
-        k1′ = k1 + unique(k1[1+p1:end-p1]) + Knots(rand(2))
-        P1′ = BSplineSpace{p1′}(k1′)
-        p2′ = p2 + 1
-        k2′ = k2 + unique(k2[1+p2:end-p2]) + Knots(rand(2))
-        P2′ = BSplineSpace{p2′}(k2′)
-        p3′ = p3 + 1
-        k3′ = k3 + unique(k3[1+p3:end-p3]) + Knots(rand(2))
-        P3′ = BSplineSpace{p3′}(k3′)
+        P1′ = expandspace(P1, p₊=1, k₊=Knots(rand(2)))
+        P2′ = expandspace(P2, p₊=1, k₊=Knots(rand(2)))
+        P3′ = expandspace(P3, p₊=1, k₊=Knots(rand(2)))
 
         M′ = refinement(M, (P1′, P2′, P3′))
-        a_ref = M′.controlpoints
+        a_ref = controlpoints(M′)
 
         a_fit = fittingcontrolpoints(M, (P1′, P2′, P3′))
         @test norm(a_fit - a_ref) < 1.0e-6

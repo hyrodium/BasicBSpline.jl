@@ -115,12 +115,6 @@ function properdim(P::AbstractBSplineSpace)
     return dim(P) - sum(iszeros(P))
 end
 
-function _knotindex(P::AbstractBSplineSpace{p},t) where p
-    k = knots(P)
-    l = length(k)
-    return _knotindex(view(k.vector, 1+p:l-p), t) + p
-end
-
 @doc raw"""
 Return the support of ``i``-th B-spline basis function.
 ```math
@@ -145,10 +139,11 @@ Return a B-spline space of one degree lower.
 """
 _lower
 
-_lower(::Type{AbstractBSplineSpace{p}}) where p = AbstractBSplineSpace{p-1}
-_lower(::Type{AbstractBSplineSpace{p,T}}) where {p,T} = AbstractBSplineSpace{p-1,T}
-_lower(::Type{BSplineSpace{p}}) where p = BSplineSpace{p-1}
-_lower(::Type{BSplineSpace{p,T}}) where {p,T} = BSplineSpace{p-1,T}
+# TODO: Consider we really need these methods.
+# _lower(::Type{AbstractBSplineSpace{p}}) where p = AbstractBSplineSpace{p-1}
+# _lower(::Type{AbstractBSplineSpace{p,T}}) where {p,T} = AbstractBSplineSpace{p-1,T}
+# _lower(::Type{BSplineSpace{p}}) where p = BSplineSpace{p-1}
+# _lower(::Type{BSplineSpace{p,T}}) where {p,T} = BSplineSpace{p-1,T}
 _lower(P::BSplineSpace{p,T}) where {p,T} = BSplineSpace{p-1}(knots(P))
 
 """
@@ -159,4 +154,16 @@ function intervalindex(P::AbstractBSplineSpace{p},t::Real) where p
     l = length(k)
     v = view(k.vector,2+p:l-p-1)
     return searchsortedlast(v,t)+1
+end
+
+"""
+Expand B-spline space with given additional degree and knots.
+"""
+function expandspace(P::BSplineSpace{p,T}; p₊::Integer=0, k₊::Knots{T}=Knots{T}()) where {p,T}
+    k = knots(P)
+    k0 = unique(k[1+p:end-p])
+    p′ = p + p₊
+    k′ = k + p₊*k0 + k₊
+    P′ = BSplineSpace{p′}(k′)
+    return P′
 end

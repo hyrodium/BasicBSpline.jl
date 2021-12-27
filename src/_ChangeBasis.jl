@@ -1,4 +1,5 @@
 # Change Basis between B-Spline Spaces
+# See https://hackmd.io/lpA0D0ySTQ6Hq1CdaaONxQ for more information.
 
 @doc raw"""
 Return a coefficient matrix A which satisfy
