@@ -16,6 +16,32 @@ intervalindex(dP::BSplineDerivativeSpace,t::Real) = intervalindex(bsplinespace(d
 domain(dP::BSplineDerivativeSpace) = domain(bsplinespace(dP))
 _lower(dP::BSplineDerivativeSpace{r}) where r = BSplineDerivativeSpace{r-1}(_lower(bsplinespace(dP)))
 
+function Base.issubset(dP1::BSplineDerivativeSpace{r1,<:AbstractBSplineSpace{p1}}, P2::AbstractBSplineSpace) where r1
+    k1 = knots(dP1)
+    P1 = BSplineSpace{p1-r1}(k1)
+    return bsplinespace(P1) ⊆ bsplinespace(P2)
+end
+function Base.issubset(dP1::BSplineDerivativeSpace{r1,<:AbstractBSplineSpace{p1}}, dP2::BSplineDerivativeSpace{0}) where r1
+    P2 = bsplinespace(dP2)
+    return dP1 ⊆ P2
+end
+function Base.issubset(dP1::BSplineDerivativeSpace{r1,<:AbstractBSplineSpace{p1}}, dP2::BSplineDerivativeSpace{r2,<:AbstractBSplineSpace{p1}}) where {r1,p1,r2,p2}
+    if r1 > r2
+        P1 = bsplinespace(dP1)
+        P2 = bsplinespace(dP2)
+        _dP1 = BSplineDerivativeSpace{r1-r2}(P1)
+        _dP2 = BSplineDerivativeSpace{r2-r2}(P2)
+        return _dP1 ⊆ _dP2
+    elseif r1 == r2
+        P1 = bsplinespace(dP1)
+        P2 = bsplinespace(dP2)
+        return P1 ⊆ P2
+    else
+        return false
+    end
+end
+# TODO: Add issqsubset
+
 @generated function bsplinebasis₊₀(P::BSplineDerivativeSpace{r,BSplineSpace{p,T}}, i::Integer, t::Real) where {r, p, T}
     ks = [Symbol(:k,i) for i in 1:p+2]
     Ks = [Symbol(:K,i) for i in 1:p+1]
@@ -193,5 +219,3 @@ end
     P = bsplinespace(dP)
     bsplinebasisall(P,i,t)
 end
-
-# TODO: Add issubset(::BSplineDerivativeSpace, i, t)
