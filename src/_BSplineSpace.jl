@@ -145,10 +145,11 @@ Return a B-spline space of one degree lower.
 """
 _lower
 
-_lower(::Type{AbstractBSplineSpace{p}}) where p = AbstractBSplineSpace{p-1}
-_lower(::Type{AbstractBSplineSpace{p,T}}) where {p,T} = AbstractBSplineSpace{p-1,T}
-_lower(::Type{BSplineSpace{p}}) where p = BSplineSpace{p-1}
-_lower(::Type{BSplineSpace{p,T}}) where {p,T} = BSplineSpace{p-1,T}
+# TODO: Consider we really need these methods.
+# _lower(::Type{AbstractBSplineSpace{p}}) where p = AbstractBSplineSpace{p-1}
+# _lower(::Type{AbstractBSplineSpace{p,T}}) where {p,T} = AbstractBSplineSpace{p-1,T}
+# _lower(::Type{BSplineSpace{p}}) where p = BSplineSpace{p-1}
+# _lower(::Type{BSplineSpace{p,T}}) where {p,T} = BSplineSpace{p-1,T}
 _lower(P::BSplineSpace{p,T}) where {p,T} = BSplineSpace{p-1}(knots(P))
 
 """
