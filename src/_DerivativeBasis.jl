@@ -1,46 +1,4 @@
-# Derivative
-
-struct BSplineDerivativeSpace{r, T<:AbstractBSplineSpace}
-    bsplinespace::T
-    function BSplineDerivativeSpace{r}(P::T) where {r, T<:AbstractBSplineSpace}
-        new{r,T}(P)
-    end
-end
-
-bsplinespace(dP::BSplineDerivativeSpace) = dP.bsplinespace
-knots(dP::BSplineDerivativeSpace) = knots(bsplinespace(dP))
-degree(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}) where {r,p} = p - r
-dim(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}) where {r,p} = dim(bsplinespace(dP))
-properdim(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}) where {r,p} = properdim(bsplinespace(dP)) - r
-intervalindex(dP::BSplineDerivativeSpace,t::Real) = intervalindex(bsplinespace(dP),t)
-domain(dP::BSplineDerivativeSpace) = domain(bsplinespace(dP))
-_lower(dP::BSplineDerivativeSpace{r}) where r = BSplineDerivativeSpace{r-1}(_lower(bsplinespace(dP)))
-
-function Base.issubset(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}, P′::AbstractBSplineSpace) where {r,p}
-    k = knots(dP)
-    P = BSplineSpace{p-r}(k)
-    return bsplinespace(P) ⊆ bsplinespace(P′)
-end
-function Base.issubset(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}, dP′::BSplineDerivativeSpace{0}) where {r,p}
-    P′ = bsplinespace(dP′)
-    return dP ⊆ P′
-end
-function Base.issubset(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}, dP′::BSplineDerivativeSpace{r′,<:AbstractBSplineSpace{p}}) where {r,p,r′,p′}
-    if r > r′
-        P = bsplinespace(dP)
-        P′ = bsplinespace(dP′)
-        _dP = BSplineDerivativeSpace{r-r′}(P)
-        _dP′ = BSplineDerivativeSpace{0}(P′)
-        return _dP ⊆ _dP′
-    elseif r == r′
-        P = bsplinespace(dP)
-        P′ = bsplinespace(dP′)
-        return P ⊆ P′
-    else
-        return false
-    end
-end
-# TODO: Add issqsubset
+# Derivative of B-spline basis function
 
 @generated function bsplinebasis₊₀(P::BSplineDerivativeSpace{r,BSplineSpace{p,T}}, i::Integer, t::Real) where {r, p, T}
     ks = [Symbol(:k,i) for i in 1:p+2]
