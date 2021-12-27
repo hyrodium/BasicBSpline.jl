@@ -16,12 +16,12 @@ intervalindex(dP::BSplineDerivativeSpace,t::Real) = intervalindex(bsplinespace(d
 domain(dP::BSplineDerivativeSpace) = domain(bsplinespace(dP))
 _lower(dP::BSplineDerivativeSpace{r}) where r = BSplineDerivativeSpace{r-1}(_lower(bsplinespace(dP)))
 
-function Base.issubset(dP1::BSplineDerivativeSpace{r1,<:AbstractBSplineSpace{p1}}, P2::AbstractBSplineSpace) where r1
+function Base.issubset(dP1::BSplineDerivativeSpace{r1,<:AbstractBSplineSpace{p1}}, P2::AbstractBSplineSpace) where {r1,p1}
     k1 = knots(dP1)
     P1 = BSplineSpace{p1-r1}(k1)
     return bsplinespace(P1) ⊆ bsplinespace(P2)
 end
-function Base.issubset(dP1::BSplineDerivativeSpace{r1,<:AbstractBSplineSpace{p1}}, dP2::BSplineDerivativeSpace{0}) where r1
+function Base.issubset(dP1::BSplineDerivativeSpace{r1,<:AbstractBSplineSpace{p1}}, dP2::BSplineDerivativeSpace{0}) where {r1,p1}
     P2 = bsplinespace(dP2)
     return dP1 ⊆ P2
 end
