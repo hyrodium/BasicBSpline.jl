@@ -16,26 +16,26 @@ intervalindex(dP::BSplineDerivativeSpace,t::Real) = intervalindex(bsplinespace(d
 domain(dP::BSplineDerivativeSpace) = domain(bsplinespace(dP))
 _lower(dP::BSplineDerivativeSpace{r}) where r = BSplineDerivativeSpace{r-1}(_lower(bsplinespace(dP)))
 
-function Base.issubset(dP1::BSplineDerivativeSpace{r1,<:AbstractBSplineSpace{p1}}, P2::AbstractBSplineSpace) where {r1,p1}
-    k1 = knots(dP1)
-    P1 = BSplineSpace{p1-r1}(k1)
-    return bsplinespace(P1) ⊆ bsplinespace(P2)
+function Base.issubset(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}, P′::AbstractBSplineSpace) where {r,p}
+    k = knots(dP)
+    P = BSplineSpace{p-r}(k)
+    return bsplinespace(P) ⊆ bsplinespace(P′)
 end
-function Base.issubset(dP1::BSplineDerivativeSpace{r1,<:AbstractBSplineSpace{p1}}, dP2::BSplineDerivativeSpace{0}) where {r1,p1}
-    P2 = bsplinespace(dP2)
-    return dP1 ⊆ P2
+function Base.issubset(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}, dP′::BSplineDerivativeSpace{0}) where {r,p}
+    P′ = bsplinespace(dP′)
+    return dP ⊆ P′
 end
-function Base.issubset(dP1::BSplineDerivativeSpace{r1,<:AbstractBSplineSpace{p1}}, dP2::BSplineDerivativeSpace{r2,<:AbstractBSplineSpace{p1}}) where {r1,p1,r2,p2}
-    if r1 > r2
-        P1 = bsplinespace(dP1)
-        P2 = bsplinespace(dP2)
-        _dP1 = BSplineDerivativeSpace{r1-r2}(P1)
-        _dP2 = BSplineDerivativeSpace{r2-r2}(P2)
-        return _dP1 ⊆ _dP2
-    elseif r1 == r2
-        P1 = bsplinespace(dP1)
-        P2 = bsplinespace(dP2)
-        return P1 ⊆ P2
+function Base.issubset(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}, dP′::BSplineDerivativeSpace{r′,<:AbstractBSplineSpace{p}}) where {r,p,r′,p′}
+    if r > r′
+        P = bsplinespace(dP)
+        P′ = bsplinespace(dP′)
+        _dP = BSplineDerivativeSpace{r-r′}(P)
+        _dP′ = BSplineDerivativeSpace{0}(P′)
+        return _dP ⊆ _dP′
+    elseif r == r′
+        P = bsplinespace(dP)
+        P′ = bsplinespace(dP′)
+        return P ⊆ P′
     else
         return false
     end
