@@ -155,3 +155,15 @@ function intervalindex(P::AbstractBSplineSpace{p},t::Real) where p
     v = view(k.vector,2+p:l-p-1)
     return searchsortedlast(v,t)+1
 end
+
+"""
+Expand B-spline space with given additional degree and knots.
+"""
+function expandspace(P::BSplineSpace{p,T}; p₊::Integer=0, k₊::Knots{T}=Knots{T}()) where {p,T}
+    k = knots(P)
+    k0 = unique(k[1+p:end-p])
+    p′ = p + p₊
+    k′ = k + p₊*k0 + k₊
+    P′ = BSplineSpace{p′}(k′)
+    return P′
+end
