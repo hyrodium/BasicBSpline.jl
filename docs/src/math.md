@@ -1,5 +1,10 @@
 # Mathematical properties of B-spline
 
+```@setup math
+using BasicBSpline
+using Plots
+```
+
 ## Introduction
 [B-spline](https://en.wikipedia.org/wiki/B-spline) is a mathematical object, and it has a lot of application. (e.g. [NURBS](https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline), [IGA](https://en.wikipedia.org/wiki/Isogeometric_analysis))
 
@@ -26,7 +31,7 @@ using BasicBSpline
 [TODO: fig]
 
 ```@docs
-Knots(vector::AbstractVector{<:Real})
+Knots
 ```
 
 ```@docs
@@ -37,7 +42,7 @@ Knots(knot::Real)
 length(k::Knots)
 ```
 
-We introduce **additional operator** ``+``.
+Although a knot vector is **not** a vector in linear algebra, but we introduce **additional operator** ``+``.
 
 ```@docs
 Base.:+(k1::Knots{T}, k2::Knots{T}) where T
@@ -82,7 +87,7 @@ B_{(i,p)}(t)
 \end{aligned}
 ```
 
-Where ``\binom{p}{i-1}`` is a binomial coefficient.
+Where ``\binom{p}{i-1}`` is a [binomial coefficient](https://en.wikipedia.org/wiki/Binomial_coefficient).
 
 !!! tip "Def.  B-spline space"
     For given polynomial degree ``p\ge 0`` and knot vector ``k=(k_1,\dots,k_l)``, B-spline space ``\mathcal{P}[p,k]`` is defined as follows:
@@ -101,8 +106,7 @@ Note that each element of the space ``\mathcal{P}[p,k]`` is a piecewise polynomi
 
 [TODO: fig]
 
-```@repl
-using BasicBSpline
+```@repl math
 p = 2
 k = Knots([1,3,5,6,8,9])
 BSplineSpace{p}(k)
@@ -115,22 +119,22 @@ k_{i}&<k_{i+p+1} & (1 \le i \le l-p-1)
 \end{aligned}
 ```
 
-```@repl
-using BasicBSpline
-isproper(BSplineSpace{2}(Knots([1,3,5,6,8,9])))
-isproper(BSplineSpace{1}(Knots([1,3,3,3,8,9])))
+```@docs
+isproper
 ```
 
-The B-spline space is linear space, and if a B-spline space is proper, its dimension is calculated by:
+The B-spline space is a linear space, and if a B-spline space is proper, its dimension is calculated by:
 ```math
 \dim(\mathcal{P}[p,k])=\sharp k - p -1
 ```
 
-```@repl
-using BasicBSpline
+```@repl math
 dim(BSplineSpace{2}(Knots([1,3,5,6,8,9])))
 ```
 
+```@docs
+dim
+```
 
 ## B-spline basis function
 !!! tip "Def.  B-spline space"
@@ -156,8 +160,7 @@ dim(BSplineSpace{2}(Knots([1,3,5,6,8,9])))
     The set of functions ``\{B_{(i,p,k)}\}_i`` is a basis of B-spline space ``\mathcal{P}[p,k]``.
 
 
-```@repl
-using BasicBSpline
+```@repl math
 using Plots
 p = 2
 k = Knots(1:8)
@@ -180,8 +183,7 @@ You can choose the first terms in different ways.
 \end{aligned}
 ```
 
-```@repl
-using BasicBSpline
+```@repl math
 using Plots
 p = 2
 k = Knots(1:8)
@@ -200,8 +202,7 @@ plot([t->bsplinebasis₋₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(0,1))
 
 [TODO: fig]
 
-```@repl
-using BasicBSpline
+```@repl math
 i = 2
 k = Knots([5,12,13,13,14])
 p = 2
@@ -222,8 +223,7 @@ bsplinesupport(P,i) # 12..14
     ```
     Note that ``\dot{B}_{(i,p,k)}\in\mathcal{P}[p-1,k]``.
 
-```@repl
-using BasicBSpline
+```@repl math
 using Plots
 p = 2
 k = Knots(1:8)
@@ -242,8 +242,7 @@ plot([t->bsplinebasis′₊₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(0,1))
     \end{aligned}
     ```
 
-```@repl
-using BasicBSpline
+```@repl math
 using Plots
 p = 2
 k = Knots(1:8)
@@ -255,8 +254,7 @@ plot(t->sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1))
 
 To satisfy the partition of unity on whole interval ``[1,8]``, sometimes more knots will be inserted to the endpoints of the interval.
 
-```@repl
-using BasicBSpline
+```@repl math
 using Plots
 p = 2
 k = Knots(1:8) + p * Knots([1,8])
@@ -281,8 +279,7 @@ Therefore, to satisfy partition of unity on closed interval ``[k_{p+1}, k_{l-p}]
 \end{aligned}
 ```
 
-```@repl
-using BasicBSpline
+```@repl math
 using Plots
 p = 2
 k = Knots(1:8) + p * Knots([1,8])
@@ -293,7 +290,7 @@ plot(t->sum(bsplinebasis(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1))
 ![](img/sumofbsplineplot3.png)
 
 
-## Inclusion relation between B-spline spaces
+## Inclusive relation between B-spline spaces
 !!! info "Thm.  Support of B-spline basis function"
     For proper B-spline spaces, the following relationship holds.
     ```math
@@ -304,8 +301,7 @@ plot(t->sum(bsplinebasis(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1))
 
 (as linear subspace..)
 
-```@repl
-using BasicBSpline
+```@repl math
 P1 = BSplineSpace{1}(Knots([1,3,5,8]))
 P2 = BSplineSpace{1}(Knots([1,3,5,6,8,9]))
 P3 = BSplineSpace{2}(Knots([1,1,3,3,5,5,8,8]))
@@ -317,8 +313,7 @@ P2 ⊈ P3 # true
 
 Here are plots of the B-spline basis functions of the spaces `P1`, `P2`, `P3`.
 
-```@repl
-using BasicBSpline
+```@repl math
 using Plots
 P1 = BSplineSpace{1}(Knots([1,3,5,8]))
 P2 = BSplineSpace{1}(Knots([1,3,5,6,8,9]))
@@ -347,14 +342,12 @@ n'&=\dim(\mathcal{P}[p',k'])
 
 You can calculate the change of basis matrix ``A`` with `changebasis`.
 
-```@repl
-using BasicBSpline
+```@repl math
 A12 = changebasis(P1,P2)
 A13 = changebasis(P1,P3)
 ```
 
-```@repl
-using BasicBSpline
+```@repl math
 using Plots
 plot(
     plot([t->bsplinebasis₊₀(P1,i,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
@@ -389,8 +382,7 @@ B-spline manifold is a parametric representation of a shape.
 
 We will also write ``\bm{p}(t^1,\dots,t^d; \bm{a})``, ``\bm{p}(t^1,\dots,t^d)``, ``\bm{p}(t; \bm{a})`` or ``\bm{p}(t)`` for simplicity.
 
-```@repl
-using BasicBSpline
+```@repl math
 P1 = BSplineSpace{1}(Knots([0,0,1,1]))
 P2 = BSplineSpace{1}(Knots([1,1,2,3,3]))
 n1 = dim(P1) # 2
@@ -401,8 +393,7 @@ M = BSplineManifold([P1, P2], a)
 
 
 ### B-spline curve
-```@repl
-using BasicBSpline
+```@repl math
 ## 1-dim B-spline manifold
 p = 2 # degree of polynomial
 k = Knots(1:12) # knot vector
@@ -415,8 +406,7 @@ save_png("1dim.png", M, unitlength = 50)
 
 
 ### B-spline surface
-```@repl
-using BasicBSpline
+```@repl math
 p = 2 # degree of polynomial
 k = Knots(1:8) # knot vector
 P = BSplineSpace{p}(k) # B-spline space
@@ -427,8 +417,7 @@ save_png("2dim.png", M) # save image
 ```
 ![](img/2dim.png)
 
-```@repl
-using BasicBSpline
+```@repl math
 points = [M([u,v]) for u in range(3.0,6.0,length=50), v in range(3.0,6.0,length=50)]
 X = [point[1] for point in points]
 Y = [point[2] for point in points]
@@ -454,8 +443,7 @@ save("2dim_makie.png", scene)
 ### h-refinemnet
 Insert additional knots to knot vector.
 
-```@repl
-using BasicBSpline
+```@repl math
 k₊=[Knots(3.3,4.2),Knots(3.8,3.2,5.3)] # additional knots
 M′ = refinement(M,k₊=k₊) # refinement of B-spline manifold
 save_png("2dim_h-refinement.png", M′) # save image
@@ -468,8 +456,7 @@ Note that this shape and the last shape are identical.
 ### p-refinemnet
 Increase the polynomial degree of B-spline manifold.
 
-```@repl
-using BasicBSpline
+```@repl math
 p₊=[1,2] # additional degrees
 M′ = refinement(M,p₊=p₊) # refinement of B-spline manifold
 save_png("2dim_p-refinement.png", M′) # save image
@@ -483,8 +470,7 @@ Note that this shape and the last shape are identical.
 Least squares method.
 
 [Try on Desmos graphing graphing calculator!](https://www.desmos.com/calculator/2hm3b1fbdf)
-```@repl
-using BasicBSpline
+```@repl math
 p1 = 2
 p2 = 2
 k1 = Knots(-10:10)+p1*Knots(-10,10)
