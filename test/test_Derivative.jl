@@ -2,7 +2,7 @@
     Random.seed!(42)
     p_max = 4
     ts = rand(10)
-    dt = 1e-7
+    dt = 1e-8
 
     # Not sure why this @testset doesn't work fine.
     # @testset "$(p)-th degree basis" for p in 0:p_max
@@ -54,7 +54,7 @@
                 d1 = bsplinebasis(Pa,i,t)
                 d2 = (bsplinebasis(Pb,i,t+dt) - bsplinebasis(Pb,i,t-dt))/2dt
                 d3 = bsplinebasis′(Pb,i,t)
-                @test d1 ≈ d2
+                @test d1 ≈ d2 rtol=1e-7
                 @test d1 == d3
             end
         end
