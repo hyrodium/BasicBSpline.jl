@@ -7,7 +7,6 @@ Construct B-spline space from given polynominal degree and knot vector.
 ```math
 \mathcal{P}[p,k]
 ```
-This type `BSplineSpace` is slower than `FastBSplineSpace`, but this type is not limited with degree.
 """
 struct BSplineSpace{p, T<:Real} <: AbstractBSplineSpace{p,T}
     knots::Knots{T}
@@ -20,10 +19,10 @@ function BSplineSpace{p}(k::Knots) where p
 end
 
 """
-convert AbstractBSplineSpace to BSplineSpace
+Convert AbstractBSplineSpace to BSplineSpace
 """
 function BSplineSpace(P::AbstractBSplineSpace{p}) where p
-    return BSplineSpace{degree(P)}(knots(P))
+    return BSplineSpace{p}(knots(P))
 end
 
 @inline function degree(::BSplineSpace{p}) where p
@@ -107,6 +106,18 @@ function iszeros(P::AbstractBSplineSpace{p}) where p
     return [k[i] == k[i+p+1] for i in 1:n]
 end
 
+@doc raw"""
+Check if given B-spline space is proper.
+
+# Examples
+```jldoctest
+julia> isproper(BSplineSpace{2}(Knots([1,3,5,6,8,9])))
+true
+
+julia> isproper(BSplineSpace{1}(Knots([1,3,3,3,8,9])))
+false
+```
+"""
 function isproper(P::AbstractBSplineSpace)
     return !any(iszeros(P))
 end
