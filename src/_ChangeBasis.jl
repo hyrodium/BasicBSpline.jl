@@ -11,8 +11,8 @@ Assumption:
 * ``P ⊆ P′``
 """
 function _changebasis_R(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T})::Matrix{T} where {p,p′,T}
-    k = knots(P)
-    k′ = knots(P′)
+    k = knotvector(P)
+    k′ = knotvector(P′)
     p₊ = p′ - p
 
     if p == 0
@@ -101,7 +101,7 @@ function _changebasis_sim(P1::BSplineSpace{p1,T}, P2::BSplineSpace{p2,T}) where 
     #     error("P2 ⋢ P1")
     # end
     n = dim(P1)
-    v = (knots(P1).vector)[p1+1:end-p1]
+    v = (knotvector(P1).vector)[p1+1:end-p1]
 
     if length(v) > p1
         A = Matrix{T}(I, n, n)
@@ -137,8 +137,8 @@ Assumption:
 """
 function _changebasis_I(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T})::Matrix{T} where {p, p′, T}
     I = domain(P)
-    k = knots(P)
-    k′ = knots(P′)
+    k = knotvector(P)
+    k′ = knotvector(P′)
     p₊ = p′ - p
 
     _P = BSplineSpace{p}(k[1+p:end-p] + p * KnotVector(k[1+p], k[end-p]))

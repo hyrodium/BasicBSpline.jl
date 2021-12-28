@@ -9,7 +9,7 @@ Construct B-spline space from given polynominal degree and knot vector.
 ```
 """
 struct BSplineSpace{p, T<:Real} <: AbstractBSplineSpace{p,T}
-    knots::KnotVector{T}
+    knotvector::KnotVector{T}
     global unsafe_bsplinespace(::Val{p}, k::KnotVector{T}) where {p,T} = new{p,T}(k)
 end
 function BSplineSpace{p}(k::KnotVector) where p
@@ -22,20 +22,20 @@ end
 Convert AbstractBSplineSpace to BSplineSpace
 """
 function BSplineSpace(P::AbstractBSplineSpace{p}) where p
-    return BSplineSpace{p}(knots(P))
+    return BSplineSpace{p}(knotvector(P))
 end
 
 @inline function degree(::BSplineSpace{p}) where p
     return p
 end
 
-@inline function knots(P::BSplineSpace)
-    return P.knots
+@inline function knotvector(P::BSplineSpace)
+    return P.knotvector
 end
 
 function domain(P::AbstractBSplineSpace)
     p = degree(P)
-    k = knots(P)
+    k = knotvector(P)
     return k[1+p]..k[end-p]
 end
 
@@ -47,7 +47,7 @@ Return dimention of a B-spline space.
 ```
 """
 function dim(bsplinespace::AbstractBSplineSpace{p}) where p
-    k = knots(bsplinespace)
+    k = knotvector(bsplinespace)
     return length(k) - p - 1
 end
 
@@ -59,8 +59,8 @@ Check inclusive relationship between B-spline spaces.
 ```
 """
 function Base.issubset(P::AbstractBSplineSpace{p}, P′::AbstractBSplineSpace{p′}) where {p, p′}
-    k = knots(P)
-    k′ = knots(P′)
+    k = knotvector(P)
+    k′ = knotvector(P′)
     p₊ = p′ - p
 
     return p₊ ≥ 0 && (k + p₊ * unique(k) ⊆ k′)
@@ -77,8 +77,8 @@ Check inclusive relationship between B-spline spaces.
 ```
 """
 function issqsubset(P::AbstractBSplineSpace{p}, P′::AbstractBSplineSpace{p′}) where {p, p′}
-    k = knots(P)
-    k′ = knots(P′)
+    k = knotvector(P)
+    k′ = knotvector(P′)
     p₊ = p′ - p
 
     if p₊ < 0
@@ -87,10 +87,10 @@ function issqsubset(P::AbstractBSplineSpace{p}, P′::AbstractBSplineSpace{p′}
         return false
     end
 
-    inner_knots = k[p+2:end-p-1]
-    inner_knots′ = k′[p′+2:end-p′-1]
+    inner_knotvector = k[p+2:end-p-1]
+    inner_knotvector′ = k′[p′+2:end-p′-1]
 
-    return inner_knots + p₊ * unique(inner_knots) ⊆ inner_knots′
+    return inner_knotvector + p₊ * unique(inner_knotvector) ⊆ inner_knotvector′
 end
 
 const ⊑ = issqsubset
@@ -101,7 +101,7 @@ const ⊑ = issqsubset
 ≃(P1::AbstractBSplineSpace, P2::AbstractBSplineSpace) = (P1 ⊑ P2) & (P2 ⊑ P1)
 
 function iszeros(P::AbstractBSplineSpace{p}) where p
-    k = knots(P)
+    k = knotvector(P)
     n = dim(P)
     return [k[i] == k[i+p+1] for i in 1:n]
 end
@@ -133,12 +133,12 @@ Return the support of ``i``-th B-spline basis function.
 ```
 """
 function bsplinesupport(P::AbstractBSplineSpace{p}, i::Integer) where p
-    k = knots(P)
+    k = knotvector(P)
     return k[i]..k[i+p+1]
 end
 
 function bsplinesupport(P::AbstractBSplineSpace{p}) where p
-    k = knots(P)
+    k = knotvector(P)
     return [k[i]..k[i+p+1] for i in 1:dim(P)]
 end
 
@@ -155,23 +155,23 @@ _lower
 # _lower(::Type{AbstractBSplineSpace{p,T}}) where {p,T} = AbstractBSplineSpace{p-1,T}
 # _lower(::Type{BSplineSpace{p}}) where p = BSplineSpace{p-1}
 # _lower(::Type{BSplineSpace{p,T}}) where {p,T} = BSplineSpace{p-1,T}
-_lower(P::BSplineSpace{p,T}) where {p,T} = BSplineSpace{p-1}(knots(P))
+_lower(P::BSplineSpace{p,T}) where {p,T} = BSplineSpace{p-1}(knotvector(P))
 
 """
 TODO: add docstring
 """
 function intervalindex(P::AbstractBSplineSpace{p},t::Real) where p
-    k = knots(P)
+    k = knotvector(P)
     l = length(k)
     v = view(k.vector,2+p:l-p-1)
     return searchsortedlast(v,t)+1
 end
 
 """
-Expand B-spline space with given additional degree and knots.
+Expand B-spline space with given additional degree and knotvector.
 """
 function expandspace(P::BSplineSpace{p,T}; p₊::Integer=0, k₊::KnotVector{T}=KnotVector{T}()) where {p,T}
-    k = knots(P)
+    k = knotvector(P)
     k0 = unique(k[1+p:end-p])
     p′ = p + p₊
     k′ = k + p₊*k0 + k₊

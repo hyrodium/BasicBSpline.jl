@@ -35,8 +35,8 @@
     Δ45 = [bsplinebasis(P4, i, t) - sum(A45[i, j] * bsplinebasis(P5, j, t) for j in 1:n5) for i in 1:n1, t in 2 * rand(10) .+ 2]
     @test norm(Δ45) < ε
 
-    P6 = BSplineSpace{p4-1}(knots(P4)[2:end-1])
-    P7 = BSplineSpace{p5-1}(knots(P5)[2:end-1])
+    P6 = BSplineSpace{p4-1}(knotvector(P4)[2:end-1])
+    P7 = BSplineSpace{p5-1}(knotvector(P5)[2:end-1])
     @test P6 ⊑ P7
     @test P6 ⊈ P7
 

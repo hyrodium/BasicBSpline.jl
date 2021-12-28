@@ -13,7 +13,7 @@ export bsplinesupport, domain, changebasis, expandspace
 export bsplinebasisall, intervalindex
 export refinement, bsplinespaces, controlpoints
 export isproper, properdim
-export degree, knots
+export degree, knotvector
 export 𝔫
 export AbstractBSplineManifold, AbstractBSplineSpace
 export fittingcontrolpoints

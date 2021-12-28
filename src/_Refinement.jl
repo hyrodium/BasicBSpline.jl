@@ -75,7 +75,7 @@ end
 
 
 @doc raw"""
-Refinement of B-spline manifold with additional degree and knots.
+Refinement of B-spline manifold with additional degree and knotvector.
 """
 function refinement(M::BSplineManifold{Dim}; p₊::Union{Nothing,NTuple{Dim,Int}}=nothing, k₊::Union{Nothing,NTuple{Dim,KnotVector{T}}}=nothing) where {Dim, T}
     Ps = bsplinespaces(M)
@@ -96,7 +96,7 @@ function refinement(M::BSplineManifold{Dim}; p₊::Union{Nothing,NTuple{Dim,Int}
 end
 
 @doc raw"""
-Refinement of B-spline manifold with additional degree and knots.
+Refinement of B-spline manifold with additional degree and knotvector.
 """
 function refinement(M::CustomBSplineManifold; p₊::Union{Nothing,NTuple{Dim,Int}}=nothing, k₊::Union{Nothing,NTuple{Dim,KnotVector{T}}}=nothing) where {Dim, T}
     Ps = collect(bsplinespaces(M))

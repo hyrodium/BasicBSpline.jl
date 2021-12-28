@@ -36,7 +36,7 @@ Right-sided limit version.
         push!(exs, :($(B_l(p+1-i)) = $(B_r(p+1-i))))
     end
     Expr(:block,
-        :(v = knots(P).vector),
+        :(v = knotvector(P).vector),
         :($k_l = $k_r),
         :($(B_l(p+1)) = $(A_r(p+1))),
         exs...,
@@ -78,7 +78,7 @@ Left-sided limit version.
         push!(exs, :($(B_l(p+1-i)) = $(B_r(p+1-i))))
     end
     Expr(:block,
-        :(v = knots(P).vector),
+        :(v = knotvector(P).vector),
         :($k_l = $k_r),
         :($(B_l(p+1)) = $(A_r(p+1))),
         exs...,
@@ -121,7 +121,7 @@ Modified version.
         push!(exs, :($(B_l(p+1-i)) = $(B_r(p+1-i))))
     end
     Expr(:block,
-        :(v = knots(P).vector),
+        :(v = knotvector(P).vector),
         :($k_l = $k_r),
         :($(B_l(p+1)) = $(A_r(p+1))),
         :($(Bs[end]) += $(T)(t == $(ks[end]) == v[end])),
@@ -142,7 +142,7 @@ bsplinebasisall
 end
 
 @inline function bsplinebasisall(P::BSplineSpace{1,T}, i::Integer, t::T) where T
-    k = knots(P)
+    k = knotvector(P)
     B1 = (k[i+2]-t)/(k[i+2]-k[i+1])
     B2 = (t-k[i+1])/(k[i+2]-k[i+1])
     return (B1, B2)
@@ -158,7 +158,7 @@ end
     exs = [:($(Bs[j+1]) = ($(K1s[j+1])*$(bs[j+1]) + $(K2s[j])*$(bs[j]))) for j in 1:p-1]
     Expr(:block,
         :($(Expr(:meta, :inline))),
-        :(k = knots(P)),
+        :(k = knotvector(P)),
         :($b = bsplinebasisall(_lower(P),i+1,t)),
         :($(Bs[1]) = $(K1s[1])*$(bs[1])),
         exs...,
