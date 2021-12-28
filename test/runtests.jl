@@ -6,7 +6,7 @@ using Random
 using GeometryBasics
 
 @testset "BasicBSpline.jl" begin
-    include("test_Knots.jl")
+    include("test_KnotVector.jl")
     include("test_BSplineSpace.jl")
     include("test_BSplineBasis.jl")
     include("test_Derivative.jl")

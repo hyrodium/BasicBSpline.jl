@@ -9,10 +9,10 @@ Construct B-spline space from given polynominal degree and knot vector.
 ```
 """
 struct BSplineSpace{p, T<:Real} <: AbstractBSplineSpace{p,T}
-    knots::Knots{T}
-    global unsafe_bsplinespace(::Val{p}, k::Knots{T}) where {p,T} = new{p,T}(k)
+    knots::KnotVector{T}
+    global unsafe_bsplinespace(::Val{p}, k::KnotVector{T}) where {p,T} = new{p,T}(k)
 end
-function BSplineSpace{p}(k::Knots) where p
+function BSplineSpace{p}(k::KnotVector) where p
     # TOOD: add error handling like this:
     # throw(DomainError(p, "degree of polynominal must be non-negative"))
     unsafe_bsplinespace(Val{p}(), k)
@@ -111,10 +111,10 @@ Check if given B-spline space is proper.
 
 # Examples
 ```jldoctest
-julia> isproper(BSplineSpace{2}(Knots([1,3,5,6,8,9])))
+julia> isproper(BSplineSpace{2}(KnotVector([1,3,5,6,8,9])))
 true
 
-julia> isproper(BSplineSpace{1}(Knots([1,3,3,3,8,9])))
+julia> isproper(BSplineSpace{1}(KnotVector([1,3,3,3,8,9])))
 false
 ```
 """
@@ -170,7 +170,7 @@ end
 """
 Expand B-spline space with given additional degree and knots.
 """
-function expandspace(P::BSplineSpace{p,T}; p₊::Integer=0, k₊::Knots{T}=Knots{T}()) where {p,T}
+function expandspace(P::BSplineSpace{p,T}; p₊::Integer=0, k₊::KnotVector{T}=KnotVector{T}()) where {p,T}
     k = knots(P)
     k0 = unique(k[1+p:end-p])
     p′ = p + p₊

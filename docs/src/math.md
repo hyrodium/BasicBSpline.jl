@@ -31,35 +31,35 @@ using BasicBSpline
 [TODO: fig]
 
 ```@docs
-Knots
+KnotVector
 ```
 
 ```@docs
-Knots(knot::Real)
+KnotVector(knot::Real)
 ```
 
 ```@docs
-length(k::Knots)
+length(k::KnotVector)
 ```
 
 Although a knot vector is **not** a vector in linear algebra, but we introduce **additional operator** ``+``.
 
 ```@docs
-Base.:+(k1::Knots{T}, k2::Knots{T}) where T
+Base.:+(k1::KnotVector{T}, k2::KnotVector{T}) where T
 ```
 
 And **product operator** ``\cdot``.
 
 ```@docs
-*(n::Integer, k::Knots)
+*(n::Integer, k::KnotVector)
 ```
 
 ```@docs
-unique(k::Knots)
+unique(k::KnotVector)
 ```
 
 ```@docs
-𝔫(k::Knots, t::Real)
+𝔫(k::KnotVector, t::Real)
 ```
 
 
@@ -108,7 +108,7 @@ Note that each element of the space ``\mathcal{P}[p,k]`` is a piecewise polynomi
 
 ```@repl math
 p = 2
-k = Knots([1,3,5,6,8,9])
+k = KnotVector([1,3,5,6,8,9])
 BSplineSpace{p}(k)
 ```
 
@@ -129,7 +129,7 @@ The B-spline space is a linear space, and if a B-spline space is proper, its dim
 ```
 
 ```@repl math
-dim(BSplineSpace{2}(Knots([1,3,5,6,8,9])))
+dim(BSplineSpace{2}(KnotVector([1,3,5,6,8,9])))
 ```
 
 ```@docs
@@ -163,7 +163,7 @@ dim
 ```@repl math
 using Plots
 p = 2
-k = Knots(1:8)
+k = KnotVector(1:8)
 P = BSplineSpace{p}(k)
 plot([t->bsplinebasis₊₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(0,1))
 ```
@@ -186,7 +186,7 @@ You can choose the first terms in different ways.
 ```@repl math
 using Plots
 p = 2
-k = Knots(1:8)
+k = KnotVector(1:8)
 P = BSplineSpace{p}(k)
 plot([t->bsplinebasis₋₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(0,1))
 ```
@@ -204,7 +204,7 @@ plot([t->bsplinebasis₋₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(0,1))
 
 ```@repl math
 i = 2
-k = Knots([5,12,13,13,14])
+k = KnotVector([5,12,13,13,14])
 p = 2
 P = BSplineSpace{p}(k)
 bsplinesupport(P) # [5..13, 12..14]
@@ -226,7 +226,7 @@ bsplinesupport(P,i) # 12..14
 ```@repl math
 using Plots
 p = 2
-k = Knots(1:8)
+k = KnotVector(1:8)
 P = BSplineSpace{p}(k)
 plot([t->bsplinebasis′₊₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(0,1))
 ```
@@ -245,7 +245,7 @@ plot([t->bsplinebasis′₊₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(0,1))
 ```@repl math
 using Plots
 p = 2
-k = Knots(1:8)
+k = KnotVector(1:8)
 P = BSplineSpace{p}(k)
 plot(t->sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1))
 ```
@@ -257,7 +257,7 @@ To satisfy the partition of unity on whole interval ``[1,8]``, sometimes more kn
 ```@repl math
 using Plots
 p = 2
-k = Knots(1:8) + p * Knots([1,8])
+k = KnotVector(1:8) + p * KnotVector([1,8])
 P = BSplineSpace{p}(k)
 plot(t->sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1))
 ```
@@ -282,7 +282,7 @@ Therefore, to satisfy partition of unity on closed interval ``[k_{p+1}, k_{l-p}]
 ```@repl math
 using Plots
 p = 2
-k = Knots(1:8) + p * Knots([1,8])
+k = KnotVector(1:8) + p * KnotVector([1,8])
 P = BSplineSpace{p}(k)
 plot(t->sum(bsplinebasis(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1))
 ```
@@ -302,9 +302,9 @@ plot(t->sum(bsplinebasis(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1))
 (as linear subspace..)
 
 ```@repl math
-P1 = BSplineSpace{1}(Knots([1,3,5,8]))
-P2 = BSplineSpace{1}(Knots([1,3,5,6,8,9]))
-P3 = BSplineSpace{2}(Knots([1,1,3,3,5,5,8,8]))
+P1 = BSplineSpace{1}(KnotVector([1,3,5,8]))
+P2 = BSplineSpace{1}(KnotVector([1,3,5,6,8,9]))
+P3 = BSplineSpace{2}(KnotVector([1,1,3,3,5,5,8,8]))
 P1 ⊆ P2 # true
 P1 ⊆ P3 # true
 P2 ⊆ P3 # false
@@ -315,9 +315,9 @@ Here are plots of the B-spline basis functions of the spaces `P1`, `P2`, `P3`.
 
 ```@repl math
 using Plots
-P1 = BSplineSpace{1}(Knots([1,3,5,8]))
-P2 = BSplineSpace{1}(Knots([1,3,5,6,8,9]))
-P3 = BSplineSpace{2}(Knots([1,1,3,3,5,5,8,8]))
+P1 = BSplineSpace{1}(KnotVector([1,3,5,8]))
+P2 = BSplineSpace{1}(KnotVector([1,3,5,6,8,9]))
+P3 = BSplineSpace{2}(KnotVector([1,1,3,3,5,5,8,8]))
 plot(
     plot([t->bsplinebasis₊₀(P1,i,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
     plot([t->bsplinebasis₊₀(P2,i,t) for i in 1:dim(P2)], 1, 9, ylims=(0,1), legend=false),
@@ -383,8 +383,8 @@ B-spline manifold is a parametric representation of a shape.
 We will also write ``\bm{p}(t^1,\dots,t^d; \bm{a})``, ``\bm{p}(t^1,\dots,t^d)``, ``\bm{p}(t; \bm{a})`` or ``\bm{p}(t)`` for simplicity.
 
 ```@repl math
-P1 = BSplineSpace{1}(Knots([0,0,1,1]))
-P2 = BSplineSpace{1}(Knots([1,1,2,3,3]))
+P1 = BSplineSpace{1}(KnotVector([0,0,1,1]))
+P2 = BSplineSpace{1}(KnotVector([1,1,2,3,3]))
 n1 = dim(P1) # 2
 n2 = dim(P2) # 3
 a = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.
@@ -396,7 +396,7 @@ M = BSplineManifold([P1, P2], a)
 ```@repl math
 ## 1-dim B-spline manifold
 p = 2 # degree of polynomial
-k = Knots(1:12) # knot vector
+k = KnotVector(1:12) # knot vector
 P = BSplineSpace{p}(k) # B-spline space
 a = [[i-5, 3*sin(i^2)] for i in 1:dim(P)] # control points
 M = BSplineCurve([P], a) # Define B-spline manifold
@@ -408,7 +408,7 @@ save_png("1dim.png", M, unitlength = 50)
 ### B-spline surface
 ```@repl math
 p = 2 # degree of polynomial
-k = Knots(1:8) # knot vector
+k = KnotVector(1:8) # knot vector
 P = BSplineSpace{p}(k) # B-spline space
 rand_a = [rand(2) for i in 1:dim(P), j in 1:dim(P)]
 a = [[2*i-6.5,2*j-6.5] for i in 1:dim(P), j in 1:dim(P)] + rand_a # random generated control points
@@ -444,7 +444,7 @@ save("2dim_makie.png", scene)
 Insert additional knots to knot vector.
 
 ```@repl math
-k₊=[Knots(3.3,4.2),Knots(3.8,3.2,5.3)] # additional knots
+k₊=[KnotVector(3.3,4.2),KnotVector(3.8,3.2,5.3)] # additional knots
 M′ = refinement(M,k₊=k₊) # refinement of B-spline manifold
 save_png("2dim_h-refinement.png", M′) # save image
 ```
@@ -473,8 +473,8 @@ Least squares method.
 ```@repl math
 p1 = 2
 p2 = 2
-k1 = Knots(-10:10)+p1*Knots(-10,10)
-k2 = Knots(-10:10)+p2*Knots(-10,10)
+k1 = KnotVector(-10:10)+p1*KnotVector(-10,10)
+k2 = KnotVector(-10:10)+p2*KnotVector(-10,10)
 P1 = BSplineSpace{p1}(k1)
 P2 = BSplineSpace{p2}(k2)
 

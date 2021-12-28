@@ -7,7 +7,7 @@
     # Not sure why this @testset doesn't work fine.
     # @testset "$(p)-th degree basis" for p in 0:p_max
     for p in 0:p_max
-        k = Knots(rand(20)) + (p+1)*Knots(0,1)
+        k = KnotVector(rand(20)) + (p+1)*KnotVector(0,1)
         P = BSplineSpace{p}(k)
         P0 = BSplineDerivativeSpace{0}(P)
         for t in ts, i in 1:dim(P)
@@ -63,7 +63,7 @@
     @testset "bsplinebasisall" begin
         Random.seed!(42)
 
-        k = Knots(rand(10).-1) + Knots(rand(10)) + Knots(rand(10).+1)
+        k = KnotVector(rand(10).-1) + KnotVector(rand(10)) + KnotVector(rand(10).+1)
         ts = rand(10)
 
         for p in 0:5

@@ -4,43 +4,43 @@ gr()
 
 ##
 p = 2
-k = Knots(1:8)
+k = KnotVector(1:8)
 P = BSplineSpace(p, k)
 plot([t -> bsplinebasis₊₀(P, i, t) for i in 1:dim(P)], 1, 8, ylims = (0, 1))
 savefig("docs/src/img/bsplinebasisplot.png")
 
 ##
 p = 2
-k = Knots(1:8)
+k = KnotVector(1:8)
 P = BSplineSpace(p, k)
 plot([t -> bsplinebasis′₊₀(P, i, t) for i in 1:dim(P)], 1, 8)
 savefig("docs/src/img/bsplinebasisderivativeplot.png")
 
 ##
 p = 2
-k = Knots(1:8)
+k = KnotVector(1:8)
 P = BSplineSpace(p, k)
 plot(t -> sum(bsplinebasis₊₀(P, i, t) for i in 1:dim(P)), 1, 8, ylims = (0, 1))
 savefig("docs/src/img/sumofbsplineplot.png")
 
 ##
 p = 2
-k = Knots(1:8) + p * Knots([1, 8])
+k = KnotVector(1:8) + p * KnotVector([1, 8])
 P = BSplineSpace(p, k)
 plot(t -> sum(bsplinebasis₊₀(P, i, t) for i in 1:dim(P)), 1, 8, ylims = (0, 1))
 savefig("docs/src/img/sumofbsplineplot2.png")
 
 ##
 p = 2
-k = Knots(1:8) + p * Knots([1, 8])
+k = KnotVector(1:8) + p * KnotVector([1, 8])
 P = BSplineSpace(p, k)
 plot(t -> sum(bsplinebasis(P, i, t) for i in 1:dim(P)), 1, 8, ylims = (0, 1))
 savefig("docs/src/img/sumofbsplineplot3.png")
 
 ##
-P1 = BSplineSpace(1, Knots([1, 3, 5, 8]))
-P2 = BSplineSpace(1, Knots([1, 3, 5, 6, 8, 9]))
-P3 = BSplineSpace(2, Knots([1, 1, 3, 3, 5, 5, 8, 8]))
+P1 = BSplineSpace(1, KnotVector([1, 3, 5, 8]))
+P2 = BSplineSpace(1, KnotVector([1, 3, 5, 6, 8, 9]))
+P3 = BSplineSpace(2, KnotVector([1, 1, 3, 3, 5, 5, 8, 8]))
 plot([t -> bsplinebasis₊₀(P1, i, t) for i in 1:dim(P1)], 1, 9, ylims = (0, 1))
 savefig("docs/src/img/bsplineplotP1.png")
 plot([t -> bsplinebasis₊₀(P2, i, t) for i in 1:dim(P2)], 1, 9, ylims = (0, 1))
@@ -72,7 +72,7 @@ savefig("docs/src/img/subbsplineplot2.png")
 
 ##
 p = 3
-k = Knots([0.00, 1.50, 2.50, 5.50, 8.00, 9.00, 9.50, 10.0])
+k = KnotVector([0.00, 1.50, 2.50, 5.50, 8.00, 9.00, 9.50, 10.0])
 P0 = FastBSplineSpace(0, k)
 P1 = FastBSplineSpace(1, k)
 P2 = FastBSplineSpace(2, k)

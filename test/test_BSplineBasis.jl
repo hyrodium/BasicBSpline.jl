@@ -18,7 +18,7 @@ end
         Random.seed!(42)
 
         v = rand(10)
-        k = Knots(v) + (p+1)*Knots(0, 1) + Knots(v[2], v[3])
+        k = KnotVector(v) + (p+1)*KnotVector(0, 1) + KnotVector(v[2], v[3])
         P = BSplineSpace{p}(k)
         n = dim(P)
 
@@ -63,7 +63,7 @@ end
     @testset "bsplinebasisall" begin
         Random.seed!(42)
 
-        k = Knots(rand(10).-1) + Knots(rand(10)) + Knots(rand(10).+1)
+        k = KnotVector(rand(10).-1) + KnotVector(rand(10)) + KnotVector(rand(10).+1)
         ts = rand(10)
 
         for p in 0:5

@@ -4,7 +4,7 @@ using LinearAlgebra
 using IntervalSets
 using FastGaussQuadrature
 
-export Knots, BSplineSpace, dim, ⊑, ⊒, ⋢, ⋣, ≃
+export KnotVector, BSplineSpace, dim, ⊑, ⊒, ⋢, ⋣, ≃
 export BSplineDerivativeSpace
 export BSplineManifold, CustomBSplineManifold
 export bsplinebasis₊₀, bsplinebasis₋₀, bsplinebasis
@@ -18,7 +18,7 @@ export 𝔫
 export AbstractBSplineManifold, AbstractBSplineSpace
 export fittingcontrolpoints
 
-include("_Knots.jl")
+include("_KnotVector.jl")
 include("_BSplineSpace.jl")
 include("_BSplineBasis.jl")
 include("_DerivativeSpace.jl")

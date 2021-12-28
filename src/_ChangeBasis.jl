@@ -141,11 +141,11 @@ function _changebasis_I(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T})::Matri
     k′ = knots(P′)
     p₊ = p′ - p
 
-    _P = BSplineSpace{p}(k[1+p:end-p] + p * Knots(k[1+p], k[end-p]))
+    _P = BSplineSpace{p}(k[1+p:end-p] + p * KnotVector(k[1+p], k[end-p]))
     # if dim(_P) ≠ dim(P)
     #     error("dim(_P)≠dim(P)")
     # end
-    _P′ = BSplineSpace{p′}(k′[1+p′:end-p′] + p′ * Knots(k′[1+p′], k′[end-p′]))
+    _P′ = BSplineSpace{p′}(k′[1+p′:end-p′] + p′ * KnotVector(k′[1+p′], k′[end-p′]))
     # if dim(_P′) ≠ dim(P′)
     #     error("dim(_P′)≠dim(P′)")
     # end

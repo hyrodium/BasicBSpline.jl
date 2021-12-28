@@ -1,6 +1,6 @@
-# Knots
+# KnotVector
 
-abstract type AbstractKnots{T<:Real} end
+abstract type AbstractKnotVector{T<:Real} end
 
 @doc raw"""
 Construct knot vector from given array.
@@ -10,50 +10,50 @@ k=(k_1,\dots,k_l)
 
 # Examples
 ```jldoctest
-julia> k = Knots([1,2,3])
-Knots([1.0, 2.0, 3.0])
+julia> k = KnotVector([1,2,3])
+KnotVector([1.0, 2.0, 3.0])
 
-julia> k = Knots(1:3)
-Knots([1.0, 2.0, 3.0])
+julia> k = KnotVector(1:3)
+KnotVector([1.0, 2.0, 3.0])
 ```
 """
-struct Knots{T} <: AbstractKnots{T}
+struct KnotVector{T} <: AbstractKnotVector{T}
     vector::Vector{T}
     global unsafe_knots(::Type{T}, v) where T = new{T}(v)
 end
-Knots{T}(v::AbstractVector) where T = unsafe_knots(T,sort(v))
-Knots(v::AbstractVector{T}) where {T<:Real} = unsafe_knots(float(T),sort(v))
+KnotVector{T}(v::AbstractVector) where T = unsafe_knots(T,sort(v))
+KnotVector(v::AbstractVector{T}) where {T<:Real} = unsafe_knots(float(T),sort(v))
 
 @doc raw"""
 Construct knot vector from given real numbers.
 
 # Examples
 ```jldoctest
-julia> k = Knots(1,2,3)
-Knots([1.0, 2.0, 3.0])
+julia> k = KnotVector(1,2,3)
+KnotVector([1.0, 2.0, 3.0])
 
-julia> k = Knots()
-Knots([])
+julia> k = KnotVector()
+KnotVector([])
 ```
 """
-function Knots(knots::T...) where T<:Real
+function KnotVector(knots::T...) where T<:Real
     return unsafe_knots(float(T), sort!(collect(knots)))
 end
-function Knots{T}(knots::Real...) where T<:Real
+function KnotVector{T}(knots::Real...) where T<:Real
     return unsafe_knots(T, sort!(collect(knots)))
 end
-Knots() = unsafe_knots(Float64, Float64[])
+KnotVector() = unsafe_knots(Float64, Float64[])
 
-function Base.show(io::IO, k::Knots)
+function Base.show(io::IO, k::KnotVector)
     if k.vector == Float64[]
-        print(io, "Knots([])")
+        print(io, "KnotVector([])")
     else
-        print(io, "Knots($(k.vector))")
+        print(io, "KnotVector($(k.vector))")
     end
 end
 
-Base.zero(::Type{<:Knots}) = Knots()
-Base.:(==)(k₁::Knots, k₂::Knots) = (k₁.vector == k₂.vector)
+Base.zero(::Type{<:KnotVector}) = KnotVector()
+Base.:(==)(k₁::KnotVector, k₂::KnotVector) = (k₁.vector == k₂.vector)
 
 @doc raw"""
 Sum of knot vectors
@@ -70,17 +70,17 @@ For example, ``(1,2,3,5)+(4,5,8)=(1,2,3,4,5,5,8)``.
 
 # Examples
 ```jldoctest
-julia> k1 = Knots(1,2,3,5);
+julia> k1 = KnotVector(1,2,3,5);
 
-julia> k2 = Knots(4,5,8);
+julia> k2 = KnotVector(4,5,8);
 
 julia> k1 + k2
-Knots([1.0, 2.0, 3.0, 4.0, 5.0, 5.0, 8.0])
+KnotVector([1.0, 2.0, 3.0, 4.0, 5.0, 5.0, 8.0])
 ```
 """
-Base.:+(k1::Knots{T}, k2::Knots{T}) where T = unsafe_knots(T,sort!(vcat(k1.vector,k2.vector)))
+Base.:+(k1::KnotVector{T}, k2::KnotVector{T}) where T = unsafe_knots(T,sort!(vcat(k1.vector,k2.vector)))
 
-# TODO: add a method for Knots{Int} + Knots{Float64}
+# TODO: add a method for KnotVector{Int} + KnotVector{Float64}
 
 @doc raw"""
 Product of integer and knot vector
@@ -95,15 +95,15 @@ For example, ``2\cdot (1,2,2,5)=(1,1,2,2,2,2,5,5)``.
 
 # Examples
 ```jldoctest
-julia> k = Knots(1,2,2,5);
+julia> k = KnotVector(1,2,2,5);
 
 julia> 2 * k
-Knots([1.0, 1.0, 2.0, 2.0, 2.0, 2.0, 5.0, 5.0])
+KnotVector([1.0, 1.0, 2.0, 2.0, 2.0, 2.0, 5.0, 5.0])
 ```
 """
-function Base.:*(p₊::Integer, k::Knots)
+function Base.:*(p₊::Integer, k::KnotVector)
     if p₊ == 0
-        return zero(Knots)
+        return zero(KnotVector)
     elseif p₊ > 0
         return sum(k for _ in 1:p₊)
     else
@@ -111,25 +111,25 @@ function Base.:*(p₊::Integer, k::Knots)
     end
 end
 
-Base.in(r::Real, k::Knots) = in(r, k.vector)
-Base.getindex(k::Knots, i::Integer) = k.vector[i]
-Base.getindex(k::Knots, v::AbstractVector{<:Integer}) = Knots(k.vector[v])
+Base.in(r::Real, k::KnotVector) = in(r, k.vector)
+Base.getindex(k::KnotVector, i::Integer) = k.vector[i]
+Base.getindex(k::KnotVector, v::AbstractVector{<:Integer}) = KnotVector(k.vector[v])
 
 @doc raw"""
 Length of knot vector
 
 # Examples
 ```jldoctest
-julia> k = Knots(1,2,3,5);
+julia> k = KnotVector(1,2,3,5);
 
 julia> length(k)
 4
 ```
 """
-Base.length(k::Knots) = length(k.vector)
+Base.length(k::KnotVector) = length(k.vector)
 
-Base.firstindex(k::Knots) = 1
-Base.lastindex(k::Knots) = length(k)
+Base.firstindex(k::KnotVector) = 1
+Base.lastindex(k::KnotVector) = length(k)
 
 @doc raw"""
 Unique elements of knot vector.
@@ -145,19 +145,19 @@ For example, ``\widehat{(1,2,2,3)}=(1,2,3)``.
 
 # Examples
 ```jldoctest
-julia> k = Knots([1,2,2,3]);
+julia> k = KnotVector([1,2,2,3]);
 
 julia> unique(k)
-Knots([1.0, 2.0, 3.0])
+KnotVector([1.0, 2.0, 3.0])
 ```
 """
-Base.unique(k::Knots) = Knots(unique(k.vector))
-Base.unique!(k::Knots) = Knots(unique!(k.vector))
-Base.iterate(k::Knots) = iterate(k.vector)
-Base.iterate(k::Knots, i::Integer) = iterate(k.vector, i)
-Base.searchsortedfirst(k::Knots,t) = searchsortedfirst(k.vector,t)
-Base.searchsortedlast(k::Knots,t) = searchsortedlast(k.vector,t)
-Base.searchsorted(k::Knots,t) = searchsorted(k.vector,t)
+Base.unique(k::KnotVector) = KnotVector(unique(k.vector))
+Base.unique!(k::KnotVector) = KnotVector(unique!(k.vector))
+Base.iterate(k::KnotVector) = iterate(k.vector)
+Base.iterate(k::KnotVector, i::Integer) = iterate(k.vector, i)
+Base.searchsortedfirst(k::KnotVector,t) = searchsortedfirst(k.vector,t)
+Base.searchsortedlast(k::KnotVector,t) = searchsortedlast(k.vector,t)
+Base.searchsorted(k::KnotVector,t) = searchsorted(k.vector,t)
 
 @doc raw"""
 Check a inclusive relation ship ``k\subset k'``.
@@ -166,7 +166,7 @@ Check a inclusive relation ship ``k\subset k'``.
 (1,2,5) \nsubseteq (1,2,3,4)
 ```
 """
-function Base.issubset(k::Knots, k′::Knots)
+function Base.issubset(k::KnotVector, k′::KnotVector)
     v = k′.vector
     l = length(v)
     i = 0
@@ -188,7 +188,7 @@ For given knot vector ``k``, the following function ``\mathfrak{n}_k:\mathbb{R}\
 For example, if ``k=(1,2,2,3)``, then ``\mathfrak{n}_k(0.3)=0``, ``\mathfrak{n}_k(1)=1``, ``\mathfrak{n}_k(2)=2``.
 
 ```jldoctest
-julia> k = Knots([1,2,2,3]);
+julia> k = KnotVector([1,2,2,3]);
 
 julia> 𝔫(k,0.3)
 0
@@ -200,7 +200,7 @@ julia> 𝔫(k,2.0)
 2
 ```
 """
-function 𝔫(k::Knots, t::Real)
+function 𝔫(k::KnotVector, t::Real)
     # for small case, this is faster
     # return count(==(t), k.vector)
 
