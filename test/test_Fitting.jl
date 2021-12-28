@@ -9,7 +9,7 @@
         P1 = BSplineSpace{p1}(k1)
         n1 = dim(P1)
         a_org = [Point(i1, rand()) for i1 in 1:n1]
-        M = CustomBSplineManifold((P1,), a_org)
+        M = CustomBSplineManifold(a_org, (P1,))
 
         P1′ = expandspace(P1, p₊=1, k₊=KnotVector(rand(2)))
 
@@ -31,7 +31,7 @@
         P1 = BSplineSpace{p1}(k1)
         n1 = dim(P1)
         a_org = [Point(i1, rand()) for i1 in 1:n1]
-        M = CustomBSplineManifold((P1,), a_org)
+        M = CustomBSplineManifold(a_org, (P1,))
 
         P1′ = expandspace(P1, p₊=1, k₊=KnotVector(rand(2)))
 
@@ -55,7 +55,7 @@
         P2 = BSplineSpace{p2}(k2)
         n2 = dim(P2)
         a_org = [Point(i1, i2, rand()) for i1 in 1:n1, i2 in 1:n2]
-        M = CustomBSplineManifold((P1, P2), a_org)
+        M = CustomBSplineManifold(a_org, (P1, P2))
 
         P1′ = expandspace(P1, p₊=1, k₊=KnotVector(rand(2)))
         P2′ = expandspace(P2, p₊=1, k₊=KnotVector(rand(2)))
@@ -82,7 +82,7 @@
         P2 = BSplineSpace{p2}(k2)
         n2 = dim(P2)
         a_org = [Point(i1, i2, rand()) for i1 in 1:n1, i2 in 1:n2]
-        M = CustomBSplineManifold((P1, P2), a_org)
+        M = CustomBSplineManifold(a_org, (P1, P2))
 
         P1′ = expandspace(P1, p₊=1, k₊=KnotVector(rand(2)))
         P2′ = expandspace(P2, p₊=1, k₊=KnotVector(rand(2)))
@@ -110,7 +110,7 @@
         P3 = BSplineSpace{p3}(k3)
         n3 = dim(P3)
         a_org = [Point(i1, i2, i3, rand()) for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3]
-        M = CustomBSplineManifold((P1, P2, P3), a_org)
+        M = CustomBSplineManifold(a_org, (P1, P2, P3))
 
         P1′ = expandspace(P1, p₊=1, k₊=KnotVector(rand(2)))
         P2′ = expandspace(P2, p₊=1, k₊=KnotVector(rand(2)))
@@ -142,7 +142,7 @@
         P3 = BSplineSpace{p3}(k3)
         n3 = dim(P3)
         a_org = [Point(i1, i2, i3, rand()) for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3]
-        M = CustomBSplineManifold((P1, P2, P3), a_org)
+        M = CustomBSplineManifold(a_org, (P1, P2, P3))
 
         P1′ = expandspace(P1, p₊=1, k₊=KnotVector(rand(2)))
         P2′ = expandspace(P2, p₊=1, k₊=KnotVector(rand(2)))

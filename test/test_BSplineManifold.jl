@@ -27,7 +27,7 @@
             ax = [i for i in 1:n1]
             ay = [rand() for i in 1:n1]
             a = hcat(ax,ay)  # n1 × 2 array of d̂-dim vector.
-            M = BSplineManifold((P1,), a)
+            M = BSplineManifold(a, (P1,))
             @test dim(M) == 1
 
             P1′ = BSplineSpace{2}(KnotVector([-2, 0, 0, 1, 1, 2]))
@@ -51,7 +51,7 @@
             P1 = BSplineSpace{1}(KnotVector([0, 0, 1, 1]))
             n1 = dim(P1) # 2
             a = [Point(i, rand()) for i in 1:n1]  # n1 × n2 array of d̂-dim vector.
-            M = CustomBSplineManifold((P1,), a)
+            M = CustomBSplineManifold(a, (P1,))
             @test dim(M) == 1
 
             P1′ = BSplineSpace{2}(KnotVector([-2, 0, 0, 1, 1, 2]))
@@ -80,7 +80,7 @@
             n2 = dim(P2) # 3
             rand_a = [rand(2) for i in 1:n1, j in 1:n2]
             a = [[2*i-6.5,2*j-6.5] for i in 1:n1, j in 1:n2] + rand_a
-            M = BSplineManifold((P1, P2), arrayofvector2array(a))
+            M = BSplineManifold(arrayofvector2array(a), (P1, P2))
             @test dim(M) == 2
 
             P1′ = BSplineSpace{2}(KnotVector([-2, 0, 0, 1, 1, 2]))
@@ -108,7 +108,7 @@
             n1 = dim(P1) # 2
             n2 = dim(P2) # 3
             a = [Point(i, j) for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂-dim vector.
-            M = CustomBSplineManifold((P1, P2), a)
+            M = CustomBSplineManifold(a, (P1, P2))
             @test dim(M) == 2
 
             P1′ = BSplineSpace{2}(KnotVector([0, 0, 0, 1, 1, 1]))
