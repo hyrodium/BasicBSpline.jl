@@ -112,7 +112,7 @@ k = KnotVector([1,3,5,6,8,9])
 BSplineSpace{p}(k)
 ```
 
-A B-spline space is said to be **proper** if its degree and knots satisfies following property:
+A B-spline space is said to be **proper** if its degree and knotvector satisfies following property:
 ```math
 \begin{aligned}
 k_{i}&<k_{i+p+1} & (1 \le i \le l-p-1)

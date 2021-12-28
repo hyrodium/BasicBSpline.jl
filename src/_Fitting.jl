@@ -10,7 +10,7 @@ Assumption:
 * ``1 ≤ n ≤ p-j+i+1``
 """
 function _b_b_int(P::BSplineSpace{p}, i, j, n, gl) where p
-    I = knots(P)[j+n-1]..knots(P)[j+n]
+    I = knotvector(P)[j+n-1]..knotvector(P)[j+n]
 
     f(t) = bsplinebasis(P, i, t) * bsplinebasis(P, j, t)
     return integrate(f, I, gl)
@@ -95,7 +95,7 @@ function innerproduct_I(P::BSplineSpace{p}) where p
 end
 
 function _f_b_int_R(func, i1, P1::BSplineSpace{p1}, gl1) where {p1}
-    k1 = knots(P1)
+    k1 = knotvector(P1)
     F(t1) = bsplinebasis(P1, i1, t1) * func(t1)
 
     f1,l1 = i1, i1+p1
@@ -108,7 +108,7 @@ function _f_b_int_R(func, i1, P1::BSplineSpace{p1}, gl1) where {p1}
 end
 
 function _f_b_int_I(func, i1, P1::BSplineSpace{p1}, gl1) where {p1}
-    k1 = knots(P1)
+    k1 = knotvector(P1)
     m1 = length(k1)
     F(t1) = bsplinebasis(P1, i1, t1) * func(t1)
 
@@ -123,7 +123,7 @@ end
 
 function _f_b_int_R(func, i1, i2, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}}, gl1, gl2) where {p1,p2}
     P1, P2 = P
-    k1, k2 = knots(P1), knots(P2)
+    k1, k2 = knotvector(P1), knotvector(P2)
     F(t1, t2) = bsplinebasis(P1, i1, t1) * bsplinebasis(P2, i2, t2) * func(t1, t2)
 
     f1, l1 = i1, i1+p1
@@ -146,7 +146,7 @@ end
 
 function _f_b_int_I(func, i1, i2, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}}, gl1, gl2) where {p1,p2}
     P1, P2 = P
-    k1, k2 = knots(P1), knots(P2)
+    k1, k2 = knotvector(P1), knotvector(P2)
     m1, m2 = length(k1), length(k2)
     F(t1, t2) = bsplinebasis(P1, i1, t1) * bsplinebasis(P2, i2, t2) * func(t1, t2)
 
@@ -170,7 +170,7 @@ end
 
 function _f_b_int_R(func, i1, i2, i3, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}, <:AbstractBSplineSpace{p3}}, gl1, gl2, gl3) where {p1,p2,p3}
     P1, P2, P3 = P
-    k1, k2, k3 = knots(P1), knots(P2), knots(P3)
+    k1, k2, k3 = knotvector(P1), knotvector(P2), knotvector(P3)
     F(t1, t2, t3) = bsplinebasis(P1, i1, t1) * bsplinebasis(P2, i2, t2) * bsplinebasis(P3, i3, t3) * func(t1, t2, t3)
 
     f1, l1 = i1, i1+p1
@@ -210,7 +210,7 @@ end
 
 function _f_b_int_I(func, i1, i2, i3, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}, <:AbstractBSplineSpace{p3}}, gl1, gl2, gl3) where {p1,p2,p3}
     P1, P2, P3 = P
-    k1, k2, k3 = knots(P1), knots(P2), knots(P3)
+    k1, k2, k3 = knotvector(P1), knotvector(P2), knotvector(P3)
     m1, m2, m3 = length(k1), length(k2), length(k3)
     F(t1, t2, t3) = bsplinebasis(P1, i1, t1) * bsplinebasis(P2, i2, t2) * bsplinebasis(P3, i3, t3) * func(t1, t2, t3)
 

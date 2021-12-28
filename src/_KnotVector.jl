@@ -19,10 +19,10 @@ KnotVector([1.0, 2.0, 3.0])
 """
 struct KnotVector{T} <: AbstractKnotVector{T}
     vector::Vector{T}
-    global unsafe_knots(::Type{T}, v) where T = new{T}(v)
+    global unsafe_knotvector(::Type{T}, v) where T = new{T}(v)
 end
-KnotVector{T}(v::AbstractVector) where T = unsafe_knots(T,sort(v))
-KnotVector(v::AbstractVector{T}) where {T<:Real} = unsafe_knots(float(T),sort(v))
+KnotVector{T}(v::AbstractVector) where T = unsafe_knotvector(T,sort(v))
+KnotVector(v::AbstractVector{T}) where {T<:Real} = unsafe_knotvector(float(T),sort(v))
 
 @doc raw"""
 Construct knot vector from given real numbers.
@@ -36,13 +36,13 @@ julia> k = KnotVector()
 KnotVector([])
 ```
 """
-function KnotVector(knots::T...) where T<:Real
-    return unsafe_knots(float(T), sort!(collect(knots)))
+function KnotVector(knotvector::T...) where T<:Real
+    return unsafe_knotvector(float(T), sort!(collect(knotvector)))
 end
-function KnotVector{T}(knots::Real...) where T<:Real
-    return unsafe_knots(T, sort!(collect(knots)))
+function KnotVector{T}(knotvector::Real...) where T<:Real
+    return unsafe_knotvector(T, sort!(collect(knotvector)))
 end
-KnotVector() = unsafe_knots(Float64, Float64[])
+KnotVector() = unsafe_knotvector(Float64, Float64[])
 
 function Base.show(io::IO, k::KnotVector)
     if k.vector == Float64[]
@@ -78,7 +78,7 @@ julia> k1 + k2
 KnotVector([1.0, 2.0, 3.0, 4.0, 5.0, 5.0, 8.0])
 ```
 """
-Base.:+(k1::KnotVector{T}, k2::KnotVector{T}) where T = unsafe_knots(T,sort!(vcat(k1.vector,k2.vector)))
+Base.:+(k1::KnotVector{T}, k2::KnotVector{T}) where T = unsafe_knotvector(T,sort!(vcat(k1.vector,k2.vector)))
 
 # TODO: add a method for KnotVector{Int} + KnotVector{Float64}
 

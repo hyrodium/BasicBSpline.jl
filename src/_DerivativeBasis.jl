@@ -24,7 +24,7 @@
             push!(exs, :($(B_l(p+1-i)) = $(C_r(p+1-i))))
         end
         Expr(:block,
-            :(v = knots(dP).vector),
+            :(v = knotvector(dP).vector),
             :($k_l = $k_r),
             :($(B_l(p+1)) = $(A_r(p+1))),
             exs...,
@@ -59,7 +59,7 @@ end
             push!(exs, :($(B_l(p+1-i)) = $(C_r(p+1-i))))
         end
         Expr(:block,
-            :(v = knots(dP).vector),
+            :(v = knotvector(dP).vector),
             :($k_l = $k_r),
             :($(B_l(p+1)) = $(A_r(p+1))),
             exs...,
@@ -94,7 +94,7 @@ end
             push!(exs, :($(B_l(p+1-i)) = $(C_r(p+1-i))))
         end
         Expr(:block,
-            :(v = knots(dP).vector),
+            :(v = knotvector(dP).vector),
             :($k_l = $k_r),
             :($(B_l(p+1)) = $(A_r(p+1))),
             :($(Bs[end]) += $(T)(t == $(ks[end]) == v[end])),
@@ -160,7 +160,7 @@ end
     if r ≤ p
         Expr(:block,
             :($(Expr(:meta, :inline))),
-            :(k = knots(dP)),
+            :(k = knotvector(dP)),
             :($b = bsplinebasisall(_lower(dP),i+1,t)),
             :($(Bs[1]) = $(K1s[1])*$(bs[1])),
             exs...,

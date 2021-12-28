@@ -38,8 +38,8 @@
     @test P5 ⋢ P4
     @test P4 ⋣ P5
 
-    P4_ = BSplineSpace{degree(P4)-1}(knots(P4)[2:end-1])
-    P5_ = BSplineSpace{degree(P5)-1}(knots(P5)[2:end-1])
+    P4_ = BSplineSpace{degree(P4)-1}(knotvector(P4)[2:end-1])
+    P5_ = BSplineSpace{degree(P5)-1}(knotvector(P5)[2:end-1])
     @test P4_ ⊑ P5_
 
 end

@@ -8,7 +8,7 @@ struct BSplineDerivativeSpace{r, T<:AbstractBSplineSpace}
 end
 
 bsplinespace(dP::BSplineDerivativeSpace) = dP.bsplinespace
-knots(dP::BSplineDerivativeSpace) = knots(bsplinespace(dP))
+knotvector(dP::BSplineDerivativeSpace) = knotvector(bsplinespace(dP))
 degree(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}) where {r,p} = p - r
 dim(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}) where {r,p} = dim(bsplinespace(dP))
 properdim(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}) where {r,p} = properdim(bsplinespace(dP)) - r
@@ -17,7 +17,7 @@ domain(dP::BSplineDerivativeSpace) = domain(bsplinespace(dP))
 _lower(dP::BSplineDerivativeSpace{r}) where r = BSplineDerivativeSpace{r-1}(_lower(bsplinespace(dP)))
 
 function Base.issubset(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}, P′::AbstractBSplineSpace) where {r,p}
-    k = knots(dP)
+    k = knotvector(dP)
     P = BSplineSpace{p-r}(k)
     return P ⊆ P′
 end

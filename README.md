@@ -93,7 +93,7 @@ save_png("2dim.png", M) # save image
 ### Refinement
 #### h-refinemnet
 ```julia
-k₊=[KnotVector(3.3,4.2),KnotVector(3.8,3.2,5.3)] # additional knots
+k₊=[KnotVector(3.3,4.2),KnotVector(3.8,3.2,5.3)] # additional knotvectors
 M′ = refinement(M,k₊=k₊) # refinement of B-spline manifold
 save_png("2dim_h-refinement.png", M′) # save image
 ```
@@ -130,7 +130,7 @@ save_png("fitting.png", M, unitlength=50, up=10, down=-10, left=-10, right=10)
 ![](docs/src/img/fitting_desmos.png)
 ![](docs/src/img/fitting.png)
 
-If the knots span is too coarse, the approximation will be coarse.
+If the knotvector span is too coarse, the approximation will be coarse.
 ```julia
 p1 = 2
 p2 = 2
