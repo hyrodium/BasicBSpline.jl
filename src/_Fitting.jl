@@ -9,9 +9,8 @@ Assumption:
 * ``i ≤ j``
 * ``1 ≤ n ≤ p-j+i+1``
 """
-function _b_b_int(P::AbstractBSplineSpace, i, j, n, gl)
-    p = degree(P)
-    I = knots(P)[j+n-1]..knots(P)[j+n]
+function _b_b_int(P::BSplineSpace{p}, i, j, n, gl) where p
+    I = knotvector(P)[j+n-1]..knotvector(P)[j+n]
 
     f(t) = bsplinebasis(P, i, t) * bsplinebasis(P, j, t)
     return integrate(f, I, gl)
@@ -30,9 +29,7 @@ Calculate
 \end{aligned}
 ```
 """
-function _b_b_int_R(P::AbstractBSplineSpace, i, j, gl)
-    p = degree(P)
-    k = knots(P)
+function _b_b_int_R(P::BSplineSpace{p}, i, j, gl) where p
     Δ = j - i
     if Δ < -p
         return 0.0
@@ -61,9 +58,7 @@ Calculate
 \end{aligned}
 ```
 """
-function _b_b_int_I(P::AbstractBSplineSpace, i, j, gl)
-    p = degree(P)
-    k = knots(P)
+function _b_b_int_I(P::BSplineSpace{p}, i, j, gl) where p
     n = dim(P)
     Δ = j - i
     if Δ < -p
@@ -85,25 +80,22 @@ function _b_b_int_I(P::AbstractBSplineSpace, i, j, gl)
     end
 end
 
-function innerproduct_R(P::AbstractBSplineSpace)
-    p = degree(P)
+function innerproduct_R(P::BSplineSpace{p}) where p
     n = dim(P)
     nip = p + 1
     gl = GaussLegendre(nip)
     return [_b_b_int_R(P, i, j, gl) for i in 1:n, j in 1:n]
 end
 
-function innerproduct_I(P::AbstractBSplineSpace)
-    p = degree(P)
+function innerproduct_I(P::BSplineSpace{p}) where p
     n = dim(P)
     nip = p + 1
     gl = GaussLegendre(nip)
     return [_b_b_int_I(P, i, j, gl) for i in 1:n, j in 1:n]
 end
 
-function _f_b_int_R(func, i1, P1::AbstractBSplineSpace, gl1)
-    k1 = knots(P1)
-    p1 = degree(P1)
+function _f_b_int_R(func, i1, P1::BSplineSpace{p1}, gl1) where {p1}
+    k1 = knotvector(P1)
     F(t1) = bsplinebasis(P1, i1, t1) * func(t1)
 
     f1,l1 = i1, i1+p1
@@ -115,10 +107,9 @@ function _f_b_int_R(func, i1, P1::AbstractBSplineSpace, gl1)
     return S1
 end
 
-function _f_b_int_I(func, i1, P1::AbstractBSplineSpace, gl1)
-    k1 = knots(P1)
+function _f_b_int_I(func, i1, P1::BSplineSpace{p1}, gl1) where {p1}
+    k1 = knotvector(P1)
     m1 = length(k1)
-    p1 = degree(P1)
     F(t1) = bsplinebasis(P1, i1, t1) * func(t1)
 
     f1,l1 = max(i1, p1+1), min(i1+p1, m1-p1-1)
@@ -130,9 +121,9 @@ function _f_b_int_I(func, i1, P1::AbstractBSplineSpace, gl1)
     return S1
 end
 
-function _f_b_int_R(func, i1, i2, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, gl1, gl2)
-    k1, k2 = knots(P1), knots(P2)
-    p1, p2 = degree(P1), degree(P2)
+function _f_b_int_R(func, i1, i2, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}}, gl1, gl2) where {p1,p2}
+    P1, P2 = P
+    k1, k2 = knotvector(P1), knotvector(P2)
     F(t1, t2) = bsplinebasis(P1, i1, t1) * bsplinebasis(P2, i2, t2) * func(t1, t2)
 
     f1, l1 = i1, i1+p1
@@ -153,10 +144,10 @@ function _f_b_int_R(func, i1, i2, P1::AbstractBSplineSpace, P2::AbstractBSplineS
     return S1
 end
 
-function _f_b_int_I(func, i1, i2, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, gl1, gl2)
-    k1, k2 = knots(P1), knots(P2)
+function _f_b_int_I(func, i1, i2, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}}, gl1, gl2) where {p1,p2}
+    P1, P2 = P
+    k1, k2 = knotvector(P1), knotvector(P2)
     m1, m2 = length(k1), length(k2)
-    p1, p2 = degree(P1), degree(P2)
     F(t1, t2) = bsplinebasis(P1, i1, t1) * bsplinebasis(P2, i2, t2) * func(t1, t2)
 
     f1, l1 = max(i1, p1+1), min(i1+p1, m1-p1-1)
@@ -177,9 +168,9 @@ function _f_b_int_I(func, i1, i2, P1::AbstractBSplineSpace, P2::AbstractBSplineS
     return S1
 end
 
-function _f_b_int_R(func, i1, i2, i3, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, P3::AbstractBSplineSpace, gl1, gl2, gl3)
-    k1, k2, k3 = knots(P1), knots(P2), knots(P3)
-    p1, p2, p3 = degree(P1), degree(P2), degree(P3)
+function _f_b_int_R(func, i1, i2, i3, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}, <:AbstractBSplineSpace{p3}}, gl1, gl2, gl3) where {p1,p2,p3}
+    P1, P2, P3 = P
+    k1, k2, k3 = knotvector(P1), knotvector(P2), knotvector(P3)
     F(t1, t2, t3) = bsplinebasis(P1, i1, t1) * bsplinebasis(P2, i2, t2) * bsplinebasis(P3, i3, t3) * func(t1, t2, t3)
 
     f1, l1 = i1, i1+p1
@@ -217,10 +208,10 @@ function _f_b_int_R(func, i1, i2, i3, P1::AbstractBSplineSpace, P2::AbstractBSpl
     return S1
 end
 
-function _f_b_int_I(func, i1, i2, i3, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, P3::AbstractBSplineSpace, gl1, gl2, gl3)
-    k1, k2, k3 = knots(P1), knots(P2), knots(P3)
+function _f_b_int_I(func, i1, i2, i3, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}, <:AbstractBSplineSpace{p3}}, gl1, gl2, gl3) where {p1,p2,p3}
+    P1, P2, P3 = P
+    k1, k2, k3 = knotvector(P1), knotvector(P2), knotvector(P3)
     m1, m2, m3 = length(k1), length(k2), length(k3)
-    p1, p2, p3 = degree(P1), degree(P2), degree(P3)
     F(t1, t2, t3) = bsplinebasis(P1, i1, t1) * bsplinebasis(P2, i2, t2) * bsplinebasis(P3, i3, t3) * func(t1, t2, t3)
 
     f1, l1 = max(i1, p1+1), min(i1+p1, m1-p1-1)
@@ -258,8 +249,7 @@ function _f_b_int_I(func, i1, i2, i3, P1::AbstractBSplineSpace, P2::AbstractBSpl
     return S1
 end
 
-function innerproduct_R(func, P1::AbstractBSplineSpace)
-    p1 = degree(P1)
+function innerproduct_R(func, P1::BSplineSpace{p1}) where {p1}
     n1 = dim(P1)
     nip1 = p1 + 1
     gl1 = GaussLegendre(nip1)
@@ -267,8 +257,7 @@ function innerproduct_R(func, P1::AbstractBSplineSpace)
     return b
 end
 
-function innerproduct_I(func, P1::AbstractBSplineSpace)
-    p1 = degree(P1)
+function innerproduct_I(func, P1::BSplineSpace{p1}) where {p1}
     n1 = dim(P1)
     nip1 = p1 + 1
     gl1 = GaussLegendre(nip1)
@@ -276,30 +265,40 @@ function innerproduct_I(func, P1::AbstractBSplineSpace)
     return b
 end
 
-function innerproduct_R(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace)
-    p1, p2 = degree(P1), degree(P2)
-    n1, n2 = dim(P1), dim(P2)
+function innerproduct_R(func, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}}) where {p1,p2}
+    n1, n2 = dim.(P)
     nip1 = p1 + 1
     nip2 = p2 + 1
     gl1 = GaussLegendre(nip1)
     gl2 = GaussLegendre(nip2)
-    b = [_f_b_int_R(func, i1, i2, P1, P2, gl1, gl2) for i1 in 1:n1, i2 in 1:n2]
+    b = [_f_b_int_R(func, i1, i2, P, gl1, gl2) for i1 in 1:n1, i2 in 1:n2]
     return b
 end
 
-function innerproduct_I(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace)
-    p1, p2 = degree(P1), degree(P2)
-    n1, n2 = dim(P1), dim(P2)
+function innerproduct_I(func, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}}) where {p1,p2}
+    n1, n2 = dim.(P)
     nip1 = p1 + 1
     nip2 = p2 + 1
     gl1 = GaussLegendre(nip1)
     gl2 = GaussLegendre(nip2)
-    b = [_f_b_int_I(func, i1, i2, P1, P2, gl1, gl2) for i1 in 1:n1, i2 in 1:n2]
+    b = [_f_b_int_I(func, i1, i2, P, gl1, gl2) for i1 in 1:n1, i2 in 1:n2]
     return b
 end
 
-function innerproduct_R(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, P3::AbstractBSplineSpace)
-    p1, p2, p3 = degree(P1), degree(P2), degree(P3)
+function innerproduct_R(func, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}, <:AbstractBSplineSpace{p3}}) where {p1,p2,p3}
+    n1, n2, n3 = dim.(P)
+    nip1 = p1 + 1
+    nip2 = p2 + 1
+    nip3 = p3 + 1
+    gl1 = GaussLegendre(nip1)
+    gl2 = GaussLegendre(nip2)
+    gl3 = GaussLegendre(nip3)
+    b = [_f_b_int_R(func, i1, i2, i3, P, gl1, gl2, gl3) for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3]
+    return b
+end
+
+function innerproduct_I(func, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}, <:AbstractBSplineSpace{p3}}) where {p1,p2,p3}
+    P1, P2, P3 = P
     n1, n2, n3 = dim(P1), dim(P2), dim(P3)
     nip1 = p1 + 1
     nip2 = p2 + 1
@@ -307,27 +306,15 @@ function innerproduct_R(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace
     gl1 = GaussLegendre(nip1)
     gl2 = GaussLegendre(nip2)
     gl3 = GaussLegendre(nip3)
-    b = [_f_b_int_R(func, i1, i2, i3, P1, P2, P3, gl1, gl2, gl3) for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3]
-    return b
-end
-
-function innerproduct_I(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, P3::AbstractBSplineSpace)
-    p1, p2, p3 = degree(P1), degree(P2), degree(P3)
-    n1, n2, n3 = dim(P1), dim(P2), dim(P3)
-    nip1 = p1 + 1
-    nip2 = p2 + 1
-    nip3 = p3 + 1
-    gl1 = GaussLegendre(nip1)
-    gl2 = GaussLegendre(nip2)
-    gl3 = GaussLegendre(nip3)
-    b = [_f_b_int_I(func, i1, i2, i3, P1, P2, P3, gl1, gl2, gl3) for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3]
+    b = [_f_b_int_I(func, i1, i2, i3, P, gl1, gl2, gl3) for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3]
     return b
 end
 
 """
 * func: Real -> ℝ-vector space
 """
-function fittingcontrolpoints(func, P1::AbstractBSplineSpace; domain=:I)
+function fittingcontrolpoints(func, P::Tuple{<:AbstractBSplineSpace{p1}}; domain=:I) where {p1}
+    P1, = P
     if domain == :I
         b = innerproduct_I(func, P1)
         A = innerproduct_I(P1)
@@ -341,14 +328,15 @@ end
 """
 * func: (Real,Real) -> ℝ-vector space
 """
-function fittingcontrolpoints(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace; domain=:I)
-    n1, n2 = dim(P1), dim(P2)
+function fittingcontrolpoints(func, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}}; domain=:I) where {p1,p2}
+    P1, P2 = P
+    n1, n2 = dim.(P)
     if domain == :I
         A1, A2 = innerproduct_I(P1), innerproduct_I(P2)
-        b = innerproduct_I(func, P1, P2)
+        b = innerproduct_I(func, P)
     elseif domain == :R
         A1, A2 = innerproduct_R(P1), innerproduct_R(P2)
-        b = innerproduct_R(func, P1, P2)
+        b = innerproduct_R(func, P)
     end
     A = [A1[i1, j1] * A2[i2, j2] for i1 in 1:n1, i2 in 1:n2, j1 in 1:n1, j2 in 1:n2]
     _A = reshape(A, n1 * n2, n1 * n2)
@@ -359,29 +347,18 @@ end
 """
 * func: (Real,Real,Real) -> ℝ-vector space
 """
-function fittingcontrolpoints(func, P1::AbstractBSplineSpace, P2::AbstractBSplineSpace, P3::AbstractBSplineSpace; domain=:I)
+function fittingcontrolpoints(func, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}, <:AbstractBSplineSpace{p3}}; domain=:I) where {p1,p2,p3}
+    P1, P2, P3 = P
     n1, n2, n3 = dim(P1), dim(P2), dim(P3)
     if domain == :I
         A1, A2, A3 = innerproduct_I(P1), innerproduct_I(P2), innerproduct_I(P3)
-        b = innerproduct_I(func, P1, P2, P3)
+        b = innerproduct_I(func, P)
     elseif domain == :R
         A1, A2, A3 = innerproduct_R(P1), innerproduct_R(P2), innerproduct_R(P3)
-        b = innerproduct_R(func, P1, P2, P3)
+        b = innerproduct_R(func, P)
     end
     A = [A1[i1, j1] * A2[i2, j2] * A3[i3, j3] for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3, j1 in 1:n1, j2 in 1:n2, j3 in 1:n3]
     _A = reshape(A, n1 * n2 * n3, n1 * n2 * n3)
     _b = reshape(b, n1 * n2 * n3)
     return reshape(inv(_A) * _b, n1, n2, n3)
-end
-
-
-"""
-Approximate given function by linear combination of B-spline functions.
-This function returns its control points.
-* func: Vector{<:Real} -> ℝ-vector space
-"""
-function fittingcontrolpoints(func, Ps::AbstractVector{<:AbstractBSplineSpace}; domain=:I)
-    # TODO: currently, this function only supports for 1-dim, 2-dim and 3-dim B-spline manifold.
-    _func(t...) = func([t...])
-    return fittingcontrolpoints(_func, Ps..., domain=domain)
 end

@@ -1,7 +1,9 @@
-# B-spline basis function
+# B-Spline Basis Function
+
+@inline _d(a::T,b::T) where T = ifelse(iszero(b), zero(T), T(a/b))
 
 @doc raw"""
-B-spline basis function.
+``i``-th B-spline basis function.
 Right-sided limit version.
 ```math
 \begin{aligned}
@@ -16,23 +18,34 @@ Right-sided limit version.
     &0\quad (\text{otherwise})
 \end{cases}
 \end{aligned}
-```
 """
-function bsplinebasis₊₀(P::BSplineSpace, t::Real)::Vector{Float64}
-    p = P.degree
-    k = P.knots
-
-    n = dim(P)
-    if p == 0
-        return [k[i] ≤ t < k[i+1] for i in 1:n]
+@generated function bsplinebasis₊₀(P::BSplineSpace{p,T}, i::Integer, t::T) where {p, T}
+    ks = [Symbol(:k,i) for i in 1:p+2]
+    Ks = [Symbol(:K,i) for i in 1:p+1]
+    Bs = [Symbol(:B,i) for i in 1:p+1]
+    k_l = Expr(:tuple, ks...)
+    k_r = Expr(:tuple, :(v[i]), (:(v[i+$j]) for j in 1:p+1)...)
+    K_l(n) = Expr(:tuple, Ks[1:n]...)
+    B_l(n) = Expr(:tuple, Bs[1:n]...)
+    A_r(n) = Expr(:tuple, [:(T($(ks[i])≤t<$(ks[i+1]))) for i in 1:n]...)
+    K_r(m,n) = Expr(:tuple, [:(_d(t-$(ks[i]),$(ks[i+m])-$(ks[i]))) for i in 1:n]...)
+    B_r(n) = Expr(:tuple, [:($(Ks[i])*$(Bs[i])+(1-$(Ks[i+1]))*$(Bs[i+1])) for i in 1:n]...)
+    exs = Expr[]
+    for i in 1:p
+        push!(exs, :($(K_l(p+2-i)) = $(K_r(i,p+2-i))))
+        push!(exs, :($(B_l(p+1-i)) = $(B_r(p+1-i))))
     end
-    K = [ifelse(k[i+p] == k[i], 0, (t - k[i]) / (k[i+p] - k[i])) for i in 1:n+1]
-    B = bsplinebasis₊₀(BSplineSpace(p-1, k), t)
-    return [K[i] * B[i] + (1 - K[i+1]) * B[i+1] for i in 1:n]
+    Expr(:block,
+        :(v = knotvector(P).vector),
+        :($k_l = $k_r),
+        :($(B_l(p+1)) = $(A_r(p+1))),
+        exs...,
+        :(return B1)
+    )
 end
 
 @doc raw"""
-B-spline basis function.
+``i``-th B-spline basis function.
 Left-sided limit version.
 ```math
 \begin{aligned}
@@ -47,23 +60,34 @@ Left-sided limit version.
     &0\quad (\text{otherwise})
 \end{cases}
 \end{aligned}
-```
 """
-function bsplinebasis₋₀(P::BSplineSpace, t::Real)::Vector{Float64}
-    p = P.degree
-    k = P.knots
-
-    n = dim(P)
-    if p == 0
-        return [k[i] < t ≤ k[i+1] for i in 1:n]
+@generated function bsplinebasis₋₀(P::BSplineSpace{p,T}, i::Integer, t::T) where {p, T}
+    ks = [Symbol(:k,i) for i in 1:p+2]
+    Ks = [Symbol(:K,i) for i in 1:p+1]
+    Bs = [Symbol(:B,i) for i in 1:p+1]
+    k_l = Expr(:tuple, ks...)
+    k_r = Expr(:tuple, :(v[i]), (:(v[i+$j]) for j in 1:p+1)...)
+    K_l(n) = Expr(:tuple, Ks[1:n]...)
+    B_l(n) = Expr(:tuple, Bs[1:n]...)
+    A_r(n) = Expr(:tuple, [:(T($(ks[i])<t≤$(ks[i+1]))) for i in 1:n]...)
+    K_r(m,n) = Expr(:tuple, [:(_d(t-$(ks[i]),$(ks[i+m])-$(ks[i]))) for i in 1:n]...)
+    B_r(n) = Expr(:tuple, [:($(Ks[i])*$(Bs[i])+(1-$(Ks[i+1]))*$(Bs[i+1])) for i in 1:n]...)
+    exs = Expr[]
+    for i in 1:p
+        push!(exs, :($(K_l(p+2-i)) = $(K_r(i,p+2-i))))
+        push!(exs, :($(B_l(p+1-i)) = $(B_r(p+1-i))))
     end
-    K = [ifelse(k[i+p] == k[i], 0, (t - k[i]) / (k[i+p] - k[i])) for i in 1:n+1]
-    B = bsplinebasis₋₀(BSplineSpace(p-1, k), t)
-    return [K[i] * B[i] + (1 - K[i+1]) * B[i+1] for i in 1:n]
+    Expr(:block,
+        :(v = knotvector(P).vector),
+        :($k_l = $k_r),
+        :($(B_l(p+1)) = $(A_r(p+1))),
+        exs...,
+        :(return B1)
+    )
 end
 
 @doc raw"""
-B-spline basis function.
+``i``-th B-spline basis function.
 Modified version.
 ```math
 \begin{aligned}
@@ -79,193 +103,66 @@ Modified version.
     &0\quad (\text{otherwise})
 \end{cases}
 \end{aligned}
-```
 """
-function bsplinebasis(P::BSplineSpace, t::Real)::Vector{Float64}
-    p = P.degree
-    k = P.knots
-
-    n = dim(P)
-    if p == 0
-        return [k[i] ≤ t < k[i+1] || (k[i] ≠ k[i+1] == k[end] == t) for i in 1:n]
+@generated function bsplinebasis(P::BSplineSpace{p,T}, i::Integer, t::T) where {p, T}
+    ks = [Symbol(:k,i) for i in 1:p+2]
+    Ks = [Symbol(:K,i) for i in 1:p+1]
+    Bs = [Symbol(:B,i) for i in 1:p+1]
+    k_l = Expr(:tuple, ks...)
+    k_r = Expr(:tuple, :(v[i]), (:(v[i+$j]) for j in 1:p+1)...)
+    K_l(n) = Expr(:tuple, Ks[1:n]...)
+    B_l(n) = Expr(:tuple, Bs[1:n]...)
+    A_r(n) = Expr(:tuple, [:(T($(ks[i])≤t<$(ks[i+1]))) for i in 1:n]...)
+    K_r(m,n) = Expr(:tuple, [:(_d(t-$(ks[i]),$(ks[i+m])-$(ks[i]))) for i in 1:n]...)
+    B_r(n) = Expr(:tuple, [:($(Ks[i])*$(Bs[i])+(1-$(Ks[i+1]))*$(Bs[i+1])) for i in 1:n]...)
+    exs = Expr[]
+    for i in 1:p
+        push!(exs, :($(K_l(p+2-i)) = $(K_r(i,p+2-i))))
+        push!(exs, :($(B_l(p+1-i)) = $(B_r(p+1-i))))
     end
-    K = [ifelse(k[i+p] == k[i], 0, (t - k[i]) / (k[i+p] - k[i])) for i in 1:n+1]
-    B = bsplinebasis(BSplineSpace(p-1, k), t)
-    return [K[i] * B[i] + (1 - K[i+1]) * B[i+1] for i in 1:n]
-end
-
-"""
-``i``-th B-spline basis function.
-Right-sided limit version.
-"""
-function bsplinebasis₊₀(P::BSplineSpace, i::Integer, t::Real)::Float64
-    p = P.degree
-    k = P.knots
-
-    if p == 0
-        return k[i] ≤ t < k[i+1]
-    else
-        return (
-            ((k[i+p] - k[i] ≠ 0) ? bsplinebasis₊₀(BSplineSpace(p-1, k), i, t) * (t - k[i]) / (k[i+p] - k[i]) : 0) +
-            ((k[i+p+1] - k[i+1] ≠ 0) ? bsplinebasis₊₀(BSplineSpace(p-1, k), i+1, t) * (k[i+p+1] - t) / (k[i+p+1] - k[i+1]) : 0)
-        )
-    end
-end
-
-"""
-``i``-th B-spline basis function.
-Left-sided limit version.
-"""
-function bsplinebasis₋₀(P::BSplineSpace, i::Integer, t::Real)::Float64
-    p = P.degree
-    k = P.knots
-
-    if p == 0
-        return k[i] < t ≤ k[i+1]
-    else
-        return (
-            ((k[i+p] - k[i] ≠ 0) ? bsplinebasis₋₀(BSplineSpace(p-1, k), i, t) * (t - k[i]) / (k[i+p] - k[i]) : 0) +
-            ((k[i+p+1] - k[i+1] ≠ 0) ? bsplinebasis₋₀(BSplineSpace(p-1, k), i+1, t) * (k[i+p+1] - t) / (k[i+p+1] - k[i+1]) : 0)
-        )
-    end
-end
-
-"""
-``i``-th B-spline basis function.
-Modified version.
-"""
-function bsplinebasis(P::BSplineSpace, i::Integer, t::Real)::Float64
-    p = P.degree
-    k = P.knots
-
-    if p == 0
-        return k[i] ≤ t < k[i+1] || (k[i] ≠ k[i+1] == k[end] == t)
-    else
-        return (
-            ((k[i+p] - k[i] ≠ 0) ? bsplinebasis(BSplineSpace(p-1, k), i, t) * (t - k[i]) / (k[i+p] - k[i]) : 0) +
-            ((k[i+p+1] - k[i+1] ≠ 0) ? bsplinebasis(BSplineSpace(p-1, k), i+1, t) * (k[i+p+1] - t) / (k[i+p+1] - k[i+1]) : 0)
-        )
-    end
-end
-
-@doc raw"""
-1st derivative of B-spline basis function.
-Right-sided limit version.
-```math
-\dot{B}_{(i,p,k)}(t)
-=p\left(\frac{1}{k_{i+p}-k_{i}}B_{(i,p-1,k)}(t)-\frac{1}{k_{i+p+1}-k_{i+1}}B_{(i+1,p-1,k)}(t)\right)
-```
-"""
-function bsplinebasis′₊₀(P::BSplineSpace, t)::Vector{Float64}
-    p = P.degree
-    k = P.knots
-
-    n = dim(P)
-    if p == 0
-        return zeros(n)
-    end
-    K = [ifelse(k[i+p] == k[i], 0, p / (k[i+p] - k[i])) for i in 1:n+1]
-    B = bsplinebasis₊₀(BSplineSpace(p-1, k), t)
-    return [K[i] * B[i] - K[i+1] * B[i+1] for i in 1:n]
-end
-
-@doc raw"""
-1st derivative of B-spline basis function.
-Left-sided limit version.
-```math
-\dot{B}_{(i,p,k)}(t)
-=p\left(\frac{1}{k_{i+p}-k_{i}}B_{(i,p-1,k)}(t)-\frac{1}{k_{i+p+1}-k_{i+1}}B_{(i+1,p-1,k)}(t)\right)
-```
-"""
-function bsplinebasis′₋₀(P::BSplineSpace, t)::Vector{Float64}
-    p = P.degree
-    k = P.knots
-
-    n = dim(P)
-    if p == 0
-        return zeros(n)
-    end
-    K = [ifelse(k[i+p] == k[i], 0, p / (k[i+p] - k[i])) for i in 1:n+1]
-    B = bsplinebasis₋₀(BSplineSpace(p-1, k), t)
-    return [K[i] * B[i] - K[i+1] * B[i+1] for i in 1:n]
-end
-
-@doc raw"""
-1st derivative of B-spline basis function.
-Modified version.
-```math
-\dot{B}_{(i,p,k)}(t)
-=p\left(\frac{1}{k_{i+p}-k_{i}}B_{(i,p-1,k)}(t)-\frac{1}{k_{i+p+1}-k_{i+1}}B_{(i+1,p-1,k)}(t)\right)
-```
-"""
-bsplinebasis′
-
-function bsplinebasis′(P::BSplineSpace, t)::Vector{Float64}
-    p = P.degree
-    k = P.knots
-
-    n = dim(P)
-    if p == 0
-        return zeros(n)
-    end
-    K = [ifelse(k[i+p] == k[i], 0, p / (k[i+p] - k[i])) for i in 1:n+1]
-    B = bsplinebasis(BSplineSpace(p-1, k), t)
-    return [K[i] * B[i] - K[i+1] * B[i+1] for i in 1:n]
-end
-
-function bsplinebasis′₊₀(P::BSplineSpace, i::Integer, t::Real)::Float64
-    p = P.degree
-    k = P.knots
-
-    return p * (
-        ((k[i+p] - k[i] ≠ 0) ? bsplinebasis₊₀(BSplineSpace(p-1, k), i, t) / (k[i+p] - k[i]) : 0) -
-        ((k[i+p+1] - k[i+1] ≠ 0) ? bsplinebasis₊₀(BSplineSpace(p-1, k), i+1, t) / (k[i+p+1] - k[i+1]) : 0)
+    Expr(:block,
+        :(v = knotvector(P).vector),
+        :($k_l = $k_r),
+        :($(B_l(p+1)) = $(A_r(p+1))),
+        :($(Bs[end]) += $(T)(t == $(ks[end]) == v[end])),
+        exs...,
+        :(return B1)
     )
 end
 
-function bsplinebasis′₋₀(P::BSplineSpace, i::Integer, t::Real)::Float64
-    p = P.degree
-    k = P.knots
-
-    return p * (
-        ((k[i+p] - k[i] ≠ 0) ? bsplinebasis₋₀(BSplineSpace(p-1, k), i, t) / (k[i+p] - k[i]) : 0) -
-        ((k[i+p+1] - k[i+1] ≠ 0) ? bsplinebasis₋₀(BSplineSpace(p-1, k), i+1, t) / (k[i+p+1] - k[i+1]) : 0)
-    )
-end
-
-function bsplinebasis′(P::BSplineSpace, i::Integer, t::Real)::Float64
-    p = P.degree
-    k = P.knots
-
-    return p * (
-        ((k[i+p] - k[i] ≠ 0) ? bsplinebasis(BSplineSpace(p-1, k), i, t) / (k[i+p] - k[i]) : 0) -
-        ((k[i+p+1] - k[i+1] ≠ 0) ? bsplinebasis(BSplineSpace(p-1, k), i+1, t) / (k[i+p+1] - k[i+1]) : 0)
-    )
-end
-
-@doc raw"""
-Return the support of ``i``-th B-spline basis function.
-```math
-\operatorname{supp}(B_{(i,p,k)})=[k_{i},k_{i+p+1}]
-```
 """
-function bsplinesupport(P::AbstractBSplineSpace, i::Integer)
-    p = degree(P)
-    k = knots(P)
-    return k[i]..k[i+p+1]
+TODO: Add docstring
+"""
+bsplinebasisall
+
+# TODO: faster implementation
+# TODO: use @generated macro
+@inline function bsplinebasisall(P::BSplineSpace{0,T},i::Integer,t::T) where T
+    (one(T),)
 end
 
-function bsplinesupport(P::AbstractBSplineSpace)
-    p = degree(P)
-    k = knots(P)
-    return [k[i]..k[i+p+1] for i in 1:dim(P)]
+@inline function bsplinebasisall(P::BSplineSpace{1,T}, i::Integer, t::T) where T
+    k = knotvector(P)
+    B1 = (k[i+2]-t)/(k[i+2]-k[i+1])
+    B2 = (t-k[i+1])/(k[i+2]-k[i+1])
+    return (B1, B2)
 end
 
-# For compatibility
-bsplinebasis₊₀(i::Integer,P::AbstractBSplineSpace,t::Real) = bsplinebasis(P,i,t)
-bsplinebasis₋₀(i::Integer,P::AbstractBSplineSpace,t::Real) = bsplinebasis(P,i,t)
-bsplinebasis(i::Integer,P::AbstractBSplineSpace,t::Real) = bsplinebasis(P,i,t)
-bsplinebasis′₊₀(i::Integer,P::AbstractBSplineSpace,t::Real) = bsplinebasis(P,i,t)
-bsplinebasis′₋₀(i::Integer,P::AbstractBSplineSpace,t::Real) = bsplinebasis(P,i,t)
-bsplinebasis′(i::Integer,P::AbstractBSplineSpace,t::Real) = bsplinebasis(P,i,t)
-bsplinesupport(i::Integer,P::AbstractBSplineSpace) = bsplinesupport(P,i)
+@generated function bsplinebasisall(P::BSplineSpace{p,T}, i::Integer, t::T) where {p, T}
+    bs = [Symbol(:b,i) for i in 1:p]
+    Bs = [Symbol(:B,i) for i in 1:p+1]
+    K1s = [:((k[i+$(p+j)]-t)/(k[i+$(p+j)]-k[i+$(j)])) for j in 1:p]
+    K2s = [:((t-k[i+$(j)])/(k[i+$(p+j)]-k[i+$(j)])) for j in 1:p]
+    b = Expr(:tuple, bs...)
+    B = Expr(:tuple, Bs...)
+    exs = [:($(Bs[j+1]) = ($(K1s[j+1])*$(bs[j+1]) + $(K2s[j])*$(bs[j]))) for j in 1:p-1]
+    Expr(:block,
+        :($(Expr(:meta, :inline))),
+        :(k = knotvector(P)),
+        :($b = bsplinebasisall(_lower(P),i+1,t)),
+        :($(Bs[1]) = $(K1s[1])*$(bs[1])),
+        exs...,
+        :($(Bs[p+1]) = $(K2s[p])*$(bs[p])),
+        :(return $(B))
+    )
+end
