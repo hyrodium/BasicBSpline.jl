@@ -17,7 +17,7 @@ function refinement(M::BSplineManifold{1}, Ps′::Tuple{<:AbstractBSplineSpace})
     (A1,) = changebasis.(Ps, Ps′)
 
     a′ = [sum(A1[I₁,J₁] * a[I₁,j] for I₁ in 1:n1) for J₁ in 1:n1′, j in 1:d]
-    return BSplineManifold(Ps′, a′)
+    return BSplineManifold(a′, Ps′)
 end
 function refinement(M::BSplineManifold{2}, Ps′::Tuple{<:AbstractBSplineSpace,<:AbstractBSplineSpace})
     Ps = bsplinespaces(M)
@@ -28,7 +28,7 @@ function refinement(M::BSplineManifold{2}, Ps′::Tuple{<:AbstractBSplineSpace,<
     (A1,A2) = changebasis.(Ps, Ps′)
 
     a′ = [sum(A1[I₁,J₁] * A2[I₂,J₂] * a[I₁,I₂,j] for I₁ in 1:n1, I₂ in 1:n2) for J₁ in 1:n1′, J₂ in 1:n2′, j in 1:d]
-    return BSplineManifold(Ps′, a′)
+    return BSplineManifold(a′, Ps′)
 end
 function refinement(M::BSplineManifold{3}, Ps′::Tuple{<:AbstractBSplineSpace,<:AbstractBSplineSpace,<:AbstractBSplineSpace})
     Ps = bsplinespaces(M)
@@ -39,7 +39,7 @@ function refinement(M::BSplineManifold{3}, Ps′::Tuple{<:AbstractBSplineSpace,<
     (A1,A2,A3) = changebasis.(Ps, Ps′)
 
     a′ = [sum(A1[I₁,J₁] * A2[I₂,J₂]* A3[I₃,J₃] * a[I₁,I₂,I₃,j] for I₁ in 1:n1, I₂ in 1:n2, I₃ in 1:n3) for J₁ in 1:n1′, J₂ in 1:n2′, J₃ in 1:n3′, j in 1:d]
-    return BSplineManifold(Ps′, a′)
+    return BSplineManifold(a′, Ps′)
 end
 
 function refinement(M::CustomBSplineManifold{1}, Ps′::Tuple{<:AbstractBSplineSpace})
@@ -50,7 +50,7 @@ function refinement(M::CustomBSplineManifold{1}, Ps′::Tuple{<:AbstractBSplineS
     (A1,) = changebasis.(Ps, Ps′)
 
     a′ = [sum(A1[I₁,J₁] * a[I₁] for I₁ in 1:n1) for J₁ in 1:n1′]
-    return CustomBSplineManifold(Ps′, a′)
+    return CustomBSplineManifold(a′, Ps′)
 end
 function refinement(M::CustomBSplineManifold{2}, Ps′::Tuple{<:AbstractBSplineSpace,<:AbstractBSplineSpace})
     Ps = bsplinespaces(M)
@@ -60,7 +60,7 @@ function refinement(M::CustomBSplineManifold{2}, Ps′::Tuple{<:AbstractBSplineS
     (A1,A2) = changebasis.(Ps, Ps′)
 
     a′ = [sum(A1[I₁,J₁] * A2[I₂,J₂] * a[I₁,I₂] for I₁ in 1:n1, I₂ in 1:n2) for J₁ in 1:n1′, J₂ in 1:n2′]
-    return CustomBSplineManifold(Ps′, a′)
+    return CustomBSplineManifold(a′, Ps′)
 end
 function refinement(M::CustomBSplineManifold{3}, Ps′::Tuple{<:AbstractBSplineSpace,<:AbstractBSplineSpace,<:AbstractBSplineSpace})
     Ps = bsplinespaces(M)
@@ -70,7 +70,7 @@ function refinement(M::CustomBSplineManifold{3}, Ps′::Tuple{<:AbstractBSplineS
     (A1,A2,A3) = changebasis.(Ps, Ps′)
 
     a′ = [sum(A1[I₁,J₁] * A2[I₂,J₂] * A3[I₃,J₃] * a[I₁,I₂,I₃] for I₁ in 1:n1, I₂ in 1:n2, I₃ in 1:n3) for J₁ in 1:n1′, J₂ in 1:n2′, J₃ in 1:n3′]
-    return CustomBSplineManifold(Ps′, a′)
+    return CustomBSplineManifold(a′, Ps′)
 end
 
 

@@ -8,7 +8,7 @@ dim(::AbstractBSplineManifold{Dim}) where Dim = Dim
 struct BSplineManifold{Dim,Deg,T,S<:Tuple,Dim₊₁} <: AbstractBSplineManifold{Dim,Deg}
     bsplinespaces::S
     controlpoints::Array{T,Dim₊₁}
-    function BSplineManifold(Ps::S,a::Array{T,Dim₊₁}) where {S<:Tuple,Dim₊₁,T<:Real}
+    function BSplineManifold(a::Array{T,Dim₊₁},Ps::S) where {S<:Tuple,Dim₊₁,T<:Real}
         if !all(isa.(Ps,AbstractBSplineSpace))
             # TODO: update error message
             error("invalid")

@@ -3,7 +3,7 @@
 struct CustomBSplineManifold{Dim,Deg,C,S<:Tuple} <: AbstractBSplineManifold{Dim,Deg}
     bsplinespaces::S
     controlpoints::Array{C,Dim}
-    function CustomBSplineManifold(Ps::S,a::Array{C,Dim}) where {S<:Tuple,C,Dim}
+    function CustomBSplineManifold(a::Array{C,Dim},Ps::S) where {S<:Tuple,C,Dim}
         if !all(isa.(Ps,AbstractBSplineSpace))
             # TODO: update error message
             error("invalid")
