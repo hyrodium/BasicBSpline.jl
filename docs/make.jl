@@ -32,11 +32,6 @@ makedocs(;
     pages = [
         "Home" => "index.md",
         "Mathematical properties of B-spline" => "math.md",
-        "Benchmark" => "benchmark.md",
-        "Example 1 - Poisson's equation" => "poisson.md",
-        "Example 2 - Linear elasticity" => "elasticity.md",
-        "Docstrings" => "detail.md",
-        "Future work" => "future.md",
         "Contributing" => "contributing.md",
     ],
     repo = "https://github.com/hyrodium/BasicBSpline.jl/blob/{commit}{path}#L{line}",
