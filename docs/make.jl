@@ -27,7 +27,7 @@ makedocs(;
     modules = [BasicBSpline],
     format = Documenter.HTML(
         canonical = "https://hyrodium.github.io/BasicBSpline.jl/stable/",
-        assets = ["assets/favicon.ico"],
+        assets = ["assets/favicon.ico", "assets/custom.css"],
     ),
     pages = [
         "Home" => "index.md",
@@ -42,7 +42,6 @@ makedocs(;
     repo = "https://github.com/hyrodium/BasicBSpline.jl/blob/{commit}{path}#L{line}",
     sitename = "BasicBSpline.jl",
     authors = "hyrodium <hyrodium@gmail.com>",
-    assets = String[],
 )
 
 deploydocs(; repo = "github.com/hyrodium/BasicBSpline.jl")
