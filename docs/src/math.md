@@ -351,8 +351,8 @@ A13 = changebasis(P1,P3)
 using Plots
 plot(
     plot([t->bsplinebasis₊₀(P1,i,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
-    plot([t->sum(A12[i,j]*bsplinebasis₊₀(j,P2,t) for j in 1:dim(P2)) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
-    plot([t->sum(A13[i,j]*bsplinebasis₊₀(j,P3,t) for j in 1:dim(P3)) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
+    plot([t->sum(A12[i,j]*bsplinebasis₊₀(P2,j,t) for j in 1:dim(P2)) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
+    plot([t->sum(A13[i,j]*bsplinebasis₊₀(P3,j,t) for j in 1:dim(P3)) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
     layout=(3,1),
     link=:x
 )
@@ -388,7 +388,7 @@ P2 = BSplineSpace{1}(KnotVector([1,1,2,3,3]))
 n1 = dim(P1) # 2
 n2 = dim(P2) # 3
 a = [[i, j] for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.
-M = BSplineManifold([P1, P2], a)
+M = BSplineManifold(a, (P1, P2))
 ```
 
 
@@ -399,7 +399,7 @@ p = 2 # degree of polynomial
 k = KnotVector(1:12) # knot vector
 P = BSplineSpace{p}(k) # B-spline space
 a = [[i-5, 3*sin(i^2)] for i in 1:dim(P)] # control points
-M = BSplineCurve([P], a) # Define B-spline manifold
+M = BSplineManifold(a, (P,)) # Define B-spline manifold
 save_png("1dim.png", M, unitlength = 50)
 ```
 ![](img/1dim.png)
@@ -412,23 +412,10 @@ k = KnotVector(1:8) # knot vector
 P = BSplineSpace{p}(k) # B-spline space
 rand_a = [rand(2) for i in 1:dim(P), j in 1:dim(P)]
 a = [[2*i-6.5,2*j-6.5] for i in 1:dim(P), j in 1:dim(P)] + rand_a # random generated control points
-M = BSplineManifold([P,P],a) # Define B-spline manifold
+M = BSplineManifold(a,(P,P)) # Define B-spline manifold
 save_png("2dim.png", M) # save image
 ```
 ![](img/2dim.png)
-
-```@repl math
-points = [M([u,v]) for u in range(3.0,6.0,length=50), v in range(3.0,6.0,length=50)]
-X = [point[1] for point in points]
-Y = [point[2] for point in points]
-scene = Scene(resolution=(1000,1000))
-Makie.surface!(X,Y)
-Makie.xlims!(-5,5)
-Makie.ylims!(-5,5)
-save("2dim_makie.png", scene)
-```
-
-![](img/2dim_makie.png)
 
 ## Affine commutativity
 !!! info "Thm.  Affine commutativity"
@@ -444,9 +431,9 @@ save("2dim_makie.png", scene)
 Insert additional knots to knot vector.
 
 ```@repl math
-k₊=[KnotVector(3.3,4.2),KnotVector(3.8,3.2,5.3)] # additional knots
-M′ = refinement(M,k₊=k₊) # refinement of B-spline manifold
-save_png("2dim_h-refinement.png", M′) # save image
+k₊=(KnotVector(3.3,4.2),KnotVector(3.8,3.2,5.3)) # additional knotvectors
+M_h = refinement(M,k₊=k₊) # refinement of B-spline manifold
+save_png("2dim_h-refinement.png", M_h) # save image
 ```
 ![](img/2dim_h-refinement.png)
 
@@ -457,9 +444,9 @@ Note that this shape and the last shape are identical.
 Increase the polynomial degree of B-spline manifold.
 
 ```@repl math
-p₊=[1,2] # additional degrees
-M′ = refinement(M,p₊=p₊) # refinement of B-spline manifold
-save_png("2dim_p-refinement.png", M′) # save image
+p₊=(1,2) # additional degrees
+M_p = refinement(M,p₊=p₊) # refinement of B-spline manifold
+save_png("2dim_p-refinement.png", M_p) # save image
 ```
 ![](img/2dim_p-refinement.png)
 
@@ -478,11 +465,12 @@ k2 = KnotVector(-10:10)+p2*KnotVector(-10,10)
 P1 = BSplineSpace{p1}(k1)
 P2 = BSplineSpace{p2}(k2)
 
-f(u1, u2) = [2u1+sin(u1)+cos(u2)+u2/2, 3u2+sin(u2)+sin(u1)/2+u1^2/6]/5
+f(u1, u2) = [2u1 + sin(u1) + cos(u2) + u2 / 2, 3u2 + sin(u2) + sin(u1) / 2 + u1^2 / 6] / 5
 
-a = fittingcontrolpoints(f, P1, P2)
-M = BSplineManifold([P1,P2],a)
-save_png("fitting.png", M, unitlength=50, up=10, down=-10, left=-10, right=10)
+a0 = fittingcontrolpoints(f, (P1, P2))
+a = [a0[i1,i2][j] for i1 in 1:dim(P1), i2 in 1:dim(P2), j in 1:2]
+M = BSplineManifold(a, (P1, P2))
+save_png("fitting.png", M, unitlength=50, xlims=(-10,10), ylims=(-10,10))
 ```
 ![](img/fitting_desmos.png)
 ![](img/fitting.png)
