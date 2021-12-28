@@ -351,8 +351,8 @@ A13 = changebasis(P1,P3)
 using Plots
 plot(
     plot([t->bsplinebasis₊₀(P1,i,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
-    plot([t->sum(A12[i,j]*bsplinebasis₊₀(j,P2,t) for j in 1:dim(P2)) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
-    plot([t->sum(A13[i,j]*bsplinebasis₊₀(j,P3,t) for j in 1:dim(P3)) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
+    plot([t->sum(A12[i,j]*bsplinebasis₊₀(P2,j,t) for j in 1:dim(P2)) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
+    plot([t->sum(A13[i,j]*bsplinebasis₊₀(P3,j,t) for j in 1:dim(P3)) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
     layout=(3,1),
     link=:x
 )
@@ -412,7 +412,7 @@ k = KnotVector(1:8) # knot vector
 P = BSplineSpace{p}(k) # B-spline space
 rand_a = [rand(2) for i in 1:dim(P), j in 1:dim(P)]
 a = [[2*i-6.5,2*j-6.5] for i in 1:dim(P), j in 1:dim(P)] + rand_a # random generated control points
-M = BSplineManifold([P,P],a) # Define B-spline manifold
+M = BSplineManifold(a,(P,P)) # Define B-spline manifold
 save_png("2dim.png", M) # save image
 ```
 ![](img/2dim.png)
@@ -481,7 +481,7 @@ P2 = BSplineSpace{p2}(k2)
 f(u1, u2) = [2u1+sin(u1)+cos(u2)+u2/2, 3u2+sin(u2)+sin(u1)/2+u1^2/6]/5
 
 a = fittingcontrolpoints(f, P1, P2)
-M = BSplineManifold([P1,P2],a)
+M = BSplineManifold(a,(P1,P2))
 save_png("fitting.png", M, unitlength=50, up=10, down=-10, left=-10, right=10)
 ```
 ![](img/fitting_desmos.png)
