@@ -6,7 +6,7 @@ Random.seed!(2)
 
 ## 1-dim B-spline manifold
 p = 2 # degree of polynomial
-k = Knots(1:12) # knot vector
+k = KnotVector(1:12) # knot vector
 P = FastBSplineSpace(p, k) # B-spline space
 a = [[i-5, 3*sin(i^2)] for i in 1:dim(P)] # control points
 M = BSplineCurve([P], a) # Define B-spline manifold
@@ -14,7 +14,7 @@ save_png("docs/src/img/1dim.png", M, unitlength = 50)
 
 ## 2-dim B-spline manifold
 p = 2 # degree of polynomial
-k = Knots(1:8) # knot vector
+k = KnotVector(1:8) # knot vector
 P = BSplineSpace(p, k) # B-spline space
 rand_a = [rand(2) for i in 1:dim(P), j in 1:dim(P)]
 a = [[2 * i - 6.5, 2 * j - 6.5] for i in 1:dim(P), j in 1:dim(P)] + rand_a # random generated control points
@@ -22,7 +22,7 @@ M = BSplineManifold([P, P], a) # Define B-spline manifold
 save_png("docs/src/img/2dim.png", M, unitlength = 50)
 
 ## h-Refinement
-k₊ = [Knots(3.3, 4.2), Knots(3.8, 3.2, 5.3)]
+k₊ = [KnotVector(3.3, 4.2), KnotVector(3.8, 3.2, 5.3)]
 M′ = refinement(M, k₊ = k₊)
 save_png("docs/src/img/2dim_h-refinement.png", M′, unitlength = 50)
 
@@ -44,8 +44,8 @@ save("docs/src/img/2dim_makie.png", scene)
 ## Fitting
 p1 = 2
 p2 = 2
-k1 = Knots(-10:10) + p1 * Knots(-10, 10)
-k2 = Knots(-10:10) + p2 * Knots(-10, 10)
+k1 = KnotVector(-10:10) + p1 * KnotVector(-10, 10)
+k2 = KnotVector(-10:10) + p2 * KnotVector(-10, 10)
 P1 = FastBSplineSpace(p1, k1)
 P2 = FastBSplineSpace(p2, k2)
 
@@ -58,8 +58,8 @@ save_png("docs/src/img/fitting.png", M, unitlength = 50, up = 10, down = -10, le
 ## Coarse fitting
 p1 = 2
 p2 = 2
-k1 = Knots(-10:5:10) + p1 * Knots(-10, 10)
-k2 = Knots(-10:5:10) + p2 * Knots(-10, 10)
+k1 = KnotVector(-10:5:10) + p1 * KnotVector(-10, 10)
+k2 = KnotVector(-10:5:10) + p2 * KnotVector(-10, 10)
 P1 = FastBSplineSpace(p1, k1)
 P2 = FastBSplineSpace(p2, k2)
 
@@ -71,7 +71,7 @@ save_png("docs/src/img/fitting_coarse.png", M, unitlength = 50, up = 10, down = 
 
 ## Sine curve
 p = 3
-k = Knots(range(-2π, 2π, length = 8)) + p * Knots(-2π, 2π)
+k = KnotVector(range(-2π, 2π, length = 8)) + p * KnotVector(-2π, 2π)
 P = FastBSplineSpace(p, k)
 
 f(u) = [u, sin(u)]

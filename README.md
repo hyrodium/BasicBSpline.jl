@@ -57,7 +57,7 @@ using BasicBSpline
 using Plots
 gr()
 
-k = Knots([0.00,1.50,2.50,5.50,8.00,9.00,9.50,10.0])
+k = KnotVector([0.00,1.50,2.50,5.50,8.00,9.00,9.50,10.0])
 P0 = BSplineSpace(0,k) # 0th degree piecewise polynomial space
 P1 = BSplineSpace(1,k) # 1st degree piecewise polynomial space
 P2 = BSplineSpace(2,k) # 2nd degree piecewise polynomial space
@@ -81,7 +81,7 @@ using BasicBSpline
 using ExportNURBS
 
 p = 2 # degree of polynomial
-k = Knots(1:8) # knot vector
+k = KnotVector(1:8) # knot vector
 P = BSplineSpace(p,k) # B-spline space
 rand_a = [rand(2) for i in 1:dim(P), j in 1:dim(P)]
 a = [[2*i-6.5,2*j-6.5] for i in 1:dim(P), j in 1:dim(P)] + rand_a # random generated control points
@@ -93,7 +93,7 @@ save_png("2dim.png", M) # save image
 ### Refinement
 #### h-refinemnet
 ```julia
-k₊=[Knots(3.3,4.2),Knots(3.8,3.2,5.3)] # additional knots
+k₊=[KnotVector(3.3,4.2),KnotVector(3.8,3.2,5.3)] # additional knots
 M′ = refinement(M,k₊=k₊) # refinement of B-spline manifold
 save_png("2dim_h-refinement.png", M′) # save image
 ```
@@ -116,8 +116,8 @@ Note that this shape and the last shape are identical.
 ```julia
 p1 = 2
 p2 = 2
-k1 = Knots(-10:10)+p1*Knots(-10,10)
-k2 = Knots(-10:10)+p2*Knots(-10,10)
+k1 = KnotVector(-10:10)+p1*KnotVector(-10,10)
+k2 = KnotVector(-10:10)+p2*KnotVector(-10,10)
 P1 = FastBSplineSpace(p1, k1)
 P2 = FastBSplineSpace(p2, k2)
 
@@ -134,8 +134,8 @@ If the knots span is too coarse, the approximation will be coarse.
 ```julia
 p1 = 2
 p2 = 2
-k1 = Knots(-10:5:10)+p1*Knots(-10,10)
-k2 = Knots(-10:5:10)+p2*Knots(-10,10)
+k1 = KnotVector(-10:5:10)+p1*KnotVector(-10,10)
+k2 = KnotVector(-10:5:10)+p2*KnotVector(-10,10)
 P1 = FastBSplineSpace(p1, k1)
 P2 = FastBSplineSpace(p2, k2)
 
@@ -150,7 +150,7 @@ save_png("fitting_coarse.png", M, unitlength=50, up=10, down=-10, left=-10, righ
 ### Draw smooth vector graphics
 ```julia
 p = 3
-k = Knots(range(-2π,2π,length=8))+p*Knots(-2π,2π)
+k = KnotVector(range(-2π,2π,length=8))+p*KnotVector(-2π,2π)
 P = FastBSplineSpace(p, k)
 
 f(u) = [u,sin(u)]

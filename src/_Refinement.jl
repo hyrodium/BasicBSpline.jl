@@ -77,7 +77,7 @@ end
 @doc raw"""
 Refinement of B-spline manifold with additional degree and knots.
 """
-function refinement(M::BSplineManifold{Dim}; p₊::Union{Nothing,NTuple{Dim,Int}}=nothing, k₊::Union{Nothing,NTuple{Dim,Knots{T}}}=nothing) where {Dim, T}
+function refinement(M::BSplineManifold{Dim}; p₊::Union{Nothing,NTuple{Dim,Int}}=nothing, k₊::Union{Nothing,NTuple{Dim,KnotVector{T}}}=nothing) where {Dim, T}
     Ps = bsplinespaces(M)
     if isnothing(p₊)
         p₊ = tuple(zeros(Int, Dim)...)
@@ -85,7 +85,7 @@ function refinement(M::BSplineManifold{Dim}; p₊::Union{Nothing,NTuple{Dim,Int}
         throw(DimensionMismatch())
     end
     if isnothing(k₊)
-        k₊ = tuple(zeros(Knots, Dim)...)
+        k₊ = tuple(zeros(KnotVector, Dim)...)
     elseif length(Ps) ≠ length(k₊)
         throw(DimensionMismatch())
     end
@@ -98,7 +98,7 @@ end
 @doc raw"""
 Refinement of B-spline manifold with additional degree and knots.
 """
-function refinement(M::CustomBSplineManifold; p₊::Union{Nothing,NTuple{Dim,Int}}=nothing, k₊::Union{Nothing,NTuple{Dim,Knots{T}}}=nothing) where {Dim, T}
+function refinement(M::CustomBSplineManifold; p₊::Union{Nothing,NTuple{Dim,Int}}=nothing, k₊::Union{Nothing,NTuple{Dim,KnotVector{T}}}=nothing) where {Dim, T}
     Ps = collect(bsplinespaces(M))
     d = length(Ps)
     if isnothing(p₊)
@@ -107,7 +107,7 @@ function refinement(M::CustomBSplineManifold; p₊::Union{Nothing,NTuple{Dim,Int
         throw(DimensionMismatch())
     end
     if isnothing(k₊)
-        k₊ = zeros(Knots, d)
+        k₊ = zeros(KnotVector, d)
     elseif length(Ps) ≠ length(k₊)
         throw(DimensionMismatch())
     end

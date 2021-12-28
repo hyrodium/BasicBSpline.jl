@@ -79,7 +79,7 @@ knotvector = sort(rand(10)) # Vector{Float64} with 10 elements
 p = 3
 i = 1
 t = 0.2
-k = Knots(knotvector)
+k = KnotVector(knotvector)
 P = BSplineSpace(p,k)
 @benchmark bsplinebasis(i,P,t)
 ```
@@ -97,7 +97,7 @@ knotvector = sort(rand(10)) # Vector{Float64} with 10 elements
 p = 3
 i = 1
 t = 0.2
-k = Knots(knotvector)
+k = KnotVector(knotvector)
 P = FastBSplineSpace(p,k)
 @benchmark bsplinebasis(i,P,t)
 ```

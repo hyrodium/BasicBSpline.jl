@@ -1,33 +1,33 @@
-@testset "Knots" begin
-    k1 = Knots([1,2,3])
-    k2 = Knots([1,2,2,3])
-    k3 = Knots([2,4,5])
+@testset "KnotVector" begin
+    k1 = KnotVector([1,2,3])
+    k2 = KnotVector([1,2,2,3])
+    k3 = KnotVector([2,4,5])
     @testset "constructor" begin
-        @test k1 isa Knots{Float64}
-        @test k1 == Knots(1:3)::Knots{Float64}
-        @test k1 == Knots([1,3,2])::Knots{Float64}
-        @test k1 == Knots(1,2,3)::Knots{Float64}
-        @test k1 == Knots(1,3,2)::Knots{Float64}
+        @test k1 isa KnotVector{Float64}
+        @test k1 == KnotVector(1:3)::KnotVector{Float64}
+        @test k1 == KnotVector([1,3,2])::KnotVector{Float64}
+        @test k1 == KnotVector(1,2,3)::KnotVector{Float64}
+        @test k1 == KnotVector(1,3,2)::KnotVector{Float64}
 
-        @test Knots{Int}([1,2]) isa Knots{Int}
-        @test Knots{Int}(1,2) isa Knots{Int}
+        @test KnotVector{Int}([1,2]) isa KnotVector{Int}
+        @test KnotVector{Int}(1,2) isa KnotVector{Int}
     end
 
     @testset "zeros" begin
-        @test Knots() == zero(Knots)
-        @test Knots() == 0*k1
-        @test Knots() == Knots(Float64[])
+        @test KnotVector() == zero(KnotVector)
+        @test KnotVector() == 0*k1
+        @test KnotVector() == KnotVector(Float64[])
     end
 
     @testset "length" begin
-        @test length(Knots()) == 0
-        @test length(Knots([1,2,2,3])) == 4
+        @test length(KnotVector()) == 0
+        @test length(KnotVector([1,2,2,3])) == 4
     end
 
     @testset "addition, multiply" begin
-        @test Knots([-1,2,3]) + 2 * Knots([2,5]) == Knots([-1,2,2,2,3,5,5])
-        @test k1 + k3 == Knots([1,2,2,3,4,5])
-        @test 2 * Knots([2,3]) == Knots([2,2,3,3])
+        @test KnotVector([-1,2,3]) + 2 * KnotVector([2,5]) == KnotVector([-1,2,2,2,3,5,5])
+        @test k1 + k3 == KnotVector([1,2,2,3,4,5])
+        @test 2 * KnotVector([2,3]) == KnotVector([2,2,3,3])
     end
 
     @testset "unique" begin
@@ -36,22 +36,22 @@
     end
 
     @testset "inclusive relation" begin
-        @test Knots([1,2,3])     ⊆ Knots([1,2,3])
-        @test Knots([1,2,3])     ⊇ Knots([1,2,3])
-        @test Knots([1,2,2,3])   ⊆ Knots([1,2,2,3,5])
-        @test Knots([1,2,2,3])   ⊈ Knots([1,2,3,5])
-        @test Knots([1,2,2,3,5]) ⊇ Knots([1,2,2,3])
-        @test Knots([1,2,3,5])   ⊉ Knots([1,2,2,3])
+        @test KnotVector([1,2,3])     ⊆ KnotVector([1,2,3])
+        @test KnotVector([1,2,3])     ⊇ KnotVector([1,2,3])
+        @test KnotVector([1,2,2,3])   ⊆ KnotVector([1,2,2,3,5])
+        @test KnotVector([1,2,2,3])   ⊈ KnotVector([1,2,3,5])
+        @test KnotVector([1,2,2,3,5]) ⊇ KnotVector([1,2,2,3])
+        @test KnotVector([1,2,3,5])   ⊉ KnotVector([1,2,2,3])
     end
 
     @testset "string" begin
-        k = Knots([1,2,2,3])
-        @test string(k) == "Knots([1.0, 2.0, 2.0, 3.0])"
-        @test string(Knots()) == "Knots([])"
+        k = KnotVector([1,2,2,3])
+        @test string(k) == "KnotVector([1.0, 2.0, 2.0, 3.0])"
+        @test string(KnotVector()) == "KnotVector([])"
     end
 
     @testset "other operators" begin
-        k = Knots([1,2,2,3])
+        k = KnotVector([1,2,2,3])
         @test 𝔫(k, 0.3) == 0
         @test 𝔫(k, 1.0) == 1
         @test 𝔫(k, 2.0) == 2

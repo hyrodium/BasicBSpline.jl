@@ -2,9 +2,9 @@
     ε = 1e-14
     Random.seed!(42)
 
-    P1 = BSplineSpace{1}(Knots([1, 3, 5, 8]))
-    P2 = BSplineSpace{1}(Knots([1, 3, 5, 6, 8, 9]))
-    P3 = BSplineSpace{2}(Knots([1, 1, 3, 3, 5, 5, 8, 8]))
+    P1 = BSplineSpace{1}(KnotVector([1, 3, 5, 8]))
+    P2 = BSplineSpace{1}(KnotVector([1, 3, 5, 6, 8, 9]))
+    P3 = BSplineSpace{2}(KnotVector([1, 1, 3, 3, 5, 5, 8, 8]))
     @test P1 ⊆ P2
     @test P1 ⊆ P3
     @test P2 ⊈ P3
@@ -21,8 +21,8 @@
 
     p4 = 1
     p5 = 2
-    P4 = BSplineSpace{p4}(Knots([1, 2, 3, 4, 5]))
-    P5 = BSplineSpace{p5}(Knots([-1, 0.3, 2, 3, 3, 4, 5.2, 6]))
+    P4 = BSplineSpace{p4}(KnotVector([1, 2, 3, 4, 5]))
+    P5 = BSplineSpace{p5}(KnotVector([-1, 0.3, 2, 3, 3, 4, 5.2, 6]))
     @test P4 ⊑ P4
     @test P4 ⊑ P5
     @test P5 ⊒ P4
