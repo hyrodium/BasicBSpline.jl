@@ -42,7 +42,6 @@ Install this package
 ```
 
 To export graphics, use [BasicBSplineExporter.jl](https://github.com/hyrodium/BasicBSplineExporter.jl).
-
 ```julia
 ] add https://github.com/hyrodium/BasicBSplineExporter.jl
 ```
@@ -128,7 +127,7 @@ f(u1, u2) = [2u1 + sin(u1) + cos(u2) + u2 / 2, 3u2 + sin(u2) + sin(u1) / 2 + u1^
 a0 = fittingcontrolpoints(f, (P1, P2))
 a = [a0[i1,i2][j] for i1 in 1:dim(P1), i2 in 1:dim(P2), j in 1:2]
 M = BSplineManifold(a, (P1, P2))
-save_png("fitting.png", M, unitlength=50, up=10, down=-10, left=-10, right=10)
+save_png("fitting.png", M, unitlength=50, xlims=(-10,10), ylims=(-10,10))
 ```
 ![](docs/src/img/fitting_desmos.png)
 ![](docs/src/img/fitting.png)
@@ -147,7 +146,7 @@ f(u1, u2) = [2u1 + sin(u1) + cos(u2) + u2 / 2, 3u2 + sin(u2) + sin(u1) / 2 + u1^
 a0 = fittingcontrolpoints(f, (P1, P2))
 a = [a0[i1,i2][j] for i1 in 1:dim(P1), i2 in 1:dim(P2), j in 1:2]
 M = BSplineManifold(a, (P1, P2))
-save_png("fitting_coarse.png", M, unitlength=50, up=10, down=-10, left=-10, right=10)
+save_png("fitting_coarse.png", M, unitlength=50, xlims=(-10,10), ylims=(-10,10))
 ```
 ![](docs/src/img/fitting_coarse.png)
 
@@ -162,8 +161,8 @@ f(u) = [u,sin(u)]
 a0 = fittingcontrolpoints(f, (P,))
 a = [a0[i1][j] for i1 in 1:dim(P), j in 1:2]
 M = BSplineManifold(a, (P,))
-save_svg("sine-curve.svg", M, unitlength=50, up=2, down=-2, left=-8, right=8)
-save_svg("sine-curve_no-points.svg", M, unitlength=50, up=2, down=-2, left=-8, right=8, points=false)
+save_svg("sine-curve.svg", M, unitlength=50, xlims=(-2,2), ylims=(-8,8))
+save_svg("sine-curve_no-points.svg", M, unitlength=50, xlims=(-2,2), ylims=(-8,8), points=false)
 ```
 ![](docs/src/img/sine-curve.svg)
 ![](docs/src/img/sine-curve_no-points.svg)
