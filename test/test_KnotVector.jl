@@ -10,6 +10,7 @@
         @test k1 == KnotVector(1,3,2)::KnotVector{Float64}
         @test k1 == KnotVector(1.,3,2)::KnotVector{Float64}
         @test k1 == KnotVector{Int}(1,3,2)::KnotVector{Int}
+        @test k1 != k2
 
         @test KnotVector{Int}([1,2]) isa KnotVector{Int}
         @test KnotVector{Int}(1,2) isa KnotVector{Int}
@@ -18,7 +19,7 @@
 
     @testset "zeros" begin
         @test KnotVector() == zero(KnotVector)
-        @test KnotVector() == 0*k1
+        @test KnotVector() == 0*k1 == k1*0
         @test KnotVector() == KnotVector(Float64[])
     end
 
@@ -29,6 +30,7 @@
 
     @testset "addition, multiply" begin
         @test KnotVector([-1,2,3]) + 2 * KnotVector([2,5]) == KnotVector([-1,2,2,2,3,5,5])
+        @test KnotVector([-1,2,3]) + KnotVector([2,5]) * 2 == KnotVector([-1,2,2,2,3,5,5])
         @test k1 + k3 == KnotVector([1,2,2,3,4,5])
         @test 2 * KnotVector([2,3]) == KnotVector([2,2,3,3])
     end
