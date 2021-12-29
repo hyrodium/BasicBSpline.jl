@@ -36,11 +36,11 @@ julia> k = KnotVector()
 KnotVector([])
 ```
 """
-function KnotVector(knotvector::T...) where T<:Real
-    return unsafe_knotvector(float(T), sort!(collect(knotvector)))
+function KnotVector(knots::Real...)
+    return KnotVector(collect(knots))
 end
-function KnotVector{T}(knotvector::Real...) where T<:Real
-    return unsafe_knotvector(T, sort!(collect(knotvector)))
+function KnotVector{T}(knots::Real...) where T<:Real
+    return unsafe_knotvector(T, sort!(collect(knots)))
 end
 KnotVector() = unsafe_knotvector(Float64, Float64[])
 
