@@ -8,9 +8,12 @@
         @test k1 == KnotVector([1,3,2])::KnotVector{Float64}
         @test k1 == KnotVector(1,2,3)::KnotVector{Float64}
         @test k1 == KnotVector(1,3,2)::KnotVector{Float64}
+        @test k1 == KnotVector(1.,3,2)::KnotVector{Float64}
+        @test k1 == KnotVector{Int}(1,3,2)::KnotVector{Int}
 
         @test KnotVector{Int}([1,2]) isa KnotVector{Int}
         @test KnotVector{Int}(1,2) isa KnotVector{Int}
+        @test KnotVector{Int}(1,2.) isa KnotVector{Int}
     end
 
     @testset "zeros" begin
