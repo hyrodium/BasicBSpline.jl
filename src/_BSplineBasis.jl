@@ -1,6 +1,7 @@
 # B-Spline Basis Function
 
 @inline _d(a::T,b::T) where T = ifelse(iszero(b), zero(T), T(a/b))
+@inline _d(a,b) = _d(promote(a,b)...)
 
 @doc raw"""
 ``i``-th B-spline basis function.
@@ -19,7 +20,8 @@ Right-sided limit version.
 \end{cases}
 \end{aligned}
 """
-@generated function bsplinebasis₊₀(P::BSplineSpace{p,T}, i::Integer, t::T) where {p, T}
+@generated function bsplinebasis₊₀(P::BSplineSpace{p,T}, i::Integer, t::S) where {p, T, S<:Real}
+    U = promote_type(T,S)
     ks = [Symbol(:k,i) for i in 1:p+2]
     Ks = [Symbol(:K,i) for i in 1:p+1]
     Bs = [Symbol(:B,i) for i in 1:p+1]
@@ -27,7 +29,7 @@ Right-sided limit version.
     k_r = Expr(:tuple, :(v[i]), (:(v[i+$j]) for j in 1:p+1)...)
     K_l(n) = Expr(:tuple, Ks[1:n]...)
     B_l(n) = Expr(:tuple, Bs[1:n]...)
-    A_r(n) = Expr(:tuple, [:(T($(ks[i])≤t<$(ks[i+1]))) for i in 1:n]...)
+    A_r(n) = Expr(:tuple, [:($U($(ks[i])≤t<$(ks[i+1]))) for i in 1:n]...)
     K_r(m,n) = Expr(:tuple, [:(_d(t-$(ks[i]),$(ks[i+m])-$(ks[i]))) for i in 1:n]...)
     B_r(n) = Expr(:tuple, [:($(Ks[i])*$(Bs[i])+(1-$(Ks[i+1]))*$(Bs[i+1])) for i in 1:n]...)
     exs = Expr[]
@@ -61,7 +63,8 @@ Left-sided limit version.
 \end{cases}
 \end{aligned}
 """
-@generated function bsplinebasis₋₀(P::BSplineSpace{p,T}, i::Integer, t::T) where {p, T}
+@generated function bsplinebasis₋₀(P::BSplineSpace{p,T}, i::Integer, t::S) where {p, T, S<:Real}
+    U = promote_type(T,S)
     ks = [Symbol(:k,i) for i in 1:p+2]
     Ks = [Symbol(:K,i) for i in 1:p+1]
     Bs = [Symbol(:B,i) for i in 1:p+1]
@@ -69,7 +72,7 @@ Left-sided limit version.
     k_r = Expr(:tuple, :(v[i]), (:(v[i+$j]) for j in 1:p+1)...)
     K_l(n) = Expr(:tuple, Ks[1:n]...)
     B_l(n) = Expr(:tuple, Bs[1:n]...)
-    A_r(n) = Expr(:tuple, [:(T($(ks[i])<t≤$(ks[i+1]))) for i in 1:n]...)
+    A_r(n) = Expr(:tuple, [:($U($(ks[i])<t≤$(ks[i+1]))) for i in 1:n]...)
     K_r(m,n) = Expr(:tuple, [:(_d(t-$(ks[i]),$(ks[i+m])-$(ks[i]))) for i in 1:n]...)
     B_r(n) = Expr(:tuple, [:($(Ks[i])*$(Bs[i])+(1-$(Ks[i+1]))*$(Bs[i+1])) for i in 1:n]...)
     exs = Expr[]
@@ -104,7 +107,8 @@ Modified version.
 \end{cases}
 \end{aligned}
 """
-@generated function bsplinebasis(P::BSplineSpace{p,T}, i::Integer, t::T) where {p, T}
+@generated function bsplinebasis(P::BSplineSpace{p,T}, i::Integer, t::S) where {p, T, S<:Real}
+    U = promote_type(T,S)
     ks = [Symbol(:k,i) for i in 1:p+2]
     Ks = [Symbol(:K,i) for i in 1:p+1]
     Bs = [Symbol(:B,i) for i in 1:p+1]
@@ -112,7 +116,7 @@ Modified version.
     k_r = Expr(:tuple, :(v[i]), (:(v[i+$j]) for j in 1:p+1)...)
     K_l(n) = Expr(:tuple, Ks[1:n]...)
     B_l(n) = Expr(:tuple, Bs[1:n]...)
-    A_r(n) = Expr(:tuple, [:(T($(ks[i])≤t<$(ks[i+1]))) for i in 1:n]...)
+    A_r(n) = Expr(:tuple, [:($U($(ks[i])≤t<$(ks[i+1]))) for i in 1:n]...)
     K_r(m,n) = Expr(:tuple, [:(_d(t-$(ks[i]),$(ks[i+m])-$(ks[i]))) for i in 1:n]...)
     B_r(n) = Expr(:tuple, [:($(Ks[i])*$(Bs[i])+(1-$(Ks[i+1]))*$(Bs[i+1])) for i in 1:n]...)
     exs = Expr[]
@@ -124,7 +128,7 @@ Modified version.
         :(v = knotvector(P).vector),
         :($k_l = $k_r),
         :($(B_l(p+1)) = $(A_r(p+1))),
-        :($(Bs[end]) += $(T)(t == $(ks[end]) == v[end])),
+        :($(Bs[end]) += $(U)(t == $(ks[end]) == v[end])),
         exs...,
         :(return B1)
     )
@@ -137,18 +141,19 @@ bsplinebasisall
 
 # TODO: faster implementation
 # TODO: use @generated macro
-@inline function bsplinebasisall(P::BSplineSpace{0,T},i::Integer,t::T) where T
-    (one(T),)
+@inline function bsplinebasisall(P::BSplineSpace{0,T},i::Integer,t::S) where {T, S<:Real}
+    U = promote_type(T,S)
+    (one(U),)
 end
 
-@inline function bsplinebasisall(P::BSplineSpace{1,T}, i::Integer, t::T) where T
+@inline function bsplinebasisall(P::BSplineSpace{1}, i::Integer, t::Real)
     k = knotvector(P)
     B1 = (k[i+2]-t)/(k[i+2]-k[i+1])
     B2 = (t-k[i+1])/(k[i+2]-k[i+1])
     return (B1, B2)
 end
 
-@generated function bsplinebasisall(P::BSplineSpace{p,T}, i::Integer, t::T) where {p, T}
+@generated function bsplinebasisall(P::BSplineSpace{p}, i::Integer, t::Real) where p
     bs = [Symbol(:b,i) for i in 1:p]
     Bs = [Symbol(:B,i) for i in 1:p+1]
     K1s = [:((k[i+$(p+j)]-t)/(k[i+$(p+j)]-k[i+$(j)])) for j in 1:p]
