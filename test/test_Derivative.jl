@@ -73,18 +73,16 @@
                 dP = BSplineDerivativeSpace{r}(P)
 
                 for t in ts
-                    j = intervalindex(dP,t)
-                    B = collect(bsplinebasisall(dP,j,t))
-                    _B = [bsplinebasis(dP,i,t) for i in j:j+p]
+                    j = intervalindex(P,t)
+                    B = collect(bsplinebasisall(P,j,t))
+    
+                    _B = bsplinebasis.(P,j:j+p,t)
                     @test _B ≈ B
-
-                    _B = [bsplinebasis(dP,i,t) for i in j:j+p]
+    
+                    _B = bsplinebasis₊₀.(P,j:j+p,t)
                     @test _B ≈ B
-
-                    _B = [bsplinebasis₊₀(dP,i,t) for i in j:j+p]
-                    @test _B ≈ B
-
-                    _B = [bsplinebasis₋₀(dP,i,t) for i in j:j+p]
+    
+                    _B = bsplinebasis₋₀.(P,j:j+p,t)
                     @test _B ≈ B
                 end
             end
