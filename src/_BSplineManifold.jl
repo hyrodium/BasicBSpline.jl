@@ -9,17 +9,18 @@ struct BSplineManifold{Dim,Deg,T,S<:Tuple,Dim₊₁} <: AbstractBSplineManifold{
     bsplinespaces::S
     controlpoints::Array{T,Dim₊₁}
     function BSplineManifold(a::Array{T,Dim₊₁},Ps::S) where {S<:Tuple,Dim₊₁,T<:Real}
-        if !all(isa.(Ps,AbstractBSplineSpace))
-            # TODO: update error message
-            error("invalid")
+        for P in Ps
+            if !(P isa AbstractBSplineSpace)
+                throw(TypeError(:CustomBSplineManifold,AbstractBSplineSpace,P))
+            end
         end
         if size(a)[1:Dim₊₁-1] != dim.(Ps)
-            # TODO: update error message
-            error("invalid")
+            msg = "The size of control points array $(size(a)[1:Dim₊₁-1]) and dimensions of B-spline spaces $(dim.(Ps)) must be equal."
+            throw(DimensionMismatch(msg))
         end
-        d = length(Ps)
-        p = degree.(Ps)
-        new{d,p,T,S,d+1}(Ps,a)
+        Dim = length(Ps)
+        Deg = degree.(Ps)
+        new{Dim,Deg,T,S,Dim+1}(Ps,a)
     end
 end
 
