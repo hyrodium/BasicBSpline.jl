@@ -24,6 +24,15 @@ end
 KnotVector{T}(v::AbstractVector) where T = unsafe_knotvector(T,sort(v))
 KnotVector(v::AbstractVector{T}) where {T<:Real} = unsafe_knotvector(float(T),sort(v))
 
+KnotVector(k::KnotVector) = k
+KnotVector{T}(k::KnotVector{T}) where T = k
+KnotVector{T}(k::KnotVector{S}) where {T,S} = unsafe_knotvector(T,k.vector)
+
+Base.convert(T::Type{<:KnotVector},k::KnotVector) = T(k)
+function Base.promote_rule(::Type{KnotVector{T}}, ::Type{KnotVector{S}}) where {T,S}
+    KnotVector{promote_type(T,S)}
+end
+
 @doc raw"""
 Construct knot vector from given real numbers.
 
@@ -55,6 +64,9 @@ end
 Base.zero(::Type{<:KnotVector}) = KnotVector()
 Base.:(==)(k₁::KnotVector, k₂::KnotVector) = (k₁.vector == k₂.vector)
 
+Base.eltype(::KnotVector{T}) where T = T
+Base.collect(k::KnotVector) = k.vector
+
 @doc raw"""
 Sum of knot vectors
 
@@ -79,6 +91,7 @@ KnotVector([1.0, 2.0, 3.0, 4.0, 5.0, 5.0, 8.0])
 ```
 """
 Base.:+(k1::KnotVector{T}, k2::KnotVector{T}) where T = unsafe_knotvector(T,sort!(vcat(k1.vector,k2.vector)))
+Base.:+(k1::AbstractKnotVector, k2::AbstractKnotVector) = +(promote(k1,k2)...)
 
 # TODO: add a method for KnotVector{Int} + KnotVector{Float64}
 
