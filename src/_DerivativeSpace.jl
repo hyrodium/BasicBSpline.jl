@@ -7,6 +7,9 @@ struct BSplineDerivativeSpace{r, T<:AbstractBSplineSpace}
     end
 end
 
+# Broadcast like a scalar
+Base.Broadcast.broadcastable(dP::BSplineDerivativeSpace) = Ref(dP)
+
 bsplinespace(dP::BSplineDerivativeSpace) = dP.bsplinespace
 knotvector(dP::BSplineDerivativeSpace) = knotvector(bsplinespace(dP))
 degree(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}) where {r,p} = p - r

@@ -2,6 +2,9 @@
 
 abstract type AbstractBSplineSpace{p,T} end
 
+# Broadcast like a scalar
+Base.Broadcast.broadcastable(P::AbstractBSplineSpace) = Ref(P)
+
 @doc raw"""
 Construct B-spline space from given polynominal degree and knot vector.
 ```math
