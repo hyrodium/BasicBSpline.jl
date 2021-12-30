@@ -93,8 +93,6 @@ KnotVector([1.0, 2.0, 3.0, 4.0, 5.0, 5.0, 8.0])
 Base.:+(k1::KnotVector{T}, k2::KnotVector{T}) where T = unsafe_knotvector(T,sort!(vcat(k1.vector,k2.vector)))
 Base.:+(k1::AbstractKnotVector, k2::AbstractKnotVector) = +(promote(k1,k2)...)
 
-# TODO: add a method for KnotVector{Int} + KnotVector{Float64}
-
 @doc raw"""
 Product of integer and knot vector
 
