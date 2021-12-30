@@ -4,7 +4,8 @@ using LinearAlgebra
 using IntervalSets
 using FastGaussQuadrature
 
-export KnotVector, BSplineSpace, dim, ⊑, ⊒, ⋢, ⋣, ≃
+export KnotVector, AbstractKnotVector
+export BSplineSpace, dim, ⊑, ⊒, ⋢, ⋣, ≃
 export BSplineDerivativeSpace
 export BSplineManifold, CustomBSplineManifold
 export bsplinebasis₊₀, bsplinebasis₋₀, bsplinebasis

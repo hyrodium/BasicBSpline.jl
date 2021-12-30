@@ -13,8 +13,9 @@ struct BSplineSpace{p, T<:Real} <: AbstractBSplineSpace{p,T}
     global unsafe_bsplinespace(::Val{p}, k::KnotVector{T}) where {p,T} = new{p,T}(k)
 end
 function BSplineSpace{p}(k::KnotVector) where p
-    # TOOD: add error handling like this:
-    # throw(DomainError(p, "degree of polynominal must be non-negative"))
+    if p < 0
+        throw(DomainError(p, "degree of polynominal must be non-negative"))
+    end
     unsafe_bsplinespace(Val{p}(), k)
 end
 
