@@ -85,4 +85,13 @@ end
             end
         end
     end
+
+    @testset "Rational" begin
+        k = KnotVector{Int}(1:12)
+        P = BSplineSpace{3}(k)
+        @test k isa KnotVector{Int}
+        @test P isa BSplineSpace{3,Int}
+        @test bsplinebasis(P,1,11//5) isa Rational{Int}
+        @test bsplinebasis(P,1,11//5) === bsplinebasis(P,2,16//5) === 106//375
+    end
 end
