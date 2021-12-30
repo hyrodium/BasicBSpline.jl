@@ -75,13 +75,13 @@
                 for t in ts
                     j = intervalindex(dP,t)
                     B = collect(bsplinebasisall(dP,j,t))
-    
+
                     _B = bsplinebasis.(dP,j:j+p,t)
                     @test _B ≈ B
-    
+
                     _B = bsplinebasis₊₀.(dP,j:j+p,t)
                     @test _B ≈ B
-    
+
                     _B = bsplinebasis₋₀.(dP,j:j+p,t)
                     @test _B ≈ B
                 end
