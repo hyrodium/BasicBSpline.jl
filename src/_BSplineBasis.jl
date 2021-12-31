@@ -116,7 +116,7 @@ Modified version.
     k_r = Expr(:tuple, :(v[i]), (:(v[i+$j]) for j in 1:p+1)...)
     K_l(n) = Expr(:tuple, Ks[1:n]...)
     B_l(n) = Expr(:tuple, Bs[1:n]...)
-    A_r(n) = Expr(:tuple, [:($U($(ks[i])≤t<$(ks[i+1]))) for i in 1:n]...)
+    A_r(n) = Expr(:tuple, [:($U(($(ks[i])≤t<$(ks[i+1])) || ($(ks[i])<t==$(ks[i+1])==v[end]))) for i in 1:n]...)
     K_r(m,n) = Expr(:tuple, [:(_d(t-$(ks[i]),$(ks[i+m])-$(ks[i]))) for i in 1:n]...)
     B_r(n) = Expr(:tuple, [:($(Ks[i])*$(Bs[i])+(1-$(Ks[i+1]))*$(Bs[i+1])) for i in 1:n]...)
     exs = Expr[]
@@ -128,7 +128,6 @@ Modified version.
         :(v = knotvector(P).vector),
         :($k_l = $k_r),
         :($(B_l(p+1)) = $(A_r(p+1))),
-        :($(Bs[end]) += $(U)(t == $(ks[end]) == v[end])),
         exs...,
         :(return B1)
     )
@@ -139,8 +138,6 @@ TODO: Add docstring
 """
 bsplinebasisall
 
-# TODO: faster implementation
-# TODO: use @generated macro
 @inline function bsplinebasisall(P::BSplineSpace{0,T},i::Integer,t::S) where {T, S<:Real}
     U = promote_type(T,S)
     (one(U),)

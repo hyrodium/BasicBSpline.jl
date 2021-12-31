@@ -89,7 +89,43 @@ end
         P = BSplineSpace{3}(k)
         @test k isa KnotVector{Int}
         @test P isa BSplineSpace{3,Int}
-        @test bsplinebasis(P,1,11//5) isa Rational{Int}
-        @test bsplinebasis(P,1,11//5) === bsplinebasis(P,2,16//5) === 106//375
+        bsplinebasis(P,1,11//5) isa Rational{Int}
+        bsplinebasis₊₀(P,1,11//5) isa Rational{Int}
+        bsplinebasis₋₀(P,1,11//5) isa Rational{Int}
+
+        bsplinebasis(P,1,11//5)   ===
+        bsplinebasis₊₀(P,1,11//5) ===
+        bsplinebasis₋₀(P,1,11//5) === 106//375
+    end
+
+    @testset "Endpoints" begin
+        p = 2
+
+        k = KnotVector(1:2) + (p+1)*KnotVector(0,3)
+        P0 = BSplineSpace{0}(k)
+        P1 = BSplineSpace{1}(k)
+        P2 = BSplineSpace{2}(k)
+
+        @test !isproper(P0)
+        @test !isproper(P1)
+        @test isproper(P2)
+
+        n0 = dim(P0)
+        n1 = dim(P1)
+        n2 = dim(P2)
+
+        @test bsplinebasis.(P0,1:n0,0) == bsplinebasis₊₀.(P0,1:n0,0) == [0,0,1,0,0,0,0]
+        @test bsplinebasis.(P1,1:n1,0) == bsplinebasis₊₀.(P1,1:n1,0) == [0,1,0,0,0,0]
+        @test bsplinebasis.(P2,1:n2,0) == bsplinebasis₊₀.(P2,1:n2,0) == [1,0,0,0,0]
+        @test bsplinebasis.(P0,1:n0,3) == bsplinebasis₋₀.(P0,1:n0,3) == [0,0,0,0,1,0,0]
+        @test bsplinebasis.(P1,1:n1,3) == bsplinebasis₋₀.(P1,1:n1,3) == [0,0,0,0,1,0]
+        @test bsplinebasis.(P2,1:n2,3) == bsplinebasis₋₀.(P2,1:n2,3) == [0,0,0,0,1]
+
+        @test bsplinebasis₋₀.(P0,1:n0,0) == [0,0,0,0,0,0,0]
+        @test bsplinebasis₋₀.(P1,1:n1,0) == [0,0,0,0,0,0]
+        @test bsplinebasis₋₀.(P2,1:n2,0) == [0,0,0,0,0]
+        @test bsplinebasis₊₀.(P0,1:n0,3) == [0,0,0,0,0,0,0]
+        @test bsplinebasis₊₀.(P1,1:n1,3) == [0,0,0,0,0,0]
+        @test bsplinebasis₊₀.(P2,1:n2,3) == [0,0,0,0,0]
     end
 end
