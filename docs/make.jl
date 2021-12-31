@@ -32,6 +32,7 @@ makedocs(;
     pages = [
         "Home" => "index.md",
         "Mathematical properties of B-spline" => "math.md",
+        "BasicBSplineExporter.jl" => "basicbsplineexporter.md",
         "Contributing" => "contributing.md",
     ],
     repo = "https://github.com/hyrodium/BasicBSpline.jl/blob/{commit}{path}#L{line}",

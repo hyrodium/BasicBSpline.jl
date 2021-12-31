@@ -112,16 +112,16 @@ julia> 2 * k
 KnotVector([1.0, 1.0, 2.0, 2.0, 2.0, 2.0, 5.0, 5.0])
 ```
 """
-function Base.:*(p₊::Integer, k::AbstractKnotVector)
-    if p₊ == 0
+function Base.:*(m::Integer, k::AbstractKnotVector)
+    if m == 0
         return zero(KnotVector)
-    elseif p₊ > 0
-        return sum(k for _ in 1:p₊)
+    elseif m > 0
+        return sum(k for _ in 1:m)
     else
-        throw(DomainError(p₊, "additional degree of polynominal must be non-negative"))
+        throw(DomainError(m, "The number to be multiplied must be non-negative."))
     end
 end
-Base.:*(k::AbstractKnotVector, p₊::Integer) = p₊*k
+Base.:*(k::AbstractKnotVector, m::Integer) = m*k
 
 Base.in(r::Real, k::KnotVector) = in(r, k.vector)
 Base.getindex(k::KnotVector, i::Integer) = k.vector[i]

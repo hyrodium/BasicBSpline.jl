@@ -51,7 +51,7 @@ Base.:+(k1::KnotVector{T}, k2::KnotVector{T}) where T
 And **product operator** ``\cdot``.
 
 ```@docs
-*(n::Integer, k::KnotVector)
+*(m::Integer, k::AbstractKnotVector)
 ```
 
 ```@docs
@@ -192,6 +192,8 @@ plot([t->bsplinebasis₋₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(0,1))
 ```
 
 ![](img/bsplinebasisplot.png)
+
+In these cases, each B-spline basis function ``B_{(i,2,k)}`` is coninuous, so `bsplinebasis₊₀` and `bsplinebasis₋₀` are equal.
 
 ## Support of B-spline basis function
 !!! info "Thm.  Support of B-spline basis function"
