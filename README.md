@@ -75,18 +75,17 @@ Try [interactive graph with Desmos graphing calculator](https://www.desmos.com/c
 ```julia
 using BasicBSpline
 using BasicBSplineExporter
+using StaticArrays
 
 p = 2 # degree of polynomial
 k1 = KnotVector(1:8)     # knot vector
-k2 = KnotVector(rand(8)) # knot vector
+k2 = KnotVector(rand(7))+(p+1)*KnotVector(1)
 P1 = BSplineSpace{p}(k1) # B-spline space
-P2 = BSplineSpace{p}(k2) # B-spline space
+P2 = BSplineSpace{p}(k2)
 n1 = dim(P1) # dimension of B-spline space
-n2 = dim(P2) # dimension of B-spline space
-ax = [2*i-6.5+rand() for i in 1:dim(P), j in 1:dim(P)] # x-coordinates of random generated control points
-ay = [2*j-6.5+rand() for i in 1:dim(P), j in 1:dim(P)] # y-coordinates of random generated control points
-a = [ax;;;ay] # n1 × n2 × 2 dimension array
-M = BSplineManifold(a,(P,P)) # Define B-spline manifold
+n2 = dim(P2)
+a = [SVector(2i-6.5+rand(),1.5j-6.5+rand()) for i in 1:dim(P1), j in 1:dim(P2)] # random generated control points
+M = CustomBSplineManifold(a,(P1,P2)) # Define B-spline manifold
 save_png("2dim.png", M) # save image
 ```
 ![](docs/src/img/2dim.png)
@@ -94,7 +93,7 @@ save_png("2dim.png", M) # save image
 ### Refinement
 #### h-refinemnet
 ```julia
-k₊=(KnotVector(3.3,4.2),KnotVector(3.8,3.2,5.3)) # additional knotvectors
+k₊=(KnotVector(3.3,4.2),KnotVector(0.3,0.5)) # additional knotvectors
 M_h = refinement(M,k₊=k₊) # refinement of B-spline manifold
 save_png("2dim_h-refinement.png", M_h) # save image
 ```
