@@ -88,4 +88,22 @@
             end
         end
     end
+
+    @testset "Rational" begin
+        k = KnotVector{Int}(1:12)
+        P = BSplineSpace{3}(k)
+        dP = BSplineDerivativeSpace{1}(P)
+        k isa KnotVector{Int}
+        dP isa BSplineDerivativeSpace{1,BSplineSpace{3,Int}}
+        bsplinebasis(dP,1,11//5) isa Rational{Int}
+        bsplinebasis₊₀(dP,1,11//5) isa Rational{Int}
+        bsplinebasis₋₀(dP,1,11//5) isa Rational{Int}
+
+        bsplinebasis(dP,1,11//5)   ===
+        bsplinebasis₊₀(dP,1,11//5) ===
+        bsplinebasis₋₀(dP,1,11//5) ===
+        bsplinebasis′(P,1,11//5)   ===
+        bsplinebasis′₊₀(P,1,11//5) ===
+        bsplinebasis′₋₀(P,1,11//5) === 16//25
+    end
 end
