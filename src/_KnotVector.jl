@@ -121,7 +121,7 @@ function Base.:*(m::Integer, k::AbstractKnotVector)
         throw(DomainError(m, "The number to be multiplied must be non-negative."))
     end
 end
-Base.:*(k::AbstractKnotVector, p₊::Integer) = p₊*k
+Base.:*(k::AbstractKnotVector, m::Integer) = m*k
 
 Base.in(r::Real, k::KnotVector) = in(r, k.vector)
 Base.getindex(k::KnotVector, i::Integer) = k.vector[i]
