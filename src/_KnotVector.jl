@@ -118,7 +118,7 @@ function Base.:*(m::Integer, k::AbstractKnotVector)
     elseif m > 0
         return sum(k for _ in 1:m)
     else
-        throw(DomainError(m, "additional degree of polynominal must be non-negative"))
+        throw(DomainError(m, "The number to be multiplied must be non-negative."))
     end
 end
 Base.:*(k::AbstractKnotVector, p₊::Integer) = p₊*k
