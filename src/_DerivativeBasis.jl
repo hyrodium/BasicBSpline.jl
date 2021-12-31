@@ -1,6 +1,7 @@
 # Derivative of B-spline basis function
 
-@generated function bsplinebasis₊₀(dP::BSplineDerivativeSpace{r,BSplineSpace{p,T}}, i::Integer, t::Real) where {r, p, T}
+@generated function bsplinebasis₊₀(dP::BSplineDerivativeSpace{r,BSplineSpace{p,T}}, i::Integer, t::S) where {r, p, T, S<:Real}
+    U = promote_type(T,S)
     ks = [Symbol(:k,i) for i in 1:p+2]
     Ks = [Symbol(:K,i) for i in 1:p+1]
     Bs = [Symbol(:B,i) for i in 1:p+1]
@@ -8,9 +9,45 @@
     k_r = Expr(:tuple, :(v[i]), (:(v[i+$j]) for j in 1:p+1)...)
     K_l(n) = Expr(:tuple, Ks[1:n]...)
     B_l(n) = Expr(:tuple, Bs[1:n]...)
-    A_r(n) = Expr(:tuple, [:(T($(ks[i])≤t<$(ks[i+1]))) for i in 1:n]...)
+    A_r(n) = Expr(:tuple, [:($U($(ks[i])≤t<$(ks[i+1]))) for i in 1:n]...)
     K_r(m,n) = Expr(:tuple, [:(_d(t-$(ks[i]),$(ks[i+m])-$(ks[i]))) for i in 1:n]...)
-    L_r(m,n) = Expr(:tuple, [:(_d(one(T),$(ks[i+m])-$(ks[i]))) for i in 1:n]...)
+    L_r(m,n) = Expr(:tuple, [:(_d(one($U),$(ks[i+m])-$(ks[i]))) for i in 1:n]...)
+    B_r(n) = Expr(:tuple, [:($(Ks[i])*$(Bs[i])+(1-$(Ks[i+1]))*$(Bs[i+1])) for i in 1:n]...)
+    C_r(n) = Expr(:tuple, [:($(Ks[i])*$(Bs[i])-$(Ks[i+1])*$(Bs[i+1])) for i in 1:n]...)
+    if r ≤ p
+        exs = Expr[]
+        for i in 1:p-r
+            push!(exs, :($(K_l(p+2-i)) = $(K_r(i,p+2-i))))
+            push!(exs, :($(B_l(p+1-i)) = $(B_r(p+1-i))))
+        end
+        for i in p-r+1:p
+            push!(exs, :($(K_l(p+2-i)) = $(L_r(i,p+2-i))))
+            push!(exs, :($(B_l(p+1-i)) = $(C_r(p+1-i))))
+        end
+        Expr(:block,
+            :(v = knotvector(dP).vector),
+            :($k_l = $k_r),
+            :($(B_l(p+1)) = $(A_r(p+1))),
+            exs...,
+            :(return $(prod(p-r+1:p))*B1)
+        )
+    else
+        :(return zero($U))
+    end
+end
+
+@generated function bsplinebasis₋₀(dP::BSplineDerivativeSpace{r,BSplineSpace{p,T}}, i::Integer, t::S) where {r, p, T, S<:Real}
+    U = promote_type(T,S)
+    ks = [Symbol(:k,i) for i in 1:p+2]
+    Ks = [Symbol(:K,i) for i in 1:p+1]
+    Bs = [Symbol(:B,i) for i in 1:p+1]
+    k_l = Expr(:tuple, ks...)
+    k_r = Expr(:tuple, :(v[i]), (:(v[i+$j]) for j in 1:p+1)...)
+    K_l(n) = Expr(:tuple, Ks[1:n]...)
+    B_l(n) = Expr(:tuple, Bs[1:n]...)
+    A_r(n) = Expr(:tuple, [:($U($(ks[i])<t≤$(ks[i+1]))) for i in 1:n]...)
+    K_r(m,n) = Expr(:tuple, [:(_d(t-$(ks[i]),$(ks[i+m])-$(ks[i]))) for i in 1:n]...)
+    L_r(m,n) = Expr(:tuple, [:(_d(one($U),$(ks[i+m])-$(ks[i]))) for i in 1:n]...)
     B_r(n) = Expr(:tuple, [:($(Ks[i])*$(Bs[i])+(1-$(Ks[i+1]))*$(Bs[i+1])) for i in 1:n]...)
     C_r(n) = Expr(:tuple, [:($(Ks[i])*$(Bs[i])-$(Ks[i+1])*$(Bs[i+1])) for i in 1:n]...)
     if r ≤ p
@@ -35,7 +72,8 @@
     end
 end
 
-@generated function bsplinebasis₋₀(dP::BSplineDerivativeSpace{r,BSplineSpace{p,T}}, i::Integer, t::Real) where {r, p, T}
+@generated function bsplinebasis(dP::BSplineDerivativeSpace{r,BSplineSpace{p,T}}, i::Integer, t::S) where {r, p, T, S<:Real}
+    U = promote_type(T,S)
     ks = [Symbol(:k,i) for i in 1:p+2]
     Ks = [Symbol(:K,i) for i in 1:p+1]
     Bs = [Symbol(:B,i) for i in 1:p+1]
@@ -43,9 +81,9 @@ end
     k_r = Expr(:tuple, :(v[i]), (:(v[i+$j]) for j in 1:p+1)...)
     K_l(n) = Expr(:tuple, Ks[1:n]...)
     B_l(n) = Expr(:tuple, Bs[1:n]...)
-    A_r(n) = Expr(:tuple, [:(T($(ks[i])<t≤$(ks[i+1]))) for i in 1:n]...)
+    A_r(n) = Expr(:tuple, [:($U(($(ks[i])≤t<$(ks[i+1])) || ($(ks[i])<t==$(ks[i+1])==v[end]))) for i in 1:n]...)
     K_r(m,n) = Expr(:tuple, [:(_d(t-$(ks[i]),$(ks[i+m])-$(ks[i]))) for i in 1:n]...)
-    L_r(m,n) = Expr(:tuple, [:(_d(one(T),$(ks[i+m])-$(ks[i]))) for i in 1:n]...)
+    L_r(m,n) = Expr(:tuple, [:(_d(one($U),$(ks[i+m])-$(ks[i]))) for i in 1:n]...)
     B_r(n) = Expr(:tuple, [:($(Ks[i])*$(Bs[i])+(1-$(Ks[i+1]))*$(Bs[i+1])) for i in 1:n]...)
     C_r(n) = Expr(:tuple, [:($(Ks[i])*$(Bs[i])-$(Ks[i+1])*$(Bs[i+1])) for i in 1:n]...)
     if r ≤ p
@@ -62,42 +100,6 @@ end
             :(v = knotvector(dP).vector),
             :($k_l = $k_r),
             :($(B_l(p+1)) = $(A_r(p+1))),
-            exs...,
-            :(return $(prod(p-r+1:p))*B1)
-        )
-    else
-        :(return zero(T))
-    end
-end
-
-@generated function bsplinebasis(dP::BSplineDerivativeSpace{r,BSplineSpace{p,T}}, i::Integer, t::Real) where {r, p, T}
-    ks = [Symbol(:k,i) for i in 1:p+2]
-    Ks = [Symbol(:K,i) for i in 1:p+1]
-    Bs = [Symbol(:B,i) for i in 1:p+1]
-    k_l = Expr(:tuple, ks...)
-    k_r = Expr(:tuple, :(v[i]), (:(v[i+$j]) for j in 1:p+1)...)
-    K_l(n) = Expr(:tuple, Ks[1:n]...)
-    B_l(n) = Expr(:tuple, Bs[1:n]...)
-    A_r(n) = Expr(:tuple, [:(T($(ks[i])≤t<$(ks[i+1]))) for i in 1:n]...)
-    K_r(m,n) = Expr(:tuple, [:(_d(t-$(ks[i]),$(ks[i+m])-$(ks[i]))) for i in 1:n]...)
-    L_r(m,n) = Expr(:tuple, [:(_d(one(T),$(ks[i+m])-$(ks[i]))) for i in 1:n]...)
-    B_r(n) = Expr(:tuple, [:($(Ks[i])*$(Bs[i])+(1-$(Ks[i+1]))*$(Bs[i+1])) for i in 1:n]...)
-    C_r(n) = Expr(:tuple, [:($(Ks[i])*$(Bs[i])-$(Ks[i+1])*$(Bs[i+1])) for i in 1:n]...)
-    if r ≤ p
-        exs = Expr[]
-        for i in 1:p-r
-            push!(exs, :($(K_l(p+2-i)) = $(K_r(i,p+2-i))))
-            push!(exs, :($(B_l(p+1-i)) = $(B_r(p+1-i))))
-        end
-        for i in p-r+1:p
-            push!(exs, :($(K_l(p+2-i)) = $(L_r(i,p+2-i))))
-            push!(exs, :($(B_l(p+1-i)) = $(C_r(p+1-i))))
-        end
-        Expr(:block,
-            :(v = knotvector(dP).vector),
-            :($k_l = $k_r),
-            :($(B_l(p+1)) = $(A_r(p+1))),
-            :($(Bs[end]) += $(T)(t == $(ks[end]) == v[end])),
             exs...,
             :(return $(prod(p-r+1:p))*B1)
         )
@@ -149,7 +151,8 @@ for suffix in ("", "₋₀", "₊₀")
     end
 end
 
-@generated function bsplinebasisall(dP::BSplineDerivativeSpace{r,BSplineSpace{p,T}}, i::Integer, t::Real) where {r, p, T}
+@generated function bsplinebasisall(dP::BSplineDerivativeSpace{r,BSplineSpace{p,T}}, i::Integer, t::S) where {r, p, T, S<:Real}
+    U = promote_type(T,S)
     bs = [Symbol(:b,i) for i in 1:p]
     Bs = [Symbol(:B,i) for i in 1:p+1]
     K1s = [:($(p)/(k[i+$(j)]-k[i+$(p+j)])) for j in 1:p]
@@ -168,7 +171,7 @@ end
             :(return $(B))
         )
     else
-        Z = Expr(:tuple, [:(zero($T)) for i in 1:p+1]...)
+        Z = Expr(:tuple, [:(zero($U)) for i in 1:p+1]...)
         :(return $(Z))
     end
 end
