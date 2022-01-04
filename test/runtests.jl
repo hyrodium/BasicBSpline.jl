@@ -3,6 +3,7 @@ using IntervalSets
 using LinearAlgebra
 using Test
 using Random
+using StaticArrays
 using GeometryBasics
 
 @testset "BasicBSpline.jl" begin

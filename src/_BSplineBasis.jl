@@ -1,6 +1,6 @@
 # B-Spline Basis Function
 
-@inline _d(a::T,b::T) where T = ifelse(iszero(b), zero(T), T(a/b))
+@inline _d(a::T,b::T) where T = (U=StaticArrays.arithmetic_closure(T); ifelse(iszero(b), zero(U), U(a/b)))
 @inline _d(a,b) = _d(promote(a,b)...)
 
 @doc raw"""
@@ -21,7 +21,7 @@ Right-sided limit version.
 \end{aligned}
 """
 @generated function bsplinebasis₊₀(P::BSplineSpace{p,T}, i::Integer, t::S) where {p, T, S<:Real}
-    U = promote_type(T,S)
+    U = StaticArrays.arithmetic_closure(promote_type(T,S))
     ks = [Symbol(:k,i) for i in 1:p+2]
     Ks = [Symbol(:K,i) for i in 1:p+1]
     Bs = [Symbol(:B,i) for i in 1:p+1]
@@ -64,7 +64,7 @@ Left-sided limit version.
 \end{aligned}
 """
 @generated function bsplinebasis₋₀(P::BSplineSpace{p,T}, i::Integer, t::S) where {p, T, S<:Real}
-    U = promote_type(T,S)
+    U = StaticArrays.arithmetic_closure(promote_type(T,S))
     ks = [Symbol(:k,i) for i in 1:p+2]
     Ks = [Symbol(:K,i) for i in 1:p+1]
     Bs = [Symbol(:B,i) for i in 1:p+1]
@@ -108,7 +108,7 @@ Modified version.
 \end{aligned}
 """
 @generated function bsplinebasis(P::BSplineSpace{p,T}, i::Integer, t::S) where {p, T, S<:Real}
-    U = promote_type(T,S)
+    U = StaticArrays.arithmetic_closure(promote_type(T,S))
     ks = [Symbol(:k,i) for i in 1:p+2]
     Ks = [Symbol(:K,i) for i in 1:p+1]
     Bs = [Symbol(:B,i) for i in 1:p+1]
@@ -139,15 +139,15 @@ TODO: Add docstring
 bsplinebasisall
 
 @inline function bsplinebasisall(P::BSplineSpace{0,T},i::Integer,t::S) where {T, S<:Real}
-    U = promote_type(T,S)
-    (one(U),)
+    U = StaticArrays.arithmetic_closure(promote_type(T,S))
+    SVector(one(U),)
 end
 
 @inline function bsplinebasisall(P::BSplineSpace{1}, i::Integer, t::Real)
     k = knotvector(P)
     B1 = (k[i+2]-t)/(k[i+2]-k[i+1])
     B2 = (t-k[i+1])/(k[i+2]-k[i+1])
-    return (B1, B2)
+    return SVector(B1, B2)
 end
 
 @generated function bsplinebasisall(P::BSplineSpace{p}, i::Integer, t::Real) where p
@@ -165,6 +165,6 @@ end
         :($(Bs[1]) = $(K1s[1])*$(bs[1])),
         exs...,
         :($(Bs[p+1]) = $(K2s[p])*$(bs[p])),
-        :(return $(B))
+        :(return SVector($(B)))
     )
 end

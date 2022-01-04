@@ -99,12 +99,40 @@
         bsplinebasis₊₀(dP,1,11//5) isa Rational{Int}
         bsplinebasis₋₀(dP,1,11//5) isa Rational{Int}
 
-        bsplinebasis(dP,1,11//5)   ===
+        @test bsplinebasis(dP,1,11//5) ===
         bsplinebasis₊₀(dP,1,11//5) ===
         bsplinebasis₋₀(dP,1,11//5) ===
         bsplinebasis′(P,1,11//5)   ===
         bsplinebasis′₊₀(P,1,11//5) ===
         bsplinebasis′₋₀(P,1,11//5) === 16//25
+    end
+
+    @testset "Check type" begin
+        k = KnotVector{Int}(1:12)
+        P0 = BSplineSpace{0}(k)
+        P1 = BSplineSpace{1}(k)
+        P2 = BSplineSpace{2}(k)
+
+        for r in 0:2
+            dP0 = BSplineDerivativeSpace{r}(P0)
+            dP1 = BSplineDerivativeSpace{r}(P1)
+            dP2 = BSplineDerivativeSpace{r}(P2)
+            @test bsplinebasis(dP0,1,5) isa Float64
+            @test bsplinebasis(dP1,1,5) isa Float64
+            @test bsplinebasis(dP2,1,5) isa Float64
+
+            @test bsplinebasis₊₀(dP0,1,5) isa Float64
+            @test bsplinebasis₊₀(dP1,1,5) isa Float64
+            @test bsplinebasis₊₀(dP2,1,5) isa Float64
+
+            @test bsplinebasis₋₀(dP0,1,5) isa Float64
+            @test bsplinebasis₋₀(dP1,1,5) isa Float64
+            @test bsplinebasis₋₀(dP2,1,5) isa Float64
+
+            @test bsplinebasisall(dP0,1,5) isa SVector{1,Float64}
+            @test bsplinebasisall(dP1,1,5) isa SVector{2,Float64}
+            @test bsplinebasisall(dP2,1,5) isa SVector{3,Float64}
+        end
     end
 
     @testset "Endpoints" begin

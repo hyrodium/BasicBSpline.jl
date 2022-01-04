@@ -93,9 +93,32 @@ end
         bsplinebasis₊₀(P,1,11//5) isa Rational{Int}
         bsplinebasis₋₀(P,1,11//5) isa Rational{Int}
 
-        bsplinebasis(P,1,11//5)   ===
+        @test bsplinebasis(P,1,11//5) ===
         bsplinebasis₊₀(P,1,11//5) ===
         bsplinebasis₋₀(P,1,11//5) === 106//375
+    end
+
+    @testset "Check type" begin
+        k = KnotVector{Int}(1:12)
+        P0 = BSplineSpace{0}(k)
+        P1 = BSplineSpace{1}(k)
+        P2 = BSplineSpace{2}(k)
+
+        @test bsplinebasis(P0,1,5) isa Float64
+        @test bsplinebasis(P1,1,5) isa Float64
+        @test bsplinebasis(P2,1,5) isa Float64
+
+        @test bsplinebasis₊₀(P0,1,5) isa Float64
+        @test bsplinebasis₊₀(P1,1,5) isa Float64
+        @test bsplinebasis₊₀(P2,1,5) isa Float64
+
+        @test bsplinebasis₋₀(P0,1,5) isa Float64
+        @test bsplinebasis₋₀(P1,1,5) isa Float64
+        @test bsplinebasis₋₀(P2,1,5) isa Float64
+
+        @test bsplinebasisall(P0,1,5) isa SVector{1,Float64}
+        @test bsplinebasisall(P1,1,5) isa SVector{2,Float64}
+        @test bsplinebasisall(P2,1,5) isa SVector{3,Float64}
     end
 
     @testset "Endpoints" begin

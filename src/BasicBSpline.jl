@@ -2,6 +2,7 @@ module BasicBSpline
 
 using LinearAlgebra
 using IntervalSets
+using StaticArrays
 using FastGaussQuadrature
 
 export KnotVector, AbstractKnotVector

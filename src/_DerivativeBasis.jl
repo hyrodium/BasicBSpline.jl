@@ -1,7 +1,7 @@
 # Derivative of B-spline basis function
 
 @generated function bsplinebasis₊₀(dP::BSplineDerivativeSpace{r,BSplineSpace{p,T}}, i::Integer, t::S) where {r, p, T, S<:Real}
-    U = promote_type(T,S)
+    U = StaticArrays.arithmetic_closure(promote_type(T,S))
     ks = [Symbol(:k,i) for i in 1:p+2]
     Ks = [Symbol(:K,i) for i in 1:p+1]
     Bs = [Symbol(:B,i) for i in 1:p+1]
@@ -37,7 +37,7 @@
 end
 
 @generated function bsplinebasis₋₀(dP::BSplineDerivativeSpace{r,BSplineSpace{p,T}}, i::Integer, t::S) where {r, p, T, S<:Real}
-    U = promote_type(T,S)
+    U = StaticArrays.arithmetic_closure(promote_type(T,S))
     ks = [Symbol(:k,i) for i in 1:p+2]
     Ks = [Symbol(:K,i) for i in 1:p+1]
     Bs = [Symbol(:B,i) for i in 1:p+1]
@@ -68,12 +68,12 @@ end
             :(return $(prod(p-r+1:p))*B1)
         )
     else
-        :(return zero(T))
+        :(return zero($U))
     end
 end
 
 @generated function bsplinebasis(dP::BSplineDerivativeSpace{r,BSplineSpace{p,T}}, i::Integer, t::S) where {r, p, T, S<:Real}
-    U = promote_type(T,S)
+    U = StaticArrays.arithmetic_closure(promote_type(T,S))
     ks = [Symbol(:k,i) for i in 1:p+2]
     Ks = [Symbol(:K,i) for i in 1:p+1]
     Bs = [Symbol(:B,i) for i in 1:p+1]
@@ -104,7 +104,7 @@ end
             :(return $(prod(p-r+1:p))*B1)
         )
     else
-        :(return zero(T))
+        :(return zero($U))
     end
 end
 
@@ -152,7 +152,7 @@ for suffix in ("", "₋₀", "₊₀")
 end
 
 @generated function bsplinebasisall(dP::BSplineDerivativeSpace{r,BSplineSpace{p,T}}, i::Integer, t::S) where {r, p, T, S<:Real}
-    U = promote_type(T,S)
+    U = StaticArrays.arithmetic_closure(promote_type(T,S))
     bs = [Symbol(:b,i) for i in 1:p]
     Bs = [Symbol(:B,i) for i in 1:p+1]
     K1s = [:($(p)/(k[i+$(j)]-k[i+$(p+j)])) for j in 1:p]
@@ -168,11 +168,11 @@ end
             :($(Bs[1]) = $(K1s[1])*$(bs[1])),
             exs...,
             :($(Bs[p+1]) = $(K2s[p])*$(bs[p])),
-            :(return $(B))
+            :(return SVector($(B)))
         )
     else
         Z = Expr(:tuple, [:(zero($U)) for i in 1:p+1]...)
-        :(return $(Z))
+        :(return SVector($(Z)))
     end
 end
 
