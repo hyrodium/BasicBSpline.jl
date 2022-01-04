@@ -99,7 +99,7 @@
         bsplinebasis₊₀(dP,1,11//5) isa Rational{Int}
         bsplinebasis₋₀(dP,1,11//5) isa Rational{Int}
 
-        bsplinebasis(dP,1,11//5)   ===
+        @test bsplinebasis(dP,1,11//5) ===
         bsplinebasis₊₀(dP,1,11//5) ===
         bsplinebasis₋₀(dP,1,11//5) ===
         bsplinebasis′(P,1,11//5)   ===

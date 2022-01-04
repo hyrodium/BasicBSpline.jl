@@ -93,7 +93,7 @@ end
         bsplinebasis₊₀(P,1,11//5) isa Rational{Int}
         bsplinebasis₋₀(P,1,11//5) isa Rational{Int}
 
-        bsplinebasis(P,1,11//5)   ===
+        @test bsplinebasis(P,1,11//5) ===
         bsplinebasis₊₀(P,1,11//5) ===
         bsplinebasis₋₀(P,1,11//5) === 106//375
     end
