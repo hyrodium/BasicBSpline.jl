@@ -1,6 +1,6 @@
 # B-Spline Basis Function
 
-@inline _d(a::T,b::T) where T = ifelse(iszero(b), zero(T), T(a/b))
+@inline _d(a::T,b::T) where T = (U=StaticArrays.arithmetic_closure(T); ifelse(iszero(b), zero(U), U(a/b)))
 @inline _d(a,b) = _d(promote(a,b)...)
 
 @doc raw"""
@@ -21,7 +21,7 @@ Right-sided limit version.
 \end{aligned}
 """
 @generated function bsplinebasis₊₀(P::BSplineSpace{p,T}, i::Integer, t::S) where {p, T, S<:Real}
-    U = promote_type(T,S)
+    U = StaticArrays.arithmetic_closure(promote_type(T,S))
     ks = [Symbol(:k,i) for i in 1:p+2]
     Ks = [Symbol(:K,i) for i in 1:p+1]
     Bs = [Symbol(:B,i) for i in 1:p+1]
@@ -64,7 +64,7 @@ Left-sided limit version.
 \end{aligned}
 """
 @generated function bsplinebasis₋₀(P::BSplineSpace{p,T}, i::Integer, t::S) where {p, T, S<:Real}
-    U = promote_type(T,S)
+    U = StaticArrays.arithmetic_closure(promote_type(T,S))
     ks = [Symbol(:k,i) for i in 1:p+2]
     Ks = [Symbol(:K,i) for i in 1:p+1]
     Bs = [Symbol(:B,i) for i in 1:p+1]
@@ -108,7 +108,7 @@ Modified version.
 \end{aligned}
 """
 @generated function bsplinebasis(P::BSplineSpace{p,T}, i::Integer, t::S) where {p, T, S<:Real}
-    U = promote_type(T,S)
+    U = StaticArrays.arithmetic_closure(promote_type(T,S))
     ks = [Symbol(:k,i) for i in 1:p+2]
     Ks = [Symbol(:K,i) for i in 1:p+1]
     Bs = [Symbol(:B,i) for i in 1:p+1]
@@ -139,7 +139,7 @@ TODO: Add docstring
 bsplinebasisall
 
 @inline function bsplinebasisall(P::BSplineSpace{0,T},i::Integer,t::S) where {T, S<:Real}
-    U = promote_type(T,S)
+    U = StaticArrays.arithmetic_closure(promote_type(T,S))
     SVector(one(U),)
 end
 
