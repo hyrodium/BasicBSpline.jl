@@ -140,14 +140,14 @@ bsplinebasisall
 
 @inline function bsplinebasisall(P::BSplineSpace{0,T},i::Integer,t::S) where {T, S<:Real}
     U = promote_type(T,S)
-    (one(U),)
+    SVector(one(U),)
 end
 
 @inline function bsplinebasisall(P::BSplineSpace{1}, i::Integer, t::Real)
     k = knotvector(P)
     B1 = (k[i+2]-t)/(k[i+2]-k[i+1])
     B2 = (t-k[i+1])/(k[i+2]-k[i+1])
-    return (B1, B2)
+    return SVector(B1, B2)
 end
 
 @generated function bsplinebasisall(P::BSplineSpace{p}, i::Integer, t::Real) where p
@@ -165,6 +165,6 @@ end
         :($(Bs[1]) = $(K1s[1])*$(bs[1])),
         exs...,
         :($(Bs[p+1]) = $(K2s[p])*$(bs[p])),
-        :(return $(B))
+        :(return SVector($(B)))
     )
 end
