@@ -1,4 +1,4 @@
-using Documenter, BasicBSpline
+using Documenter, BasicBSpline, BasicBSplineExporter
 
 # Setup for doctests in docstrings
 DocMeta.setdocmeta!(BasicBSpline, :DocTestSetup, :(using LinearAlgebra, BasicBSpline))
