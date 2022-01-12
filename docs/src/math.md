@@ -120,7 +120,7 @@ k_{i}&<k_{i+p+1} & (1 \le i \le l-p-1)
 ```
 
 ```@docs
-isproper
+isnondegenerate
 ```
 
 The B-spline space is a linear space, and if a B-spline space is proper, its dimension is calculated by:

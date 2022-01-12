@@ -111,20 +111,39 @@ function iszeros(P::AbstractBSplineSpace{p}) where p
 end
 
 @doc raw"""
-Check if given B-spline space is proper.
+Check if given B-spline space is non-degenerate.
 
 # Examples
 ```jldoctest
-julia> isproper(BSplineSpace{2}(KnotVector([1,3,5,6,8,9])))
+julia> isnondegenerate(BSplineSpace{2}(KnotVector([1,3,5,6,8,9])))
 true
 
-julia> isproper(BSplineSpace{1}(KnotVector([1,3,3,3,8,9])))
+julia> isnondegenerate(BSplineSpace{1}(KnotVector([1,3,3,3,8,9])))
 false
 ```
 """
-function isproper(P::AbstractBSplineSpace)
-    return !any(iszeros(P))
+function isnondegenerate(P::AbstractBSplineSpace)
+    return !isdegenerate(P)
 end
+
+@doc raw"""
+Check if given B-spline space is degenerate.
+
+# Examples
+```jldoctest
+julia> isdegenerate(BSplineSpace{2}(KnotVector([1,3,5,6,8,9])))
+false
+
+julia> isdegenerate(BSplineSpace{1}(KnotVector([1,3,3,3,8,9])))
+true
+```
+"""
+function isdegenerate(P::AbstractBSplineSpace)
+    return any(iszeros(P))
+end
+
+# This binding will be removed when releasing v0.5.0
+Base.@deprecate_binding isproper isnondegenerate true
 
 function properdim(P::AbstractBSplineSpace)
     return dim(P) - sum(iszeros(P))
