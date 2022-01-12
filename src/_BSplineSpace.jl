@@ -142,13 +142,13 @@ function isdegenerate(P::AbstractBSplineSpace)
     return any(iszeros(P))
 end
 
-# These bindings will be removed when releasing v0.5.0
-Base.@deprecate_binding isproper isnondegenerate true
-Base.@deprecate_binding exactdim exactdim true
-
 function exactdim(P::AbstractBSplineSpace)
     return dim(P) - sum(iszeros(P))
 end
+
+# These bindings will be removed when releasing v0.5.0
+Base.@deprecate_binding isproper isnondegenerate true
+Base.@deprecate_binding properdim exactdim true
 
 @doc raw"""
 Return the support of ``i``-th B-spline basis function.
