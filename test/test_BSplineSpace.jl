@@ -4,12 +4,12 @@
     P1 = BSplineSpace{2}(KnotVector([1, 3, 5, 6, 8, 9]))
     @test bsplinesupport(P1, 2) == 3..8
     @test dim(P1) == 3
-    @test properdim(P1) == 3
-    @test isproper(P1) == true
+    @test exactdim(P1) == 3
+    @test isnondegenerate(P1) == true
 
     P2 = BSplineSpace{1}(KnotVector([1, 3, 3, 3, 8, 9]))
-    @test isproper(P2) == false
-    @test properdim(P2) == 3
+    @test isnondegenerate(P2) == false
+    @test exactdim(P2) == 3
 
     i = 2
     k = KnotVector([5, 12, 13, 13, 14])
@@ -18,8 +18,8 @@
     @test bsplinesupport(P) == [5..13, 12..14]
     @test bsplinesupport(P, i) == 12..14
 
-    @test isproper(BSplineSpace{2}(KnotVector([1, 3, 5, 6, 8, 9])))
-    @test !isproper(BSplineSpace{1}(KnotVector([1, 3, 3, 3, 8, 9])))
+    @test isnondegenerate(BSplineSpace{2}(KnotVector([1, 3, 5, 6, 8, 9])))
+    @test isdegenerate(BSplineSpace{1}(KnotVector([1, 3, 3, 3, 8, 9])))
 
     @test dim(BSplineSpace{2}(KnotVector([1, 3, 5, 6, 8, 9]))) == 3
 

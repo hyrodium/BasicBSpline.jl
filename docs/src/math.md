@@ -112,7 +112,7 @@ k = KnotVector([1,3,5,6,8,9])
 BSplineSpace{p}(k)
 ```
 
-A B-spline space is said to be **proper** if its degree and knotvector satisfies following property:
+A B-spline space is said to be **non-degenerate** if its degree and knotvector satisfies following property:
 ```math
 \begin{aligned}
 k_{i}&<k_{i+p+1} & (1 \le i \le l-p-1)
@@ -120,10 +120,10 @@ k_{i}&<k_{i+p+1} & (1 \le i \le l-p-1)
 ```
 
 ```@docs
-isproper
+isnondegenerate
 ```
 
-The B-spline space is a linear space, and if a B-spline space is proper, its dimension is calculated by:
+The B-spline space is a linear space, and if a B-spline space is non-degenerate, its dimension is calculated by:
 ```math
 \dim(\mathcal{P}[p,k])=\sharp k - p -1
 ```
@@ -197,7 +197,7 @@ In these cases, each B-spline basis function ``B_{(i,2,k)}`` is coninuous, so `b
 
 ## Support of B-spline basis function
 !!! info "Thm.  Support of B-spline basis function"
-    If a B-spline space``\mathcal{P}[p,k]`` is proper, the support of its basis function is calculated as follows:
+    If a B-spline space``\mathcal{P}[p,k]`` is non-degenerate, the support of its basis function is calculated as follows:
     ```math
     \operatorname{supp}(B_{(i,p,k)})=[k_{i},k_{i+p+1}]
     ```
@@ -294,7 +294,7 @@ plot(t->sum(bsplinebasis(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1))
 
 ## Inclusive relation between B-spline spaces
 !!! info "Thm.  Support of B-spline basis function"
-    For proper B-spline spaces, the following relationship holds.
+    For non-degenerate B-spline spaces, the following relationship holds.
     ```math
     \mathcal{P}[p,k]
     \subseteq \mathcal{P}[p',k']

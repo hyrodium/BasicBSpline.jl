@@ -129,9 +129,9 @@ end
         P1 = BSplineSpace{1}(k)
         P2 = BSplineSpace{2}(k)
 
-        @test !isproper(P0)
-        @test !isproper(P1)
-        @test isproper(P2)
+        @test isdegenerate(P0)
+        @test isdegenerate(P1)
+        @test isnondegenerate(P2)
 
         n0 = dim(P0)
         n1 = dim(P1)

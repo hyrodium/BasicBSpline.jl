@@ -48,7 +48,7 @@
             Pb = BSplineDerivativeSpace{r-1}(P)
             @test degree(Pa) == p-r
             @test dim(Pa) == dim(P)
-            @test properdim(Pa) == properdim(P)-r
+            @test exactdim(Pa) == exactdim(P)-r
             @test domain(P) == domain(Pa) == domain(Pb)
             for t in ts, i in 1:dim(P)
                 d1 = bsplinebasis(Pa,i,t)
@@ -143,9 +143,9 @@
         P1 = BSplineSpace{1}(k)
         P2 = BSplineSpace{2}(k)
 
-        @test !isproper(P0)
-        @test !isproper(P1)
-        @test isproper(P2)
+        @test isdegenerate(P0)
+        @test isdegenerate(P1)
+        @test isnondegenerate(P2)
 
         n0 = dim(P0)
         n1 = dim(P1)
