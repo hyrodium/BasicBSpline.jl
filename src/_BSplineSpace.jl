@@ -142,10 +142,11 @@ function isdegenerate(P::AbstractBSplineSpace)
     return any(iszeros(P))
 end
 
-# This binding will be removed when releasing v0.5.0
+# These bindings will be removed when releasing v0.5.0
 Base.@deprecate_binding isproper isnondegenerate true
+Base.@deprecate_binding exactdim exactdim true
 
-function properdim(P::AbstractBSplineSpace)
+function exactdim(P::AbstractBSplineSpace)
     return dim(P) - sum(iszeros(P))
 end
 
