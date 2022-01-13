@@ -132,9 +132,18 @@ Base.getindex(k::KnotVector, v::AbstractVector{<:Integer}) = KnotVector(k.vector
 @doc raw"""
 Length of knot vector
 
+```math
+\begin{aligned}
+\#{k}
+&=(\text{number of knot elements of} \  k) \\
+\end{aligned}
+```
+
+For example, ``\#{(1,2,2,3)}=4``.
+
 # Examples
 ```jldoctest
-julia> k = KnotVector(1,2,3,5);
+julia> k = KnotVector(1,2,2,3);
 
 julia> length(k)
 4
@@ -174,10 +183,25 @@ Base.searchsortedlast(k::KnotVector,t) = searchsortedlast(k.vector,t)
 Base.searchsorted(k::KnotVector,t) = searchsorted(k.vector,t)
 
 @doc raw"""
-Check a inclusive relation ship ``k\subset k'``.
+Check a inclusive relation ship ``k\subseteq k'``, for example:
 ```math
-(1,2,3) \subseteq (1,2,3,4)
-(1,2,5) \nsubseteq (1,2,3,4)
+\begin{aligned}
+(1,2) &\subseteq (1,2,3) \\
+(1,2,2) &\subseteq (1,2,3) \\
+(1,2,3) &\subseteq (1,2,3) \\
+\end{aligned}
+```
+
+# Examples
+```jldoctest
+julia> KnotVector(1,2) ⊆ KnotVector(1,2,3)
+true
+
+julia> KnotVector(1,2,2) ⊆ KnotVector(1,2,3)
+false
+
+julia> KnotVector(1,2,3) ⊆ KnotVector(1,2,3)
+true
 ```
 """
 function Base.issubset(k::KnotVector, k′::KnotVector)
