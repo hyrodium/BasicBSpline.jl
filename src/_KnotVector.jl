@@ -52,7 +52,7 @@ function KnotVector{T}(knots::Real...) where T<:Real
     return unsafe_knotvector(T, sort!(collect(knots)))
 end
 KnotVector() = unsafe_knotvector(Float64, Float64[])
-KnotVector{T}() where T = unsafe_knotvector(T, T[])
+KnotVector{T}() where T<:Real = unsafe_knotvector(T, T[])
 
 function Base.show(io::IO, k::KnotVector)
     if k.vector == Float64[]
