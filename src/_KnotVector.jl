@@ -52,6 +52,7 @@ function KnotVector{T}(knots::Real...) where T<:Real
     return unsafe_knotvector(T, sort!(collect(knots)))
 end
 KnotVector() = unsafe_knotvector(Float64, Float64[])
+KnotVector{T}() where T<:Real = unsafe_knotvector(T, T[])
 
 function Base.show(io::IO, k::KnotVector)
     if k.vector == Float64[]
@@ -62,6 +63,7 @@ function Base.show(io::IO, k::KnotVector)
 end
 
 Base.zero(::Type{<:KnotVector}) = KnotVector()
+Base.zero(::KnotVector{T}) where T = KnotVector{T}()
 Base.:(==)(k₁::KnotVector, k₂::KnotVector) = (k₁.vector == k₂.vector)
 
 Base.eltype(::KnotVector{T}) where T = T
@@ -114,7 +116,7 @@ KnotVector([1.0, 1.0, 2.0, 2.0, 2.0, 2.0, 5.0, 5.0])
 """
 function Base.:*(m::Integer, k::AbstractKnotVector)
     if m == 0
-        return zero(KnotVector)
+        return zero(k)
     elseif m > 0
         return sum(k for _ in 1:m)
     else
