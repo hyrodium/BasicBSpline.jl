@@ -121,11 +121,10 @@ k2 = KnotVector(-10:10)+p2*KnotVector(-10,10)
 P1 = BSplineSpace{p1}(k1)
 P2 = BSplineSpace{p2}(k2)
 
-f(u1, u2) = [2u1 + sin(u1) + cos(u2) + u2 / 2, 3u2 + sin(u2) + sin(u1) / 2 + u1^2 / 6] / 5
+f(u1, u2) = SVector(2u1 + sin(u1) + cos(u2) + u2 / 2, 3u2 + sin(u2) + sin(u1) / 2 + u1^2 / 6) / 5
 
-a0 = fittingcontrolpoints(f, (P1, P2))
-a = [a0[i1,i2][j] for i1 in 1:dim(P1), i2 in 1:dim(P2), j in 1:2]
-M = BSplineManifold(a, (P1, P2))
+a = fittingcontrolpoints(f, (P1, P2))
+M = CustomBSplineManifold(a, (P1, P2))
 save_png("fitting.png", M, unitlength=50, xlims=(-10,10), ylims=(-10,10))
 ```
 ![](docs/src/img/fitting_desmos.png)
@@ -140,11 +139,10 @@ k2 = KnotVector(-10:5:10)+p2*KnotVector(-10,10)
 P1 = BSplineSpace{p1}(k1)
 P2 = BSplineSpace{p2}(k2)
 
-f(u1, u2) = [2u1 + sin(u1) + cos(u2) + u2 / 2, 3u2 + sin(u2) + sin(u1) / 2 + u1^2 / 6] / 5
+f(u1, u2) = SVector(2u1 + sin(u1) + cos(u2) + u2 / 2, 3u2 + sin(u2) + sin(u1) / 2 + u1^2 / 6) / 5
 
-a0 = fittingcontrolpoints(f, (P1, P2))
-a = [a0[i1,i2][j] for i1 in 1:dim(P1), i2 in 1:dim(P2), j in 1:2]
-M = BSplineManifold(a, (P1, P2))
+a = fittingcontrolpoints(f, (P1, P2))
+M = CustomBSplineManifold(a, (P1, P2))
 save_png("fitting_coarse.png", M, unitlength=50, xlims=(-10,10), ylims=(-10,10))
 ```
 ![](docs/src/img/fitting_coarse.png)
@@ -155,11 +153,10 @@ p = 3
 k = KnotVector(range(-2π,2π,length=8))+p*KnotVector(-2π,2π)
 P = BSplineSpace{p}(k)
 
-f(u) = [u,sin(u)]
+f(u) = SVector(u,sin(u))
 
-a0 = fittingcontrolpoints(f, (P,))
-a = [a0[i1][j] for i1 in 1:dim(P), j in 1:2]
-M = BSplineManifold(a, (P,))
+a = fittingcontrolpoints(f, (P,))
+M = CustomBSplineManifold(a, (P,))
 save_svg("sine-curve.svg", M, unitlength=50, xlims=(-2,2), ylims=(-8,8))
 save_svg("sine-curve_no-points.svg", M, unitlength=50, xlims=(-2,2), ylims=(-8,8), points=false)
 ```
