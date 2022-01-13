@@ -21,7 +21,7 @@
 
     @testset "zeros" begin
         @test KnotVector() == zero(KnotVector)
-        @test KnotVector() == 0*k1 == k1*0
+        @test KnotVector() == 0*k1 == k1*0 == zero(k1)
         @test KnotVector() == KnotVector(Float64[])
     end
 
@@ -39,6 +39,9 @@
         # type promotion
         @test KnotVector{Int}(1,2) + KnotVector{Rational{Int}}(3) == KnotVector(1,2,3)
         @test KnotVector{Int}(1,2) + KnotVector{Rational{Int}}(3) isa KnotVector{Rational{Int}}
+        @test KnotVector{Int}(1,2)*0 == KnotVector()
+        @test KnotVector{Int}(1,2)*0 isa KnotVector{Int}
+        @test KnotVector{Int}() isa KnotVector{Int}
     end
 
     @testset "unique" begin
