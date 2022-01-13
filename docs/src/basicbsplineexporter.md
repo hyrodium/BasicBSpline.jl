@@ -1,4 +1,4 @@
-# BasicBSplineExporter
+# BasicBSplineExporter.jl
 
 [BasicBSplineExporter.jl](https://github.com/hyrodium/BasicBSplineExporter.jl) supports export `BasicBSpline.BSplineManifold` and `BasicBSpline.CustomBSplineManifold{Dim,Deg,<:StaticVector}` to:
 * PNG image (`.png`)
