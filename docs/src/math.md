@@ -50,10 +50,18 @@ Although a knot vector is **not** a vector in linear algebra, but we introduce *
 Base.:+(k1::KnotVector{T}, k2::KnotVector{T}) where T
 ```
 
-And **product operator** ``\cdot``.
+Note that the operator `+(::KnotVector, ::KnotVector)` is commutative.
+This is why we choose the ``+`` sign.
+We also introduce **product operator** ``\cdot`` for knotvector.
 
 ```@docs
 *(m::Integer, k::AbstractKnotVector)
+```
+
+Inclusive relationship between knotvectors.
+
+```@docs
+Base.issubset(k::KnotVector, k′::KnotVector)
 ```
 
 ```@docs
