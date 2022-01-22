@@ -50,36 +50,6 @@ function _b_b_int_R(P::BSplineSpace{p}, i, j, gl) where p
     end
 end
 
-@doc raw"""
-Calculate
-```math
-\begin{aligned}
-&\int_{I} B_{(i,p,k)}(t) B_{(j,p,k)}(t) dt \\
-\end{aligned}
-```
-"""
-function _b_b_int_I(P::BSplineSpace{p}, i, j, gl) where p
-    n = dim(P)
-    Δ = j - i
-    if Δ < -p
-        return 0.0
-    elseif Δ > p
-        return 0.0
-    elseif Δ ≥ 0  # i ≤ j
-        s = 0.0
-        for m in max(p-j+2,1):min(n-j+1,p-j+i+1)
-            s += _b_b_int(P, i, j, m, gl)
-        end
-        return s
-    else  # j < i
-        s = 0.0
-        for m in max(p-i+2,1):min(n-i+1,p-i+j+1)
-            s += _b_b_int(P, j, i, m, gl)
-        end
-        return s
-    end
-end
-
 function innerproduct_R(P::BSplineSpace{p}) where p
     n = dim(P)
     nip = p + 1
@@ -87,6 +57,14 @@ function innerproduct_R(P::BSplineSpace{p}) where p
     return [_b_b_int_R(P, i, j, gl) for i in 1:n, j in 1:n]
 end
 
+@doc raw"""
+Calculate a matrix
+```math
+\begin{aligned}
+A_{ij}&=\int_{I} B_{(i,p,k)}(t) B_{(j,p,k)}(t) dt \\
+\end{aligned}
+```
+"""
 function innerproduct_I(P::BSplineSpace{p}) where p
     n = dim(P)
     A = zeros(n,n)
