@@ -76,13 +76,12 @@ function innerproduct_I(P::BSplineSpace{p}) where p
         @inbounds t2 = k[m+p+1]
         width = t2-t1
         iszero(width) && continue
-        dnodes = (width * nodes .+ sum(t1+t2)) / 2
-        bs(t) = bsplinebasisall(P,m,t)
+        dnodes = (width * nodes .+ (t1+t2)) / 2
         bbs = hcat(bsplinebasisall.(P,m,dnodes)...)
         for i in 1:n
             for q in 0:p
                 j = i + q
-                j > n && continue
+                n < j && continue
                 j ≤ m+p || continue
                 m+p+1 ≤ i+p+1 || continue
                 @inbounds A[i,j] += sum(bbs[i-m+1,:].*bbs[j-m+1,:].*weights)*width/2
