@@ -3,55 +3,7 @@
 @doc raw"""
 Calculate a matrix
 ```math
-\begin{aligned}
-A_{ij}&=\int_{\mathbb{R}} B_{(i,p,k)}(t) B_{(j,p,k)}(t) dt \\
-\end{aligned}
-```
-"""
-function innerproduct_R(P::BSplineSpace{p}) where p
-    n = dim(P)
-    k = knotvector(P)
-    nodes, weights = SVector{p+1}.(gausslegendre(p+1))
-    _A1 = zeros(p,p)
-    for i in 1:p, j in 1:p
-        j < i && continue
-        for m in 1:p-j+1
-            t1 = k[j+m-1]
-            t2 = k[j+m]
-            width = t2-t1
-            iszero(width) && continue
-            dnodes = (width * nodes .+ (t1+t2)) / 2
-
-            F = bsplinebasis.(P, i, dnodes) .* bsplinebasis.(P, j, dnodes)
-            _A1[i,j] += sum(F .* weights)*width/2
-        end
-    end
-    _A2 = zeros(p,p)
-    for i in 1:p, j in 1:p
-        j < i && continue
-        for m in p-j+2:p-j+i+1
-            t1 = k[j-p+n+m-1]
-            t2 = k[j-p+n+m]
-            width = t2-t1
-            iszero(width) && continue
-            dnodes = (width * nodes .+ (t1+t2)) / 2
-
-            F = bsplinebasis.(P, i-p+n, dnodes) .* bsplinebasis.(P, j-p+n, dnodes)
-            _A2[i,j] += sum(F .* weights)*width/2
-        end
-    end
-    A = innerproduct_I(P).data
-    A[1:p,1:p] += _A1
-    A[n-p+1:n,n-p+1:n] += _A2
-    return Symmetric(A)
-end
-
-@doc raw"""
-Calculate a matrix
-```math
-\begin{aligned}
-A_{ij}&=\int_{I} B_{(i,p,k)}(t) B_{(j,p,k)}(t) dt \\
-\end{aligned}
+A_{ij}=\int_{I} B_{(i,p,k)}(t) B_{(j,p,k)}(t) dt
 ```
 """
 function innerproduct_I(P::BSplineSpace{p}) where p
@@ -77,6 +29,45 @@ function innerproduct_I(P::BSplineSpace{p}) where p
             end
         end
     end
+    return Symmetric(A)
+end
+
+@doc raw"""
+Calculate a matrix
+```math
+A_{ij}=\int_{\mathbb{R}} B_{(i,p,k)}(t) B_{(j,p,k)}(t) dt
+```
+"""
+function innerproduct_R(P::BSplineSpace{p}) where p
+    n = dim(P)
+    A = innerproduct_I(P).data
+    k = knotvector(P)
+    nodes, weights = SVector{p+1}.(gausslegendre(p+1))
+    A1 = zeros(p,p)
+    A2 = zeros(p,p)
+    for i in 1:p, j in 1:p
+        j < i && continue
+        for m in 1:p-j+1
+            t1 = k[j+m-1]
+            t2 = k[j+m]
+            width = t2-t1
+            iszero(width) && continue
+            dnodes = (width * nodes .+ (t1+t2)) / 2
+            F = bsplinebasis.(P, i, dnodes) .* bsplinebasis.(P, j, dnodes)
+            A1[i,j] += sum(F .* weights)*width/2
+        end
+        for m in p-j+2:p-j+i+1
+            t1 = k[j-p+n+m-1]
+            t2 = k[j-p+n+m]
+            width = t2-t1
+            iszero(width) && continue
+            dnodes = (width * nodes .+ (t1+t2)) / 2
+            F = bsplinebasis.(P, i-p+n, dnodes) .* bsplinebasis.(P, j-p+n, dnodes)
+            A2[i,j] += sum(F .* weights)*width/2
+        end
+    end
+    A[1:p,1:p] += A1
+    A[n-p+1:n,n-p+1:n] += A2
     return Symmetric(A)
 end
 
