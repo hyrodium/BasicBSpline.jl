@@ -1,55 +1,13 @@
 # Fitting
 
 @doc raw"""
-Calculate
-```math
-\int_{[k_{j+n-1}, k_{j+n}]} B_{(i,p,k)}(t) B_{(j,p,k)}(t) dt
-```
-Assumption:
-* ``i ≤ j``
-* ``1 ≤ n ≤ p-j+i+1``
-"""
-function _b_b_int(P::BSplineSpace{p}, i, j, n, gl) where p
-    I = knotvector(P)[j+n-1]..knotvector(P)[j+n]
-
-    f(t) = bsplinebasis(P, i, t) * bsplinebasis(P, j, t)
-    return integrate(f, I, gl)
-end
-
-@doc raw"""
-Calculate
+Calculate a matrix
 ```math
 \begin{aligned}
-&\int_{\mathbb{R}} B_{(i,p,k)}(t) B_{(j,p,k)}(t) dt \\
-={}&
-\begin{cases}
-\displaystyle \int_{[k_{j}, k_{i+p+1}]} B_{(i,p,k)}(t)  B_{(j,p,k)}(t) dt & (i \le j) \\
-\displaystyle \int_{[k_{i}, k_{j+p+1}]} B_{(i,p,k)}(t)  B_{(j,p,k)}(t) dt & (j \le i)
-\end{cases}
+A_{ij}&=\int_{\mathbb{R}} B_{(i,p,k)}(t) B_{(j,p,k)}(t) dt \\
 \end{aligned}
 ```
 """
-function _b_b_int_R(P::BSplineSpace{p}, i, j, gl) where p
-    Δ = j - i
-    if Δ < -p
-        return 0.0
-    elseif Δ > p
-        return 0.0
-    elseif Δ ≥ 0  # i ≤ j
-        s = 0.0
-        for n in 1:p-j+i+1
-            s += _b_b_int(P, i, j, n, gl)
-        end
-        return s
-    else  # j < i
-        s = 0.0
-        for n in 1:p-i+j+1
-            s += _b_b_int(P, j, i, n, gl)
-        end
-        return s
-    end
-end
-
 function innerproduct_R(P::BSplineSpace{p}) where p
     n = dim(P)
     k = knotvector(P)
