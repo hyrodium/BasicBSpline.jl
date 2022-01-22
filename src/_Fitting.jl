@@ -89,9 +89,29 @@ end
 
 function innerproduct_I(P::BSplineSpace{p}) where p
     n = dim(P)
-    nip = p + 1
-    gl = GaussLegendre(nip)
-    return [_b_b_int_I(P, i, j, gl) for i in 1:n, j in 1:n]
+    A = zeros(n,n)
+    k = knotvector(P)
+    l = length(k)
+    @inbounds nodes, weights = SVector{p+1}.(gausslegendre(p+1))
+    for m in 1:l-2p-1
+        @inbounds t1 = k[m+p]
+        @inbounds t2 = k[m+p+1]
+        width = t2-t1
+        iszero(width) && continue
+        dnodes = (width * nodes .+ sum(t1+t2)) / 2
+        bs(t) = bsplinebasisall(P,m,t)
+        bbs = hcat(bsplinebasisall.(P,m,dnodes)...)
+        for i in 1:n
+            for q in 0:p
+                j = i + q
+                j > n && continue
+                j ≤ m+p || continue
+                m+p+1 ≤ i+p+1 || continue
+                @inbounds A[i,j] += sum(bbs[i-m+1,:].*bbs[j-m+1,:].*weights)*width/2
+            end
+        end
+    end
+    return Symmetric(A)
 end
 
 function _f_b_int_R(func, i1, P1::BSplineSpace{p1}, gl1) where {p1}
