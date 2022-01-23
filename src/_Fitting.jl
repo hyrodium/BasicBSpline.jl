@@ -84,20 +84,6 @@ function _f_b_int_R(func, i1, P1::BSplineSpace{p1}, gl1) where {p1}
     return S1
 end
 
-function _f_b_int_I(func, i1, P1::BSplineSpace{p1}, gl1) where {p1}
-    k1 = knotvector(P1)
-    m1 = length(k1)
-    F(t1) = bsplinebasis(P1, i1, t1) * func(t1)
-
-    f1,l1 = max(i1, p1+1), min(i1+p1, m1-p1-1)
-
-    S1 = integrate(F, k1[f1]..k1[f1+1], gl1)
-    for j1 in f1+1:l1
-        S1 += integrate(F, k1[j1]..k1[j1+1], gl1)
-    end
-    return S1
-end
-
 function _f_b_int_R(func, i1, i2, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}}, gl1, gl2) where {p1,p2}
     P1, P2 = P
     k1, k2 = knotvector(P1), knotvector(P2)
@@ -234,11 +220,29 @@ function innerproduct_R(func, P1::BSplineSpace{p1}) where {p1}
     return b
 end
 
-function innerproduct_I(func, P1::BSplineSpace{p1}) where {p1}
-    n1 = dim(P1)
-    nip1 = p1 + 1
-    gl1 = GaussLegendre(nip1)
-    b = [_f_b_int_I(func, i1, P1, gl1) for i1 in 1:n1]
+function innerproduct_I(func, P₁::BSplineSpace{p₁}) where {p₁}
+    n₁ = dim(P₁)
+    k₁ = knotvector(P₁)
+    l₁ = length(k₁)
+    nodes₁, weights₁ = SVector{p₁+1}.(gausslegendre(p₁+1))
+
+    sample_point = func(0.1)
+    b = Array{typeof(sample_point),1}(undef, n₁)
+    fill!(b, zero(sample_point))
+
+    for m₁ in 1:l₁-2p₁-1
+        ta₁ = k₁[m₁+p₁]
+        tb₁ = k₁[m₁+p₁+1]
+        w₁ = tb₁-ta₁
+        iszero(w₁) && continue
+        dnodes₁ = (w₁ * nodes₁ .+ (ta₁+tb₁)) / 2
+        bbs₁ = hcat(bsplinebasisall.(P₁,m₁,dnodes₁)...)
+        F = func.(dnodes₁)
+        for q₁ in 0:p₁
+            i₁ = m₁ + q₁
+            b[i₁] += sum(bbs₁[i₁-m₁+1,:].*F.*weights₁)*w₁/2
+        end
+    end
     return b
 end
 
