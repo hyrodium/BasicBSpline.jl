@@ -71,46 +71,6 @@ function innerproduct_R(P::BSplineSpace{p}) where p
     return Symmetric(A)
 end
 
-function _f_b_int_R(func, i1, i2, i3, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}, <:AbstractBSplineSpace{p3}}, gl1, gl2, gl3) where {p1,p2,p3}
-    P1, P2, P3 = P
-    k1, k2, k3 = knotvector(P1), knotvector(P2), knotvector(P3)
-    F(t1, t2, t3) = bsplinebasis(P1, i1, t1) * bsplinebasis(P2, i2, t2) * bsplinebasis(P3, i3, t3) * func(t1, t2, t3)
-
-    f1, l1 = i1, i1+p1
-    f2, l2 = i2, i2+p2
-    f3, l3 = i3, i3+p3
-
-    S3 = integrate(F, k1[f1]..k1[f1+1], k2[f2]..k2[f2+1], k3[f3]..k3[f3+1], gl1, gl2, gl3)
-    for j3 in f3+1:l3
-        S3 += integrate(F, k1[f1]..k1[f1+1], k2[f2]..k2[f2+1], k3[j3]..k3[j3+1], gl1, gl2, gl3)
-    end
-    S2 = S3
-    for j2 in f2+1:l2
-        S3 = integrate(F, k1[f1]..k1[f1+1], k2[j2]..k2[j2+1], k3[f3]..k3[f3+1], gl1, gl2, gl3)
-        for j3 in f3+1:l3
-            S3 += integrate(F, k1[f1]..k1[f1+1], k2[j2]..k2[j2+1], k3[j3]..k3[j3+1], gl1, gl2, gl3)
-        end
-        S2 += S3
-    end
-    S1 = S2
-    for j1 in f1+1:l1
-        S3 = integrate(F, k1[j1]..k1[j1+1], k2[f2]..k2[f2+1], k3[f3]..k3[f3+1], gl1, gl2, gl3)
-        for j3 in f3+1:l3
-            S3 += integrate(F, k1[j1]..k1[j1+1], k2[f2]..k2[f2+1], k3[j3]..k3[j3+1], gl1, gl2, gl3)
-        end
-        S2 = S3
-        for j2 in f2+1:l2
-            S3 = integrate(F, k1[j1]..k1[j1+1], k2[j2]..k2[j2+1], k3[f3]..k3[f3+1], gl1, gl2, gl3)
-            for j3 in f3+1:l3
-                S3 += integrate(F, k1[j1]..k1[j1+1], k2[j2]..k2[j2+1], k3[j3]..k3[j3+1], gl1, gl2, gl3)
-            end
-            S2 += S3
-        end
-        S1 += S2
-    end
-    return S1
-end
-
 function innerproduct_I(func, Ps::Tuple{<:BSplineSpace{p₁}}) where {p₁}
     P₁, = Ps
     n₁ = dim(P₁)
@@ -286,15 +246,47 @@ function innerproduct_R(func, Ps::Tuple{<:BSplineSpace{p₁},<:BSplineSpace{p₂
     return b
 end
 
-function innerproduct_R(func, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}, <:AbstractBSplineSpace{p3}}) where {p1,p2,p3}
-    n1, n2, n3 = dim.(P)
-    nip1 = p1 + 1
-    nip2 = p2 + 1
-    nip3 = p3 + 1
-    gl1 = GaussLegendre(nip1)
-    gl2 = GaussLegendre(nip2)
-    gl3 = GaussLegendre(nip3)
-    b = [_f_b_int_R(func, i1, i2, i3, P, gl1, gl2, gl3) for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3]
+function innerproduct_R(func, Ps::Tuple{<:BSplineSpace{p₁},<:BSplineSpace{p₂},<:BSplineSpace{p₃}}) where {p₁,p₂,p₃}
+    P₁,P₂,P₃ = Ps
+    n₁,n₂,n₃ = dim.(Ps)
+    k₁,k₂,k₃ = knotvector.(Ps)
+    l₁,l₂,l₃ = length(k₁), length(k₂), length(k₃)
+    nodes₁,weights₁ = SVector{p₁+1}.(gausslegendre(p₁+1))
+    nodes₂,weights₂ = SVector{p₂+1}.(gausslegendre(p₂+1))
+    nodes₃,weights₃ = SVector{p₃+1}.(gausslegendre(p₃+1))
+    b = innerproduct_I(func,Ps)
+    for i₁ in 1:n₁, i₂ in 1:n₂, i₃ in 1:n₃
+        F(t₁,t₂,t₃) = bsplinebasis(P₁,i₁,t₁) * bsplinebasis(P₂,i₂,t₂)  * bsplinebasis(P₃,i₃,t₃) * func(t₁,t₂,t₃)
+        for j₁ in 1:l₁-1
+            i₁ ≤ j₁ ≤ i₁+p₁ || continue
+            ta₁ = k₁[j₁]
+            tb₁ = k₁[j₁+1]
+            w₁ = tb₁-ta₁
+            iszero(w₁) && continue
+            dnodes₁ = (w₁ * nodes₁ .+ (ta₁+tb₁)) / 2
+            for j₂ in 1:l₂-1
+                i₂ ≤ j₂ ≤ i₂+p₂ || continue
+                ta₂ = k₂[j₂]
+                tb₂ = k₂[j₂+1]
+                w₂ = tb₂-ta₂
+                iszero(w₂) && continue
+                dnodes₂ = (w₂ * nodes₂ .+ (ta₂+tb₂)) / 2
+                for j₃ in 1:l₃-1
+                    i₃ ≤ j₃ ≤ i₃+p₃ || continue
+                    # TODO: This can be potentially faster
+                    (1+p₁ ≤ j₁ ≤ l₁-p₁-1 && 1+p₂ ≤ j₂ ≤ l₂-p₂-1 && 1+p₃ ≤ j₃ ≤ l₃-p₃-1) && continue
+                    ta₃ = k₃[j₃]
+                    tb₃ = k₃[j₃+1]
+                    w₃ = tb₃-ta₃
+                    iszero(w₃) && continue
+                    dnodes₃ = (w₃ * nodes₃ .+ (ta₃+tb₃)) / 2
+                    for j in 1:p₃+1
+                        b[i₁,i₂,i₃] += weights₃[j]*sum(F.(dnodes₁,dnodes₂',dnodes₃[j]).*weights₁.*weights₂')*w₁*w₂*w₃/8
+                    end
+                end
+            end
+        end
+    end
     return b
 end
 
