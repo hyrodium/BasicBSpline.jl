@@ -12,12 +12,12 @@
         @test IntervalSets.width(domain(P)) == 1
 
         a_org = [rand() for i in 1:n]
-        M = CustomBSplineManifold(a_org, (P,))
+        f(t) = sum(bsplinebasis(P,i,t)*a_org[i] for i in 1:n)
 
-        a_fit = fittingcontrolpoints(M, (P,), domain=:I)
+        a_fit = fittingcontrolpoints(f, (P,), domain=:I)
         @test norm(a_fit - a_org) < ε
 
-        a_fit = fittingcontrolpoints(M, (P,), domain=:R)
+        a_fit = fittingcontrolpoints(f, (P,), domain=:R)
         @test norm(a_fit - a_org) < ε
     end
 
