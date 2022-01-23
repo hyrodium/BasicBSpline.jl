@@ -1,6 +1,26 @@
 @testset "Fitting" begin
     ε = 1.0e-8
 
+    @testset "Fitting_tinycase" begin
+        Random.seed!(42)
+
+        p = 2
+        k = KnotVector(1:2p+2)
+        P = BSplineSpace{p}(k)
+        n = dim(P)
+        @test n == p+1
+        @test IntervalSets.width(domain(P)) == 1
+
+        a_org = [rand() for i in 1:n]
+        f(t) = sum(bsplinebasis(P,i,t)*a_org[i] for i in 1:n)
+
+        a_fit = fittingcontrolpoints(f, (P,), domain=:I)
+        @test norm(a_fit - a_org) < ε
+
+        a_fit = fittingcontrolpoints(f, (P,), domain=:R)
+        @test norm(a_fit - a_org) < ε
+    end
+
     @testset "Fitting-curve_R" begin
         Random.seed!(42)
 

@@ -1,312 +1,292 @@
 # Fitting
 
 @doc raw"""
-Calculate
+Calculate a matrix
 ```math
-\int_{[k_{j+n-1}, k_{j+n}]} B_{(i,p,k)}(t) B_{(j,p,k)}(t) dt
-```
-Assumption:
-* ``i ≤ j``
-* ``1 ≤ n ≤ p-j+i+1``
-"""
-function _b_b_int(P::BSplineSpace{p}, i, j, n, gl) where p
-    I = knotvector(P)[j+n-1]..knotvector(P)[j+n]
-
-    f(t) = bsplinebasis(P, i, t) * bsplinebasis(P, j, t)
-    return integrate(f, I, gl)
-end
-
-@doc raw"""
-Calculate
-```math
-\begin{aligned}
-&\int_{\mathbb{R}} B_{(i,p,k)}(t) B_{(j,p,k)}(t) dt \\
-={}&
-\begin{cases}
-\displaystyle \int_{[k_{j}, k_{i+p+1}]} B_{(i,p,k)}(t)  B_{(j,p,k)}(t) dt & (i \le j) \\
-\displaystyle \int_{[k_{i}, k_{j+p+1}]} B_{(i,p,k)}(t)  B_{(j,p,k)}(t) dt & (j \le i)
-\end{cases}
-\end{aligned}
+A_{ij}=\int_{I} B_{(i,p,k)}(t) B_{(j,p,k)}(t) dt
 ```
 """
-function _b_b_int_R(P::BSplineSpace{p}, i, j, gl) where p
-    Δ = j - i
-    if Δ < -p
-        return 0.0
-    elseif Δ > p
-        return 0.0
-    elseif Δ ≥ 0  # i ≤ j
-        s = 0.0
-        for n in 1:p-j+i+1
-            s += _b_b_int(P, i, j, n, gl)
-        end
-        return s
-    else  # j < i
-        s = 0.0
-        for n in 1:p-i+j+1
-            s += _b_b_int(P, j, i, n, gl)
-        end
-        return s
-    end
-end
-
-@doc raw"""
-Calculate
-```math
-\begin{aligned}
-&\int_{I} B_{(i,p,k)}(t) B_{(j,p,k)}(t) dt \\
-\end{aligned}
-```
-"""
-function _b_b_int_I(P::BSplineSpace{p}, i, j, gl) where p
-    n = dim(P)
-    Δ = j - i
-    if Δ < -p
-        return 0.0
-    elseif Δ > p
-        return 0.0
-    elseif Δ ≥ 0  # i ≤ j
-        s = 0.0
-        for m in max(p-j+2,1):min(n-j+1,p-j+i+1)
-            s += _b_b_int(P, i, j, m, gl)
-        end
-        return s
-    else  # j < i
-        s = 0.0
-        for m in max(p-i+2,1):min(n-i+1,p-i+j+1)
-            s += _b_b_int(P, j, i, m, gl)
-        end
-        return s
-    end
-end
-
-function innerproduct_R(P::BSplineSpace{p}) where p
-    n = dim(P)
-    nip = p + 1
-    gl = GaussLegendre(nip)
-    return [_b_b_int_R(P, i, j, gl) for i in 1:n, j in 1:n]
-end
-
 function innerproduct_I(P::BSplineSpace{p}) where p
     n = dim(P)
-    nip = p + 1
-    gl = GaussLegendre(nip)
-    return [_b_b_int_I(P, i, j, gl) for i in 1:n, j in 1:n]
-end
-
-function _f_b_int_R(func, i1, P1::BSplineSpace{p1}, gl1) where {p1}
-    k1 = knotvector(P1)
-    F(t1) = bsplinebasis(P1, i1, t1) * func(t1)
-
-    f1,l1 = i1, i1+p1
-
-    S1 = integrate(F, k1[f1]..k1[f1+1], gl1)
-    for j1 in f1+1:l1
-        S1 += integrate(F, k1[j1]..k1[j1+1], gl1)
-    end
-    return S1
-end
-
-function _f_b_int_I(func, i1, P1::BSplineSpace{p1}, gl1) where {p1}
-    k1 = knotvector(P1)
-    m1 = length(k1)
-    F(t1) = bsplinebasis(P1, i1, t1) * func(t1)
-
-    f1,l1 = max(i1, p1+1), min(i1+p1, m1-p1-1)
-
-    S1 = integrate(F, k1[f1]..k1[f1+1], gl1)
-    for j1 in f1+1:l1
-        S1 += integrate(F, k1[j1]..k1[j1+1], gl1)
-    end
-    return S1
-end
-
-function _f_b_int_R(func, i1, i2, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}}, gl1, gl2) where {p1,p2}
-    P1, P2 = P
-    k1, k2 = knotvector(P1), knotvector(P2)
-    F(t1, t2) = bsplinebasis(P1, i1, t1) * bsplinebasis(P2, i2, t2) * func(t1, t2)
-
-    f1, l1 = i1, i1+p1
-    f2, l2 = i2, i2+p2
-
-    S2 = integrate(F, k1[f1]..k1[f1+1], k2[f2]..k2[f2+1], gl1, gl2)
-    for j2 in f2+1:l2
-        S2 += integrate(F, k1[f1]..k1[f1+1], k2[j2]..k2[j2+1], gl1, gl2)
-    end
-    S1 = S2
-    for j1 in f1+1:l1
-        S2 = integrate(F, k1[j1]..k1[j1+1], k2[f2]..k2[f2+1], gl1, gl2)
-        for j2 in f2+1:l2
-            S2 += integrate(F, k1[j1]..k1[j1+1], k2[j2]..k2[j2+1], gl1, gl2)
-        end
-        S1 += S2
-    end
-    return S1
-end
-
-function _f_b_int_I(func, i1, i2, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}}, gl1, gl2) where {p1,p2}
-    P1, P2 = P
-    k1, k2 = knotvector(P1), knotvector(P2)
-    m1, m2 = length(k1), length(k2)
-    F(t1, t2) = bsplinebasis(P1, i1, t1) * bsplinebasis(P2, i2, t2) * func(t1, t2)
-
-    f1, l1 = max(i1, p1+1), min(i1+p1, m1-p1-1)
-    f2, l2 = max(i2, p2+1), min(i2+p2, m2-p2-1)
-
-    S2 = integrate(F, k1[f1]..k1[f1+1], k2[f2]..k2[f2+1], gl1, gl2)
-    for j2 in f2+1:l2
-        S2 += integrate(F, k1[f1]..k1[f1+1], k2[j2]..k2[j2+1], gl1, gl2)
-    end
-    S1 = S2
-    for j1 in f1+1:l1
-        S2 = integrate(F, k1[j1]..k1[j1+1], k2[f2]..k2[f2+1], gl1, gl2)
-        for j2 in f2+1:l2
-            S2 += integrate(F, k1[j1]..k1[j1+1], k2[j2]..k2[j2+1], gl1, gl2)
-        end
-        S1 += S2
-    end
-    return S1
-end
-
-function _f_b_int_R(func, i1, i2, i3, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}, <:AbstractBSplineSpace{p3}}, gl1, gl2, gl3) where {p1,p2,p3}
-    P1, P2, P3 = P
-    k1, k2, k3 = knotvector(P1), knotvector(P2), knotvector(P3)
-    F(t1, t2, t3) = bsplinebasis(P1, i1, t1) * bsplinebasis(P2, i2, t2) * bsplinebasis(P3, i3, t3) * func(t1, t2, t3)
-
-    f1, l1 = i1, i1+p1
-    f2, l2 = i2, i2+p2
-    f3, l3 = i3, i3+p3
-
-    S3 = integrate(F, k1[f1]..k1[f1+1], k2[f2]..k2[f2+1], k3[f3]..k3[f3+1], gl1, gl2, gl3)
-    for j3 in f3+1:l3
-        S3 += integrate(F, k1[f1]..k1[f1+1], k2[f2]..k2[f2+1], k3[j3]..k3[j3+1], gl1, gl2, gl3)
-    end
-    S2 = S3
-    for j2 in f2+1:l2
-        S3 = integrate(F, k1[f1]..k1[f1+1], k2[j2]..k2[j2+1], k3[f3]..k3[f3+1], gl1, gl2, gl3)
-        for j3 in f3+1:l3
-            S3 += integrate(F, k1[f1]..k1[f1+1], k2[j2]..k2[j2+1], k3[j3]..k3[j3+1], gl1, gl2, gl3)
-        end
-        S2 += S3
-    end
-    S1 = S2
-    for j1 in f1+1:l1
-        S3 = integrate(F, k1[j1]..k1[j1+1], k2[f2]..k2[f2+1], k3[f3]..k3[f3+1], gl1, gl2, gl3)
-        for j3 in f3+1:l3
-            S3 += integrate(F, k1[j1]..k1[j1+1], k2[f2]..k2[f2+1], k3[j3]..k3[j3+1], gl1, gl2, gl3)
-        end
-        S2 = S3
-        for j2 in f2+1:l2
-            S3 = integrate(F, k1[j1]..k1[j1+1], k2[j2]..k2[j2+1], k3[f3]..k3[f3+1], gl1, gl2, gl3)
-            for j3 in f3+1:l3
-                S3 += integrate(F, k1[j1]..k1[j1+1], k2[j2]..k2[j2+1], k3[j3]..k3[j3+1], gl1, gl2, gl3)
+    A = zeros(n,n)
+    k = knotvector(P)
+    l = length(k)
+    @inbounds nodes, weights = SVector{p+1}.(gausslegendre(p+1))
+    for m in 1:l-2p-1
+        @inbounds t1 = k[m+p]
+        @inbounds t2 = k[m+p+1]
+        width = t2-t1
+        iszero(width) && continue
+        dnodes = (width * nodes .+ (t1+t2)) / 2
+        bbs = hcat(bsplinebasisall.(P,m,dnodes)...)
+        for i in 1:n
+            for q in 0:p
+                j = i + q
+                n < j && continue
+                j ≤ m+p || continue
+                m+p+1 ≤ i+p+1 || continue
+                @inbounds A[i,j] += sum(bbs[i-m+1,:].*bbs[j-m+1,:].*weights)*width/2
             end
-            S2 += S3
         end
-        S1 += S2
     end
-    return S1
+    return Symmetric(A)
 end
 
-function _f_b_int_I(func, i1, i2, i3, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}, <:AbstractBSplineSpace{p3}}, gl1, gl2, gl3) where {p1,p2,p3}
-    P1, P2, P3 = P
-    k1, k2, k3 = knotvector(P1), knotvector(P2), knotvector(P3)
-    m1, m2, m3 = length(k1), length(k2), length(k3)
-    F(t1, t2, t3) = bsplinebasis(P1, i1, t1) * bsplinebasis(P2, i2, t2) * bsplinebasis(P3, i3, t3) * func(t1, t2, t3)
-
-    f1, l1 = max(i1, p1+1), min(i1+p1, m1-p1-1)
-    f2, l2 = max(i2, p2+1), min(i2+p2, m2-p2-1)
-    f3, l3 = max(i3, p3+1), min(i3+p3, m3-p3-1)
-
-    S3 = integrate(F, k1[f1]..k1[f1+1], k2[f2]..k2[f2+1], k3[f3]..k3[f3+1], gl1, gl2, gl3)
-    for j3 in f3+1:l3
-        S3 += integrate(F, k1[f1]..k1[f1+1], k2[f2]..k2[f2+1], k3[j3]..k3[j3+1], gl1, gl2, gl3)
-    end
-    S2 = S3
-    for j2 in f2+1:l2
-        S3 = integrate(F, k1[f1]..k1[f1+1], k2[j2]..k2[j2+1], k3[f3]..k3[f3+1], gl1, gl2, gl3)
-        for j3 in f3+1:l3
-            S3 += integrate(F, k1[f1]..k1[f1+1], k2[j2]..k2[j2+1], k3[j3]..k3[j3+1], gl1, gl2, gl3)
+@doc raw"""
+Calculate a matrix
+```math
+A_{ij}=\int_{\mathbb{R}} B_{(i,p,k)}(t) B_{(j,p,k)}(t) dt
+```
+"""
+function innerproduct_R(P::BSplineSpace{p}) where p
+    n = dim(P)
+    A = innerproduct_I(P).data
+    k = knotvector(P)
+    nodes, weights = SVector{p+1}.(gausslegendre(p+1))
+    A1 = zeros(p,p)
+    A2 = zeros(p,p)
+    for i in 1:p, j in 1:p
+        j < i && continue
+        for m in 1:p-j+1
+            t1 = k[j+m-1]
+            t2 = k[j+m]
+            width = t2-t1
+            iszero(width) && continue
+            dnodes = (width * nodes .+ (t1+t2)) / 2
+            F = bsplinebasis.(P, i, dnodes) .* bsplinebasis.(P, j, dnodes)
+            A1[i,j] += sum(F .* weights)*width/2
         end
-        S2 += S3
-    end
-    S1 = S2
-    for j1 in f1+1:l1
-        S3 = integrate(F, k1[j1]..k1[j1+1], k2[f2]..k2[f2+1], k3[f3]..k3[f3+1], gl1, gl2, gl3)
-        for j3 in f3+1:l3
-            S3 += integrate(F, k1[j1]..k1[j1+1], k2[f2]..k2[f2+1], k3[j3]..k3[j3+1], gl1, gl2, gl3)
+        for m in p-j+2:p-j+i+1
+            t1 = k[j-p+n+m-1]
+            t2 = k[j-p+n+m]
+            width = t2-t1
+            iszero(width) && continue
+            dnodes = (width * nodes .+ (t1+t2)) / 2
+            F = bsplinebasis.(P, i-p+n, dnodes) .* bsplinebasis.(P, j-p+n, dnodes)
+            A2[i,j] += sum(F .* weights)*width/2
         end
-        S2 = S3
-        for j2 in f2+1:l2
-            S3 = integrate(F, k1[j1]..k1[j1+1], k2[j2]..k2[j2+1], k3[f3]..k3[f3+1], gl1, gl2, gl3)
-            for j3 in f3+1:l3
-                S3 += integrate(F, k1[j1]..k1[j1+1], k2[j2]..k2[j2+1], k3[j3]..k3[j3+1], gl1, gl2, gl3)
+    end
+    A[1:p,1:p] += A1
+    A[n-p+1:n,n-p+1:n] += A2
+    return Symmetric(A)
+end
+
+function innerproduct_I(func, Ps::Tuple{<:BSplineSpace{p₁}}) where {p₁}
+    P₁, = Ps
+    n₁ = dim(P₁)
+    k₁ = knotvector(P₁)
+    l₁ = length(k₁)
+    nodes₁, weights₁ = SVector{p₁+1}.(gausslegendre(p₁+1))
+
+    sample_point = func(leftendpoint(domain(P₁)))
+    b = Array{typeof(sample_point),1}(undef, n₁)
+    fill!(b, zero(sample_point))
+
+    for m₁ in 1:l₁-2p₁-1
+        ta₁ = k₁[m₁+p₁]
+        tb₁ = k₁[m₁+p₁+1]
+        w₁ = tb₁-ta₁
+        iszero(w₁) && continue
+        dnodes₁ = (w₁ * nodes₁ .+ (ta₁+tb₁)) / 2
+        bbs₁ = hcat(bsplinebasisall.(P₁,m₁,dnodes₁)...)
+        F = func.(dnodes₁)
+        for q₁ in 0:p₁
+            i₁ = m₁ + q₁
+            b[i₁] += sum(bbs₁[i₁-m₁+1,:].*F.*weights₁)*w₁/2
+        end
+    end
+    return b
+end
+
+function innerproduct_I(func, Ps::Tuple{<:BSplineSpace{p₁},<:BSplineSpace{p₂}}) where {p₁,p₂}
+    P₁,P₂ = Ps
+    n₁,n₂ = dim.(Ps)
+    k₁,k₂ = knotvector.(Ps)
+    l₁,l₂ = length(k₁), length(k₂)
+    nodes₁, weights₁ = SVector{p₁+1}.(gausslegendre(p₁+1))
+    nodes₂, weights₂ = SVector{p₂+1}.(gausslegendre(p₂+1))
+
+    sample_point = func(leftendpoint(domain(P₁)),leftendpoint(domain(P₂)))
+    b = Array{typeof(sample_point),2}(undef, n₁, n₂)
+    fill!(b, zero(sample_point))
+
+    for m₁ in 1:l₁-2p₁-1
+        ta₁ = k₁[m₁+p₁]
+        tb₁ = k₁[m₁+p₁+1]
+        w₁ = tb₁-ta₁
+        iszero(w₁) && continue
+        dnodes₁ = (w₁ * nodes₁ .+ (ta₁+tb₁)) / 2
+        bbs₁ = hcat(bsplinebasisall.(P₁,m₁,dnodes₁)...)
+        for m₂ in 1:l₂-2p₂-1
+            ta₂ = k₂[m₂+p₂]
+            tb₂ = k₂[m₂+p₂+1]
+            w₂ = tb₂-ta₂
+            iszero(w₂) && continue
+            dnodes₂ = (w₂ * nodes₂ .+ (ta₂+tb₂)) / 2
+            bbs₂ = hcat(bsplinebasisall.(P₂,m₂,dnodes₂)...)
+            F = func.(dnodes₁,dnodes₂')
+            for q₁ in 0:p₁
+                i₁ = m₁ + q₁
+                for q₂ in 0:p₂
+                    i₂ = m₂ + q₂
+                    b[i₁,i₂] += sum(F.*bbs₁[i₁-m₁+1,:].*weights₁.*(bbs₂[i₂-m₂+1,:].*weights₂)')*w₁*w₂/4
+                end
             end
-            S2 += S3
         end
-        S1 += S2
     end
-    return S1
-end
-
-function innerproduct_R(func, P1::BSplineSpace{p1}) where {p1}
-    n1 = dim(P1)
-    nip1 = p1 + 1
-    gl1 = GaussLegendre(nip1)
-    b = [_f_b_int_R(func, i1, P1, gl1) for i1 in 1:n1]
     return b
 end
 
-function innerproduct_I(func, P1::BSplineSpace{p1}) where {p1}
-    n1 = dim(P1)
-    nip1 = p1 + 1
-    gl1 = GaussLegendre(nip1)
-    b = [_f_b_int_I(func, i1, P1, gl1) for i1 in 1:n1]
+function innerproduct_I(func, Ps::Tuple{<:BSplineSpace{p₁},<:BSplineSpace{p₂},<:BSplineSpace{p₃}}) where {p₁,p₂,p₃}
+    P₁,P₂,P₃ = Ps
+    n₁,n₂,n₃ = dim.(Ps)
+    k₁,k₂,k₃ = knotvector.(Ps)
+    l₁,l₂,l₃ = length(k₁), length(k₂), length(k₃)
+    nodes₁, weights₁ = SVector{p₁+1}.(gausslegendre(p₁+1))
+    nodes₂, weights₂ = SVector{p₂+1}.(gausslegendre(p₂+1))
+    nodes₃, weights₃ = SVector{p₃+1}.(gausslegendre(p₃+1))
+
+    sample_point = func(leftendpoint(domain(P₁)),leftendpoint(domain(P₂)),leftendpoint(domain(P₃)))
+    b = Array{typeof(sample_point),3}(undef, n₁, n₂, n₃)
+    fill!(b, zero(sample_point))
+
+    for m₁ in 1:l₁-2p₁-1
+        ta₁ = k₁[m₁+p₁]
+        tb₁ = k₁[m₁+p₁+1]
+        w₁ = tb₁-ta₁
+        iszero(w₁) && continue
+        dnodes₁ = (w₁ * nodes₁ .+ (ta₁+tb₁)) / 2
+        bbs₁ = hcat(bsplinebasisall.(P₁,m₁,dnodes₁)...)
+        for m₂ in 1:l₂-2p₂-1
+            ta₂ = k₂[m₂+p₂]
+            tb₂ = k₂[m₂+p₂+1]
+            w₂ = tb₂-ta₂
+            iszero(w₂) && continue
+            dnodes₂ = (w₂ * nodes₂ .+ (ta₂+tb₂)) / 2
+            bbs₂ = hcat(bsplinebasisall.(P₂,m₂,dnodes₂)...)
+            for m₃ in 1:l₃-2p₃-1
+                ta₃ = k₃[m₃+p₃]
+                tb₃ = k₃[m₃+p₃+1]
+                w₃ = tb₃-ta₃
+                iszero(w₃) && continue
+                dnodes₃ = (w₃ * nodes₃ .+ (ta₃+tb₃)) / 2
+                bbs₃ = hcat(bsplinebasisall.(P₃,m₃,dnodes₃)...)
+                # TODO: This can be potentially faster
+                for j in 1:p₃+1
+                    F = func.(dnodes₁,dnodes₂',dnodes₃[j])
+                    for q₁ in 0:p₁
+                        i₁ = m₁ + q₁
+                        for q₂ in 0:p₂
+                            i₂ = m₂ + q₂
+                            for q₃ in 0:p₃
+                                i₃ = m₃ + q₃
+                                b[i₁,i₂,i₃] += sum(F.*bbs₁[i₁-m₁+1,:].*weights₁.*(bbs₂[i₂-m₂+1,:].*weights₂)')*bbs₃[i₃-m₃+1,j]*weights₃[j]*w₁*w₂*w₃/8
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
     return b
 end
 
-function innerproduct_R(func, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}}) where {p1,p2}
-    n1, n2 = dim.(P)
-    nip1 = p1 + 1
-    nip2 = p2 + 1
-    gl1 = GaussLegendre(nip1)
-    gl2 = GaussLegendre(nip2)
-    b = [_f_b_int_R(func, i1, i2, P, gl1, gl2) for i1 in 1:n1, i2 in 1:n2]
+function innerproduct_R(func, Ps::Tuple{<:BSplineSpace{p₁}}) where {p₁}
+    P₁, = Ps
+    n₁ = dim(P₁)
+    k₁ = knotvector(P₁)
+    l₁ = length(k₁)
+    nodes₁,weights₁ = SVector{p₁+1}.(gausslegendre(p₁+1))
+    b = innerproduct_I(func,Ps)
+    for i₁ in 1:n₁
+        F(t₁) = bsplinebasis(P₁, i₁, t₁) * func(t₁)
+        for j₁ in 1:l₁-1
+            i₁ ≤ j₁ ≤ i₁+p₁ || continue
+            1+p₁ ≤ j₁ ≤ l₁-p₁-1 && continue
+            ta₁ = k₁[j₁]
+            tb₁ = k₁[j₁+1]
+            w₁ = tb₁-ta₁
+            iszero(w₁) && continue
+            dnodes₁ = (w₁ * nodes₁ .+ (ta₁+tb₁)) / 2
+            b[i₁] += sum(F.(dnodes₁).*weights₁)*w₁/2
+        end
+    end
     return b
 end
 
-function innerproduct_I(func, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}}) where {p1,p2}
-    n1, n2 = dim.(P)
-    nip1 = p1 + 1
-    nip2 = p2 + 1
-    gl1 = GaussLegendre(nip1)
-    gl2 = GaussLegendre(nip2)
-    b = [_f_b_int_I(func, i1, i2, P, gl1, gl2) for i1 in 1:n1, i2 in 1:n2]
+function innerproduct_R(func, Ps::Tuple{<:BSplineSpace{p₁},<:BSplineSpace{p₂}}) where {p₁,p₂}
+    P₁,P₂ = Ps
+    n₁,n₂ = dim.(Ps)
+    k₁,k₂ = knotvector.(Ps)
+    l₁,l₂ = length(k₁), length(k₂)
+    nodes₁,weights₁ = SVector{p₁+1}.(gausslegendre(p₁+1))
+    nodes₂,weights₂ = SVector{p₂+1}.(gausslegendre(p₂+1))
+    b = innerproduct_I(func,Ps)
+    for i₁ in 1:n₁, i₂ in 1:n₂
+        F(t₁,t₂) = bsplinebasis(P₁,i₁,t₁) * bsplinebasis(P₂,i₂,t₂) * func(t₁,t₂)
+        for j₁ in 1:l₁-1
+            i₁ ≤ j₁ ≤ i₁+p₁ || continue
+            ta₁ = k₁[j₁]
+            tb₁ = k₁[j₁+1]
+            w₁ = tb₁-ta₁
+            iszero(w₁) && continue
+            dnodes₁ = (w₁ * nodes₁ .+ (ta₁+tb₁)) / 2
+            for j₂ in 1:l₂-1
+                i₂ ≤ j₂ ≤ i₂+p₂ || continue
+                (1+p₁ ≤ j₁ ≤ l₁-p₁-1 && 1+p₂ ≤ j₂ ≤ l₂-p₂-1) && continue
+                ta₂ = k₂[j₂]
+                tb₂ = k₂[j₂+1]
+                w₂ = tb₂-ta₂
+                iszero(w₂) && continue
+                dnodes₂ = (w₂ * nodes₂ .+ (ta₂+tb₂)) / 2
+                b[i₁,i₂] += sum(F.(dnodes₁,dnodes₂').*weights₁.*weights₂')*w₁*w₂/4
+            end
+        end
+    end
     return b
 end
 
-function innerproduct_R(func, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}, <:AbstractBSplineSpace{p3}}) where {p1,p2,p3}
-    n1, n2, n3 = dim.(P)
-    nip1 = p1 + 1
-    nip2 = p2 + 1
-    nip3 = p3 + 1
-    gl1 = GaussLegendre(nip1)
-    gl2 = GaussLegendre(nip2)
-    gl3 = GaussLegendre(nip3)
-    b = [_f_b_int_R(func, i1, i2, i3, P, gl1, gl2, gl3) for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3]
-    return b
-end
-
-function innerproduct_I(func, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}, <:AbstractBSplineSpace{p3}}) where {p1,p2,p3}
-    P1, P2, P3 = P
-    n1, n2, n3 = dim(P1), dim(P2), dim(P3)
-    nip1 = p1 + 1
-    nip2 = p2 + 1
-    nip3 = p3 + 1
-    gl1 = GaussLegendre(nip1)
-    gl2 = GaussLegendre(nip2)
-    gl3 = GaussLegendre(nip3)
-    b = [_f_b_int_I(func, i1, i2, i3, P, gl1, gl2, gl3) for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3]
+function innerproduct_R(func, Ps::Tuple{<:BSplineSpace{p₁},<:BSplineSpace{p₂},<:BSplineSpace{p₃}}) where {p₁,p₂,p₃}
+    P₁,P₂,P₃ = Ps
+    n₁,n₂,n₃ = dim.(Ps)
+    k₁,k₂,k₃ = knotvector.(Ps)
+    l₁,l₂,l₃ = length(k₁), length(k₂), length(k₃)
+    nodes₁,weights₁ = SVector{p₁+1}.(gausslegendre(p₁+1))
+    nodes₂,weights₂ = SVector{p₂+1}.(gausslegendre(p₂+1))
+    nodes₃,weights₃ = SVector{p₃+1}.(gausslegendre(p₃+1))
+    b = innerproduct_I(func,Ps)
+    for i₁ in 1:n₁, i₂ in 1:n₂, i₃ in 1:n₃
+        F(t₁,t₂,t₃) = bsplinebasis(P₁,i₁,t₁) * bsplinebasis(P₂,i₂,t₂)  * bsplinebasis(P₃,i₃,t₃) * func(t₁,t₂,t₃)
+        for j₁ in 1:l₁-1
+            i₁ ≤ j₁ ≤ i₁+p₁ || continue
+            ta₁ = k₁[j₁]
+            tb₁ = k₁[j₁+1]
+            w₁ = tb₁-ta₁
+            iszero(w₁) && continue
+            dnodes₁ = (w₁ * nodes₁ .+ (ta₁+tb₁)) / 2
+            for j₂ in 1:l₂-1
+                i₂ ≤ j₂ ≤ i₂+p₂ || continue
+                ta₂ = k₂[j₂]
+                tb₂ = k₂[j₂+1]
+                w₂ = tb₂-ta₂
+                iszero(w₂) && continue
+                dnodes₂ = (w₂ * nodes₂ .+ (ta₂+tb₂)) / 2
+                for j₃ in 1:l₃-1
+                    i₃ ≤ j₃ ≤ i₃+p₃ || continue
+                    # TODO: This can be potentially faster
+                    (1+p₁ ≤ j₁ ≤ l₁-p₁-1 && 1+p₂ ≤ j₂ ≤ l₂-p₂-1 && 1+p₃ ≤ j₃ ≤ l₃-p₃-1) && continue
+                    ta₃ = k₃[j₃]
+                    tb₃ = k₃[j₃+1]
+                    w₃ = tb₃-ta₃
+                    iszero(w₃) && continue
+                    dnodes₃ = (w₃ * nodes₃ .+ (ta₃+tb₃)) / 2
+                    for j in 1:p₃+1
+                        b[i₁,i₂,i₃] += weights₃[j]*sum(F.(dnodes₁,dnodes₂',dnodes₃[j]).*weights₁.*weights₂')*w₁*w₂*w₃/8
+                    end
+                end
+            end
+        end
+    end
     return b
 end
 
@@ -316,10 +296,10 @@ end
 function fittingcontrolpoints(func, P::Tuple{<:AbstractBSplineSpace{p1}}; domain=:I) where {p1}
     P1, = P
     if domain == :I
-        b = innerproduct_I(func, P1)
+        b = innerproduct_I(func, P)
         A = innerproduct_I(P1)
     elseif domain == :R
-        b = innerproduct_R(func, P1)
+        b = innerproduct_R(func, P)
         A = innerproduct_R(P1)
     end
     return inv(A) * b
