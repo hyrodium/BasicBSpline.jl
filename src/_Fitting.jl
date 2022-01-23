@@ -212,7 +212,8 @@ function _f_b_int_I(func, i1, i2, i3, P::Tuple{<:AbstractBSplineSpace{p1}, <:Abs
     return S1
 end
 
-function innerproduct_R(func, P1::BSplineSpace{p1}) where {p1}
+function innerproduct_R(func, Ps::Tuple{<:BSplineSpace{p1}}) where {p1}
+    P1, = Ps
     n1 = dim(P1)
     nip1 = p1 + 1
     gl1 = GaussLegendre(nip1)
@@ -220,7 +221,8 @@ function innerproduct_R(func, P1::BSplineSpace{p1}) where {p1}
     return b
 end
 
-function innerproduct_I(func, P₁::BSplineSpace{p₁}) where {p₁}
+function innerproduct_I(func, Ps::Tuple{<:BSplineSpace{p₁}}) where {p₁}
+    P₁, = Ps
     n₁ = dim(P₁)
     k₁ = knotvector(P₁)
     l₁ = length(k₁)
@@ -297,10 +299,10 @@ end
 function fittingcontrolpoints(func, P::Tuple{<:AbstractBSplineSpace{p1}}; domain=:I) where {p1}
     P1, = P
     if domain == :I
-        b = innerproduct_I(func, P1)
+        b = innerproduct_I(func, P)
         A = innerproduct_I(P1)
     elseif domain == :R
-        b = innerproduct_R(func, P1)
+        b = innerproduct_R(func, P)
         A = innerproduct_R(P1)
     end
     return inv(A) * b
