@@ -27,7 +27,7 @@ end
 bsplinespaces(M::BSplineManifold) = M.bsplinespaces
 controlpoints(M::BSplineManifold) = M.controlpoints
 
-@generated function _mapping(M::BSplineManifold{1,Deg,S,T},t1) where {Deg,S,T}
+@generated function unsafe_mapping(M::BSplineManifold{1,Deg,S,T},t1) where {Deg,S,T}
     p1, = Deg
     exs = Expr[]
     for j1 in 1:p1
@@ -45,7 +45,7 @@ controlpoints(M::BSplineManifold) = M.controlpoints
     )
 end
 
-@generated function _mapping(M::BSplineManifold{2,Deg,S,T},t1,t2) where {Deg,S,T}
+@generated function unsafe_mapping(M::BSplineManifold{2,Deg,S,T},t1,t2) where {Deg,S,T}
     p1, p2 = Deg
     exs = Expr[]
     for j2 in 1:p2+1, j1 in 1:p1+1
@@ -64,7 +64,7 @@ end
     )
 end
 
-@generated function _mapping(M::BSplineManifold{3,Deg,S,T},t1,t2,t3) where {Deg,S,T}
+@generated function unsafe_mapping(M::BSplineManifold{3,Deg,S,T},t1,t2,t3) where {Deg,S,T}
     p1, p2, p3 = Deg
     exs = Expr[]
     for j3 in 1:p3+1, j2 in 1:p2+1, j1 in 1:p1+1
@@ -86,14 +86,14 @@ end
 @inline function (M::AbstractBSplineManifold{1})(t1)
     Ps = bsplinespaces(M)
     t1 in domain(Ps[1]) || throw(DomainError(t1, "The input $(t1) is out of range."))
-    _mapping(M,t1)
+    unsafe_mapping(M,t1)
 end
 
 @inline function (M::AbstractBSplineManifold{2})(t1,t2)
     Ps = bsplinespaces(M)
     t1 in domain(Ps[1]) || throw(DomainError(t1, "The input $(t1) is out of range."))
     t2 in domain(Ps[2]) || throw(DomainError(t2, "The input $(t2) is out of range."))
-    _mapping(M,t1,t2)
+    unsafe_mapping(M,t1,t2)
 end
 
 @inline function (M::AbstractBSplineManifold{3})(t1,t2,t3)
@@ -101,7 +101,7 @@ end
     t1 in domain(Ps[1]) || throw(DomainError(t1, "The input $(t1) is out of range."))
     t2 in domain(Ps[2]) || throw(DomainError(t2, "The input $(t2) is out of range."))
     t3 in domain(Ps[3]) || throw(DomainError(t3, "The input $(t3) is out of range."))
-    _mapping(M,t1,t2,t3)
+    unsafe_mapping(M,t1,t2,t3)
 end
 
 # TODO add mappings higher dimensionnal B-spline manifold with @generated macro
