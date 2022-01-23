@@ -27,13 +27,14 @@ end
 bsplinespaces(M::BSplineManifold) = M.bsplinespaces
 controlpoints(M::BSplineManifold) = M.controlpoints
 
-@generated function (M::BSplineManifold{1,Deg,S,T})(t1::Real) where {Deg,S,T}
+@generated function _mapping(M::BSplineManifold{1,Deg,S,T},t1) where {Deg,S,T}
     p1, = Deg
     exs = Expr[]
     for j1 in 1:p1
         push!(exs, :(v .+= b1[$(1+j1)]*view(a,i1+$(j1),:)))
     end
-    Expr(:block,
+    Expr(
+        :block,
         :((P1,) = bsplinespaces(M)),
         :(a = controlpoints(M)),
         :(i1 = intervalindex(P1,t1)),
@@ -44,7 +45,7 @@ controlpoints(M::BSplineManifold) = M.controlpoints
     )
 end
 
-@generated function (M::BSplineManifold{2,Deg,S,T})(t1,t2) where {Deg,S,T}
+@generated function _mapping(M::BSplineManifold{2,Deg,S,T},t1,t2) where {Deg,S,T}
     p1, p2 = Deg
     exs = Expr[]
     for j2 in 1:p2+1, j1 in 1:p1+1
@@ -63,7 +64,7 @@ end
     )
 end
 
-@generated function (M::BSplineManifold{3,Deg,S,T})(t1,t2,t3) where {Deg,S,T}
+@generated function _mapping(M::BSplineManifold{3,Deg,S,T},t1,t2,t3) where {Deg,S,T}
     p1, p2, p3 = Deg
     exs = Expr[]
     for j3 in 1:p3+1, j2 in 1:p2+1, j1 in 1:p1+1
@@ -80,6 +81,14 @@ end
         exs...,
         :(return v)
     )
+end
+
+function (M::AbstractBSplineManifold{Dim})(ts::Real...) where Dim
+    Ps = bsplinespaces(M)
+    for i in 1:Dim
+        ts[i] in domain(Ps[i]) || throw(DomainError(ts[i], "The input is out of range."))
+    end
+    _mapping(M,ts...)
 end
 
 # TODO add mappings higher dimensionnal B-spline manifold with @generated macro
