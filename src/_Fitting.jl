@@ -276,11 +276,11 @@ function innerproduct_R(func, Ps::Tuple{<:BSplineSpace{p₁}}) where {p₁}
     b = innerproduct_I(func,Ps)
     for i₁ in 1:n₁
         F(t₁) = bsplinebasis(P₁, i₁, t₁) * func(t₁)
-        for j1 in 1:l₁-1
-            i₁ ≤ j1 ≤ i₁+p₁ || continue
-            1+p₁ ≤ j1 ≤ l₁-p₁-1 && continue
-            ta₁ = k₁[j1]
-            tb₁ = k₁[j1+1]
+        for j₁ in 1:l₁-1
+            i₁ ≤ j₁ ≤ i₁+p₁ || continue
+            1+p₁ ≤ j₁ ≤ l₁-p₁-1 && continue
+            ta₁ = k₁[j₁]
+            tb₁ = k₁[j₁+1]
             w₁ = tb₁-ta₁
             iszero(w₁) && continue
             dnodes₁ = (w₁ * nodes₁ .+ (ta₁+tb₁)) / 2
@@ -290,13 +290,35 @@ function innerproduct_R(func, Ps::Tuple{<:BSplineSpace{p₁}}) where {p₁}
     return b
 end
 
-function innerproduct_R(func, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}}) where {p1,p2}
-    n1, n2 = dim.(P)
-    nip1 = p1 + 1
-    nip2 = p2 + 1
-    gl1 = GaussLegendre(nip1)
-    gl2 = GaussLegendre(nip2)
-    b = [_f_b_int_R(func, i1, i2, P, gl1, gl2) for i1 in 1:n1, i2 in 1:n2]
+function innerproduct_R(func, Ps::Tuple{<:BSplineSpace{p₁},<:BSplineSpace{p₂}}) where {p₁,p₂}
+    P₁,P₂ = Ps
+    n₁,n₂ = dim.(Ps)
+    k₁,k₂ = knotvector.(Ps)
+    l₁,l₂ = length(k₁), length(k₂)
+    nodes₁,weights₁ = SVector{p₁+1}.(gausslegendre(p₁+1))
+    nodes₂,weights₂ = SVector{p₂+1}.(gausslegendre(p₂+1))
+    b = innerproduct_I(func,Ps)
+    for i₁ in 1:n₁, i₂ in 1:n₂
+        F(t₁,t₂) = bsplinebasis(P₁,i₁,t₁) * bsplinebasis(P₂,i₂,t₂) * func(t₁,t₂)
+        for j₁ in 1:l₁-1
+            i₁ ≤ j₁ ≤ i₁+p₁ || continue
+            ta₁ = k₁[j₁]
+            tb₁ = k₁[j₁+1]
+            w₁ = tb₁-ta₁
+            iszero(w₁) && continue
+            dnodes₁ = (w₁ * nodes₁ .+ (ta₁+tb₁)) / 2
+            for j₂ in 1:l₂-1
+                i₂ ≤ j₂ ≤ i₂+p₂ || continue
+                (1+p₁ ≤ j₁ ≤ l₁-p₁-1 && 1+p₂ ≤ j₂ ≤ l₂-p₂-1) && continue
+                ta₂ = k₂[j₂]
+                tb₂ = k₂[j₂+1]
+                w₂ = tb₂-ta₂
+                iszero(w₂) && continue
+                dnodes₂ = (w₂ * nodes₂ .+ (ta₂+tb₂)) / 2
+                b[i₁,i₂] += sum(F.(dnodes₁,dnodes₂').*weights₁.*weights₂')*w₁*w₂/4
+            end
+        end
+    end
     return b
 end
 
