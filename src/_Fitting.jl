@@ -226,7 +226,7 @@ function innerproduct_I(func, P₁::BSplineSpace{p₁}) where {p₁}
     l₁ = length(k₁)
     nodes₁, weights₁ = SVector{p₁+1}.(gausslegendre(p₁+1))
 
-    sample_point = func(0.1)
+    sample_point = func(leftendpoint(domain(P₁)))
     b = Array{typeof(sample_point),1}(undef, n₁)
     fill!(b, zero(sample_point))
 
