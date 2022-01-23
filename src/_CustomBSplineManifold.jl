@@ -21,7 +21,7 @@ end
 bsplinespaces(M::CustomBSplineManifold) = M.bsplinespaces
 controlpoints(M::CustomBSplineManifold) = M.controlpoints
 
-@generated function (M::CustomBSplineManifold{1,Deg,S,T})(t1::Real) where {Deg,S,T}
+@generated function unsafe_mapping(M::CustomBSplineManifold{1,Deg,S,T},t1::Real) where {Deg,S,T}
     p1, = Deg
     exs = Expr[]
     for j1 in 1:p1
@@ -38,7 +38,7 @@ controlpoints(M::CustomBSplineManifold) = M.controlpoints
     )
 end
 
-@generated function (M::CustomBSplineManifold{2,Deg,S,T})(t1,t2) where {Deg,S,T}
+@generated function unsafe_mapping(M::CustomBSplineManifold{2,Deg,S,T},t1,t2) where {Deg,S,T}
     p1, p2 = Deg
     exs = Expr[]
     for j2 in 1:p2+1, j1 in 1:p1+1
@@ -57,7 +57,7 @@ end
     )
 end
 
-@generated function (M::CustomBSplineManifold{3,Deg,S,T})(t1,t2,t3) where {Deg,S,T}
+@generated function unsafe_mapping(M::CustomBSplineManifold{3,Deg,S,T},t1,t2,t3) where {Deg,S,T}
     p1, p2, p3 = Deg
     exs = Expr[]
     for j3 in 1:p3+1, j2 in 1:p2+1, j1 in 1:p1+1

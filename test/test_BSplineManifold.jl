@@ -43,6 +43,7 @@
                 @test M(t) ≈ M′(t)
                 @test M(t) ≈ M′′(t)
             end
+            @test_throws DomainError M(-5)
         end
 
         @testset "CustomBSplineManifold-1dim" begin
@@ -67,6 +68,7 @@
                 @test M(t...) ≈ M′(t...)
                 @test M(t...) ≈ M′′(t...)
             end
+            @test_throws DomainError M(-5)
         end
     end
 
@@ -98,6 +100,7 @@
                 @test M(t...) ≈ M′(t...)
                 @test M(t...) ≈ M′′(t...)
             end
+            @test_throws DomainError M(-5,-8)
         end
 
         @testset "CustomBSplineManifold-2dim" begin
@@ -126,6 +129,57 @@
                 @test M(t...) ≈ M′(t...)
                 @test M(t...) ≈ M′′(t...)
             end
+            @test_throws DomainError M(-5,-8)
+        end
+    end
+
+    @testset "3dim" begin
+        @testset "BSplineManifold-3dim" begin
+            Random.seed!(42)
+
+            P1 = BSplineSpace{1}(KnotVector([0, 0, 1, 1]))
+            P2 = BSplineSpace{1}(KnotVector([1, 1, 2, 3, 3]))
+            P3 = BSplineSpace{2}(KnotVector(rand(16)))
+            n1 = dim(P1) # 2
+            n2 = dim(P2) # 3
+            n3 = dim(P3)
+            a = [rand(2) for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3]
+            M = BSplineManifold(arrayofvector2array(a), (P1, P2, P3))
+            @test dim(M) == 3
+
+            p₊ = (1, 0, 1)
+            k₊ = (KnotVector(), KnotVector(1.45), KnotVector())
+
+            M′′ = refinement(M, p₊=p₊, k₊=k₊)
+            ts = [[rand(), 1 + 2 * rand(), 0.5] for _ in 1:10]
+            for t in ts
+                @test M(t...) ≈ M′′(t...)
+            end
+            @test_throws DomainError M(-5,-8,-120)
+        end
+
+        @testset "CustomBSplineManifold-3dim" begin
+            Random.seed!(42)
+
+            P1 = BSplineSpace{1}(KnotVector([0, 0, 1, 1]))
+            P2 = BSplineSpace{1}(KnotVector([1, 1, 2, 3, 3]))
+            P3 = BSplineSpace{2}(KnotVector(rand(16)))
+            n1 = dim(P1) # 2
+            n2 = dim(P2) # 3
+            n3 = dim(P3)
+            a = [Point(i1, i2, 3) for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3]
+            M = CustomBSplineManifold(a, (P1, P2, P3))
+            @test dim(M) == 3
+
+            p₊ = (1, 0, 1)
+            k₊ = (KnotVector(), KnotVector(1.45), KnotVector())
+
+            M′′ = refinement(M, p₊=p₊, k₊=k₊)
+            ts = [[rand(), 1 + 2 * rand(), 0.5] for _ in 1:10]
+            for t in ts
+                @test M(t...) ≈ M′′(t...)
+            end
+            @test_throws DomainError M(-5,-8,-120)
         end
     end
 end
