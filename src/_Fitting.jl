@@ -71,42 +71,6 @@ function innerproduct_R(P::BSplineSpace{p}) where p
     return Symmetric(A)
 end
 
-function _f_b_int_R(func, i1, P1::BSplineSpace{p1}, gl1) where {p1}
-    k1 = knotvector(P1)
-    F(t1) = bsplinebasis(P1, i1, t1) * func(t1)
-
-    f1,l1 = i1, i1+p1
-
-    S1 = integrate(F, k1[f1]..k1[f1+1], gl1)
-    for j1 in f1+1:l1
-        S1 += integrate(F, k1[j1]..k1[j1+1], gl1)
-    end
-    return S1
-end
-
-function _f_b_int_R(func, i1, i2, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}}, gl1, gl2) where {p1,p2}
-    P1, P2 = P
-    k1, k2 = knotvector(P1), knotvector(P2)
-    F(t1, t2) = bsplinebasis(P1, i1, t1) * bsplinebasis(P2, i2, t2) * func(t1, t2)
-
-    f1, l1 = i1, i1+p1
-    f2, l2 = i2, i2+p2
-
-    S2 = integrate(F, k1[f1]..k1[f1+1], k2[f2]..k2[f2+1], gl1, gl2)
-    for j2 in f2+1:l2
-        S2 += integrate(F, k1[f1]..k1[f1+1], k2[j2]..k2[j2+1], gl1, gl2)
-    end
-    S1 = S2
-    for j1 in f1+1:l1
-        S2 = integrate(F, k1[j1]..k1[j1+1], k2[f2]..k2[f2+1], gl1, gl2)
-        for j2 in f2+1:l2
-            S2 += integrate(F, k1[j1]..k1[j1+1], k2[j2]..k2[j2+1], gl1, gl2)
-        end
-        S1 += S2
-    end
-    return S1
-end
-
 function _f_b_int_R(func, i1, i2, i3, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}, <:AbstractBSplineSpace{p3}}, gl1, gl2, gl3) where {p1,p2,p3}
     P1, P2, P3 = P
     k1, k2, k3 = knotvector(P1), knotvector(P2), knotvector(P3)
