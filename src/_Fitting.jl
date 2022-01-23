@@ -267,12 +267,26 @@ function innerproduct_I(func, Ps::Tuple{<:BSplineSpace{p₁},<:BSplineSpace{p₂
     return b
 end
 
-function innerproduct_R(func, Ps::Tuple{<:BSplineSpace{p1}}) where {p1}
-    P1, = Ps
-    n1 = dim(P1)
-    nip1 = p1 + 1
-    gl1 = GaussLegendre(nip1)
-    b = [_f_b_int_R(func, i1, P1, gl1) for i1 in 1:n1]
+function innerproduct_R(func, Ps::Tuple{<:BSplineSpace{p₁}}) where {p₁}
+    P₁, = Ps
+    n₁ = dim(P₁)
+    k₁ = knotvector(P₁)
+    l₁ = length(k₁)
+    nodes₁,weights₁ = SVector{p₁+1}.(gausslegendre(p₁+1))
+    b = innerproduct_I(func,Ps)
+    for i₁ in 1:n₁
+        F(t₁) = bsplinebasis(P₁, i₁, t₁) * func(t₁)
+        for j1 in 1:l₁-1
+            i₁ ≤ j1 ≤ i₁+p₁ || continue
+            1+p₁ ≤ j1 ≤ l₁-p₁-1 && continue
+            ta₁ = k₁[j1]
+            tb₁ = k₁[j1+1]
+            w₁ = tb₁-ta₁
+            iszero(w₁) && continue
+            dnodes₁ = (w₁ * nodes₁ .+ (ta₁+tb₁)) / 2
+            b[i₁] += sum(F.(dnodes₁).*weights₁)*w₁/2
+        end
+    end
     return b
 end
 
