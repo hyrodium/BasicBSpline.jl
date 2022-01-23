@@ -13,6 +13,5 @@ using GeometryBasics
     include("test_Derivative.jl")
     include("test_ChangeBasis.jl")
     include("test_BSplineManifold.jl")
-    include("test_Integral.jl")
     include("test_Fitting.jl")
 end

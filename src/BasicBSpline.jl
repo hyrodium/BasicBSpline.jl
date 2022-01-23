@@ -29,7 +29,6 @@ include("_ChangeBasis.jl")
 include("_BSplineManifold.jl")
 include("_CustomBSplineManifold.jl")
 include("_Refinement.jl")
-include("_Integral.jl")
 include("_Fitting.jl")
 
 end # module
