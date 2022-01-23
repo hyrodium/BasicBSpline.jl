@@ -212,15 +212,6 @@ function _f_b_int_I(func, i1, i2, i3, P::Tuple{<:AbstractBSplineSpace{p1}, <:Abs
     return S1
 end
 
-function innerproduct_R(func, Ps::Tuple{<:BSplineSpace{p1}}) where {p1}
-    P1, = Ps
-    n1 = dim(P1)
-    nip1 = p1 + 1
-    gl1 = GaussLegendre(nip1)
-    b = [_f_b_int_R(func, i1, P1, gl1) for i1 in 1:n1]
-    return b
-end
-
 function innerproduct_I(func, Ps::Tuple{<:BSplineSpace{p₁}}) where {p₁}
     P₁, = Ps
     n₁ = dim(P₁)
@@ -248,6 +239,54 @@ function innerproduct_I(func, Ps::Tuple{<:BSplineSpace{p₁}}) where {p₁}
     return b
 end
 
+function innerproduct_I(func, Ps::Tuple{<:BSplineSpace{p₁},<:BSplineSpace{p₂}}) where {p₁,p₂}
+    P₁,P₂ = Ps
+    n₁,n₂ = dim.(Ps)
+    k₁,k₂ = knotvector.(Ps)
+    l₁,l₂ = length(k₁), length(k₂)
+    nodes₁, weights₁ = SVector{p₁+1}.(gausslegendre(p₁+1))
+    nodes₂, weights₂ = SVector{p₂+1}.(gausslegendre(p₂+1))
+
+    sample_point = func(leftendpoint(domain(P₁)),leftendpoint(domain(P₂)))
+    b = Array{typeof(sample_point),2}(undef, n₁, n₂)
+    fill!(b, zero(sample_point))
+
+    for m₁ in 1:l₁-2p₁-1
+        ta₁ = k₁[m₁+p₁]
+        tb₁ = k₁[m₁+p₁+1]
+        w₁ = tb₁-ta₁
+        iszero(w₁) && continue
+        dnodes₁ = (w₁ * nodes₁ .+ (ta₁+tb₁)) / 2
+        bbs₁ = hcat(bsplinebasisall.(P₁,m₁,dnodes₁)...)
+        for m₂ in 1:l₂-2p₂-1
+            ta₂ = k₂[m₂+p₂]
+            tb₂ = k₂[m₂+p₂+1]
+            w₂ = tb₂-ta₂
+            iszero(w₂) && continue
+            dnodes₂ = (w₂ * nodes₂ .+ (ta₂+tb₂)) / 2
+            bbs₂ = hcat(bsplinebasisall.(P₂,m₂,dnodes₂)...)
+            F = func.(dnodes₁,dnodes₂')
+            for q₁ in 0:p₁
+                i₁ = m₁ + q₁
+                for q₂ in 0:p₂
+                    i₂ = m₂ + q₂
+                    b[i₁,i₂] += sum(F.*bbs₁[i₁-m₁+1,:].*weights₁.*(bbs₂[i₂-m₂+1,:].*weights₂)')*w₁*w₂/4
+                end
+            end
+        end
+    end
+    return b
+end
+
+function innerproduct_R(func, Ps::Tuple{<:BSplineSpace{p1}}) where {p1}
+    P1, = Ps
+    n1 = dim(P1)
+    nip1 = p1 + 1
+    gl1 = GaussLegendre(nip1)
+    b = [_f_b_int_R(func, i1, P1, gl1) for i1 in 1:n1]
+    return b
+end
+
 function innerproduct_R(func, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}}) where {p1,p2}
     n1, n2 = dim.(P)
     nip1 = p1 + 1
@@ -255,16 +294,6 @@ function innerproduct_R(func, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSp
     gl1 = GaussLegendre(nip1)
     gl2 = GaussLegendre(nip2)
     b = [_f_b_int_R(func, i1, i2, P, gl1, gl2) for i1 in 1:n1, i2 in 1:n2]
-    return b
-end
-
-function innerproduct_I(func, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}}) where {p1,p2}
-    n1, n2 = dim.(P)
-    nip1 = p1 + 1
-    nip2 = p2 + 1
-    gl1 = GaussLegendre(nip1)
-    gl2 = GaussLegendre(nip2)
-    b = [_f_b_int_I(func, i1, i2, P, gl1, gl2) for i1 in 1:n1, i2 in 1:n2]
     return b
 end
 
