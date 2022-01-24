@@ -28,7 +28,7 @@ KnotVector(k::KnotVector) = k
 KnotVector{T}(k::KnotVector{T}) where T = k
 KnotVector{T}(k::KnotVector{S}) where {T,S} = unsafe_knotvector(T,k.vector)
 
-Base.convert(T::Type{<:KnotVector},k::KnotVector) = T(k)
+Base.convert(T::Type{<:KnotVector},k::AbstractKnotVector) = T(k)
 function Base.promote_rule(::Type{KnotVector{T}}, ::Type{KnotVector{S}}) where {T,S}
     KnotVector{promote_type(T,S)}
 end
@@ -66,7 +66,7 @@ Base.zero(::Type{<:KnotVector}) = KnotVector()
 Base.zero(::KnotVector{T}) where T = KnotVector{T}()
 Base.:(==)(k₁::KnotVector, k₂::KnotVector) = (k₁.vector == k₂.vector)
 
-Base.eltype(::KnotVector{T}) where T = T
+Base.eltype(::AbstractKnotVector{T}) where T = T
 Base.collect(k::KnotVector) = k.vector
 
 @doc raw"""
