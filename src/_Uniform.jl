@@ -48,3 +48,13 @@ end
         :(return SVector($(B)))
     )
 end
+
+@inline function uniform_bsplinebasis_kernel(::Val{0},t::T) where T<:Real
+    return zero(t) ≤ t < one(t)
+end
+@inline function uniform_bsplinebasis_kernel(::Val{1},t::T) where T<:Real
+    return max(1-abs(t-1), zero(t))
+end
+@inline function uniform_bsplinebasis_kernel(::Val{p},t::T) where {p,T<:Real}
+    return (t*uniform_bsplinebasis_kernel(Val{p-1}(),t) + (p+1-t)*uniform_bsplinebasis_kernel(Val{p-1}(),t-1))/p
+end
