@@ -5,8 +5,9 @@ using IntervalSets
 using StaticArrays
 using FastGaussQuadrature
 
-export KnotVector, AbstractKnotVector
-export BSplineSpace, dim, ⊑, ⊒, ⋢, ⋣, ≃
+export AbstractKnotVector, KnotVector, UniformKnotVector
+export BSplineSpace, UniformBSplineSpace
+export dim, ⊑, ⊒, ⋢, ⋣, ≃
 export BSplineDerivativeSpace
 export BSplineManifold, CustomBSplineManifold
 export bsplinebasis₊₀, bsplinebasis₋₀, bsplinebasis
@@ -23,6 +24,7 @@ export fittingcontrolpoints
 include("_KnotVector.jl")
 include("_BSplineSpace.jl")
 include("_BSplineBasis.jl")
+include("_Uniform.jl")
 include("_DerivativeSpace.jl")
 include("_DerivativeBasis.jl")
 include("_ChangeBasis.jl")
