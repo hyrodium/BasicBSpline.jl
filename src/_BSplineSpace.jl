@@ -192,7 +192,7 @@ end
 """
 Expand B-spline space with given additional degree and knotvector.
 """
-function expandspace(P::BSplineSpace{p,T}; p₊::AbstractInteger=0, k₊::KnotVector{T}=KnotVector{T}()) where {p,T}
+function expandspace(P::BSplineSpace{p,T}; p₊::Integer=0, k₊::KnotVector{T}=KnotVector{T}()) where {p,T}
     k = knotvector(P)
     k̂ = unique(k[1+p:end-p])
     p′ = p + p₊
