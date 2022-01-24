@@ -183,11 +183,11 @@ Base.searchsortedlast(k::KnotVector,t) = searchsortedlast(k.vector,t)
 Base.searchsorted(k::KnotVector,t) = searchsorted(k.vector,t)
 
 @doc raw"""
-Check a inclusive relation ship ``k\subseteq k'``, for example:
+Check a inclusive relationship ``k\subseteq k'``, for example:
 ```math
 \begin{aligned}
 (1,2) &\subseteq (1,2,3) \\
-(1,2,2) &\subseteq (1,2,3) \\
+(1,2,2) &\not\subseteq (1,2,3) \\
 (1,2,3) &\subseteq (1,2,3) \\
 \end{aligned}
 ```
@@ -206,7 +206,6 @@ true
 """
 function Base.issubset(k::KnotVector, k′::KnotVector)
     v = k′.vector
-    l = length(v)
     i = 0
     for kᵢ in k
         i = findnext(==(kᵢ), v, i+1)

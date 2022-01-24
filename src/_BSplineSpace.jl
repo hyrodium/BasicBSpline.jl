@@ -167,18 +167,16 @@ function bsplinesupport(P::AbstractBSplineSpace{p}) where p
 end
 
 @doc raw"""
-Return a B-spline space of one degree lower.
+Internal methods for obtaining a B-spline space with one degree lower.
 ```math
-\mathcal{P}[p,k] \mapsto \mathcal{P}[p-1,k]
+\begin{aligned}
+\mathcal{P}[p,k] \mapsto \mathcal{P}[p-1,k] \\
+D^r\mathcal{P}[p,k] \mapsto D^{r-1}\mathcal{P}[p-1,k]
+\end{aligned}
 ```
 """
 _lower
 
-# TODO: Consider we really need these methods.
-# _lower(::Type{AbstractBSplineSpace{p}}) where p = AbstractBSplineSpace{p-1}
-# _lower(::Type{AbstractBSplineSpace{p,T}}) where {p,T} = AbstractBSplineSpace{p-1,T}
-# _lower(::Type{BSplineSpace{p}}) where p = BSplineSpace{p-1}
-# _lower(::Type{BSplineSpace{p,T}}) where {p,T} = BSplineSpace{p-1,T}
 _lower(P::BSplineSpace{p,T}) where {p,T} = BSplineSpace{p-1}(knotvector(P))
 
 """
@@ -194,11 +192,11 @@ end
 """
 Expand B-spline space with given additional degree and knotvector.
 """
-function expandspace(P::BSplineSpace{p,T}; p₊::Integer=0, k₊::KnotVector{T}=KnotVector{T}()) where {p,T}
+function expandspace(P::BSplineSpace{p,T}; p₊::AbstractInteger=0, k₊::KnotVector{T}=KnotVector{T}()) where {p,T}
     k = knotvector(P)
-    k0 = unique(k[1+p:end-p])
+    k̂ = unique(k[1+p:end-p])
     p′ = p + p₊
-    k′ = k + p₊*k0 + k₊
+    k′ = k + p₊*k̂ + k₊
     P′ = BSplineSpace{p′}(k′)
     return P′
 end
