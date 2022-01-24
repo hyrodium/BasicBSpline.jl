@@ -25,8 +25,10 @@ KnotVector{T}(v::AbstractVector) where T = unsafe_knotvector(T,sort(v))
 KnotVector(v::AbstractVector{T}) where {T<:Real} = unsafe_knotvector(float(T),sort(v))
 
 KnotVector(k::KnotVector) = k
+KnotVector(k::AbstractKnotVector{T}) where T = unsafe_knotvector(T,_vec(k))
 KnotVector{T}(k::KnotVector{T}) where T = k
 KnotVector{T}(k::KnotVector{S}) where {T,S} = unsafe_knotvector(T,k.vector)
+KnotVector{T}(k::AbstractKnotVector{S}) where {T,S} = unsafe_knotvector(T,_vec(k))
 
 Base.convert(T::Type{<:KnotVector},k::AbstractKnotVector) = T(k)
 function Base.promote_rule(::Type{KnotVector{T}}, ::Type{KnotVector{S}}) where {T,S}
@@ -62,12 +64,21 @@ function Base.show(io::IO, k::KnotVector)
     end
 end
 
+"""
+Convert `AbstractKnotVector` to `AbstractVector`
+"""
+_vec
+
+_vec(k::KnotVector) = k.vector
+
 Base.zero(::Type{<:KnotVector}) = KnotVector()
 Base.zero(::KnotVector{T}) where T = KnotVector{T}()
 Base.:(==)(k₁::KnotVector, k₂::KnotVector) = (k₁.vector == k₂.vector)
 
 Base.eltype(::AbstractKnotVector{T}) where T = T
-Base.collect(k::KnotVector) = k.vector
+
+# TODO: remove collect
+Base.collect(k::KnotVector) = copy(k.vector)
 
 @doc raw"""
 Sum of knot vectors
@@ -125,8 +136,8 @@ function Base.:*(m::Integer, k::AbstractKnotVector)
 end
 Base.:*(k::AbstractKnotVector, m::Integer) = m*k
 
-Base.in(r::Real, k::KnotVector) = in(r, k.vector)
-Base.getindex(k::KnotVector, i::Integer) = k.vector[i]
+Base.in(r::Real, k::AbstractKnotVector) = in(r, _vec(k))
+Base.getindex(k::AbstractKnotVector, i::Integer) = _vec(k.vector)[i]
 Base.getindex(k::KnotVector, v::AbstractVector{<:Integer}) = KnotVector(k.vector[v])
 
 @doc raw"""

@@ -5,11 +5,8 @@ end
 UniformKnotVector(v::AbstractRange) = unsafe_uniformknotvector(sort(v))
 UniformKnotVector(k::UniformKnotVector) = k
 
-KnotVector(k::UniformKnotVector{T}) where T = unsafe_knotvector(T,k.vector)
-KnotVector{T}(k::UniformKnotVector{S}) where {T,S} = unsafe_knotvector(T,k.vector)
+_vec(k::UniformKnotVector) = k.vector
 
-Base.in(r::Real, k::UniformKnotVector) = in(r, k.vector)
-Base.getindex(k::UniformKnotVector, i::Integer) = k.vector[i]
 Base.getindex(k::UniformKnotVector, v::AbstractVector{<:Integer}) = KnotVector(k.vector[v])
 Base.getindex(k::UniformKnotVector, v::AbstractRange{<:Integer}) = UniformKnotVector(sort(k.vector[v]))
 
@@ -36,6 +33,7 @@ Base.searchsortedfirst(k::UniformKnotVector,t) = searchsortedfirst(k.vector,t)
 Base.searchsortedlast(k::UniformKnotVector,t) = searchsortedlast(k.vector,t)
 Base.searchsorted(k::UniformKnotVector,t) = searchsorted(k.vector,t)
 
+# TODO: remove collect
 Base.collect(k::UniformKnotVector) = collect(k.vector)
 
 Base.:+(k1::UniformKnotVector{T1},k2::UniformKnotVector{T2}) where {T1,T2} = KnotVector{promote_type(T1,T2)}([k1.vector;k2.vector])
