@@ -4,6 +4,7 @@ struct UniformKnotVector{T,R<:AbstractRange} <: AbstractKnotVector{T}
 end
 UniformKnotVector(v::AbstractRange) = unsafe_uniformknotvector(sort(v))
 UniformKnotVector(k::UniformKnotVector) = k
+UniformKnotVector{T,R}(k::UniformKnotVector) where R<:AbstractRange{T} where T = UniformKnotVector(R(k.vector))
 
 _vec(k::UniformKnotVector) = k.vector
 
@@ -37,3 +38,7 @@ Base.searchsorted(k::UniformKnotVector,t) = searchsorted(k.vector,t)
 Base.collect(k::UniformKnotVector) = collect(k.vector)
 
 Base.:+(k1::UniformKnotVector{T1},k2::UniformKnotVector{T2}) where {T1,T2} = KnotVector{promote_type(T1,T2)}([k1.vector;k2.vector])
+
+function 𝔫(k::UniformKnotVector, t::Real)
+    return Int(t ∈ k)
+end
