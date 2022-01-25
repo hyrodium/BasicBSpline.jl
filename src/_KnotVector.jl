@@ -73,7 +73,7 @@ _vec(k::KnotVector) = k.vector
 
 Base.zero(::Type{<:KnotVector}) = KnotVector()
 Base.zero(::KnotVector{T}) where T = KnotVector{T}()
-Base.:(==)(k₁::KnotVector, k₂::KnotVector) = (k₁.vector == k₂.vector)
+Base.:(==)(k₁::AbstractKnotVector, k₂::AbstractKnotVector) = (_vec(k₁) == _vec(k₂))
 
 Base.eltype(::AbstractKnotVector{T}) where T = T
 
@@ -137,8 +137,8 @@ end
 Base.:*(k::AbstractKnotVector, m::Integer) = m*k
 
 Base.in(r::Real, k::AbstractKnotVector) = in(r, _vec(k))
-Base.getindex(k::AbstractKnotVector, i::Integer) = _vec(k.vector)[i]
-Base.getindex(k::KnotVector, v::AbstractVector{<:Integer}) = KnotVector(k.vector[v])
+Base.getindex(k::AbstractKnotVector, i::Integer) = _vec(k)[i]
+Base.getindex(k::KnotVector, v::AbstractVector{<:Integer}) = KnotVector(_vec(k)[v])
 
 @doc raw"""
 Length of knot vector
