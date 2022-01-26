@@ -77,7 +77,6 @@ Base.:(==)(k₁::AbstractKnotVector, k₂::AbstractKnotVector) = (_vec(k₁) == 
 
 Base.eltype(::AbstractKnotVector{T}) where T = T
 
-# TODO: remove collect
 Base.collect(k::KnotVector) = copy(k.vector)
 
 @doc raw"""
