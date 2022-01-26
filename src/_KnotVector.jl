@@ -63,6 +63,10 @@ function Base.show(io::IO, k::KnotVector)
     end
 end
 
+function Base.show(io::IO, k::T) where T<:AbstractKnotVector
+    print(io, "$(nameof(T))($(k.vector))")
+end
+
 """
 Convert `AbstractKnotVector` to `AbstractVector`
 """
@@ -185,11 +189,11 @@ KnotVector([1.0, 2.0, 3.0])
 """
 Base.unique(k::KnotVector) = KnotVector(unique(k.vector))
 Base.unique!(k::KnotVector) = KnotVector(unique!(k.vector))
-Base.iterate(k::KnotVector) = iterate(k.vector)
-Base.iterate(k::KnotVector, i::Integer) = iterate(k.vector, i)
-Base.searchsortedfirst(k::KnotVector,t) = searchsortedfirst(k.vector,t)
-Base.searchsortedlast(k::KnotVector,t) = searchsortedlast(k.vector,t)
-Base.searchsorted(k::KnotVector,t) = searchsorted(k.vector,t)
+Base.iterate(k::AbstractKnotVector) = iterate(_vec(k))
+Base.iterate(k::AbstractKnotVector, i::Integer) = iterate(_vec(k), i)
+Base.searchsortedfirst(k::AbstractKnotVector,t) = searchsortedfirst(_vec(k),t)
+Base.searchsortedlast(k::AbstractKnotVector,t) = searchsortedlast(_vec(k),t)
+Base.searchsorted(k::AbstractKnotVector,t) = searchsorted(_vec(k),t)
 
 @doc raw"""
 Check a inclusive relationship ``k\subseteq k'``, for example:
@@ -246,7 +250,7 @@ julia> 𝔫(k,2.0)
 2
 ```
 """
-function 𝔫(k::KnotVector, t::Real)
+function 𝔫(k::AbstractKnotVector, t::Real)
     # for small case, this is faster
     # return count(==(t), k.vector)
 
