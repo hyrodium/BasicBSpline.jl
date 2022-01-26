@@ -15,6 +15,10 @@
     @test isdegenerate(P2,2) == true
     @test isdegenerate(P2,3) == false
     @test isdegenerate(P2,4) == false
+    @test isnondegenerate(P2,1) == true
+    @test isnondegenerate(P2,2) == false
+    @test isnondegenerate(P2,3) == true
+    @test isnondegenerate(P2,4) == true
     @test dim(P2) == 4
     @test exactdim(P2) == 3
 
