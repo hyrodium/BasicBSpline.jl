@@ -43,12 +43,14 @@
         @test length(k4) == 3
     end
 
-    @testset "iterator" begin
+    @testset "iterator, getindex" begin
         for t in k2
             @test t in k3
         end
         @test k1[1] == 1
         @test k2[end] == 3
+        @test k4[2] == 3
+        @test k3[2:4] == k4
         @test collect(k2) isa Vector{Int}
         @test [k2...] isa Vector{Int}
         @test collect(k5) isa Vector{Float64}
