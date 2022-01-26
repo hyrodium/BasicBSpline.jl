@@ -110,9 +110,10 @@ function isdegenerate(P::AbstractBSplineSpace{p}, i::Int) where p
 end
 isnondegenerate(P::AbstractBSplineSpace, i::Int) = !isdegenerate(P, i)
 
-function iszeros(P::AbstractBSplineSpace{p}) where p
+function _iszeros(P::AbstractBSplineSpace{p}) where p
     return [isdegenerate(P,i) for i in 1:dim(P)]
 end
+Base.@deprecate_binding iszeros _iszeros true
 
 @doc raw"""
 Check if given B-spline space is non-degenerate.
