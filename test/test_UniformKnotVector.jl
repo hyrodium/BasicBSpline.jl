@@ -95,11 +95,11 @@
         @test k2 ⊈ KnotVector(k4)
     end
 
-    # @testset "string" begin
-    #     k = UniformKnotVector([1,2,2,3])
-    #     @test string(k) == "UniformKnotVector([1.0, 2.0, 2.0, 3.0])"
-    #     @test string(UniformKnotVector()) == "UniformKnotVector([])"
-    # end
+    @testset "string" begin
+        @test string(k1) = "UniformKnotVector(1:1:3)"
+        @test string(k2) = "UniformKnotVector(Base.OneTo(3))"
+        @test string(k3) = "UniformKnotVector(1:4)"
+    end
 
     @testset "other operators" begin
         @test 𝔫(k2, 0.3) == 0
