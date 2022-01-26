@@ -39,6 +39,7 @@
         @test collect(k2) isa Vector{Float64}
         @test [k2...] isa Vector{Float64}
         @test collect(k2) == [k2...]
+        @test collect(k2) != k2
     end
 
     @testset "addition, multiply" begin
