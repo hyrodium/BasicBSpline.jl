@@ -19,14 +19,14 @@ function _changebasis_R(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T})::Matri
         n = length(k) - 1
         n′ = length(k′) - p₊ - 1
         A⁰ = T[bsplinesupport(BSplineSpace{p₊}(k′), j) ⊆ bsplinesupport(BSplineSpace{0}(k), i) for i in 1:n, j in 1:n′]
-        A⁰[:, findall(iszeros(P′))] .= NaN
+        A⁰[:, findall(_iszeros(P′))] .= NaN
         return A⁰
     end
 
     Aᵖ⁻¹ = _changebasis_R(_lower(P), _lower(P′)) # (n+1) × (n′+1) matrix
     n = dim(P)
     n′ = dim(P′)
-    Z = iszeros(_lower(P′))
+    Z = _iszeros(_lower(P′))
     W = findall(Z)
     K′ = [k′[i+p′] - k′[i] for i in 1:n′+1]
     K = [ifelse(k[i+p] ≠ k[i], 1 / (k[i+p] - k[i]), 0.0) for i in 1:n+1]
