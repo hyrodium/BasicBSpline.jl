@@ -30,6 +30,17 @@
         @test length(KnotVector([1,2,2,3])) == 4
     end
 
+    @testset "iterator" begin
+        for t in k1
+            @test t in k2
+        end
+        @test k1[1] == 1
+        @test k2[end] == 3
+        @test collect(k2) isa Vector{Float64}
+        @test [k2...] isa Vector{Float64}
+        @test collect(k2) == [k2...]
+    end
+
     @testset "addition, multiply" begin
         @test KnotVector([-1,2,3]) + 2 * KnotVector([2,5]) == KnotVector([-1,2,2,2,3,5,5])
         @test KnotVector([-1,2,3]) + KnotVector([2,5]) * 2 == KnotVector([-1,2,2,2,3,5,5])
@@ -37,6 +48,8 @@
         @test 2 * KnotVector([2,3]) == KnotVector([2,2,3,3])
 
         # type promotion
+        @test KnotVector{Int}(1,2) + KnotVector(3) == KnotVector(1,2,3)
+        @test KnotVector{Int}(1,2) + KnotVector(3) isa KnotVector{Float64}
         @test KnotVector{Int}(1,2) + KnotVector{Rational{Int}}(3) == KnotVector(1,2,3)
         @test KnotVector{Int}(1,2) + KnotVector{Rational{Int}}(3) isa KnotVector{Rational{Int}}
         @test KnotVector{Int}(1,2)*0 == KnotVector()
