@@ -197,7 +197,7 @@ TODO: add docstring
 function intervalindex(P::AbstractBSplineSpace{p},t::Real) where p
     k = knotvector(P)
     l = length(k)
-    v = view(k.vector,2+p:l-p-1)
+    v = view(_vec(k),2+p:l-p-1)
     return searchsortedlast(v,t)+1
 end
 
