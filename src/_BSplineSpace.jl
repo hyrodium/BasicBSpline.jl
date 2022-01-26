@@ -104,10 +104,14 @@ const ⊑ = issqsubset
 
 ≃(P1::AbstractBSplineSpace, P2::AbstractBSplineSpace) = (P1 ⊑ P2) & (P2 ⊑ P1)
 
-function iszeros(P::AbstractBSplineSpace{p}) where p
+function isdegenerate(P::AbstractBSplineSpace{p}, i::Int) where p
     k = knotvector(P)
-    n = dim(P)
-    return [k[i] == k[i+p+1] for i in 1:n]
+    return k[i] == k[i+p+1]
+end
+isnondegenerate(P::AbstractBSplineSpace, i::Int) = !isdegenerate(P, i)
+
+function iszeros(P::AbstractBSplineSpace{p}) where p
+    return [isdegenerate(P,i) for i in 1:dim(P)]
 end
 
 @doc raw"""
@@ -139,11 +143,18 @@ true
 ```
 """
 function isdegenerate(P::AbstractBSplineSpace)
-    return any(iszeros(P))
+    for i in 1:dim(P)
+        isdegenerate(P,i) && return true
+    end
+    return false
 end
 
 function exactdim(P::AbstractBSplineSpace)
-    return dim(P) - sum(iszeros(P))
+    n = dim(P)
+    for i in 1:dim(P)
+        n -= isdegenerate(P,i)
+    end
+    return n
 end
 
 # These bindings will be removed when releasing v0.5.0
