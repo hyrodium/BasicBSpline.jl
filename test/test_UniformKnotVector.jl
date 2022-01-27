@@ -96,9 +96,9 @@
     end
 
     @testset "string" begin
-        @test string(k1) = "UniformKnotVector(1:1:3)"
-        @test string(k2) = "UniformKnotVector(Base.OneTo(3))"
-        @test string(k3) = "UniformKnotVector(1:4)"
+        @test string(k1) == "UniformKnotVector(1:1:3)"
+        @test string(k2) == "UniformKnotVector(Base.OneTo(3))"
+        @test string(k3) == "UniformKnotVector(1:4)"
     end
 
     @testset "other operators" begin
