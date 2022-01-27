@@ -13,9 +13,9 @@ Construct B-spline space from given polynominal degree and knot vector.
 """
 struct BSplineSpace{p, T<:Real} <: AbstractBSplineSpace{p,T}
     knotvector::KnotVector{T}
-    global unsafe_bsplinespace(::Val{p}, k::KnotVector{T}) where {p,T} = new{p,T}(k)
+    global unsafe_bsplinespace(::Val{p}, k::AbstractKnotVector{T}) where {p,T} = new{p,T}(k)
 end
-function BSplineSpace{p}(k::KnotVector) where p
+function BSplineSpace{p}(k::AbstractKnotVector) where p
     if p < 0
         throw(DomainError(p, "degree of polynominal must be non-negative"))
     end
@@ -29,7 +29,7 @@ function BSplineSpace(P::AbstractBSplineSpace{p}) where p
     return BSplineSpace{p}(knotvector(P))
 end
 
-@inline function degree(::BSplineSpace{p}) where p
+@inline function degree(::AbstractBSplineSpace{p}) where p
     return p
 end
 
