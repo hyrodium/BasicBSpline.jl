@@ -11,6 +11,6 @@ function UniformBSplineSpace{p}(k::UniformKnotVector) where p
     unsafe_uniformbsplinespace(Val{p}(), k)
 end
 
-BasicBSpline.knotvector(P::UniformBSplineSpace) = P.knotvector
+knotvector(P::UniformBSplineSpace) = P.knotvector
 
 _lower(P::UniformBSplineSpace{p,T}) where {p,T} = UniformBSplineSpace{p-1}(knotvector(P))
