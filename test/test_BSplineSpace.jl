@@ -46,6 +46,23 @@
         @test P2 ⊈ P3
     end
 
+    @testset "equality" begin
+        P1 = BSplineSpace{2}(KnotVector([1, 2, 3, 5, 8, 8, 9]))
+        P2 = BSplineSpace{2}(KnotVector([1, 2, 3, 5, 8, 8, 9]))
+        P3 = BSplineSpace{1}(KnotVector([1, 2, 3, 5, 8, 8, 9]))
+        P4 = BSplineSpace{1}(KnotVector([1, 2, 3, 5, 8, 8, 9]))
+
+        @test P1 ⊆ P2
+        @test P2 ⊆ P1
+        @test P1 == P2
+
+        @test P3 ⊆ P4
+        @test P4 ⊆ P3
+        @test P3 == P4
+
+        @test P1 != P3
+    end
+
     @testset "subset but not sqsubset" begin
         P4 = BSplineSpace{1}(KnotVector([1, 2, 3, 4, 5]))
         P5 = BSplineSpace{2}(KnotVector([-1, 0.3, 2, 3, 3, 4, 5.2, 6]))
