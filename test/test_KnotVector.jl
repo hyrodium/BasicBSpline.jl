@@ -19,6 +19,13 @@
         @test KnotVector(k1) isa KnotVector{Float64}
     end
 
+    @testset "eltype" begin
+        @test eltype(KnotVector([1,2,3])) == Float64
+        @test eltype(KnotVector{Int}([1,2,3])) == Int
+        @test eltype(KnotVector{BigInt}([1,2,3])) == BigInt
+        @test eltype(KnotVector{Rational{Int}}([1,2,3])) == Rational{Int}
+    end
+
     @testset "zeros" begin
         @test KnotVector() == zero(KnotVector)
         @test KnotVector() == 0*k1 == k1*0 == zero(k1)

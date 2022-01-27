@@ -37,6 +37,14 @@
         @test KnotVector(k5) isa KnotVector{Float64}
     end
 
+    @testset "eltype" begin
+        @test eltype(UniformKnotVector(1:3)) == Int
+        @test eltype(UniformKnotVector(1:1:3)) == Int
+        @test eltype(UniformKnotVector(1:1:BigInt(3))) == BigInt
+        @test eltype(UniformKnotVector(1.0:1.0:3.0)) == Float64
+        @test eltype(UniformKnotVector(1//1:1//5:3//1)) == Rational{Int}
+    end
+
     @testset "length" begin
         @test length(k2) == 3
         @test length(k3) == 4
