@@ -5,6 +5,10 @@ abstract type AbstractBSplineSpace{p,T} end
 # Broadcast like a scalar
 Base.Broadcast.broadcastable(P::AbstractBSplineSpace) = Ref(P)
 
+# Equality
+@inline Base.:(==)(P1::AbstractBSplineSpace{p}, P2::AbstractBSplineSpace{p}) where p = knotvector(P1) == knotvector(P2)
+@inline Base.:(==)(P1::AbstractBSplineSpace{p1}, P2::AbstractBSplineSpace{p2}) where {p1, p2} = false
+
 @doc raw"""
 Construct B-spline space from given polynominal degree and knot vector.
 ```math
