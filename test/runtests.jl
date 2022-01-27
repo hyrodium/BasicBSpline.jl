@@ -11,6 +11,7 @@ using GeometryBasics
     include("test_BSplineSpace.jl")
     include("test_BSplineBasis.jl")
     include("test_UniformKnotVector.jl")
+    include("test_UniformBSplineSpace.jl")
     include("test_Derivative.jl")
     include("test_ChangeBasis.jl")
     include("test_BSplineManifold.jl")
