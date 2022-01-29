@@ -44,15 +44,13 @@ end
 @inline function bsplinebasis(P::UniformBSplineSpace{p,T,R},i::Integer,t::S) where {p, T, R<:AbstractUnitRange, S<:Real}
     U = StaticArrays.arithmetic_closure(promote_type(T,S))
     k = knotvector(P)
-    @boundscheck (1 ≤ i) || throw(BoundsError(knotvector(P), i))
-    @boundscheck (i ≤ dim(P)) || throw(BoundsError(knotvector(P), i+p+1))
+    @boundscheck (1 ≤ i ≤ dim(P)) || throw(DomainError(i, "index of B-spline basis function is out of range."))
     return U(uniform_bsplinebasis_kernel(Val{p}(),t-i+1-k[1]))
 end
 @inline function bsplinebasis(P::UniformBSplineSpace{p,T},i::Integer,t::S) where {p, T, S<:Real}
     U = StaticArrays.arithmetic_closure(promote_type(T,S))
-    @boundscheck (1 ≤ i) || throw(BoundsError(knotvector(P), i))
-    @boundscheck (i ≤ dim(P)) || throw(BoundsError(knotvector(P), i+p+1))
     k = knotvector(P)
+    @boundscheck (1 ≤ i ≤ dim(P)) || throw(DomainError(i, "index of B-spline basis function is out of range."))
     a = @inbounds k.vector[i]
     b = @inbounds k.vector[i+p+1]
     return U(uniform_bsplinebasis_kernel(Val{p}(),(p+1)*(t-a)/(b-a)))
