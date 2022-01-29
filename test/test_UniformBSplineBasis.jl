@@ -1,9 +1,10 @@
 @testset "UniformKnotVector" begin
     @testset "bsplinebasis" begin
-        k = KnotVector(0:10)
-        k1 = UniformKnotVector(0:10)
-        k2 = UniformKnotVector(0:0.5:5)
-        k3 = UniformKnotVector(0:2:20)
+        v = 2:10
+        k = KnotVector(v)
+        k1 = UniformKnotVector(v)
+        k2 = UniformKnotVector(v/2)
+        k3 = UniformKnotVector(v*2)
         @test eltype(k1) == Int
         for p in 0:3
             P = BSplineSpace{p}(k)
@@ -26,6 +27,9 @@
                     @test bsplinebasis(P1,i,t) isa Float64
                     @test bsplinebasis(P2,i,t) isa Float64
                     @test bsplinebasis(P3,i,t) isa Float64
+                    @test bsplinebasis(P1,i,t) == bsplinebasis₊₀(P1,i,t) == bsplinebasis₋₀(P1,i,t)
+                    @test bsplinebasis(P2,i,t) == bsplinebasis₊₀(P2,i,t) == bsplinebasis₋₀(P2,i,t)
+                    @test bsplinebasis(P3,i,t) == bsplinebasis₊₀(P3,i,t) == bsplinebasis₋₀(P3,i,t)
                 end
             end
         end
