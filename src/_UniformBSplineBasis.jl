@@ -59,5 +59,17 @@ end
 @inline bsplinebasis₊₀(P::UniformBSplineSpace,i::Integer,t::Real) = bsplinebasis(P,i,t)
 
 ## bsplinebasisall
-# @inline function bsplinebasisall(P::UniformBSplineSpace{p},i::Integer,t::Real) where p
-# end
+@inline function bsplinebasisall(P::UniformBSplineSpace{p,T,R},i::Integer,t::S) where {p, T, R<:AbstractUnitRange, S<:Real}
+    U = StaticArrays.arithmetic_closure(promote_type(T,S))
+    k = knotvector(P)
+    @boundscheck (0 ≤ i ≤ length(k)-2p) || throw(DomainError(i, "index of interval is out of range."))
+    return uniform_bsplinebasisall_kernel(Val{p}(),U(t-i+1-p-k[1]))
+end
+@inline function bsplinebasisall(P::UniformBSplineSpace{p,T},i::Integer,t::S) where {p, T, S<:Real}
+    U = StaticArrays.arithmetic_closure(promote_type(T,S))
+    k = knotvector(P)
+    @boundscheck (0 ≤ i ≤ length(k)-2p) || throw(DomainError(i, "index of interval is out of range."))
+    a = @inbounds k.vector[i+p]
+    b = @inbounds k.vector[i+p+1]
+    return BasicBSpline.uniform_bsplinebasisall_kernel(Val{p}(),U((t-a)/(b-a)))
+end
