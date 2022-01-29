@@ -25,10 +25,11 @@ KnotVector{T}(v::AbstractVector) where T = unsafe_knotvector(T,sort(v))
 KnotVector(v::AbstractVector{T}) where {T<:Real} = unsafe_knotvector(float(T),sort(v))
 
 KnotVector(k::KnotVector) = k
+KnotVector(k::AbstractKnotVector{T}) where T = unsafe_knotvector(T,_vec(k))
 KnotVector{T}(k::KnotVector{T}) where T = k
-KnotVector{T}(k::KnotVector{S}) where {T,S} = unsafe_knotvector(T,k.vector)
+KnotVector{T}(k::AbstractKnotVector) where T = unsafe_knotvector(T,_vec(k))
 
-Base.convert(T::Type{<:KnotVector},k::KnotVector) = T(k)
+Base.convert(T::Type{<:KnotVector},k::AbstractKnotVector) = T(k)
 function Base.promote_rule(::Type{KnotVector{T}}, ::Type{KnotVector{S}}) where {T,S}
     KnotVector{promote_type(T,S)}
 end
@@ -62,12 +63,24 @@ function Base.show(io::IO, k::KnotVector)
     end
 end
 
+function Base.show(io::IO, k::T) where T<:AbstractKnotVector
+    print(io, "$(nameof(T))($(k.vector))")
+end
+
+"""
+Convert `AbstractKnotVector` to `AbstractVector`
+"""
+_vec
+
+_vec(k::KnotVector) = k.vector
+
 Base.zero(::Type{<:KnotVector}) = KnotVector()
 Base.zero(::KnotVector{T}) where T = KnotVector{T}()
-Base.:(==)(k₁::KnotVector, k₂::KnotVector) = (k₁.vector == k₂.vector)
+Base.:(==)(k₁::AbstractKnotVector, k₂::AbstractKnotVector) = (_vec(k₁) == _vec(k₂))
 
-Base.eltype(::KnotVector{T}) where T = T
-Base.collect(k::KnotVector) = k.vector
+Base.eltype(::AbstractKnotVector{T}) where T = T
+
+Base.collect(k::KnotVector) = copy(k.vector)
 
 @doc raw"""
 Sum of knot vectors
@@ -125,9 +138,9 @@ function Base.:*(m::Integer, k::AbstractKnotVector)
 end
 Base.:*(k::AbstractKnotVector, m::Integer) = m*k
 
-Base.in(r::Real, k::KnotVector) = in(r, k.vector)
-Base.getindex(k::KnotVector, i::Integer) = k.vector[i]
-Base.getindex(k::KnotVector, v::AbstractVector{<:Integer}) = KnotVector(k.vector[v])
+Base.in(r::Real, k::AbstractKnotVector) = in(r, _vec(k))
+Base.getindex(k::AbstractKnotVector, i::Integer) = _vec(k)[i]
+Base.getindex(k::AbstractKnotVector, v::AbstractVector{<:Integer}) = KnotVector(_vec(k)[v])
 
 @doc raw"""
 Length of knot vector
@@ -176,18 +189,18 @@ KnotVector([1.0, 2.0, 3.0])
 """
 Base.unique(k::KnotVector) = KnotVector(unique(k.vector))
 Base.unique!(k::KnotVector) = KnotVector(unique!(k.vector))
-Base.iterate(k::KnotVector) = iterate(k.vector)
-Base.iterate(k::KnotVector, i::Integer) = iterate(k.vector, i)
-Base.searchsortedfirst(k::KnotVector,t) = searchsortedfirst(k.vector,t)
-Base.searchsortedlast(k::KnotVector,t) = searchsortedlast(k.vector,t)
-Base.searchsorted(k::KnotVector,t) = searchsorted(k.vector,t)
+Base.iterate(k::AbstractKnotVector) = iterate(_vec(k))
+Base.iterate(k::AbstractKnotVector, i::Integer) = iterate(_vec(k), i)
+Base.searchsortedfirst(k::AbstractKnotVector,t) = searchsortedfirst(_vec(k),t)
+Base.searchsortedlast(k::AbstractKnotVector,t) = searchsortedlast(_vec(k),t)
+Base.searchsorted(k::AbstractKnotVector,t) = searchsorted(_vec(k),t)
 
 @doc raw"""
-Check a inclusive relation ship ``k\subseteq k'``, for example:
+Check a inclusive relationship ``k\subseteq k'``, for example:
 ```math
 \begin{aligned}
 (1,2) &\subseteq (1,2,3) \\
-(1,2,2) &\subseteq (1,2,3) \\
+(1,2,2) &\not\subseteq (1,2,3) \\
 (1,2,3) &\subseteq (1,2,3) \\
 \end{aligned}
 ```
@@ -206,7 +219,6 @@ true
 """
 function Base.issubset(k::KnotVector, k′::KnotVector)
     v = k′.vector
-    l = length(v)
     i = 0
     for kᵢ in k
         i = findnext(==(kᵢ), v, i+1)
@@ -238,7 +250,7 @@ julia> 𝔫(k,2.0)
 2
 ```
 """
-function 𝔫(k::KnotVector, t::Real)
+function 𝔫(k::AbstractKnotVector, t::Real)
     # for small case, this is faster
     # return count(==(t), k.vector)
 

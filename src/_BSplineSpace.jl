@@ -17,9 +17,9 @@ Construct B-spline space from given polynominal degree and knot vector.
 """
 struct BSplineSpace{p, T<:Real} <: AbstractBSplineSpace{p,T}
     knotvector::KnotVector{T}
-    global unsafe_bsplinespace(::Val{p}, k::KnotVector{T}) where {p,T} = new{p,T}(k)
+    global unsafe_bsplinespace(::Val{p}, k::AbstractKnotVector{T}) where {p,T} = new{p,T}(k)
 end
-function BSplineSpace{p}(k::KnotVector) where p
+function BSplineSpace{p}(k::AbstractKnotVector) where p
     if p < 0
         throw(DomainError(p, "degree of polynominal must be non-negative"))
     end
@@ -33,7 +33,7 @@ function BSplineSpace(P::AbstractBSplineSpace{p}) where p
     return BSplineSpace{p}(knotvector(P))
 end
 
-@inline function degree(::BSplineSpace{p}) where p
+@inline function degree(::AbstractBSplineSpace{p}) where p
     return p
 end
 
@@ -178,23 +178,22 @@ function bsplinesupport(P::AbstractBSplineSpace{p}, i::Integer) where p
 end
 
 function bsplinesupport(P::AbstractBSplineSpace{p}) where p
+    @warn "bsplinesupport(P::AbstractBSplineSpace{p}) will be removed in the next breaking release."
     k = knotvector(P)
     return [k[i]..k[i+p+1] for i in 1:dim(P)]
 end
 
 @doc raw"""
-Return a B-spline space of one degree lower.
+Internal methods for obtaining a B-spline space with one degree lower.
 ```math
-\mathcal{P}[p,k] \mapsto \mathcal{P}[p-1,k]
+\begin{aligned}
+\mathcal{P}[p,k] \mapsto \mathcal{P}[p-1,k] \\
+D^r\mathcal{P}[p,k] \mapsto D^{r-1}\mathcal{P}[p-1,k]
+\end{aligned}
 ```
 """
 _lower
 
-# TODO: Consider we really need these methods.
-# _lower(::Type{AbstractBSplineSpace{p}}) where p = AbstractBSplineSpace{p-1}
-# _lower(::Type{AbstractBSplineSpace{p,T}}) where {p,T} = AbstractBSplineSpace{p-1,T}
-# _lower(::Type{BSplineSpace{p}}) where p = BSplineSpace{p-1}
-# _lower(::Type{BSplineSpace{p,T}}) where {p,T} = BSplineSpace{p-1,T}
 _lower(P::BSplineSpace{p,T}) where {p,T} = BSplineSpace{p-1}(knotvector(P))
 
 """
@@ -203,7 +202,7 @@ TODO: add docstring
 function intervalindex(P::AbstractBSplineSpace{p},t::Real) where p
     k = knotvector(P)
     l = length(k)
-    v = view(k.vector,2+p:l-p-1)
+    v = view(_vec(k),2+p:l-p-1)
     return searchsortedlast(v,t)+1
 end
 
@@ -212,9 +211,9 @@ Expand B-spline space with given additional degree and knotvector.
 """
 function expandspace(P::BSplineSpace{p,T}; p₊::Integer=0, k₊::KnotVector{T}=KnotVector{T}()) where {p,T}
     k = knotvector(P)
-    k0 = unique(k[1+p:end-p])
+    k̂ = unique(k[1+p:end-p])
     p′ = p + p₊
-    k′ = k + p₊*k0 + k₊
+    k′ = k + p₊*k̂ + k₊
     P′ = BSplineSpace{p′}(k′)
     return P′
 end
