@@ -9,9 +9,7 @@ UniformKnotVector{T,R}(k::UniformKnotVector) where R<:AbstractRange{T} where T =
 
 _vec(k::UniformKnotVector) = k.vector
 
-Base.getindex(k::UniformKnotVector, v::AbstractVector{<:Integer}) = KnotVector(k.vector[v])
 Base.getindex(k::UniformKnotVector, v::AbstractRange{<:Integer}) = UniformKnotVector(sort(k.vector[v]))
-
 Base.length(k::UniformKnotVector) = length(k.vector)
 Base.firstindex(k::UniformKnotVector) = 1
 Base.lastindex(k::UniformKnotVector) = length(k)

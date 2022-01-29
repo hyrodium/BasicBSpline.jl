@@ -140,7 +140,7 @@ Base.:*(k::AbstractKnotVector, m::Integer) = m*k
 
 Base.in(r::Real, k::AbstractKnotVector) = in(r, _vec(k))
 Base.getindex(k::AbstractKnotVector, i::Integer) = _vec(k)[i]
-Base.getindex(k::KnotVector, v::AbstractVector{<:Integer}) = KnotVector(_vec(k)[v])
+Base.getindex(k::AbstractKnotVector, v::AbstractVector{<:Integer}) = KnotVector(_vec(k)[v])
 
 @doc raw"""
 Length of knot vector
