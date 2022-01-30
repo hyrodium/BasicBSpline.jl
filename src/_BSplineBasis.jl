@@ -1,8 +1,5 @@
 # B-Spline Basis Function
 
-@inline _d(a::T,b::T) where T = (U=StaticArrays.arithmetic_closure(T); ifelse(iszero(b), zero(U), U(a/b)))
-@inline _d(a,b) = _d(promote(a,b)...)
-
 @doc raw"""
 ``i``-th B-spline basis function.
 Right-sided limit version.

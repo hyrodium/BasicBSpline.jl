@@ -21,6 +21,7 @@ export 𝔫
 export AbstractBSplineManifold, AbstractBSplineSpace
 export fittingcontrolpoints
 
+include("_util.jl")
 include("_KnotVector.jl")
 include("_BSplineSpace.jl")
 include("_BSplineBasis.jl")
