@@ -10,18 +10,22 @@ B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p',k')}
 Assumption:
 * ``P ⊆ P′``
 """
+_changebasis_R
+
+function _changebasis_R(P::BSplineSpace{0,T}, P′::BSplineSpace{p′,T})::Matrix{T} where {p′,T}
+    k = knotvector(P)
+    k′ = knotvector(P′)
+
+    n = dim(P)
+    n′ = dim(P′)
+    A⁰ = T[bsplinesupport(BSplineSpace{p′}(k′), j) ⊆ bsplinesupport(BSplineSpace{0}(k), i) for i in 1:n, j in 1:n′]
+    A⁰[:, findall(_iszeros(P′))] .= NaN
+    return A⁰
+end
+
 function _changebasis_R(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T})::Matrix{T} where {p,p′,T}
     k = knotvector(P)
     k′ = knotvector(P′)
-    p₊ = p′ - p
-
-    if p == 0
-        n = length(k) - 1
-        n′ = length(k′) - p₊ - 1
-        A⁰ = T[bsplinesupport(BSplineSpace{p₊}(k′), j) ⊆ bsplinesupport(BSplineSpace{0}(k), i) for i in 1:n, j in 1:n′]
-        A⁰[:, findall(_iszeros(P′))] .= NaN
-        return A⁰
-    end
 
     Aᵖ⁻¹ = _changebasis_R(_lower(P), _lower(P′)) # (n+1) × (n′+1) matrix
     n = dim(P)
@@ -136,10 +140,8 @@ Assumption:
 * ``P ⊑ P′``
 """
 function _changebasis_I(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T})::Matrix{T} where {p, p′, T}
-    I = domain(P)
     k = knotvector(P)
     k′ = knotvector(P′)
-    p₊ = p′ - p
 
     _P = BSplineSpace{p}(k[1+p:end-p] + p * KnotVector(k[1+p], k[end-p]))
     # if dim(_P) ≠ dim(P)
