@@ -9,6 +9,7 @@ struct BSplineManifold{Dim,Deg,T,S<:Tuple,Dim₊₁} <: AbstractBSplineManifold{
     bsplinespaces::S
     controlpoints::Array{T,Dim₊₁}
     function BSplineManifold(a::Array{T,Dim₊₁},Ps::S) where {S<:Tuple,Dim₊₁,T<:Real}
+        @warn "BSplineManifold may be removed in the future release. Please use CustomBSplineManifold instead."
         for P in Ps
             if !(P isa AbstractBSplineSpace)
                 throw(TypeError(:CustomBSplineManifold,AbstractBSplineSpace,P))
