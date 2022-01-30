@@ -13,12 +13,9 @@ Assumption:
 _changebasis_R
 
 function _changebasis_R(P::BSplineSpace{0,T}, P′::BSplineSpace{p′,T})::Matrix{T} where {p′,T}
-    k = knotvector(P)
-    k′ = knotvector(P′)
-
     n = dim(P)
     n′ = dim(P′)
-    A⁰ = T[bsplinesupport(BSplineSpace{p′}(k′), j) ⊆ bsplinesupport(BSplineSpace{0}(k), i) for i in 1:n, j in 1:n′]
+    A⁰ = T[bsplinesupport(P′, j) ⊆ bsplinesupport(P, i) for i in 1:n, j in 1:n′]
     A⁰[:, findall(_iszeros(P′))] .= NaN
     return A⁰
 end
