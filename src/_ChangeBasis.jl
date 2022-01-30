@@ -10,28 +10,34 @@ B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p',k')}
 Assumption:
 * ``P ⊆ P′``
 """
-function _changebasis_R(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T})::Matrix{T} where {p,p′,T}
-    k = knotvector(P)
-    k′ = knotvector(P′)
-    p₊ = p′ - p
+_changebasis_R
 
-    if p == 0
-        n = length(k) - 1
-        n′ = length(k′) - p₊ - 1
-        A⁰ = T[bsplinesupport(BSplineSpace{p₊}(k′), j) ⊆ bsplinesupport(BSplineSpace{0}(k), i) for i in 1:n, j in 1:n′]
-        A⁰[:, findall(_iszeros(P′))] .= NaN
-        return A⁰
-    end
-
-    Aᵖ⁻¹ = _changebasis_R(_lower(P), _lower(P′)) # (n+1) × (n′+1) matrix
+function _changebasis_R(P::AbstractBSplineSpace{0,T}, P′::AbstractBSplineSpace{p′,T′}) where {p′,T,T′}
+    P ⊆ P′ || throw(DomainError((P,P′),"P ⊆ P′ should be hold."))
+    U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     n = dim(P)
     n′ = dim(P′)
+    A⁰ = U[bsplinesupport(P′, j) ⊆ bsplinesupport(P, i) for i in 1:n, j in 1:n′]
+    A⁰[:, findall(_iszeros(P′))] .= zero(U)  # Strictly this should be NaN, but we use zero here to support Rational.
+    return A⁰
+end
+
+function _changebasis_R(P::AbstractBSplineSpace{p,T}, P′::AbstractBSplineSpace{p′,T′}) where {p,p′,T,T′}
+    P ⊆ P′ || throw(DomainError((P,P′),"P ⊆ P′ should be hold."))
+    U = StaticArrays.arithmetic_closure(promote_type(T,T′))
+    k = knotvector(P)
+    k′ = knotvector(P′)
+    n = dim(P)
+    n′ = dim(P′)
+
+    Aᵖ⁻¹ = _changebasis_R(_lower(P), _lower(P′))  # (n+1) × (n′+1) matrix
+    Aᵖ = zeros(U, n, n′)  # n × n′ matrix
+
     Z = _iszeros(_lower(P′))
     W = findall(Z)
     K′ = [k′[i+p′] - k′[i] for i in 1:n′+1]
     K = [ifelse(k[i+p] ≠ k[i], 1 / (k[i+p] - k[i]), 0.0) for i in 1:n+1]
     Δ = (p / p′) * [K′[j] * (K[i] * Aᵖ⁻¹[i, j] - K[i+1] * Aᵖ⁻¹[i+1, j]) for i in 1:n, j in 1:n′+1]
-    Aᵖ = zeros(n, n′)
     Aᵖ[:, 1] = Δ[:, 1]
     Aᵖ[:, n′] = -Δ[:, n′+1]
 
@@ -48,7 +54,7 @@ function _changebasis_R(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T})::Matri
     for ȷ in 2:λ-1
         if Λ[ȷ] == 1
             # if B(i,p′,k′) = 0
-            Ãᵖ[ȷ] .= NaN
+            Ãᵖ[ȷ] .= zero(U)  # Strictly this should be NaN, but we use zero here to support Rational.
         end
     end
     for ȷ in 1:λ-1
@@ -90,21 +96,16 @@ B_{(i,p_1,k_1)} = \sum_{j}A_{i,j}B_{(j,p_2,k_2)}
 ```
 
 Assumption:
-* ``P1 ⊑ P2``
-* ``P2 ⊑ P1``
+* ``P1 ≃ P2``
 """
-function _changebasis_sim(P1::BSplineSpace{p1,T}, P2::BSplineSpace{p2,T}) where {p1,p2,T}
-    # if P1 ⋢ P2
-    #     error("P1 ⋢ P2")
-    # end
-    # if P2 ⋢ P1
-    #     error("P2 ⋢ P1")
-    # end
+function _changebasis_sim(P1::AbstractBSplineSpace{p1,T1}, P2::AbstractBSplineSpace{p2,T2}) where {p1,p2,T1,T2}
+    P1 ≃ P2 || throw(DomainError((P1,P2),"P1 ≃ P2 should be hold."))
+    U = StaticArrays.arithmetic_closure(promote_type(T1,T2))
     n = dim(P1)
     v = (knotvector(P1).vector)[p1+1:end-p1]
 
     if length(v) > p1
-        A = Matrix{T}(I, n, n)
+        A = Matrix{U}(I, n, n)
         # TODO: Fix below
         vvv = [v[1] * (p1-i+1) / (p1+1) + v[i+1] * (i) / (p1+1) for i in 1:p1]
         A1 = [bsplinebasis₊₀(P1,i,t) for i in 1:p1, t in vvv]
@@ -135,20 +136,13 @@ B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p',k')}
 Assumption:
 * ``P ⊑ P′``
 """
-function _changebasis_I(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T})::Matrix{T} where {p, p′, T}
-    I = domain(P)
+function _changebasis_I(P::AbstractBSplineSpace{p,T}, P′::AbstractBSplineSpace{p′,T′}) where {p,p′,T,T′}
+    P ⊑ P′ || throw(DomainError((P,P′),"P ⊑ P′ should be hold."))
     k = knotvector(P)
     k′ = knotvector(P′)
-    p₊ = p′ - p
 
-    _P = BSplineSpace{p}(k[1+p:end-p] + p * KnotVector(k[1+p], k[end-p]))
-    # if dim(_P) ≠ dim(P)
-    #     error("dim(_P)≠dim(P)")
-    # end
-    _P′ = BSplineSpace{p′}(k′[1+p′:end-p′] + p′ * KnotVector(k′[1+p′], k′[end-p′]))
-    # if dim(_P′) ≠ dim(P′)
-    #     error("dim(_P′)≠dim(P′)")
-    # end
+    _P = BSplineSpace{p}(k[1+p:end-p] + p * KnotVector{T}(k[1+p], k[end-p]))
+    _P′ = BSplineSpace{p′}(k′[1+p′:end-p′] + p′ * KnotVector{T′}(k′[1+p′], k′[end-p′]))
     _A = _changebasis_R(_P, _P′)
     Asim = _changebasis_sim(P, _P)
     Asim′ = _changebasis_sim(_P′, P′)
@@ -157,18 +151,10 @@ function _changebasis_I(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T})::Matri
     return A
 end
 
-function changebasis(P::BSplineSpace, P′::BSplineSpace)
-    if P ⊆ P′
-        return _changebasis_R(P, P′)
-    elseif P ⊑ P′
-        return _changebasis_I(P, P′)
-    else
-        throw(DomainError((P, P′),"𝒫[p,k] ⊆ 𝒫[p′,k′] or 𝒫[p,k] ⊑ 𝒫[p′,k′] must hold."))
-    end
-end
-
 function changebasis(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
-    changebasis(BSplineSpace(P),BSplineSpace(P′))
+    P ⊆ P′ && return _changebasis_R(P, P′)
+    P ⊑ P′ && return _changebasis_I(P, P′)
+    throw(DomainError((P, P′),"𝒫[p,k] ⊆ 𝒫[p′,k′] or 𝒫[p,k] ⊑ 𝒫[p′,k′] must hold."))
 end
 
 # TODO: Add changebasis(::BSplineDerivativeSpace, )
