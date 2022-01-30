@@ -6,7 +6,7 @@ Calculate a matrix
 A_{ij}=\int_{I} B_{(i,p,k)}(t) B_{(j,p,k)}(t) dt
 ```
 """
-function innerproduct_I(P::BSplineSpace{p}) where p
+function innerproduct_I(P::AbstractBSplineSpace{p}) where p
     n = dim(P)
     A = zeros(n,n)
     k = knotvector(P)
@@ -38,7 +38,7 @@ Calculate a matrix
 A_{ij}=\int_{\mathbb{R}} B_{(i,p,k)}(t) B_{(j,p,k)}(t) dt
 ```
 """
-function innerproduct_R(P::BSplineSpace{p}) where p
+function innerproduct_R(P::AbstractBSplineSpace{p}) where p
     n = dim(P)
     A = innerproduct_I(P).data
     k = knotvector(P)
@@ -71,7 +71,7 @@ function innerproduct_R(P::BSplineSpace{p}) where p
     return Symmetric(A)
 end
 
-function innerproduct_I(func, Ps::Tuple{<:BSplineSpace{p₁}}) where {p₁}
+function innerproduct_I(func, Ps::Tuple{<:AbstractBSplineSpace{p₁}}) where {p₁}
     P₁, = Ps
     n₁ = dim(P₁)
     k₁ = knotvector(P₁)
@@ -98,7 +98,7 @@ function innerproduct_I(func, Ps::Tuple{<:BSplineSpace{p₁}}) where {p₁}
     return b
 end
 
-function innerproduct_I(func, Ps::Tuple{<:BSplineSpace{p₁},<:BSplineSpace{p₂}}) where {p₁,p₂}
+function innerproduct_I(func, Ps::Tuple{<:AbstractBSplineSpace{p₁},<:AbstractBSplineSpace{p₂}}) where {p₁,p₂}
     P₁,P₂ = Ps
     n₁,n₂ = dim.(Ps)
     k₁,k₂ = knotvector.(Ps)
@@ -137,7 +137,7 @@ function innerproduct_I(func, Ps::Tuple{<:BSplineSpace{p₁},<:BSplineSpace{p₂
     return b
 end
 
-function innerproduct_I(func, Ps::Tuple{<:BSplineSpace{p₁},<:BSplineSpace{p₂},<:BSplineSpace{p₃}}) where {p₁,p₂,p₃}
+function innerproduct_I(func, Ps::Tuple{<:AbstractBSplineSpace{p₁},<:AbstractBSplineSpace{p₂},<:AbstractBSplineSpace{p₃}}) where {p₁,p₂,p₃}
     P₁,P₂,P₃ = Ps
     n₁,n₂,n₃ = dim.(Ps)
     k₁,k₂,k₃ = knotvector.(Ps)
@@ -191,7 +191,7 @@ function innerproduct_I(func, Ps::Tuple{<:BSplineSpace{p₁},<:BSplineSpace{p₂
     return b
 end
 
-function innerproduct_R(func, Ps::Tuple{<:BSplineSpace{p₁}}) where {p₁}
+function innerproduct_R(func, Ps::Tuple{<:AbstractBSplineSpace{p₁}}) where {p₁}
     P₁, = Ps
     n₁ = dim(P₁)
     k₁ = knotvector(P₁)
@@ -214,7 +214,7 @@ function innerproduct_R(func, Ps::Tuple{<:BSplineSpace{p₁}}) where {p₁}
     return b
 end
 
-function innerproduct_R(func, Ps::Tuple{<:BSplineSpace{p₁},<:BSplineSpace{p₂}}) where {p₁,p₂}
+function innerproduct_R(func, Ps::Tuple{<:AbstractBSplineSpace{p₁},<:AbstractBSplineSpace{p₂}}) where {p₁,p₂}
     P₁,P₂ = Ps
     n₁,n₂ = dim.(Ps)
     k₁,k₂ = knotvector.(Ps)
@@ -246,7 +246,7 @@ function innerproduct_R(func, Ps::Tuple{<:BSplineSpace{p₁},<:BSplineSpace{p₂
     return b
 end
 
-function innerproduct_R(func, Ps::Tuple{<:BSplineSpace{p₁},<:BSplineSpace{p₂},<:BSplineSpace{p₃}}) where {p₁,p₂,p₃}
+function innerproduct_R(func, Ps::Tuple{<:AbstractBSplineSpace{p₁},<:AbstractBSplineSpace{p₂},<:AbstractBSplineSpace{p₃}}) where {p₁,p₂,p₃}
     P₁,P₂,P₃ = Ps
     n₁,n₂,n₃ = dim.(Ps)
     k₁,k₂,k₃ = knotvector.(Ps)
@@ -289,6 +289,38 @@ function innerproduct_R(func, Ps::Tuple{<:BSplineSpace{p₁},<:BSplineSpace{p₂
     end
     return b
 end
+
+function innerproduct_R(P::UniformBSplineSpace{p,T,<:AbstractUnitRange}) where {p,T}
+    U = StaticArrays.arithmetic_closure(T)
+    n = dim(P)
+    A = zeros(U,n,n)
+    m = factorial(2p+1)
+
+    for q in 0:p
+        a = U(eulertriangle(2p+1,q))/m
+        for i in 1:n-(p-q)
+            A[i,i+(p-q)] = a
+        end
+    end
+    return Symmetric(A)
+end
+
+function innerproduct_R(P::UniformBSplineSpace{p,T}) where {p,T}
+    U = StaticArrays.arithmetic_closure(T)
+    d = step(_vec(knotvector(P)))
+    n = dim(P)
+    A = zeros(U,n,n)
+    m = factorial(2p+1)
+
+    for q in 0:p
+        a = U(eulertriangle(2p+1,q)*d)/m
+        for i in 1:n-(p-q)
+            A[i,i+(p-q)] = a
+        end
+    end
+    return Symmetric(A)
+end
+
 
 """
 * func: Real -> ℝ-vector space
