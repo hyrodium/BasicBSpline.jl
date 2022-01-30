@@ -290,6 +290,38 @@ function innerproduct_R(func, Ps::Tuple{<:AbstractBSplineSpace{p₁},<:AbstractB
     return b
 end
 
+function innerproduct_R(P::UniformBSplineSpace{p,T,<:AbstractUnitRange}) where {p,T}
+    U = StaticArrays.arithmetic_closure(T)
+    n = dim(P)
+    A = zeros(U,n,n)
+    m = factorial(2p+1)
+
+    for q in 0:p
+        a = BasicBSpline.eulertriangle(2p+1,q)/m
+        for i in 1:n-(p-q)
+            A[i,i+(p-q)] = a
+        end
+    end
+    return Symmetric(A)
+end
+
+function innerproduct_R(P::UniformBSplineSpace{p,T}) where {p,T}
+    d = step(BasicBSpline._vec(knotvector(P)))
+    U = StaticArrays.arithmetic_closure(T)
+    n = dim(P)
+    A = zeros(U,n,n)
+    m = factorial(2p+1)
+
+    for q in 0:p
+        a = BasicBSpline.eulertriangle(2p+1,q)*d/m
+        for i in 1:n-(p-q)
+            A[i,i+(p-q)] = a
+        end
+    end
+    return Symmetric(A)
+end
+
+
 """
 * func: Real -> ℝ-vector space
 """
