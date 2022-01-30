@@ -8,3 +8,6 @@ end
 # Create ininity from given type
 @inline _inf(::Type{T}) where T<:Number = one(T)/zero(T)
 @inline _inf(::T) where T<:Number = _inf(T)
+
+# Euler's triangle number (http://oeis.org/wiki/Eulerian_numbers,_triangle_of)
+eulertriangle(n,k) = sum((-1)^j*binomial(n+1,j)*(k-j+1)^n for j in 0:k)
