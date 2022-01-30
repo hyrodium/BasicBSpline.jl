@@ -49,4 +49,27 @@
         Δ67 = [bsplinebasis(P6, i, t) - sum(A67[i, j] * bsplinebasis(P7, j, t) for j in 1:n7) for i in 1:n6, t in 2 * rand(10) .+ 2]
         @test norm(Δ67) < ε
     end
+
+    @testset "non-float" begin
+        k = UniformKnotVector(1:15)
+        P = UniformBSplineSpace{3}(k)
+        @test changebasis(P,P) isa Matrix{Float64}
+        @test BasicBSpline._changebasis_R(P,P) isa Matrix{Float64}
+        @test BasicBSpline._changebasis_I(P,P) isa Matrix{Float64}
+        @test BasicBSpline._changebasis_sim(P,P) isa Matrix{Float64}
+
+        k = UniformKnotVector(1:15//1)
+        P = UniformBSplineSpace{3}(k)
+        @test changebasis(P,P) isa Matrix{Rational{Int}}
+        @test BasicBSpline._changebasis_R(P,P) isa Matrix{Rational{Int}}
+        @test BasicBSpline._changebasis_I(P,P) isa Matrix{Rational{Int}}
+        @test BasicBSpline._changebasis_sim(P,P) isa Matrix{Rational{Int}}
+
+        k = UniformKnotVector(1:BigInt(15))
+        P = UniformBSplineSpace{3}(k)
+        @test changebasis(P,P) isa Matrix{BigFloat}
+        @test BasicBSpline._changebasis_R(P,P) isa Matrix{BigFloat}
+        @test BasicBSpline._changebasis_I(P,P) isa Matrix{BigFloat}
+        @test BasicBSpline._changebasis_sim(P,P) isa Matrix{BigFloat}
+    end
 end
