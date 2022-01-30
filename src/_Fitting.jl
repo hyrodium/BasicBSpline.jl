@@ -297,7 +297,7 @@ function innerproduct_R(P::UniformBSplineSpace{p,T,<:AbstractUnitRange}) where {
     m = factorial(2p+1)
 
     for q in 0:p
-        a = BasicBSpline.eulertriangle(2p+1,q)/m
+        a = U(eulertriangle(2p+1,q))/m
         for i in 1:n-(p-q)
             A[i,i+(p-q)] = a
         end
@@ -306,14 +306,14 @@ function innerproduct_R(P::UniformBSplineSpace{p,T,<:AbstractUnitRange}) where {
 end
 
 function innerproduct_R(P::UniformBSplineSpace{p,T}) where {p,T}
-    d = step(BasicBSpline._vec(knotvector(P)))
     U = StaticArrays.arithmetic_closure(T)
+    d = step(_vec(knotvector(P)))
     n = dim(P)
     A = zeros(U,n,n)
     m = factorial(2p+1)
 
     for q in 0:p
-        a = BasicBSpline.eulertriangle(2p+1,q)*d/m
+        a = U(eulertriangle(2p+1,q)*d)/m
         for i in 1:n-(p-q)
             A[i,i+(p-q)] = a
         end
