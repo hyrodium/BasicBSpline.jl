@@ -108,7 +108,7 @@ const ⊑ = issqsubset
 
 ≃(P1::AbstractBSplineSpace, P2::AbstractBSplineSpace) = (P1 ⊑ P2) & (P2 ⊑ P1)
 
-function isdegenerate(P::AbstractBSplineSpace{p}, i::Int) where p
+function isdegenerate(P::AbstractBSplineSpace{p}, i::Integer) where p
     k = knotvector(P)
     return k[i] == k[i+p+1]
 end
