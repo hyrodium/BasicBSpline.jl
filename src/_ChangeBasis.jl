@@ -18,7 +18,7 @@ function _changebasis_R(P::AbstractBSplineSpace{0,T}, P′::AbstractBSplineSpace
     n = dim(P)
     n′ = dim(P′)
     A⁰ = U[bsplinesupport(P′, j) ⊆ bsplinesupport(P, i) for i in 1:n, j in 1:n′]
-    A⁰[:, findall(_iszeros(P′))] .= _inf(U)
+    A⁰[:, findall(_iszeros(P′))] .= zero(U)  # Strictly this should be NaN, but we use zero here to support Rational.
     return A⁰
 end
 
@@ -54,7 +54,7 @@ function _changebasis_R(P::AbstractBSplineSpace{p,T}, P′::AbstractBSplineSpace
     for ȷ in 2:λ-1
         if Λ[ȷ] == 1
             # if B(i,p′,k′) = 0
-            Ãᵖ[ȷ] .= _inf(U)
+            Ãᵖ[ȷ] .= zero(U)  # Strictly this should be NaN, but we use zero here to support Rational.
         end
     end
     for ȷ in 1:λ-1
@@ -136,13 +136,13 @@ B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p',k')}
 Assumption:
 * ``P ⊑ P′``
 """
-function _changebasis_I(P::AbstractBSplineSpace{p}, P′::AbstractBSplineSpace{p′}) where {p,p′}
+function _changebasis_I(P::AbstractBSplineSpace{p,T}, P′::AbstractBSplineSpace{p′,T′}) where {p,p′,T,T′}
     P ⊑ P′ || throw(DomainError((P,P′),"P ⊑ P′ should be hold."))
     k = knotvector(P)
     k′ = knotvector(P′)
 
-    _P = BSplineSpace{p}(k[1+p:end-p] + p * KnotVector(k[1+p], k[end-p]))
-    _P′ = BSplineSpace{p′}(k′[1+p′:end-p′] + p′ * KnotVector(k′[1+p′], k′[end-p′]))
+    _P = BSplineSpace{p}(k[1+p:end-p] + p * KnotVector{T}(k[1+p], k[end-p]))
+    _P′ = BSplineSpace{p′}(k′[1+p′:end-p′] + p′ * KnotVector{T′}(k′[1+p′], k′[end-p′]))
     _A = _changebasis_R(_P, _P′)
     Asim = _changebasis_sim(P, _P)
     Asim′ = _changebasis_sim(_P′, P′)
