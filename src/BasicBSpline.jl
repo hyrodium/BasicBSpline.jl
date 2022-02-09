@@ -9,7 +9,7 @@ export AbstractKnotVector, KnotVector, UniformKnotVector
 export BSplineSpace, UniformBSplineSpace
 export dim, ⊑, ⊒, ⋢, ⋣, ≃
 export BSplineDerivativeSpace
-export CustomBSplineManifold
+export BSplineManifold
 export bsplinebasis₊₀, bsplinebasis₋₀, bsplinebasis
 export bsplinebasis′₊₀, bsplinebasis′₋₀, bsplinebasis′
 export bsplinesupport, domain, changebasis, expandspace
@@ -32,7 +32,6 @@ include("_DerivativeSpace.jl")
 include("_DerivativeBasis.jl")
 include("_ChangeBasis.jl")
 include("_BSplineManifold.jl")
-include("_CustomBSplineManifold.jl")
 include("_Refinement.jl")
 include("_Fitting.jl")
 
