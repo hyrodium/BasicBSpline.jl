@@ -25,7 +25,7 @@ P2 = BSplineSpace{p}(k2)
 n1 = dim(P1) # dimension of B-spline space
 n2 = dim(P2)
 a = [SVector(2i-6.5+rand(),1.5j-6.5+rand()) for i in 1:dim(P1), j in 1:dim(P2)] # random generated control points
-M = CustomBSplineManifold(a,(P1,P2)) # Define B-spline manifold
+M = BSplineManifold(a,(P1,P2)) # Define B-spline manifold
 save_png(&quot;2dim.png&quot;, M) # save image</code></pre><p><img src="img/2dim.png" alt/></p><h3 id="Refinement"><a class="docs-heading-anchor" href="#Refinement">Refinement</a><a id="Refinement-1"></a><a class="docs-heading-anchor-permalink" href="#Refinement" title="Permalink"></a></h3><h4 id="h-refinemnet"><a class="docs-heading-anchor" href="#h-refinemnet">h-refinemnet</a><a id="h-refinemnet-1"></a><a class="docs-heading-anchor-permalink" href="#h-refinemnet" title="Permalink"></a></h4><pre><code class="language-julia hljs">k₊=(KnotVector(3.3,4.2),KnotVector(0.3,0.5)) # additional knotvectors
 M_h = refinement(M,k₊=k₊) # refinement of B-spline manifold
 save_png(&quot;2dim_h-refinement.png&quot;, M_h) # save image</code></pre><p><img src="img/2dim_h-refinement.png" alt/></p><p>Note that this shape and the last shape are identical.</p><h4 id="p-refinemnet"><a class="docs-heading-anchor" href="#p-refinemnet">p-refinemnet</a><a id="p-refinemnet-1"></a><a class="docs-heading-anchor-permalink" href="#p-refinemnet" title="Permalink"></a></h4><pre><code class="language-julia hljs">p₊=(1,2) # additional degrees
@@ -40,7 +40,7 @@ P2 = BSplineSpace{p2}(k2)
 f(u1, u2) = SVector(2u1 + sin(u1) + cos(u2) + u2 / 2, 3u2 + sin(u2) + sin(u1) / 2 + u1^2 / 6) / 5
 
 a = fittingcontrolpoints(f, (P1, P2))
-M = CustomBSplineManifold(a, (P1, P2))
+M = BSplineManifold(a, (P1, P2))
 save_png(&quot;fitting.png&quot;, M, unitlength=50, xlims=(-10,10), ylims=(-10,10))</code></pre><p><img src="img/fitting_desmos.png" alt/> <img src="img/fitting.png" alt/></p><p>If the knotvector span is too coarse, the approximation will be coarse.</p><pre><code class="language-julia hljs">p1 = 2
 p2 = 2
 k1 = KnotVector(-10:5:10)+p1*KnotVector(-10,10)
@@ -51,7 +51,7 @@ P2 = BSplineSpace{p2}(k2)
 f(u1, u2) = SVector(2u1 + sin(u1) + cos(u2) + u2 / 2, 3u2 + sin(u2) + sin(u1) / 2 + u1^2 / 6) / 5
 
 a = fittingcontrolpoints(f, (P1, P2))
-M = CustomBSplineManifold(a, (P1, P2))
+M = BSplineManifold(a, (P1, P2))
 save_png(&quot;fitting_coarse.png&quot;, M, unitlength=50, xlims=(-10,10), ylims=(-10,10))</code></pre><p><img src="img/fitting_coarse.png" alt/></p><h3 id="Draw-smooth-vector-graphics"><a class="docs-heading-anchor" href="#Draw-smooth-vector-graphics">Draw smooth vector graphics</a><a id="Draw-smooth-vector-graphics-1"></a><a class="docs-heading-anchor-permalink" href="#Draw-smooth-vector-graphics" title="Permalink"></a></h3><pre><code class="language-julia hljs">p = 3
 k = KnotVector(range(-2π,2π,length=8))+p*KnotVector(-2π,2π)
 P = BSplineSpace{p}(k)
@@ -59,7 +59,7 @@ P = BSplineSpace{p}(k)
 f(u) = SVector(u,sin(u))
 
 a = fittingcontrolpoints(f, (P,))
-M = CustomBSplineManifold(a, (P,))
+M = BSplineManifold(a, (P,))
 save_svg(&quot;sine-curve.svg&quot;, M, unitlength=50, xlims=(-2,2), ylims=(-8,8))
 save_svg(&quot;sine-curve_no-points.svg&quot;, M, unitlength=50, xlims=(-2,2), ylims=(-8,8), points=false)</code></pre><p><img src="img/sine-curve.svg" alt/> <img src="img/sine-curve_no-points.svg" alt/></p><p>This is useful when you edit graphs (or curves) with your favorite vector graphics editor.</p><p><img src="img/inkscape.png" alt/></p><h2 id="References"><a class="docs-heading-anchor" href="#References">References</a><a id="References-1"></a><a class="docs-heading-anchor-permalink" href="#References" title="Permalink"></a></h2><p>If you use BasicBSpline.jl in your work, please consider citing it by</p><pre><code class="language-bibtex hljs">@misc{hyrodium:2020:BasicBSpline,
   title={BasicBSpline.jl: Basic operations for B-spline functions and related things with julia},
@@ -67,4 +67,4 @@ save_svg(&quot;sine-curve_no-points.svg&quot;, M, unitlength=50, xlims=(-2,2), y
   year={2020},
   howpublished={\url{https://hyrodium.github.io/BasicBSpline.jl/stable/}},
   doi={10.5281/zenodo.4356869}
-}</code></pre></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="math/">Mathematical properties of B-spline »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.12 on <span class="colophon-date" title="Sunday 30 January 2022 06:57">Sunday 30 January 2022</span>. Using Julia version 1.6.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+}</code></pre></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="math/">Mathematical properties of B-spline »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.12 on <span class="colophon-date" title="Wednesday 9 February 2022 16:27">Wednesday 9 February 2022</span>. Using Julia version 1.6.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
