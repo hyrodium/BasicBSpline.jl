@@ -1,6 +1,6 @@
 # BasicBSplineExporter.jl
 
-[BasicBSplineExporter.jl](https://github.com/hyrodium/BasicBSplineExporter.jl) supports export `BasicBSpline.BSplineManifold` and `BasicBSpline.CustomBSplineManifold{Dim,Deg,<:StaticVector}` to:
+[BasicBSplineExporter.jl](https://github.com/hyrodium/BasicBSplineExporter.jl) supports export `BasicBSpline.BSplineManifold{Dim,Deg,<:StaticVector}` to:
 * PNG image (`.png`)
 * SVG image (`.png`)
 * POV-Ray mesh (`.inc`)
@@ -24,7 +24,7 @@ P2 = BSplineSpace{p}(k2)
 n1 = dim(P1) # dimension of B-spline space
 n2 = dim(P2)
 a = [SVector(2i-6.5+rand(),1.5j-6.5+rand()) for i in 1:dim(P1), j in 1:dim(P2)] # random generated control points
-M = CustomBSplineManifold(a,(P1,P2)) # Define B-spline manifold
+M = BSplineManifold(a,(P1,P2)) # Define B-spline manifold
 save_png("2dim.png", M) # save image
 ```
 

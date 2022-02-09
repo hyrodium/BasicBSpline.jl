@@ -400,7 +400,7 @@ P2 = BSplineSpace{1}(KnotVector([1,1,2,3,3]))
 n1 = dim(P1) # 2
 n2 = dim(P2) # 3
 a = [SVector(i, j) for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.
-M = CustomBSplineManifold(a, (P1, P2))
+M = BSplineManifold(a, (P1, P2))
 ```
 
 
@@ -411,7 +411,7 @@ p = 2 # degree of polynomial
 k = KnotVector(1:12) # knot vector
 P = BSplineSpace{p}(k) # B-spline space
 a = [SVector(i-5, 3*sin(i^2)) for i in 1:dim(P)] # control points
-M = CustomBSplineManifold(a, (P,)) # Define B-spline manifold
+M = BSplineManifold(a, (P,)) # Define B-spline manifold
 save_png("1dim.png", M, unitlength = 50)
 ```
 ![](img/1dim.png)
@@ -424,7 +424,7 @@ k = KnotVector(1:8) # knot vector
 P = BSplineSpace{p}(k) # B-spline space
 rand_a = [SVector(rand(), rand()) for i in 1:dim(P), j in 1:dim(P)]
 a = [SVector(2*i-6.5, 2*j-6.5) for i in 1:dim(P), j in 1:dim(P)] + rand_a # random generated control points
-M = CustomBSplineManifold(a,(P,P)) # Define B-spline manifold
+M = BSplineManifold(a,(P,P)) # Define B-spline manifold
 save_png("2dim.png", M) # save image
 ```
 ![](img/2dim.png)
@@ -480,7 +480,7 @@ P2 = BSplineSpace{p2}(k2)
 f(u1, u2) = SVector(2u1 + sin(u1) + cos(u2) + u2 / 2, 3u2 + sin(u2) + sin(u1) / 2 + u1^2 / 6) / 5
 
 a = fittingcontrolpoints(f, (P1, P2))
-M = CustomBSplineManifold(a, (P1, P2))
+M = BSplineManifold(a, (P1, P2))
 save_png("fitting.png", M, unitlength=50, xlims=(-10,10), ylims=(-10,10))
 ```
 ![](img/fitting_desmos.png)

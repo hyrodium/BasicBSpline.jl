@@ -4,43 +4,39 @@ abstract type AbstractBSplineManifold{Dim, Deg} end
 
 dim(::AbstractBSplineManifold{Dim}) where Dim = Dim
 
-# struct BSplineManifold{Dim,Deg,T,S<:Tuple,Dim₊₁} <: AbstractBSplineManifold{Dim,Deg,T}
-struct BSplineManifold{Dim,Deg,T,S<:Tuple,Dim₊₁} <: AbstractBSplineManifold{Dim,Deg}
+struct BSplineManifold{Dim,Deg,C,S<:Tuple} <: AbstractBSplineManifold{Dim,Deg}
     bsplinespaces::S
-    controlpoints::Array{T,Dim₊₁}
-    function BSplineManifold(a::Array{T,Dim₊₁},Ps::S) where {S<:Tuple,Dim₊₁,T<:Real}
-        @warn "BSplineManifold may be removed in the future release. Please use CustomBSplineManifold instead."
+    controlpoints::Array{C,Dim}
+    function BSplineManifold(a::Array{C,Dim},Ps::S) where {S<:Tuple,C,Dim}
         for P in Ps
             if !(P isa AbstractBSplineSpace)
-                throw(TypeError(:CustomBSplineManifold,AbstractBSplineSpace,P))
+                throw(TypeError(:BSplineManifold,AbstractBSplineSpace,P))
             end
         end
-        if size(a)[1:Dim₊₁-1] != dim.(Ps)
-            msg = "The size of control points array $(size(a)[1:Dim₊₁-1]) and dimensions of B-spline spaces $(dim.(Ps)) must be equal."
+        if size(a) != dim.(Ps)
+            msg = "The size of control points array $(size(a)) and dimensions of B-spline spaces $(dim.(Ps)) must be equal."
             throw(DimensionMismatch(msg))
         end
-        Dim = length(Ps)
         Deg = degree.(Ps)
-        new{Dim,Deg,T,S,Dim+1}(Ps,a)
+        new{Dim,Deg,C,S}(Ps,a)
     end
 end
 
 bsplinespaces(M::BSplineManifold) = M.bsplinespaces
 controlpoints(M::BSplineManifold) = M.controlpoints
 
-@generated function unsafe_mapping(M::BSplineManifold{1,Deg,S,T},t1) where {Deg,S,T}
+@generated function unsafe_mapping(M::BSplineManifold{1,Deg,S,T},t1::Real) where {Deg,S,T}
     p1, = Deg
     exs = Expr[]
     for j1 in 1:p1
-        push!(exs, :(v .+= b1[$(1+j1)]*view(a,i1+$(j1),:)))
+        push!(exs, :(v += b1[$(1+j1)]*getindex(a,i1+$(j1))))
     end
-    Expr(
-        :block,
+    Expr(:block,
         :((P1,) = bsplinespaces(M)),
         :(a = controlpoints(M)),
         :(i1 = intervalindex(P1,t1)),
         :(b1 = bsplinebasisall(P1,i1,t1)),
-        :(v = b1[1]*view(a,i1,:)),
+        :(v = b1[1]*getindex(a,i1)),
         exs...,
         :(return v)
     )
@@ -50,7 +46,7 @@ end
     p1, p2 = Deg
     exs = Expr[]
     for j2 in 1:p2+1, j1 in 1:p1+1
-        push!(exs, :(v .+= b1[$(j1)]*b2[$(j2)]*view(a,i1+$(j1-1),i2+$(j2-1),:)))
+        push!(exs, :(v += b1[$(j1)]*b2[$(j2)]*getindex(a,i1+$(j1-1),i2+$(j2-1))))
     end
     deleteat!(exs,1)
     Expr(
@@ -59,7 +55,7 @@ end
         :(a = controlpoints(M)),
         :((i1, i2) = (intervalindex(P1,t1), intervalindex(P2,t2))),
         :((b1, b2) = (bsplinebasisall(P1,i1,t1), bsplinebasisall(P2,i2,t2))),
-        :(v = b1[1]*b2[1]*view(a,i1,i2,:)),
+        :(v = b1[1]*b2[1]*getindex(a,i1,i2)),
         exs...,
         :(return v)
     )
@@ -69,7 +65,7 @@ end
     p1, p2, p3 = Deg
     exs = Expr[]
     for j3 in 1:p3+1, j2 in 1:p2+1, j1 in 1:p1+1
-        push!(exs, :(v .+= b1[$(j1)]*b2[$(j2)]*b3[$(j3)]*view(a,i1+$(j1-1),i2+$(j2-1),i3+$(j3-1),:)))
+        push!(exs, :(v += b1[$(j1)]*b2[$(j2)]*b3[$(j3)]*getindex(a,i1+$(j1-1),i2+$(j2-1),i3+$(j3-1))))
     end
     deleteat!(exs,1)
     Expr(
@@ -78,7 +74,7 @@ end
         :(a = controlpoints(M)),
         :((i1, i2, i3) = (intervalindex(P1,t1), intervalindex(P2,t2), intervalindex(P3,t3))),
         :((b1, b2, b3) = (bsplinebasisall(P1,i1,t1), bsplinebasisall(P2,i2,t2), bsplinebasisall(P3,i3,t3))),
-        :(v = b1[1]*b2[1]*b3[1]*view(a,i1,i2,i3,:)),
+        :(v = b1[1]*b2[1]*b3[1]*getindex(a,i1,i2,i3)),
         exs...,
         :(return v)
     )
@@ -106,3 +102,4 @@ end
 end
 
 # TODO add mappings higher dimensionnal B-spline manifold with @generated macro
+Base.@deprecate_binding CustomBSplineManifold BSplineManifold true

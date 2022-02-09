@@ -85,7 +85,7 @@ P2 = BSplineSpace{p}(k2)
 n1 = dim(P1) # dimension of B-spline space
 n2 = dim(P2)
 a = [SVector(2i-6.5+rand(),1.5j-6.5+rand()) for i in 1:dim(P1), j in 1:dim(P2)] # random generated control points
-M = CustomBSplineManifold(a,(P1,P2)) # Define B-spline manifold
+M = BSplineManifold(a,(P1,P2)) # Define B-spline manifold
 save_png("2dim.png", M) # save image
 ```
 ![](docs/src/img/2dim.png)
@@ -124,7 +124,7 @@ P2 = BSplineSpace{p2}(k2)
 f(u1, u2) = SVector(2u1 + sin(u1) + cos(u2) + u2 / 2, 3u2 + sin(u2) + sin(u1) / 2 + u1^2 / 6) / 5
 
 a = fittingcontrolpoints(f, (P1, P2))
-M = CustomBSplineManifold(a, (P1, P2))
+M = BSplineManifold(a, (P1, P2))
 save_png("fitting.png", M, unitlength=50, xlims=(-10,10), ylims=(-10,10))
 ```
 ![](docs/src/img/fitting_desmos.png)
@@ -142,7 +142,7 @@ P2 = BSplineSpace{p2}(k2)
 f(u1, u2) = SVector(2u1 + sin(u1) + cos(u2) + u2 / 2, 3u2 + sin(u2) + sin(u1) / 2 + u1^2 / 6) / 5
 
 a = fittingcontrolpoints(f, (P1, P2))
-M = CustomBSplineManifold(a, (P1, P2))
+M = BSplineManifold(a, (P1, P2))
 save_png("fitting_coarse.png", M, unitlength=50, xlims=(-10,10), ylims=(-10,10))
 ```
 ![](docs/src/img/fitting_coarse.png)
@@ -156,7 +156,7 @@ P = BSplineSpace{p}(k)
 f(u) = SVector(u,sin(u))
 
 a = fittingcontrolpoints(f, (P,))
-M = CustomBSplineManifold(a, (P,))
+M = BSplineManifold(a, (P,))
 save_svg("sine-curve.svg", M, unitlength=50, xlims=(-2,2), ylims=(-8,8))
 save_svg("sine-curve_no-points.svg", M, unitlength=50, xlims=(-2,2), ylims=(-8,8), points=false)
 ```

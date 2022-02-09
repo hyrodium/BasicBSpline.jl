@@ -24,12 +24,6 @@
         @test exactdim(P2) == 3
     end
 
-    @testset "support" begin
-        k = KnotVector(rand(10))
-        P = BSplineSpace{2}(k)
-        @test bsplinesupport(P) == [bsplinesupport(P, i) for i in 1:dim(P)]
-    end
-
     @testset "denegeration with lower degree" begin
         k = KnotVector([1, 3, 3, 3, 6, 8, 9])
         @test isnondegenerate(BSplineSpace{2}(k))
