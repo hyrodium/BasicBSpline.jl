@@ -117,7 +117,6 @@ isnondegenerate(P::AbstractBSplineSpace, i::Int) = !isdegenerate(P, i)
 function _iszeros(P::AbstractBSplineSpace{p}) where p
     return [isdegenerate(P,i) for i in 1:dim(P)]
 end
-Base.@deprecate_binding iszeros _iszeros true
 
 @doc raw"""
 Check if given B-spline space is non-degenerate.
@@ -161,10 +160,6 @@ function exactdim(P::AbstractBSplineSpace)
     end
     return n
 end
-
-# These bindings will be removed when releasing v0.5.0
-Base.@deprecate_binding isproper isnondegenerate true
-Base.@deprecate_binding properdim exactdim true
 
 @doc raw"""
 Return the support of ``i``-th B-spline basis function.
