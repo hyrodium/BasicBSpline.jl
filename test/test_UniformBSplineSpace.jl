@@ -61,7 +61,6 @@
     @testset "support" begin
         k = UniformKnotVector(0:9)
         P = UniformBSplineSpace{2}(k)
-        @test bsplinesupport(P) == [bsplinesupport(P, i) for i in 1:dim(P)]
         @test bsplinesupport(P,1) == 0..3
         @test bsplinesupport(P,2) == 1..4
     end

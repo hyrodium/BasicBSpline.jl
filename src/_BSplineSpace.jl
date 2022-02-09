@@ -172,12 +172,6 @@ function bsplinesupport(P::AbstractBSplineSpace{p}, i::Integer) where p
     return k[i]..k[i+p+1]
 end
 
-function bsplinesupport(P::AbstractBSplineSpace{p}) where p
-    @warn "bsplinesupport(P::AbstractBSplineSpace{p}) will be removed in the next breaking release."
-    k = knotvector(P)
-    return [k[i]..k[i+p+1] for i in 1:dim(P)]
-end
-
 @doc raw"""
 Internal methods for obtaining a B-spline space with one degree lower.
 ```math
