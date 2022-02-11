@@ -28,7 +28,7 @@ function Base.issubset(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}, 
     P′ = bsplinespace(dP′)
     return dP ⊆ P′
 end
-function Base.issubset(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}, dP′::BSplineDerivativeSpace{r′,<:AbstractBSplineSpace{p}}) where {r,p,r′,p′}
+function Base.issubset(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}, dP′::BSplineDerivativeSpace{r′,<:AbstractBSplineSpace{p′}}) where {r,p,r′,p′}
     if r > r′
         P = bsplinespace(dP)
         P′ = bsplinespace(dP′)
@@ -39,12 +39,14 @@ function Base.issubset(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}, 
         P′ = bsplinespace(dP′)
         return P ⊆ P′
     else
-        # This might not be correct.
         return false
     end
 end
-function Base.issubset(P::AbstractBSplineSpace, dP′::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}) where {r,p}
-    # This might not be correct.
+function Base.issubset(P::AbstractBSplineSpace, dP′::BSplineDerivativeSpace{0})
+    P′ = bsplinespace(dP′)
+    return P ⊆ P′
+end
+function Base.issubset(P::AbstractBSplineSpace, dP′::BSplineDerivativeSpace)
     return false
 end
 
