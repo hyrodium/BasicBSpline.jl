@@ -24,11 +24,11 @@ function Base.issubset(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}, 
     P = BSplineSpace{p-r}(k)
     return P ⊆ P′
 end
-function Base.issubset(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}, dP′::BSplineDerivativeSpace{0}) where {r,p}
+function Base.issubset(dP::BSplineDerivativeSpace, dP′::BSplineDerivativeSpace{0})
     P′ = bsplinespace(dP′)
     return dP ⊆ P′
 end
-function Base.issubset(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}, dP′::BSplineDerivativeSpace{r′,<:AbstractBSplineSpace{p′}}) where {r,p,r′,p′}
+function Base.issubset(dP::BSplineDerivativeSpace{r}, dP′::BSplineDerivativeSpace{r′}) where {r,r′}
     if r > r′
         P = bsplinespace(dP)
         P′ = bsplinespace(dP′)
