@@ -157,4 +157,43 @@ function changebasis(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
     throw(DomainError((P, P′),"𝒫[p,k] ⊆ 𝒫[p′,k′] or 𝒫[p,k] ⊑ 𝒫[p′,k′] must hold."))
 end
 
-# TODO: Add changebasis(::BSplineDerivativeSpace, )
+function _changebasis_R(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}, P′::AbstractBSplineSpace) where {r,p}
+    dP ⊆ P′ || throw(DomainError((P,P′),"dP ⊆ P′ should be hold."))
+    k = knotvector(dP)
+    n = dim(dP)
+    A = Matrix(I(n))
+    for _r in 0:r-1
+        _p = p - _r
+        _A = zeros(n+_r,n+1+_r)
+        for i in 1:n+_r
+            _A[i,i] = _p/(k[i+_p]-k[i])
+            _A[i,i+1] = -_p/(k[i+_p+1]-k[i+1])
+        end
+        A = A*_A
+    end
+    _P = BSplineSpace{degree(dP)}(k)
+    A = A*_changebasis_R(_P, P′)
+    return A
+end
+function _changebasis_R(dP::BSplineDerivativeSpace, dP′::BSplineDerivativeSpace{0})
+    dP ⊆ dP′ || throw(DomainError((dP,dP′),"dP ⊆ dP′ should be hold."))
+    P′ = bsplinespace(dP′)
+    return _changebasis_R(dP, P′)
+end
+function _changebasis_R(dP::BSplineDerivativeSpace{r}, dP′::BSplineDerivativeSpace{r′}) where {r,r′}
+    dP ⊆ dP′ || throw(DomainError((dP,dP′),"dP ⊆ dP′ should be hold."))
+    if r > r′
+        P = bsplinespace(dP)
+        P′ = bsplinespace(dP′)
+        _dP = BSplineDerivativeSpace{r-r′}(P)
+        return _changebasis_R(_dP, P′)
+    elseif r == r′
+        P = bsplinespace(dP)
+        P′ = bsplinespace(dP′)
+        return _changebasis_R(P, P′)
+    end
+end
+function _changebasis_R(P::AbstractBSplineSpace, dP′::BSplineDerivativeSpace{0})
+    P′ = bsplinespace(dP′)
+    return _changebasis_R(P, P′)
+end
