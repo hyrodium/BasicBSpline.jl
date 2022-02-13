@@ -1,6 +1,7 @@
 # B-spline space
 
-abstract type AbstractBSplineSpace{p,T} end
+abstract type AbstractFunctionSpace{T} end
+abstract type AbstractBSplineSpace{p,T} <: AbstractFunctionSpace{T} end
 
 # Broadcast like a scalar
 Base.Broadcast.broadcastable(P::AbstractBSplineSpace) = Ref(P)
