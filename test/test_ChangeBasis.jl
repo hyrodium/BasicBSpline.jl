@@ -2,6 +2,20 @@
     ε = 1e-14
     Random.seed!(42)
 
+    function test_changebasis_R(P,P′)
+        @test P ⊆ P′
+        A = changebasis(P,P′)
+        @test A == BasicBSpline._changebasis_R(P,P′)
+        n = dim(P)
+        n′ = dim(P′)
+        t_min = minimum(knotvector(P)+knotvector(P′))
+        t_max = maximum(knotvector(P)+knotvector(P′))
+        ts = range(t_min,t_max,length=20)
+        for t in ts
+            @test norm(bsplinebasis.(P,1:n,t) - A*bsplinebasis.(P′,1:n′,t), Inf) < eps()
+        end
+    end
+
     @testset "subseteq (R)" begin
         P1 = BSplineSpace{1}(KnotVector([1, 3, 5, 8]))
         P2 = BSplineSpace{1}(KnotVector([1, 3, 5, 6, 8, 9]))
@@ -71,5 +85,38 @@
         @test BasicBSpline._changebasis_R(P,P) isa Matrix{BigFloat}
         @test BasicBSpline._changebasis_I(P,P) isa Matrix{BigFloat}
         @test BasicBSpline._changebasis_sim(P,P) isa Matrix{BigFloat}
+    end
+
+    @testset "derivative" begin
+        k = KnotVector(5*rand(12))
+        p = 5
+        dP1 = BSplineDerivativeSpace{1}(BSplineSpace{p}(k))
+        dP2 = BSplineDerivativeSpace{0}(BSplineSpace{p-1}(k))
+        P1 = BSplineSpace{p-1}(k)
+        P2 = BSplineSpace{p-1}(k + KnotVector(rand(3)*3 .+ 1))
+
+        test_changebasis_R(dP1, P1)
+        test_changebasis_R(dP1, P2)
+        test_changebasis_R(dP2, P1)
+        test_changebasis_R(dP2, P2)
+        test_changebasis_R(dP2, P1)
+        test_changebasis_R(dP2, P2)
+
+        test_changebasis_R(dP1, dP2)
+        test_changebasis_R(dP1, P2)
+        test_changebasis_R(dP2, dP2)
+        test_changebasis_R(dP2, P2)
+        test_changebasis_R(dP2, dP2)
+        test_changebasis_R(dP2, P2)
+
+        dP2 = BSplineDerivativeSpace{2}(BSplineSpace{p}(k))
+        dP3 = BSplineDerivativeSpace{1}(BSplineSpace{p-1}(k))
+        dP4 = BSplineDerivativeSpace{0}(BSplineSpace{p-2}(k))
+        P3 = BSplineSpace{p-2}(k)
+
+        test_changebasis_R(dP2, dP3)
+        test_changebasis_R(dP3, dP4)
+        test_changebasis_R(dP4, P3)
+        test_changebasis_R(P3, dP4)
     end
 end
