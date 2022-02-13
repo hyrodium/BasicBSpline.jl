@@ -1,4 +1,7 @@
-using Documenter, BasicBSpline, BasicBSplineExporter
+using Documenter, BasicBSpline, BasicBSplineExporter, Plots
+
+gr()
+plotlyjs()
 
 # Setup for doctests in docstrings
 DocMeta.setdocmeta!(BasicBSpline, :DocTestSetup, :(using LinearAlgebra, BasicBSpline))
