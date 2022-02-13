@@ -79,12 +79,13 @@
     end
 
     @testset "derivative" begin
-        k = KnotVector(5*rand(12))
+        k1 = KnotVector(5*rand(12))
+        k2 = k1 + KnotVector(rand(3)*3 .+ 1)
         p = 5
-        dP1 = BSplineDerivativeSpace{1}(BSplineSpace{p}(k))
-        dP2 = BSplineDerivativeSpace{0}(BSplineSpace{p-1}(k))
-        P1 = BSplineSpace{p-1}(k)
-        P2 = BSplineSpace{p-1}(k + KnotVector(rand(3)*3 .+ 1))
+        dP1 = BSplineDerivativeSpace{1}(BSplineSpace{p}(k1))
+        dP2 = BSplineDerivativeSpace{0}(BSplineSpace{p-1}(k1))
+        P1 = BSplineSpace{p-1}(k1)
+        P2 = BSplineSpace{p-1}(k2)
 
         test_changebasis_R(dP1, P1)
         test_changebasis_R(dP1, P2)
@@ -100,14 +101,29 @@
         test_changebasis_R(dP2, dP2)
         test_changebasis_R(dP2, P2)
 
-        dP2 = BSplineDerivativeSpace{2}(BSplineSpace{p}(k))
-        dP3 = BSplineDerivativeSpace{1}(BSplineSpace{p-1}(k))
-        dP4 = BSplineDerivativeSpace{0}(BSplineSpace{p-2}(k))
-        P3 = BSplineSpace{p-2}(k)
+        dP2 = BSplineDerivativeSpace{2}(BSplineSpace{p}(k1))
+        dP3 = BSplineDerivativeSpace{1}(BSplineSpace{p-1}(k1))
+        dP4 = BSplineDerivativeSpace{0}(BSplineSpace{p-2}(k1))
+        dP5 = BSplineDerivativeSpace{2}(BSplineSpace{p}(k2))
+        P3 = BSplineSpace{p-2}(k1)
+        P4 = BSplineSpace{p-2}(k2)
 
         test_changebasis_R(dP2, dP3)
+        @test dP2 ⊉ dP3
         test_changebasis_R(dP3, dP4)
+        @test dP3 ⊉ dP4
         test_changebasis_R(dP4, P3)
         test_changebasis_R(P3, dP4)
+
+        test_changebasis_R(dP2, dP5)
+        @test dP2 ⊉ dP5
+        test_changebasis_R(dP5, dP5)
+        test_changebasis_R(dP2, dP2)
+        test_changebasis_R(dP5, P4)
+        @test dP5 ⊉ P4
+        test_changebasis_R(dP3, P4)
+        @test dP3 ⊉ P4
+
+        @test_throws DomainError changebasis(P4, P3)
     end
 end
