@@ -53,7 +53,7 @@ To export graphics, use [BasicBSplineExporter.jl](https://github.com/hyrodium/Ba
 using BasicBSpline
 using Plots
 
-k = KnotVector([0.00,1.50,2.50,5.50,8.00,9.00,9.50,10.0])
+k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 P0 = BSplineSpace{0}(k) # 0th degree piecewise polynomial space
 P1 = BSplineSpace{1}(k) # 1st degree piecewise polynomial space
 P2 = BSplineSpace{2}(k) # 2nd degree piecewise polynomial space
