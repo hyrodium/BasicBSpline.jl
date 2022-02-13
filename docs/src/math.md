@@ -69,7 +69,7 @@ unique(k::KnotVector)
 ```
 
 ```@docs
-𝔫(k::KnotVector, t::Real)
+𝔫(k::AbstractKnotVector, t::Real)
 ```
 
 
@@ -172,13 +172,15 @@ dim
 
 ```@repl math
 using Plots
+plotlyjs() # hide
 p = 2
 k = KnotVector(1:8)
 P = BSplineSpace{p}(k)
-plot([t->bsplinebasis₊₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(0,1))
+plot([t->bsplinebasis₊₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(0,1), label=false)
+png("bsplinebasisplot") # hide
 ```
 
-![](img/bsplinebasisplot.png)
+![](bsplinebasisplot.png)
 
 You can choose the first terms in different ways.
 
@@ -195,13 +197,15 @@ You can choose the first terms in different ways.
 
 ```@repl math
 using Plots
+plotlyjs() # hide
 p = 2
 k = KnotVector(1:8)
 P = BSplineSpace{p}(k)
-plot([t->bsplinebasis₋₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(0,1))
+plot([t->bsplinebasis₋₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(0,1), label=false)
+png("bsplinebasisplot2") # hide
 ```
 
-![](img/bsplinebasisplot.png)
+![](bsplinebasisplot2.png)
 
 In these cases, each B-spline basis function ``B_{(i,2,k)}`` is coninuous, so `bsplinebasis₊₀` and `bsplinebasis₋₀` are equal.
 
@@ -237,13 +241,15 @@ bsplinesupport(P,i) # 12..14
 
 ```@repl math
 using Plots
+plotlyjs() # hide
 p = 2
 k = KnotVector(1:8)
 P = BSplineSpace{p}(k)
-plot([t->bsplinebasis′₊₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(0,1))
+plot([t->bsplinebasis′₊₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(-2,2), label=false)
+png("bsplinebasisderivativeplot") # hide
 ```
 
-![](img/bsplinebasisderivativeplot.png)
+![](bsplinebasisderivativeplot.png)
 
 ## Partition of unity
 !!! info "Thm.  Partition of unity"
@@ -256,25 +262,29 @@ plot([t->bsplinebasis′₊₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(0,1))
 
 ```@repl math
 using Plots
+plotlyjs() # hide
 p = 2
 k = KnotVector(1:8)
 P = BSplineSpace{p}(k)
-plot(t->sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1))
+plot(t->sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.1), label=false)
+png("sumofbsplineplot") # hide
 ```
 
-![](img/sumofbsplineplot.png)
+![](sumofbsplineplot.png)
 
 To satisfy the partition of unity on whole interval ``[1,8]``, sometimes more knots will be inserted to the endpoints of the interval.
 
 ```@repl math
 using Plots
+plotlyjs() # hide
 p = 2
 k = KnotVector(1:8) + p * KnotVector([1,8])
 P = BSplineSpace{p}(k)
-plot(t->sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1))
+plot(t->sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.1), label=false)
+png("sumofbsplineplot2") # hide
 ```
 
-![](img/sumofbsplineplot2.png)
+![](sumofbsplineplot2.png)
 
 But, the sum ``\sum_{i} B_{(i,p,k)}(t)`` is not equal to ``1`` if ``t=8``.
 Therefore, to satisfy partition of unity on closed interval ``[k_{p+1}, k_{l-p}]``, the definition of first terms of B-spline basis functions are sometimes replaced:
@@ -293,13 +303,15 @@ Therefore, to satisfy partition of unity on closed interval ``[k_{p+1}, k_{l-p}]
 
 ```@repl math
 using Plots
+plotlyjs() # hide
 p = 2
 k = KnotVector(1:8) + p * KnotVector([1,8])
 P = BSplineSpace{p}(k)
-plot(t->sum(bsplinebasis(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1))
+plot(t->sum(bsplinebasis(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.1), label=false)
+png("sumofbsplineplot3") # hide
 ```
 
-![](img/sumofbsplineplot3.png)
+![](sumofbsplineplot3.png)
 
 
 ## Inclusive relation between B-spline spaces
@@ -327,6 +339,7 @@ Here are plots of the B-spline basis functions of the spaces `P1`, `P2`, `P3`.
 
 ```@repl math
 using Plots
+plotlyjs() # hide
 P1 = BSplineSpace{1}(KnotVector([1,3,5,8]))
 P2 = BSplineSpace{1}(KnotVector([1,3,5,6,8,9]))
 P3 = BSplineSpace{2}(KnotVector([1,1,3,3,5,5,8,8]))
@@ -337,9 +350,10 @@ plot(
     layout=(3,1),
     link=:x
 )
+png("subbsplineplot") # hide
 ```
 
-![](img/subbsplineplot.png)
+![](subbsplineplot.png)
 
 This means, there exists a ``n \times n'`` matrix ``A`` which holds:
 
@@ -361,6 +375,7 @@ A13 = changebasis(P1,P3)
 
 ```@repl math
 using Plots
+plotlyjs() # hide
 plot(
     plot([t->bsplinebasis₊₀(P1,i,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
     plot([t->sum(A12[i,j]*bsplinebasis₊₀(P2,j,t) for j in 1:dim(P2)) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
@@ -368,9 +383,10 @@ plot(
     layout=(3,1),
     link=:x
 )
+png("subbsplineplot2") # hide
 ```
 
-![](img/subbsplineplot2.png)
+![](subbsplineplot2.png)
 
 ## Multi-dimensional B-spline
 tensor product
@@ -414,7 +430,7 @@ a = [SVector(i-5, 3*sin(i^2)) for i in 1:dim(P)] # control points
 M = BSplineManifold(a, (P,)) # Define B-spline manifold
 save_png("1dim.png", M, unitlength = 50)
 ```
-![](img/1dim.png)
+![](1dim.png)
 
 
 ### B-spline surface
@@ -427,7 +443,8 @@ a = [SVector(2*i-6.5, 2*j-6.5) for i in 1:dim(P), j in 1:dim(P)] + rand_a # rand
 M = BSplineManifold(a,(P,P)) # Define B-spline manifold
 save_png("2dim.png", M) # save image
 ```
-![](img/2dim.png)
+
+![](2dim.png)
 
 ## Affine commutativity
 !!! info "Thm.  Affine commutativity"
@@ -447,7 +464,7 @@ k₊=(KnotVector(3.3,4.2),KnotVector(3.8,3.2,5.3)) # additional knotvectors
 M_h = refinement(M,k₊=k₊) # refinement of B-spline manifold
 save_png("2dim_h-refinement.png", M_h) # save image
 ```
-![](img/2dim_h-refinement.png)
+![](2dim_h-refinement.png)
 
 Note that this shape and the last shape are identical.
 
@@ -460,7 +477,7 @@ p₊=(1,2) # additional degrees
 M_p = refinement(M,p₊=p₊) # refinement of B-spline manifold
 save_png("2dim_p-refinement.png", M_p) # save image
 ```
-![](img/2dim_p-refinement.png)
+![](2dim_p-refinement.png)
 
 Note that this shape and the last shape are identical.
 
@@ -484,4 +501,4 @@ M = BSplineManifold(a, (P1, P2))
 save_png("fitting.png", M, unitlength=50, xlims=(-10,10), ylims=(-10,10))
 ```
 ![](img/fitting_desmos.png)
-![](img/fitting.png)
+![](fitting.png)

@@ -176,8 +176,8 @@ end
 Internal methods for obtaining a B-spline space with one degree lower.
 ```math
 \begin{aligned}
-\mathcal{P}[p,k] \mapsto \mathcal{P}[p-1,k] \\
-D^r\mathcal{P}[p,k] \mapsto D^{r-1}\mathcal{P}[p-1,k]
+\mathcal{P}[p,k] &\mapsto \mathcal{P}[p-1,k] \\
+D^r\mathcal{P}[p,k] &\mapsto D^{r-1}\mathcal{P}[p-1,k]
 \end{aligned}
 ```
 """
@@ -186,7 +186,7 @@ _lower
 _lower(P::BSplineSpace{p,T}) where {p,T} = BSplineSpace{p-1}(knotvector(P))
 
 """
-TODO: add docstring
+Return an index of a interval in the domain of B-spline space
 """
 function intervalindex(P::AbstractBSplineSpace{p},t::Real) where p
     k = knotvector(P)
