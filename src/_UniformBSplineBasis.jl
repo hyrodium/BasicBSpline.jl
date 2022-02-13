@@ -71,5 +71,5 @@ end
     @boundscheck (0 ≤ i ≤ length(k)-2p) || throw(DomainError(i, "index of interval is out of range."))
     a = @inbounds k.vector[i+p]
     b = @inbounds k.vector[i+p+1]
-    return BasicBSpline.uniform_bsplinebasisall_kernel(Val{p}(),U((t-a)/(b-a)))
+    return uniform_bsplinebasisall_kernel(Val{p}(),U((t-a)/(b-a)))
 end

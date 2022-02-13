@@ -2,23 +2,28 @@
     ε = 1e-14
     Random.seed!(42)
 
+    function test_changebasis_R(P,P′)
+        @test P ⊆ P′
+        A = changebasis(P,P′)
+        @test A == BasicBSpline._changebasis_R(P,P′)
+        n = dim(P)
+        n′ = dim(P′)
+        @test size(A) == (n,n′)
+        t_min = minimum(knotvector(P)+knotvector(P′))
+        t_max = maximum(knotvector(P)+knotvector(P′))
+        ts = range(t_min,t_max,length=20)
+        for t in ts
+            @test norm(bsplinebasis.(P,1:n,t) - A*bsplinebasis.(P′,1:n′,t), Inf) < 1e-14
+        end
+    end
+
     @testset "subseteq (R)" begin
         P1 = BSplineSpace{1}(KnotVector([1, 3, 5, 8]))
         P2 = BSplineSpace{1}(KnotVector([1, 3, 5, 6, 8, 9]))
         P3 = BSplineSpace{2}(KnotVector([1, 1, 3, 3, 5, 5, 8, 8]))
-        @test P1 ⊆ P2
-        @test P1 ⊆ P3
+        test_changebasis_R(P1, P2)
+        test_changebasis_R(P1, P3)
         @test P2 ⊈ P3
-
-        n1, n2, n3 = dim(P1), dim(P2), dim(P3)
-        A12 = changebasis(P1, P2)
-        A13 = changebasis(P1, P3)
-        @test size(A12) == (n1, n2)
-        @test size(A13) == (n1, n3)
-        Δ12 = [bsplinebasis(P1, i, t) - sum(A12[i, j] * bsplinebasis(P2, j, t) for j in 1:n2) for i in 1:n1, t in 8 * rand(10)]
-        Δ13 = [bsplinebasis(P1, i, t) - sum(A13[i, j] * bsplinebasis(P3, j, t) for j in 1:n3) for i in 1:n1, t in 8 * rand(10)]
-        @test norm(Δ12) < ε
-        @test norm(Δ13) < ε
     end
 
     @testset "sqsubseteq (I)" begin
@@ -71,5 +76,54 @@
         @test BasicBSpline._changebasis_R(P,P) isa Matrix{BigFloat}
         @test BasicBSpline._changebasis_I(P,P) isa Matrix{BigFloat}
         @test BasicBSpline._changebasis_sim(P,P) isa Matrix{BigFloat}
+    end
+
+    @testset "derivative" begin
+        k1 = KnotVector(5*rand(12))
+        k2 = k1 + KnotVector(rand(3)*3 .+ 1)
+        p = 5
+        dP1 = BSplineDerivativeSpace{1}(BSplineSpace{p}(k1))
+        dP2 = BSplineDerivativeSpace{0}(BSplineSpace{p-1}(k1))
+        P1 = BSplineSpace{p-1}(k1)
+        P2 = BSplineSpace{p-1}(k2)
+
+        test_changebasis_R(dP1, P1)
+        test_changebasis_R(dP1, P2)
+        test_changebasis_R(dP2, P1)
+        test_changebasis_R(dP2, P2)
+        test_changebasis_R(dP2, P1)
+        test_changebasis_R(dP2, P2)
+
+        test_changebasis_R(dP1, dP2)
+        test_changebasis_R(dP1, P2)
+        test_changebasis_R(dP2, dP2)
+        test_changebasis_R(dP2, P2)
+        test_changebasis_R(dP2, dP2)
+        test_changebasis_R(dP2, P2)
+
+        dP2 = BSplineDerivativeSpace{2}(BSplineSpace{p}(k1))
+        dP3 = BSplineDerivativeSpace{1}(BSplineSpace{p-1}(k1))
+        dP4 = BSplineDerivativeSpace{0}(BSplineSpace{p-2}(k1))
+        dP5 = BSplineDerivativeSpace{2}(BSplineSpace{p}(k2))
+        P3 = BSplineSpace{p-2}(k1)
+        P4 = BSplineSpace{p-2}(k2)
+
+        test_changebasis_R(dP2, dP3)
+        @test dP2 ⊉ dP3
+        test_changebasis_R(dP3, dP4)
+        @test dP3 ⊉ dP4
+        test_changebasis_R(dP4, P3)
+        test_changebasis_R(P3, dP4)
+
+        test_changebasis_R(dP2, dP5)
+        @test dP2 ⊉ dP5
+        test_changebasis_R(dP5, dP5)
+        test_changebasis_R(dP2, dP2)
+        test_changebasis_R(dP5, P4)
+        @test dP5 ⊉ P4
+        test_changebasis_R(dP3, P4)
+        @test dP3 ⊉ P4
+
+        @test_throws DomainError changebasis(P4, P3)
     end
 end
