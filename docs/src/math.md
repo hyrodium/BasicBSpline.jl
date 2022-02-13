@@ -69,7 +69,7 @@ unique(k::KnotVector)
 ```
 
 ```@docs
-𝔫(k::KnotVector, t::Real)
+𝔫(k::AbstractKnotVector, t::Real)
 ```
 
 
