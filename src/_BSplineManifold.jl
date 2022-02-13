@@ -1,6 +1,7 @@
 # B-spline manifold
 
-abstract type AbstractBSplineManifold{Dim, Deg} end
+abstract type AbstractManifold{Dim} end
+abstract type AbstractBSplineManifold{Dim, Deg} <: AbstractManifold{Dim} end
 
 dim(::AbstractBSplineManifold{Dim}) where Dim = Dim
 
