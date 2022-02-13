@@ -32,6 +32,7 @@ include("_DerivativeSpace.jl")
 include("_DerivativeBasis.jl")
 include("_ChangeBasis.jl")
 include("_BSplineManifold.jl")
+include("_RationalBSplineManifold.jl")
 include("_Refinement.jl")
 include("_Fitting.jl")
 
