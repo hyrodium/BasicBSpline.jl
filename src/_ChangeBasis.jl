@@ -151,7 +151,7 @@ function _changebasis_I(P::AbstractBSplineSpace{p,T}, P′::AbstractBSplineSpace
     return A
 end
 
-function changebasis(P::AbstractBSplineSpace, P′::AbstractBSplineSpace)
+function changebasis(P, P′)
     P ⊆ P′ && return _changebasis_R(P, P′)
     P ⊑ P′ && return _changebasis_I(P, P′)
     throw(DomainError((P, P′),"𝒫[p,k] ⊆ 𝒫[p′,k′] or 𝒫[p,k] ⊑ 𝒫[p′,k′] must hold."))
