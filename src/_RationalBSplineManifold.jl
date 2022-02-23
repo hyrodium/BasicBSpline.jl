@@ -19,3 +19,7 @@ struct RationalBSplineManifold{Dim,Deg,C,S<:Tuple,T} <: AbstractRationalBSplineM
         new{Dim,Deg,C,S,T}(Ps,a,w)
     end
 end
+
+controlpoints(M::RationalBSplineManifold) = M.controlpoints
+weights(M::RationalBSplineManifold) = M.weights
+bsplinespaces(M::RationalBSplineManifold) = M.bsplinespaces
