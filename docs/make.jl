@@ -43,4 +43,7 @@ makedocs(;
     authors = "hyrodium <hyrodium@gmail.com>",
 )
 
-deploydocs(; repo = "github.com/hyrodium/BasicBSpline.jl")
+deploydocs(
+    repo = "github.com/hyrodium/BasicBSpline.jl",
+    push_preview = true
+)
