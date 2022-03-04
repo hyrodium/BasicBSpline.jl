@@ -9,7 +9,7 @@ export AbstractKnotVector, KnotVector, UniformKnotVector
 export BSplineSpace, UniformBSplineSpace
 export dim, ⊑, ⊒, ⋢, ⋣, ≃
 export BSplineDerivativeSpace
-export BSplineManifold
+export BSplineManifold, RationalBSplineManifold
 export bsplinebasis₊₀, bsplinebasis₋₀, bsplinebasis
 export bsplinebasis′₊₀, bsplinebasis′₋₀, bsplinebasis′
 export bsplinesupport, domain, changebasis, expandspace
