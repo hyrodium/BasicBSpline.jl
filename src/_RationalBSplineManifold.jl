@@ -23,3 +23,23 @@ end
 controlpoints(M::RationalBSplineManifold) = M.controlpoints
 weights(M::RationalBSplineManifold) = M.weights
 bsplinespaces(M::RationalBSplineManifold) = M.bsplinespaces
+
+@generated function unsafe_mapping(M::RationalBSplineManifold{1,Deg},t1::Real) where {Deg}
+    p1, = Deg
+    exs = Expr[]
+    for j1 in 1:p1
+        push!(exs, :(u += b1[$(1+j1)]*getindex(w,i1+$(j1))))
+        push!(exs, :(v += b1[$(1+j1)]*getindex(a,i1+$(j1))*getindex(w,i1+$(j1))))
+    end
+    Expr(:block,
+        :((P1,) = bsplinespaces(M)),
+        :(a = controlpoints(M)),
+        :(w = weights(M)),
+        :(i1 = intervalindex(P1,t1)),
+        :(b1 = bsplinebasisall(P1,i1,t1)),
+        :(u = b1[1]*getindex(w,i1)),
+        :(v = b1[1]*getindex(a,i1)*getindex(w,i1)),
+        exs...,
+        :(return v/u)
+    )
+end
