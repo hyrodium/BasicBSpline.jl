@@ -29,7 +29,7 @@ bsplinespaces(M::RationalBSplineManifold) = M.bsplinespaces
     exs = Expr[]
     for j1 in 1:p1
         push!(exs, :(u += b1[$(1+j1)]*getindex(w,i1+$(j1))))
-        push!(exs, :(v += b1[$(1+j1)]*getindex(a,i1+$(j1))*getindex(w,i1+$(j1))))
+        push!(exs, :(v += b1[$(1+j1)]*getindex(w,i1+$(j1))*getindex(a,i1+$(j1))))
     end
     Expr(:block,
         :((P1,) = bsplinespaces(M)),
@@ -38,7 +38,53 @@ bsplinespaces(M::RationalBSplineManifold) = M.bsplinespaces
         :(i1 = intervalindex(P1,t1)),
         :(b1 = bsplinebasisall(P1,i1,t1)),
         :(u = b1[1]*getindex(w,i1)),
-        :(v = b1[1]*getindex(a,i1)*getindex(w,i1)),
+        :(v = b1[1]*getindex(w,i1)*getindex(a,i1)),
+        exs...,
+        :(return v/u)
+    )
+end
+
+@generated function unsafe_mapping(M::RationalBSplineManifold{2,Deg},t1::Real,t2::Real) where {Deg}
+    p1, p2 = Deg
+    exs = Expr[]
+    for j2 in 1:p2+1, j1 in 1:p1+1
+        push!(exs, :(u += b1[$(j1)]*b2[$(j2)]*getindex(w,i1+$(j1-1),i2+$(j2-1))))
+        push!(exs, :(v += b1[$(j1)]*b2[$(j2)]*getindex(w,i1+$(j1-1),i2+$(j2-1))*getindex(a,i1+$(j1-1),i2+$(j2-1))))
+    end
+    deleteat!(exs,1)
+    deleteat!(exs,1)
+    Expr(
+        :block,
+        :((P1, P2) = bsplinespaces(M)),
+        :(a = controlpoints(M)),
+        :(w = weights(M)),
+        :((i1, i2) = (intervalindex(P1,t1), intervalindex(P2,t2))),
+        :((b1, b2) = (bsplinebasisall(P1,i1,t1), bsplinebasisall(P2,i2,t2))),
+        :(u = b1[1]*b2[1]*getindex(w,i1,i2)),
+        :(v = b1[1]*b2[1]*getindex(w,i1,i2)*getindex(a,i1,i2)),
+        exs...,
+        :(return v/u)
+    )
+end
+
+@generated function unsafe_mapping(M::RationalBSplineManifold{3,Deg},t1::Real,t2::Real,t3::Real) where {Deg}
+    p1, p2, p3 = Deg
+    exs = Expr[]
+    for j3 in 1:p3+1, j2 in 1:p2+1, j1 in 1:p1+1
+        push!(exs, :(u += b1[$(j1)]*b2[$(j2)]*b3[$(j3)]*getindex(w,i1+$(j1-1),i2+$(j2-1),i3+$(j3-1))))
+        push!(exs, :(v += b1[$(j1)]*b2[$(j2)]*b3[$(j3)]*getindex(w,i1+$(j1-1),i2+$(j2-1),i3+$(j3-1))*getindex(a,i1+$(j1-1),i2+$(j2-1),i3+$(j3-1))))
+    end
+    deleteat!(exs,1)
+    deleteat!(exs,1)
+    Expr(
+        :block,
+        :((P1, P2, P3) = bsplinespaces(M)),
+        :(a = controlpoints(M)),
+        :(w = weights(M)),
+        :((i1, i2, i3) = (intervalindex(P1,t1), intervalindex(P2,t2), intervalindex(P3,t3))),
+        :((b1, b2, b3) = (bsplinebasisall(P1,i1,t1), bsplinebasisall(P2,i2,t2), bsplinebasisall(P3,i3,t3))),
+        :(u = b1[1]*b2[1]*b3[1]*getindex(w,i1,i2,i3)),
+        :(v = b1[1]*b2[1]*b3[1]*getindex(w,i1,i2,i3)*getindex(a,i1,i2,i3)),
         exs...,
         :(return v/u)
     )
