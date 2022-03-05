@@ -81,20 +81,20 @@ end
     )
 end
 
-@inline function (M::AbstractBSplineManifold{1})(t1)
+@inline function (M::AbstractManifold{1})(t1)
     Ps = bsplinespaces(M)
     t1 in domain(Ps[1]) || throw(DomainError(t1, "The input $(t1) is out of range."))
     unsafe_mapping(M,t1)
 end
 
-@inline function (M::AbstractBSplineManifold{2})(t1,t2)
+@inline function (M::AbstractManifold{2})(t1,t2)
     Ps = bsplinespaces(M)
     t1 in domain(Ps[1]) || throw(DomainError(t1, "The input $(t1) is out of range."))
     t2 in domain(Ps[2]) || throw(DomainError(t2, "The input $(t2) is out of range."))
     unsafe_mapping(M,t1,t2)
 end
 
-@inline function (M::AbstractBSplineManifold{3})(t1,t2,t3)
+@inline function (M::AbstractManifold{3})(t1,t2,t3)
     Ps = bsplinespaces(M)
     t1 in domain(Ps[1]) || throw(DomainError(t1, "The input $(t1) is out of range."))
     t2 in domain(Ps[2]) || throw(DomainError(t2, "The input $(t2) is out of range."))
