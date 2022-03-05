@@ -14,7 +14,8 @@ export bsplinebasis₊₀, bsplinebasis₋₀, bsplinebasis
 export bsplinebasis′₊₀, bsplinebasis′₋₀, bsplinebasis′
 export bsplinesupport, domain, changebasis, expandspace
 export bsplinebasisall, intervalindex
-export refinement, bsplinespaces, controlpoints
+export bsplinespaces, controlpoints, weights
+export refinement
 export isdegenerate, isnondegenerate, exactdim
 export degree, knotvector
 export 𝔫
