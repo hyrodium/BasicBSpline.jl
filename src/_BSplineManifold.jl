@@ -43,7 +43,7 @@ controlpoints(M::BSplineManifold) = M.controlpoints
     )
 end
 
-@generated function unsafe_mapping(M::BSplineManifold{2,Deg},t1,t2) where {Deg}
+@generated function unsafe_mapping(M::BSplineManifold{2,Deg},t1::Real,t2::Real) where {Deg}
     p1, p2 = Deg
     exs = Expr[]
     for j2 in 1:p2+1, j1 in 1:p1+1
@@ -62,7 +62,7 @@ end
     )
 end
 
-@generated function unsafe_mapping(M::BSplineManifold{3,Deg},t1,t2,t3) where {Deg}
+@generated function unsafe_mapping(M::BSplineManifold{3,Deg},t1::Real,t2::Real,t3::Real) where {Deg}
     p1, p2, p3 = Deg
     exs = Expr[]
     for j3 in 1:p3+1, j2 in 1:p2+1, j1 in 1:p1+1
