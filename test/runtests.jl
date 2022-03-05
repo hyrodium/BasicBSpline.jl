@@ -6,6 +6,11 @@ using Random
 using StaticArrays
 using GeometryBasics
 
+function rand_interval(D::ClosedInterval)
+    a,b = endpoints(D)
+    return a+(b-a)*rand()
+end
+
 @testset "BasicBSpline.jl" begin
     include("test_KnotVector.jl")
     include("test_BSplineSpace.jl")
@@ -17,5 +22,6 @@ using GeometryBasics
     include("test_ChangeBasis.jl")
     include("test_BSplineManifold.jl")
     include("test_RationalBSplineManifold.jl")
+    include("test_Refinement.jl")
     include("test_Fitting.jl")
 end
