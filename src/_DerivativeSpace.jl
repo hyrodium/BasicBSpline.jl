@@ -1,9 +1,9 @@
 # Space of derivative of B-spline basis function
 
-struct BSplineDerivativeSpace{r, T<:AbstractBSplineSpace}
-    bsplinespace::T
-    function BSplineDerivativeSpace{r}(P::T) where {r, T<:AbstractBSplineSpace}
-        new{r,T}(P)
+struct BSplineDerivativeSpace{r, S<:AbstractBSplineSpace, T} <: AbstractFunctionSpace{T}
+    bsplinespace::S
+    function BSplineDerivativeSpace{r}(P::S) where {r, S<:AbstractBSplineSpace{p,T}} where {p,T}
+        new{r,S,T}(P)
     end
 end
 
