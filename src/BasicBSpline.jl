@@ -12,7 +12,8 @@ export BSplineDerivativeSpace
 export BSplineManifold, RationalBSplineManifold
 export bsplinebasis₊₀, bsplinebasis₋₀, bsplinebasis
 export bsplinebasis′₊₀, bsplinebasis′₋₀, bsplinebasis′
-export bsplinesupport, domain, changebasis, expandspace
+export bsplinesupport, domain, changebasis
+export expandspace, expandspace_R, expandspace_I
 export bsplinebasisall, intervalindex
 export bsplinespaces, controlpoints, weights
 export refinement
