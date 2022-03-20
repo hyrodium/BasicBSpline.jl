@@ -57,6 +57,21 @@
         @test P1 != P3
     end
 
+    @testset "expandspace" begin
+        P1 = BSplineSpace{1}(KnotVector(0,0,0,0,0))
+        P2 = BSplineSpace{3}(KnotVector(1:8))
+        P3 = BSplineSpace{2}(KnotVector(1:8)+3*KnotVector(0))
+        @test P1 ⊆ expandspace_R(P1)
+        @test P2 ⊆ expandspace_R(P2)
+        @test P3 ⊆ expandspace_R(P3)
+        @test P1 ⊑ expandspace_I(P1)
+        @test P2 ⊑ expandspace_I(P2)
+        @test P3 ⊑ expandspace_I(P3)
+        @test P1 ⊑ expandspace(P1)
+        @test P2 ⊑ expandspace(P2)
+        @test P3 ⊑ expandspace(P3)
+    end
+
     @testset "sqsubset and lowered B-spline space" begin
         P4 = BSplineSpace{1}(KnotVector([1, 2, 3, 4, 5]))
         P5 = BSplineSpace{2}(KnotVector([-1, 0.3, 2, 3, 3, 4, 5.2, 6]))
