@@ -27,33 +27,34 @@
     @testset "1dim" begin
         a = [Point(i, rand()) for i in 1:n1]
         p₊ = (1,)
-        k₊ = (KnotVector(1.8,1.9),)
+        k₊ = (KnotVector(4.5),)
+        # k₊ = (KnotVector(4.5,4.95),)
 
         @testset "BSplineManifold" begin
             w = ones(n1)
             M = BSplineManifold(a, (P1,))
             M0 = refinement(M)
             M1 = refinement(M, k₊=k₊)
-            # M2 = refinement(M, p₊=p₊)
-            # M3 = refinement(M, p₊=p₊, k₊=k₊)
+            M2 = refinement(M, p₊=p₊)
+            M3 = refinement(M, p₊=p₊, k₊=k₊)
             M4 = refinement(M, (P1′,))
             R = RationalBSplineManifold(a, w, (P1,))
             R0 = refinement(R)
             R1 = refinement(R, k₊=k₊)
-            # R2 = refinement(R, p₊=p₊)
-            # R3 = refinement(R, p₊=p₊, k₊=k₊)
+            R2 = refinement(R, p₊=p₊)
+            R3 = refinement(R, p₊=p₊, k₊=k₊)
             R4 = refinement(R, (P1′,))
 
             for _ in 1:100
                 t1 = rand_interval(D1)
                 @test M(t1) ≈ R(t1)
                 @test M(t1) ≈ M1(t1)
-                # @test M(t1) ≈ M2(t1)
-                # @test M(t1) ≈ M3(t1)
+                @test M(t1) ≈ M2(t1)
+                @test M(t1) ≈ M3(t1)
                 @test M(t1) ≈ M4(t1)
                 @test R(t1) ≈ R1(t1)
-                # @test R(t1) ≈ R2(t1)
-                # @test R(t1) ≈ R3(t1)
+                @test R(t1) ≈ R2(t1)
+                @test R(t1) ≈ R3(t1)
                 @test R(t1) ≈ R4(t1)
             end
         end
@@ -63,15 +64,15 @@
             R = RationalBSplineManifold(a, w, (P1,))
             R0 = refinement(R)
             R1 = refinement(R, k₊=k₊)
-            # R2 = refinement(R, p₊=p₊)
-            # R3 = refinement(R, p₊=p₊, k₊=k₊)
+            R2 = refinement(R, p₊=p₊)
+            R3 = refinement(R, p₊=p₊, k₊=k₊)
             R4 = refinement(R, (P1′,))
 
             for _ in 1:100
                 t1 = rand_interval(D1)
                 @test R(t1) ≈ R1(t1)
-                # @test R(t1) ≈ R2(t1)
-                # @test R(t1) ≈ R3(t1)
+                @test R(t1) ≈ R2(t1)
+                @test R(t1) ≈ R3(t1)
                 @test R(t1) ≈ R4(t1)
             end
         end
@@ -80,7 +81,7 @@
     @testset "2dim" begin
         a = [Point(i, rand()) for i in 1:n1, j in 1:n2]
         p₊ = (1,2)
-        k₊ = (KnotVector(1.8,1.9),KnotVector())
+        k₊ = (KnotVector(4.5,4.7),KnotVector())
 
         @testset "BSplineManifold" begin
             w = ones(n1,n2)
@@ -88,14 +89,14 @@
             M = BSplineManifold(a, (P1,P2))
             M0 = refinement(M)
             M1 = refinement(M, k₊=k₊)
-            # M2 = refinement(M, p₊=p₊)
-            # M3 = refinement(M, p₊=p₊, k₊=k₊)
+            M2 = refinement(M, p₊=p₊)
+            M3 = refinement(M, p₊=p₊, k₊=k₊)
             M4 = refinement(M, (P1′,P2′))
             R = RationalBSplineManifold(a, w, (P1,P2))
             R0 = refinement(R)
             R1 = refinement(R, k₊=k₊)
-            # R2 = refinement(R, p₊=p₊)
-            # R3 = refinement(R, p₊=p₊, k₊=k₊)
+            R2 = refinement(R, p₊=p₊)
+            R3 = refinement(R, p₊=p₊, k₊=k₊)
             R4 = refinement(R, (P1′,P2′))
 
             for _ in 1:100
@@ -103,12 +104,12 @@
                 t2 = rand_interval(D2)
                 @test M(t1,t2) ≈ R(t1,t2)
                 @test M(t1,t2) ≈ M1(t1,t2)
-                # @test M(t1,t2) ≈ M2(t1,t2)
-                # @test M(t1,t2) ≈ M3(t1,t2)
+                @test M(t1,t2) ≈ M2(t1,t2)
+                @test M(t1,t2) ≈ M3(t1,t2)
                 @test M(t1,t2) ≈ M4(t1,t2)
                 @test R(t1,t2) ≈ R1(t1,t2)
-                # @test R(t1,t2) ≈ R2(t1,t2)
-                # @test R(t1,t2) ≈ R3(t1,t2)
+                @test R(t1,t2) ≈ R2(t1,t2)
+                @test R(t1,t2) ≈ R3(t1,t2)
                 @test R(t1,t2) ≈ R4(t1,t2)
             end
         end
@@ -119,16 +120,16 @@
             R = RationalBSplineManifold(a, w, (P1,P2))
             R0 = refinement(R)
             R1 = refinement(R, k₊=k₊)
-            # R2 = refinement(R, p₊=p₊)
-            # R3 = refinement(R, p₊=p₊, k₊=k₊)
+            R2 = refinement(R, p₊=p₊)
+            R3 = refinement(R, p₊=p₊, k₊=k₊)
             R4 = refinement(R, (P1′,P2′))
 
             for _ in 1:100
                 t1 = rand_interval(D1)
                 t2 = rand_interval(D2)
                 @test R(t1,t2) ≈ R1(t1,t2)
-                # @test R(t1,t2) ≈ R2(t1,t2)
-                # @test R(t1,t2) ≈ R3(t1,t2)
+                @test R(t1,t2) ≈ R2(t1,t2)
+                @test R(t1,t2) ≈ R3(t1,t2)
                 @test R(t1,t2) ≈ R4(t1,t2)
             end
         end
@@ -137,7 +138,7 @@
     @testset "3dim" begin
         a = [Point(i, rand()) for i in 1:n1, j in 1:n2, k in 1:n3]
         p₊ = (1,2,0)
-        k₊ = (KnotVector(1.8,1.9),KnotVector(),KnotVector(42))
+        k₊ = (KnotVector(4.4,4.7),KnotVector(),KnotVector(42))
 
         @testset "BSplineManifold" begin
             w = ones(n1,n2,n3)
@@ -145,14 +146,14 @@
             M = BSplineManifold(a, (P1,P2,P3))
             M0 = refinement(M)
             M1 = refinement(M, k₊=k₊)
-            # M2 = refinement(M, p₊=p₊)
-            # M3 = refinement(M, p₊=p₊, k₊=k₊)
+            M2 = refinement(M, p₊=p₊)
+            M3 = refinement(M, p₊=p₊, k₊=k₊)
             M4 = refinement(M, (P1′,P2′,P3′))
             R = RationalBSplineManifold(a, w, (P1,P2,P3))
             R0 = refinement(R)
             R1 = refinement(R, k₊=k₊)
-            # R2 = refinement(R, p₊=p₊)
-            # R3 = refinement(R, p₊=p₊, k₊=k₊)
+            R2 = refinement(R, p₊=p₊)
+            R3 = refinement(R, p₊=p₊, k₊=k₊)
             R4 = refinement(R, (P1′,P2′,P3′))
 
             for _ in 1:100
@@ -161,12 +162,12 @@
                 t3 = rand_interval(D3)
                 @test M(t1,t2,t3) ≈ R(t1,t2,t3)
                 @test M(t1,t2,t3) ≈ M1(t1,t2,t3)
-                # @test M(t1,t2,t3) ≈ M2(t1,t2,t3)
-                # @test M(t1,t2,t3) ≈ M3(t1,t2,t3)
+                @test M(t1,t2,t3) ≈ M2(t1,t2,t3)
+                @test M(t1,t2,t3) ≈ M3(t1,t2,t3)
                 @test M(t1,t2,t3) ≈ M4(t1,t2,t3)
                 @test R(t1,t2,t3) ≈ R1(t1,t2,t3)
-                # @test R(t1,t2,t3) ≈ R2(t1,t2,t3)
-                # @test R(t1,t2,t3) ≈ R3(t1,t2,t3)
+                @test R(t1,t2,t3) ≈ R2(t1,t2,t3)
+                @test R(t1,t2,t3) ≈ R3(t1,t2,t3)
                 @test R(t1,t2,t3) ≈ R4(t1,t2,t3)
             end
         end
@@ -177,8 +178,8 @@
             R = RationalBSplineManifold(a, w, (P1,P2,P3))
             R0 = refinement(R)
             R1 = refinement(R, k₊=k₊)
-            # R2 = refinement(R, p₊=p₊)
-            # R3 = refinement(R, p₊=p₊, k₊=k₊)
+            R2 = refinement(R, p₊=p₊)
+            R3 = refinement(R, p₊=p₊, k₊=k₊)
             R4 = refinement(R, (P1′,P2′,P3′))
 
             for _ in 1:100
@@ -186,8 +187,8 @@
                 t2 = rand_interval(D2)
                 t3 = rand_interval(D3)
                 @test R(t1,t2,t3) ≈ R1(t1,t2,t3)
-                # @test R(t1,t2,t3) ≈ R2(t1,t2,t3)
-                # @test R(t1,t2,t3) ≈ R3(t1,t2,t3)
+                @test R(t1,t2,t3) ≈ R2(t1,t2,t3)
+                @test R(t1,t2,t3) ≈ R3(t1,t2,t3)
                 @test R(t1,t2,t3) ≈ R4(t1,t2,t3)
             end
         end
