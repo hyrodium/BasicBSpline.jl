@@ -12,11 +12,14 @@ export BSplineDerivativeSpace
 export BSplineManifold, RationalBSplineManifold
 export bsplinebasis₊₀, bsplinebasis₋₀, bsplinebasis
 export bsplinebasis′₊₀, bsplinebasis′₋₀, bsplinebasis′
-export bsplinesupport, domain, changebasis, expandspace
+export bsplinesupport, domain, changebasis
+export expandspace, expandspace_R, expandspace_I
+export isdegenerate, isdegenerate_R, isdegenerate_I
+export isnondegenerate, isnondegenerate_R, isnondegenerate_I
 export bsplinebasisall, intervalindex
 export bsplinespaces, controlpoints, weights
 export refinement
-export isdegenerate, isnondegenerate, exactdim
+export exactdim
 export degree, knotvector
 export 𝔫
 export AbstractBSplineManifold, AbstractBSplineSpace
