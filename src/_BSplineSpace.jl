@@ -109,14 +109,17 @@ const ⊑ = issqsubset
 
 ≃(P1::AbstractBSplineSpace, P2::AbstractBSplineSpace) = (P1 ⊑ P2) & (P2 ⊑ P1)
 
-function isdegenerate(P::AbstractBSplineSpace{p}, i::Integer) where p
+function isdegenerate_R(P::AbstractBSplineSpace{p}, i::Integer) where p
     k = knotvector(P)
     return k[i] == k[i+p+1]
 end
-isnondegenerate(P::AbstractBSplineSpace, i::Int) = !isdegenerate(P, i)
+
+function isdegenerate_I(P::AbstractBSplineSpace{p}, i::Integer) where p
+    return width(bsplinesupport(P,i) ∩ domain(P)) > 0
+end
 
 function _iszeros(P::AbstractBSplineSpace{p}) where p
-    return [isdegenerate(P,i) for i in 1:dim(P)]
+    return [isdegenerate_R(P,i) for i in 1:dim(P)]
 end
 
 @doc raw"""
@@ -131,9 +134,7 @@ julia> isnondegenerate(BSplineSpace{1}(KnotVector([1,3,3,3,8,9])))
 false
 ```
 """
-function isnondegenerate(P::AbstractBSplineSpace)
-    return !isdegenerate(P)
-end
+isnondegenerate(P::AbstractBSplineSpace)
 
 @doc raw"""
 Check if given B-spline space is degenerate.
@@ -147,17 +148,27 @@ julia> isdegenerate(BSplineSpace{1}(KnotVector([1,3,3,3,8,9])))
 true
 ```
 """
-function isdegenerate(P::AbstractBSplineSpace)
-    for i in 1:dim(P)
-        isdegenerate(P,i) && return true
+isdegenerate(P::AbstractBSplineSpace)
+
+for (f, fnon) in ((:isdegenerate_R, :isnondegenerate_R), (:isdegenerate_I, :isnondegenerate_I))
+    @eval function $f(P::AbstractBSplineSpace)
+        for i in 1:dim(P)
+            $f(P,i) && return true
+        end
+        return false
     end
-    return false
+    @eval $fnon(P::AbstractBSplineSpace, i::Int) = !$f(P, i)
+    @eval $fnon(P::AbstractBSplineSpace) = !$f(P)
 end
+isdegenerate(P::AbstractBSplineSpace, i::Integer) = isdegenerate_R(P,i)
+isdegenerate(P::AbstractBSplineSpace) = isdegenerate_R(P)
+isnondegenerate(P::AbstractBSplineSpace, i::Integer) = isnondegenerate_R(P, i)
+isnondegenerate(P::AbstractBSplineSpace) = isnondegenerate_R(P)
 
 function exactdim(P::AbstractBSplineSpace)
     n = dim(P)
     for i in 1:dim(P)
-        n -= isdegenerate(P,i)
+        n -= isdegenerate_R(P,i)
     end
     return n
 end
