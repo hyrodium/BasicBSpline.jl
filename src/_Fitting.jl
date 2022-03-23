@@ -334,7 +334,7 @@ function fittingcontrolpoints(func, P::Tuple{<:AbstractBSplineSpace{p1}}; domain
         b = innerproduct_R(func, P)
         A = innerproduct_R(P1)
     end
-    return inv(A) * b
+    return _leftdivision(A, b)
 end
 
 """
@@ -353,7 +353,7 @@ function fittingcontrolpoints(func, P::Tuple{<:AbstractBSplineSpace{p1}, <:Abstr
     A = [A1[i1, j1] * A2[i2, j2] for i1 in 1:n1, i2 in 1:n2, j1 in 1:n1, j2 in 1:n2]
     _A = reshape(A, n1 * n2, n1 * n2)
     _b = reshape(b, n1 * n2)
-    return reshape(inv(_A) * _b, n1, n2)
+    return reshape(_leftdivision(_A, _b), n1, n2)
 end
 
 """
@@ -372,5 +372,5 @@ function fittingcontrolpoints(func, P::Tuple{<:AbstractBSplineSpace{p1}, <:Abstr
     A = [A1[i1, j1] * A2[i2, j2] * A3[i3, j3] for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3, j1 in 1:n1, j2 in 1:n2, j3 in 1:n3]
     _A = reshape(A, n1 * n2 * n3, n1 * n2 * n3)
     _b = reshape(b, n1 * n2 * n3)
-    return reshape(inv(_A) * _b, n1, n2, n3)
+    return reshape(_leftdivision(_A, _b), n1, n2, n3)
 end

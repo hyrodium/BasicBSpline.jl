@@ -175,6 +175,30 @@
         @test norm(a_fit - a_ref) < 1.0e-6
     end
 
+    @testset "Complex" begin
+        Random.seed!(42)
+
+        p1 = 2
+        k1 = KnotVector(rand(3)) + KnotVector([0, 1]) + p1 * KnotVector([-rand(), 1 + rand()])
+        P1 = BSplineSpace{p1}(k1)
+        n1 = dim(P1)
+        p2 = 1
+        k2 = KnotVector(rand(4)) + KnotVector([0, 1]) + p1 * KnotVector([-rand(), 1 + rand()])
+        P2 = BSplineSpace{p2}(k2)
+        n2 = dim(P2)
+        a_org = [rand(ComplexF64) for i1 in 1:n1, i2 in 1:n2]
+        M = BSplineManifold(a_org, (P1, P2))
+
+        P1′ = expandspace(P1, p₊=1, k₊=KnotVector(rand(2)))
+        P2′ = expandspace(P2, p₊=1, k₊=KnotVector(rand(2)))
+
+        M′ = refinement(M, (P1′, P2′))
+        a_ref = controlpoints(M′)
+
+        a_fit = fittingcontrolpoints(M, (P1′, P2′))
+        @test norm(a_fit - a_ref) < 1.0e-6
+    end
+
     @testset "uniform" begin
         k = UniformKnotVector(1:42)
         for p in 0:3

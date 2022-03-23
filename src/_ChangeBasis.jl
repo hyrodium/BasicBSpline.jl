@@ -110,18 +110,18 @@ function _changebasis_sim(P1::AbstractBSplineSpace{p1,T1}, P2::AbstractBSplineSp
         vvv = [v[1] * (p1-i+1) / (p1+1) + v[i+1] * (i) / (p1+1) for i in 1:p1]
         A1 = [bsplinebasis₊₀(P1,i,t) for i in 1:p1, t in vvv]
         A2 = [bsplinebasis₊₀(P2,i,t) for i in 1:p1, t in vvv]
-        A[1:p1, 1:p1] = A1 * inv(A2)
+        A[1:p1, 1:p1] = A1/A2
         vvv = [v[end-p1+i-1] * (p1-i+1) / (p1+1) + v[end] * (i) / (p1+1) for i in 1:p1]
         A1 = [bsplinebasis₋₀(P1,i,t) for i in n-p1+1:n, t in vvv]
         A2 = [bsplinebasis₋₀(P2,i,t) for i in n-p1+1:n, t in vvv]
-        A[n-p1+1:n, n-p1+1:n] = A1 * inv(A2)
+        A[n-p1+1:n, n-p1+1:n] = A1/A2
         # TODO: Fix above
     else
         # TODO: Fix below
         vvv = [v[1] * (n - i + 1) / (n + 1) + v[end] * (i) / (n + 1) for i in 1:n]
         A1 = [bsplinebasis₋₀(P1,i,t) for i in 1:n, t in vvv]
         A2 = [bsplinebasis₋₀(P2,i,t) for i in 1:n, t in vvv]
-        A = A1 * inv(A2)
+        A = A1/A2
         # TODO: Fix above
     end
     return A
