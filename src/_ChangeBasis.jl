@@ -103,13 +103,21 @@ function _changebasis_sim(P1::AbstractBSplineSpace{p,T1}, P2::AbstractBSplineSpa
     U = StaticArrays.arithmetic_closure(promote_type(T1,T2))
     n = dim(P1)
     v = (knotvector(P1).vector)[p+1:end-p]
+    k1 = knotvector(P1)
+    a = k1[1+p]
+    b = k1[end-p]
 
-    if length(v) > p
+    if n ≥ 2p
         A = Matrix{U}(I, n, n)
-        # TODO: Fix below
-        vvv = [v[1] * (p-i+1) / (p+1) + v[i+1] * (i) / (p+1) for i in 1:p]
-        A1 = [bsplinebasis₊₀(P1,i,t) for i in 1:p, t in vvv]
-        A2 = [bsplinebasis₊₀(P2,i,t) for i in 1:p, t in vvv]
+        # TODO: This can be faster with @generated macro
+        A1 = zeros(U,p,0)
+        for r in 0:p-1
+            A1 = hcat(A1,bsplinebasis₊₀.(BSplineDerivativeSpace{r}(P1),1:p,a))
+        end
+        A2 = zeros(U,p,0)
+        for r in 0:p-1
+            A2 = hcat(A2,bsplinebasis₊₀.(BSplineDerivativeSpace{r}(P2),1:p,a))
+        end
         A[1:p, 1:p] = A1/A2
         vvv = [v[end-p+i-1] * (p-i+1) / (p+1) + v[end] * (i) / (p+1) for i in 1:p]
         A1 = [bsplinebasis₋₀(P1,i,t) for i in n-p+1:n, t in vvv]
