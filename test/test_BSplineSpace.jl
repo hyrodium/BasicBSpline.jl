@@ -27,6 +27,7 @@
         @test exactdim(P2) == 3
 
         P3 = BSplineSpace{2}(KnotVector(0,0,0,1,1,1,2))
+        @test domain(P3) == 0..1
         @test dim(P3) == 4
         @test exactdim(P3) == 4
         @test isnondegenerate(P3) == true
@@ -41,14 +42,14 @@
         @test isnondegenerate(P3,4) == true
         @test isnondegenerate_I(P3) == false
         @test isdegenerate_I(P3) == true
-        @test isdegenerate_I(P3,1) == true
-        @test isdegenerate_I(P3,2) == true
-        @test isdegenerate_I(P3,3) == true
-        @test isdegenerate_I(P3,4) == false
-        @test isnondegenerate_I(P3,1) == false
-        @test isnondegenerate_I(P3,2) == false
-        @test isnondegenerate_I(P3,3) == false
-        @test isnondegenerate_I(P3,4) == true
+        @test isdegenerate_I(P3,1) == false
+        @test isdegenerate_I(P3,2) == false
+        @test isdegenerate_I(P3,3) == false
+        @test isdegenerate_I(P3,4) == true
+        @test isnondegenerate_I(P3,1) == true
+        @test isnondegenerate_I(P3,2) == true
+        @test isnondegenerate_I(P3,3) == true
+        @test isnondegenerate_I(P3,4) == false
     end
 
     @testset "denegeration with lower degree" begin
