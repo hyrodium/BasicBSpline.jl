@@ -179,9 +179,15 @@ Return the support of ``i``-th B-spline basis function.
 \operatorname{supp}(B_{(i,p,k)})=[k_{i},k_{i+p+1}]
 ```
 """
-function bsplinesupport(P::AbstractBSplineSpace{p}, i::Integer) where p
+bsplinesupport(P::AbstractBSplineSpace, i::Integer) = bsplinesupport_R(P,i)
+
+function bsplinesupport_R(P::AbstractBSplineSpace{p}, i::Integer) where p
     k = knotvector(P)
     return k[i]..k[i+p+1]
+end
+
+function bsplinesupport_I(P::AbstractBSplineSpace{p}, i::Integer) where p
+    return bsplinesupport_R(P,i) ∩ domain(P)
 end
 
 @doc raw"""

@@ -12,7 +12,8 @@ export BSplineDerivativeSpace
 export BSplineManifold, RationalBSplineManifold
 export bsplinebasis₊₀, bsplinebasis₋₀, bsplinebasis
 export bsplinebasis′₊₀, bsplinebasis′₋₀, bsplinebasis′
-export bsplinesupport, domain, changebasis
+export domain, changebasis
+export bsplinesupport, bsplinesupport_R, bsplinesupport_I
 export expandspace, expandspace_R, expandspace_I
 export isdegenerate, isdegenerate_R, isdegenerate_I
 export isnondegenerate, isnondegenerate_R, isnondegenerate_I
