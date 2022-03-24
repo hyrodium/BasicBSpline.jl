@@ -33,6 +33,14 @@ Convert AbstractBSplineSpace to BSplineSpace
 function BSplineSpace(P::AbstractBSplineSpace{p}) where p
     return BSplineSpace{p}(knotvector(P))
 end
+function BSplineSpace{p}(P::AbstractBSplineSpace{p}) where p
+    return BSplineSpace{p}(knotvector(P))
+end
+function BSplineSpace{p,T}(P::AbstractBSplineSpace{p}) where {p,T}
+    return unsafe_bsplinespace(Val{p}(),knotvector(P))
+end
+
+bsplinespace(P::AbstractBSplineSpace) = P
 
 @inline function degree(::AbstractBSplineSpace{p}) where p
     return p
