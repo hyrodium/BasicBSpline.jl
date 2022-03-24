@@ -2,10 +2,13 @@
     Random.seed!(42)
 
     @testset "dimension, dengenerate" begin
-        P1 = BSplineSpace{2}(KnotVector([1, 3, 5, 6, 8, 9]))
+        P1 = BSplineSpace{2}(KnotVector([1, 3, 5, 6, 8, 9, 9]))
         @test bsplinesupport(P1, 2) == 3..8
-        @test dim(P1) == 3
-        @test exactdim(P1) == 3
+        @test bsplinesupport_R(P1, 2) == 3..8
+        @test bsplinesupport_I(P1, 2) == 5..8
+        @test domain(P1) == 5..8
+        @test dim(P1) == 4
+        @test exactdim(P1) == 4
         @test isnondegenerate(P1) == true
         @test isdegenerate(P1) == false
 
