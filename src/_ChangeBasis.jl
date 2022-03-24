@@ -122,9 +122,8 @@ function _changebasis_sim(P1::AbstractBSplineSpace{p,T1}, P2::AbstractBSplineSpa
             A2[:,r] = bsplinebasis₋₀.(BSplineDerivativeSpace{r-1}(P2),n-p+1:n,b)
         end
         A[n-p+1:n, n-p+1:n] = A1/A2
-        # TODO: Fix above
     else
-        # TODO: Fix below
+        # TODO: Fix below with BSplineDerivativeSpace
         m = 2n
         vvv = [v[1] * (m - i + 1) / (m + 1) + v[end] * (i) / (m + 1) for i in 1:m]
         A1 = [bsplinebasis₋₀(P1,i,t) for i in 1:n, t in vvv]
