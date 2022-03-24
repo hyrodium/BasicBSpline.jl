@@ -2,10 +2,13 @@
     Random.seed!(42)
 
     @testset "dimension, dengenerate" begin
-        P1 = BSplineSpace{2}(KnotVector([1, 3, 5, 6, 8, 9]))
+        P1 = BSplineSpace{2}(KnotVector([1, 3, 5, 6, 8, 9, 9]))
         @test bsplinesupport(P1, 2) == 3..8
-        @test dim(P1) == 3
-        @test exactdim(P1) == 3
+        @test bsplinesupport_R(P1, 2) == 3..8
+        @test bsplinesupport_I(P1, 2) == 5..8
+        @test domain(P1) == 5..8
+        @test dim(P1) == 4
+        @test exactdim(P1) == 4
         @test isnondegenerate(P1) == true
         @test isdegenerate(P1) == false
 
@@ -97,10 +100,15 @@
         @test P3 ⊆ expandspace_R(P3, p₊=1)
         @test P4 ⊆ expandspace_R(P4, p₊=1)
 
-        @test_broken P1 ⊑ expandspace_I(P1, p₊=1) == expandspace(P1, p₊=1)
+        # P1 and P4 is not subset of expandspace_I.
+        @test P1 ⋢ expandspace_I(P1, p₊=1) == expandspace(P1, p₊=1)
         @test P2 ⊑ expandspace_I(P2, p₊=1) == expandspace(P2, p₊=1)
         @test P3 ⊑ expandspace_I(P3, p₊=1) == expandspace(P3, p₊=1)
-        @test_broken P4 ⊑ expandspace_I(P4, p₊=1) == expandspace(P4, p₊=1)
+        @test P4 ⋢ expandspace_I(P4, p₊=1) == expandspace(P4, p₊=1)
+
+        # That was because P1 and P4 is not nondegenerate.
+        @test isdegenerate_I(P1)
+        @test isdegenerate_I(P4)
     end
 
     @testset "sqsubset and lowered B-spline space" begin

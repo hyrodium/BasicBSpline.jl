@@ -111,10 +111,10 @@
     end
 
     @testset "other operators" begin
-        @test 𝔫(k2, 0.3) == 0
-        @test 𝔫(k2, 1) == 1
-        @test 𝔫(k2, 1.0) == 1
-        @test 𝔫(k2, 2.0) == 1
+        @test countknots(k2, 0.3) == 0
+        @test countknots(k2, 1) == 1
+        @test countknots(k2, 1.0) == 1
+        @test countknots(k2, 2.0) == 1
         @test 1 ∈ k2
         @test 1.5 ∉ k2
     end
