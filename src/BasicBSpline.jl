@@ -22,7 +22,7 @@ export bsplinespaces, controlpoints, weights
 export refinement
 export exactdim
 export degree, knotvector
-export 𝔫
+export countknots
 export AbstractBSplineManifold, AbstractBSplineSpace
 export fittingcontrolpoints
 

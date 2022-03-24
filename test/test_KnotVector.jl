@@ -87,9 +87,9 @@
 
     @testset "other operators" begin
         k = KnotVector([1,2,2,3])
-        @test 𝔫(k, 0.3) == 0
-        @test 𝔫(k, 1.0) == 1
-        @test 𝔫(k, 2.0) == 2
+        @test countknots(k, 0.3) == 0
+        @test countknots(k, 1.0) == 1
+        @test countknots(k, 2.0) == 2
         @test 1 ∈ k
         @test 1.5 ∉ k
     end

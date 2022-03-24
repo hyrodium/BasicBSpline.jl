@@ -240,20 +240,22 @@ For example, if ``k=(1,2,2,3)``, then ``\mathfrak{n}_k(0.3)=0``, ``\mathfrak{n}_
 ```jldoctest
 julia> k = KnotVector([1,2,2,3]);
 
-julia> 𝔫(k,0.3)
+julia> countknots(k,0.3)
 0
 
-julia> 𝔫(k,1.0)
+julia> countknots(k,1.0)
 1
 
-julia> 𝔫(k,2.0)
+julia> countknots(k,2.0)
 2
 ```
 """
-function 𝔫(k::AbstractKnotVector, t::Real)
+function countknots(k::AbstractKnotVector, t::Real)
     # for small case, this is faster
     # return count(==(t), k.vector)
 
     # for large case, this is faster
     return length(searchsorted(k,t))
 end
+
+@deprecate 𝔫 countknots
