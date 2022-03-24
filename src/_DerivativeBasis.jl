@@ -180,3 +180,20 @@ end
     P = bsplinespace(dP)
     bsplinebasisall(P,i,t)
 end
+
+function bsplinebasis(dP::BSplineDerivativeSpace{r,UniformBSplineSpace{p,T,R}}, i, t) where {r,p,T,R}
+    _dP = convert(BSplineDerivativeSpace{r,BSplineSpace{p,T}},dP)
+    return bsplinebasis(_dP, i, t)
+end
+function bsplinebasis₊₀(dP::BSplineDerivativeSpace{r,UniformBSplineSpace{p,T,R}}, i, t) where {r,p,T,R}
+    _dP = convert(BSplineDerivativeSpace{r,BSplineSpace{p,T}},dP)
+    return bsplinebasis₊₀(_dP, i, t)
+end
+function bsplinebasis₋₀(dP::BSplineDerivativeSpace{r,UniformBSplineSpace{p,T,R}}, i, t) where {r,p,T,R}
+    _dP = convert(BSplineDerivativeSpace{r,BSplineSpace{p,T}},dP)
+    return bsplinebasis₋₀(_dP, i, t)
+end
+function bsplinebasisall(dP::BSplineDerivativeSpace{r,UniformBSplineSpace{p,T,R}}, i, t) where {r,p,T,R}
+    _dP = convert(BSplineDerivativeSpace{r,BSplineSpace{p,T}},dP)
+    return bsplinebasisall(_dP, i, t)
+end
