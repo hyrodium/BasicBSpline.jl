@@ -108,20 +108,23 @@ function _changebasis_sim(P1::AbstractBSplineSpace{p,T1}, P2::AbstractBSplineSpa
     b = k1[end-p]
 
     if n ≥ 2p
+        # TODO: This can be faster with SMatrix
         A = Matrix{U}(I, n, n)
-        # TODO: This can be faster with @generated macro
-        A1 = zeros(U,p,0)
-        for r in 0:p-1
-            A1 = hcat(A1,bsplinebasis₊₀.(BSplineDerivativeSpace{r}(P1),1:p,a))
+        A1 = zeros(U,p,p)
+        A2 = zeros(U,p,p)
+        for r in 1:p
+            A1[:,r] = bsplinebasis₊₀.(BSplineDerivativeSpace{r-1}(P1),1:p,a)
         end
-        A2 = zeros(U,p,0)
-        for r in 0:p-1
-            A2 = hcat(A2,bsplinebasis₊₀.(BSplineDerivativeSpace{r}(P2),1:p,a))
+        for r in 1:p
+            A2[:,r] = bsplinebasis₊₀.(BSplineDerivativeSpace{r-1}(P2),1:p,a)
         end
         A[1:p, 1:p] = A1/A2
-        vvv = [v[end-p+i-1] * (p-i+1) / (p+1) + v[end] * (i) / (p+1) for i in 1:p]
-        A1 = [bsplinebasis₋₀(P1,i,t) for i in n-p+1:n, t in vvv]
-        A2 = [bsplinebasis₋₀(P2,i,t) for i in n-p+1:n, t in vvv]
+        for r in 1:p
+            A1[:,r] = bsplinebasis₋₀.(BSplineDerivativeSpace{r-1}(P1),n-p+1:n,b)
+        end
+        for r in 1:p
+            A2[:,r] = bsplinebasis₋₀.(BSplineDerivativeSpace{r-1}(P2),n-p+1:n,b)
+        end
         A[n-p+1:n, n-p+1:n] = A1/A2
         # TODO: Fix above
     else
