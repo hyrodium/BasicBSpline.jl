@@ -37,7 +37,7 @@ function BSplineSpace{p}(P::AbstractBSplineSpace{p}) where p
     return BSplineSpace{p}(knotvector(P))
 end
 function BSplineSpace{p,T}(P::AbstractBSplineSpace{p}) where {p,T}
-    return unsafe_bsplinespace(Val{p}(),knotvector(P))
+    return unsafe_bsplinespace(Val{p}(),KnotVector{T}(knotvector(P)))
 end
 
 bsplinespace(P::AbstractBSplineSpace) = P
