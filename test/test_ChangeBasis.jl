@@ -55,6 +55,25 @@
         @test norm(Δ67) < ε
     end
 
+    @testset "changebasis_sim" begin
+        for p in 1:3, L in 1:8
+            k1 = UniformKnotVector(1:L+2p+1)
+            k2 = UniformKnotVector(p+1:p+L+1) + p*KnotVector(p+1) + KnotVector(p+L+1:2p+L)
+            P1 = UniformBSplineSpace{p}(k1)
+            P2 = BSplineSpace{p}(k2)
+            @test domain(P1) == domain(P2)
+            @test dim(P1) == dim(P2)
+            @test P1 ≃ P2
+            A = BasicBSpline._changebasis_sim(P1,P2)
+            D = domain(P1)
+            n = dim(P1)
+            for _ in 1:100
+                t = rand_interval(D)
+                @test norm(bsplinebasis.(P1,1:n,t) - A*bsplinebasis.(P2,1:n,t), Inf) < 1e-14
+            end
+        end
+    end
+
     @testset "non-float" begin
         k = UniformKnotVector(1:15)
         P = UniformBSplineSpace{3}(k)
