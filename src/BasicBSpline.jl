@@ -5,25 +5,34 @@ using IntervalSets
 using StaticArrays
 using FastGaussQuadrature
 
+# Types
 export AbstractKnotVector, KnotVector, UniformKnotVector
-export BSplineSpace, UniformBSplineSpace
-export dim, ⊑, ⊒, ⋢, ⋣, ≃
+export AbstractBSplineSpace, BSplineSpace, UniformBSplineSpace
+export AbstractBSplineManifold, BSplineManifold, RationalBSplineManifold
 export BSplineDerivativeSpace
-export BSplineManifold, RationalBSplineManifold
+
+# B-spline basis functions
 export bsplinebasis₊₀, bsplinebasis₋₀, bsplinebasis
 export bsplinebasis′₊₀, bsplinebasis′₋₀, bsplinebasis′
+export bsplinebasisall, intervalindex
+
+# B-spline space
+export dim, exactdim, ⊑, ⊒, ⋢, ⋣, ≃
 export domain, changebasis
 export bsplinesupport, bsplinesupport_R, bsplinesupport_I
 export expandspace, expandspace_R, expandspace_I
 export isdegenerate, isdegenerate_R, isdegenerate_I
 export isnondegenerate, isnondegenerate_R, isnondegenerate_I
-export bsplinebasisall, intervalindex
-export bsplinespaces, controlpoints, weights
-export refinement
-export exactdim
-export degree, knotvector
 export countknots
-export AbstractBSplineManifold, AbstractBSplineSpace
+export degree
+
+# Getter methods
+export bsplinespaces, controlpoints, weights
+export knotvector
+export bsplinespace
+
+# Useful functions
+export refinement
 export fittingcontrolpoints
 
 include("_util.jl")
