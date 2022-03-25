@@ -1,6 +1,18 @@
 @testset "BSplineSpace" begin
     Random.seed!(42)
 
+    @testset "constructor" begin
+        P1 = BSplineSpace{2}(KnotVector(1:8))
+        P2 = BSplineSpace{2}(P1)
+        P3 = BSplineSpace{2,Int}(P1)
+        P4 = BSplineSpace{2,Real}(P1)
+        @test P1 == P2 == P3 == P4 == bsplinespace(P1) == bsplinespace(P2) == bsplinespace(P3) == bsplinespace(P4)
+        @test P1 isa BSplineSpace{2,Float64}
+        @test P3 isa BSplineSpace{2,Int}
+        @test P4 isa BSplineSpace{2,Real}
+        @test_throws MethodError BSplineSpace{3}(P1)
+    end
+
     @testset "dimension, dengenerate" begin
         P1 = BSplineSpace{2}(KnotVector([1, 3, 5, 6, 8, 9, 9]))
         @test bsplinesupport(P1, 2) == 3..8
