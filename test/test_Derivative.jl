@@ -83,7 +83,7 @@
         Random.seed!(42)
         k = UniformKnotVector(1:20)
         for p in 0:5
-            P = BSplineSpace{p}(k)
+            P = UniformBSplineSpace{p}(k)
             for r in 0:5
                 dP = BSplineDerivativeSpace{r}(P)
                 for _ in 1:10
