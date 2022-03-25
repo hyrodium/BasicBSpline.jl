@@ -102,9 +102,7 @@ function _changebasis_sim(P1::AbstractBSplineSpace{p,T1}, P2::AbstractBSplineSpa
     P1 ≃ P2 || throw(DomainError((P1,P2),"P1 ≃ P2 should be hold."))
     U = StaticArrays.arithmetic_closure(promote_type(T1,T2))
     n = dim(P1)
-    k1 = knotvector(P1)
-    a = k1[1+p]
-    b = k1[end-p]
+    a, b = extrema(domain(P1))
 
     # TODO: This can be faster with SMatrix
     A = Matrix{U}(I, n, n)
