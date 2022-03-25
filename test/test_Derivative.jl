@@ -62,28 +62,37 @@
 
     @testset "bsplinebasisall" begin
         Random.seed!(42)
-
         k = KnotVector(rand(10).-1) + KnotVector(rand(10)) + KnotVector(rand(10).+1)
         ts = rand(10)
-
         for p in 0:5
             P = BSplineSpace{p}(k)
-
             for r in 0:5
                 dP = BSplineDerivativeSpace{r}(P)
-
                 for t in ts
                     j = intervalindex(dP,t)
                     B = collect(bsplinebasisall(dP,j,t))
+                    @test bsplinebasis.(dP,j:j+p,t) ≈ B
+                    @test bsplinebasis₊₀.(dP,j:j+p,t) ≈ B
+                    @test bsplinebasis₋₀.(dP,j:j+p,t) ≈ B
+                end
+            end
+        end
+    end
 
-                    _B = bsplinebasis.(dP,j:j+p,t)
-                    @test _B ≈ B
-
-                    _B = bsplinebasis₊₀.(dP,j:j+p,t)
-                    @test _B ≈ B
-
-                    _B = bsplinebasis₋₀.(dP,j:j+p,t)
-                    @test _B ≈ B
+    @testset "bsplinebasisall (uniform)" begin
+        Random.seed!(42)
+        k = UniformKnotVector(1:20)
+        for p in 0:5
+            P = BSplineSpace{p}(k)
+            for r in 0:5
+                dP = BSplineDerivativeSpace{r}(P)
+                for _ in 1:10
+                    t = rand_interval(domain(dP))
+                    j = intervalindex(dP,t)
+                    B = collect(bsplinebasisall(dP,j,t))
+                    @test bsplinebasis.(dP,j:j+p,t) ≈ B
+                    @test bsplinebasis₊₀.(dP,j:j+p,t) ≈ B
+                    @test bsplinebasis₋₀.(dP,j:j+p,t) ≈ B
                 end
             end
         end
