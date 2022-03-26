@@ -1,39 +1,41 @@
 @testset "UniformBSplineSpace" begin
     Random.seed!(42)
 
-    k1 = UniformKnotVector(1:8)
-    P1 = UniformBSplineSpace{2}(k1)
-    P1′ = BSplineSpace{2}(k1)
-    @test bsplinesupport(P1, 2) == bsplinesupport(P1′, 2) == 2..5
-    @test dim(P1) == dim(P1′) == 5
-    @test exactdim(P1) == exactdim(P1′) == 5
-    @test isnondegenerate(P1) == true
-    @test isdegenerate(P1) == false
-    @test P1 == P1′
+    @testset "constructor, subset" begin
+        k1 = UniformKnotVector(1:8)
+        P1 = UniformBSplineSpace{2}(k1)
+        P1′ = BSplineSpace{2}(k1)
+        @test bsplinesupport(P1, 2) == bsplinesupport(P1′, 2) == 2..5
+        @test dim(P1) == dim(P1′) == 5
+        @test exactdim(P1) == exactdim(P1′) == 5
+        @test isnondegenerate(P1) == true
+        @test isdegenerate(P1) == false
+        @test P1 == P1′
 
-    k2 = UniformKnotVector(range(1,1,length=8))
-    P2 = UniformBSplineSpace{2}(k2)
-    P2′ = BSplineSpace{2}(k2)
-    @test bsplinesupport(P2, 2) == bsplinesupport(P2′, 2) == 1..1
-    @test dim(P2) == dim(P2′) == 5
-    @test exactdim(P2) == exactdim(P2′) == 0
-    @test isnondegenerate(P2) == false
-    @test isdegenerate(P2) == true
-    @test P2 == P2′
+        k2 = UniformKnotVector(range(1,1,length=8))
+        P2 = UniformBSplineSpace{2}(k2)
+        P2′ = BSplineSpace{2}(k2)
+        @test bsplinesupport(P2, 2) == bsplinesupport(P2′, 2) == 1..1
+        @test dim(P2) == dim(P2′) == 5
+        @test exactdim(P2) == exactdim(P2′) == 0
+        @test isnondegenerate(P2) == false
+        @test isdegenerate(P2) == true
+        @test P2 == P2′
 
-    k3 = UniformKnotVector(1.0:0.5:12.0)
-    P3 = UniformBSplineSpace{2}(k3)
-    @test P1 ⊆ P3
-    @test P2 ⋢ P3
-    @test P1 ⋢ P3
-    @test P2 ⋢ P3
+        k3 = UniformKnotVector(1.0:0.5:12.0)
+        P3 = UniformBSplineSpace{2}(k3)
+        @test P1 ⊆ P3
+        @test P2 ⋢ P3
+        @test P1 ⋢ P3
+        @test P2 ⋢ P3
 
-    k4 = UniformKnotVector(1.0:0.5:12.0)
-    P3 = UniformBSplineSpace{2}(k3)
-    @test P1 ⊆ P3
-    @test P2 ⋢ P3
-    @test P1 ⋢ P3
-    @test P2 ⋢ P3
+        k4 = UniformKnotVector(1.0:0.5:12.0)
+        P3 = UniformBSplineSpace{2}(k3)
+        @test P1 ⊆ P3
+        @test P2 ⋢ P3
+        @test P1 ⋢ P3
+        @test P2 ⋢ P3
+    end
 
     @testset "dimension, dengenerate" begin
         P1 = UniformBSplineSpace{2}(UniformKnotVector(1:8))
