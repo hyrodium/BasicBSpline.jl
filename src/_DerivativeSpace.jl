@@ -26,6 +26,10 @@ end
 # Broadcast like a scalar
 Base.Broadcast.broadcastable(dP::BSplineDerivativeSpace) = Ref(dP)
 
+# Equality
+@inline Base.:(==)(dP1::BSplineDerivativeSpace{r}, dP2::BSplineDerivativeSpace{r}) where r = bsplinespace(dP1) == bsplinespace(dP2)
+@inline Base.:(==)(dP1::BSplineDerivativeSpace{r1}, dP2::BSplineDerivativeSpace{r2}) where {r1, r2} = false
+
 bsplinespace(dP::BSplineDerivativeSpace) = dP.bsplinespace
 knotvector(dP::BSplineDerivativeSpace) = knotvector(bsplinespace(dP))
 degree(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}) where {r,p} = p - r
