@@ -35,7 +35,15 @@ makedocs(;
     pages = [
         "Home" => "index.md",
         "Mathematical properties of B-spline" => "math.md",
-        "BasicBSplineExporter.jl" => "basicbsplineexporter.md",
+        # "Differentiation" => [
+        #     "BSplineDerivativeSpace" => "bsplinederivativespace.md",
+        #     "ForwardDiff" => "forwarddiff.md",
+        #     "ChainRules" => "chainrules.md"
+        # ],
+        "Visualization" => [
+            "BasicBSplineExporter.jl" => "basicbsplineexporter.md",
+            "PlotlyJS.jl" => "plotlyjs.md"
+        ],
         "Contributing" => "contributing.md",
     ],
     repo = "https://github.com/hyrodium/BasicBSpline.jl/blob/{commit}{path}#L{line}",
