@@ -5,6 +5,9 @@
         k1 = UniformKnotVector(1:8)
         P1 = UniformBSplineSpace{2}(k1)
         P1′ = BSplineSpace{2}(k1)
+        # @test P1 === UniformBSplineSpace{2}(P1)
+        # @test P1 === UniformBSplineSpace{2,Int}(P1)
+        @test P1 === UniformBSplineSpace{2,Int,typeof(1:8)}(P1)
         @test bsplinesupport(P1, 2) == bsplinesupport(P1′, 2) == 2..5
         @test dim(P1) == dim(P1′) == 5
         @test exactdim(P1) == exactdim(P1′) == 5
