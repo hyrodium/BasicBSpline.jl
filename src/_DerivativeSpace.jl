@@ -13,7 +13,7 @@ end
 function BSplineDerivativeSpace{r,S}(P::S) where {r, S<:AbstractBSplineSpace{p,T}} where {p,T}
     BSplineDerivativeSpace{r,S,T}(P)
 end
-function BSplineDerivativeSpace{r,S}(dP::BSplineDerivativeSpace{r,S}) where {r,S}
+function BSplineDerivativeSpace{r,S}(dP::BSplineDerivativeSpace{r,S}) where {r, S<:AbstractBSplineSpace{p,T}} where {p,T}
     dP
 end
 function BSplineDerivativeSpace{r,S}(dP::BSplineDerivativeSpace{r}) where {r,S}
