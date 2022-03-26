@@ -81,19 +81,15 @@ Refinement of B-spline manifold with additional degree and knotvector.
 """
 function refinement(M::AbstractManifold{Dim}; p₊::Union{Nothing,NTuple{Dim,Int}}=nothing, k₊::Union{Nothing,NTuple{Dim,KnotVector{T}}}=nothing) where {Dim, T}
     Ps = bsplinespaces(M)
-    d = length(Ps)
-    if isnothing(p₊)
-        p₊ = zeros(Int, d)
-    elseif length(Ps) ≠ length(p₊)
-        throw(DimensionMismatch())
+    if isnothing(p₊) & isnothing(k₊)
+        Ps′ = Ps
+    elseif isnothing(p₊) & !isnothing(k₊)
+        Ps′ = [expandspace(Ps[i], k₊=k₊[i]) for i in 1:Dim]
+    elseif !isnothing(p₊) & isnothing(k₊)
+        Ps′ = [expandspace(Ps[i], p₊=p₊[i]) for i in 1:Dim]
+    else
+        Ps′ = [expandspace(Ps[i], p₊=p₊[i], k₊=k₊[i]) for i in 1:Dim]
     end
-    if isnothing(k₊)
-        k₊ = zeros(KnotVector, d)
-    elseif length(Ps) ≠ length(k₊)
-        throw(DimensionMismatch())
-    end
-
-    Ps′ = [expandspace(Ps[i], p₊=p₊[i], k₊=k₊[i]) for i in 1:Dim]
 
     return refinement(M, tuple(Ps′...))
 end
