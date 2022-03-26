@@ -2,13 +2,33 @@
 
 struct BSplineDerivativeSpace{r, S<:AbstractBSplineSpace, T} <: AbstractFunctionSpace{T}
     bsplinespace::S
-    function BSplineDerivativeSpace{r}(P::S) where {r, S<:AbstractBSplineSpace{p,T}} where {p,T}
+    function BSplineDerivativeSpace{r,S,T}(P::S) where {r, S<:AbstractBSplineSpace{p,T}} where {p,T}
         new{r,S,T}(P)
     end
 end
 
+function BSplineDerivativeSpace{r}(P::S) where {r, S<:AbstractBSplineSpace{p,T}} where {p,T}
+    BSplineDerivativeSpace{r,S,T}(P)
+end
+function BSplineDerivativeSpace{r,S}(P::S) where {r, S<:AbstractBSplineSpace{p,T}} where {p,T}
+    BSplineDerivativeSpace{r,S,T}(P)
+end
+function BSplineDerivativeSpace{r,S}(dP::BSplineDerivativeSpace{r,S}) where {r, S<:AbstractBSplineSpace{p,T}} where {p,T}
+    dP
+end
+function BSplineDerivativeSpace{r,S}(dP::BSplineDerivativeSpace{r}) where {r,S}
+    BSplineDerivativeSpace{r,S}(S(bsplinespace(dP)))
+end
+function Base.convert(::Type{BSplineDerivativeSpace{r,S}}, dP) where {r,S}
+    BSplineDerivativeSpace{r,S}(dP)
+end
+
 # Broadcast like a scalar
 Base.Broadcast.broadcastable(dP::BSplineDerivativeSpace) = Ref(dP)
+
+# Equality
+@inline Base.:(==)(dP1::BSplineDerivativeSpace{r}, dP2::BSplineDerivativeSpace{r}) where r = bsplinespace(dP1) == bsplinespace(dP2)
+@inline Base.:(==)(dP1::BSplineDerivativeSpace{r1}, dP2::BSplineDerivativeSpace{r2}) where {r1, r2} = false
 
 bsplinespace(dP::BSplineDerivativeSpace) = dP.bsplinespace
 knotvector(dP::BSplineDerivativeSpace) = knotvector(bsplinespace(dP))

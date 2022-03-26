@@ -33,6 +33,14 @@ Convert AbstractBSplineSpace to BSplineSpace
 function BSplineSpace(P::AbstractBSplineSpace{p}) where p
     return BSplineSpace{p}(knotvector(P))
 end
+function BSplineSpace{p}(P::AbstractBSplineSpace{p}) where p
+    return BSplineSpace{p}(knotvector(P))
+end
+function BSplineSpace{p,T}(P::AbstractBSplineSpace{p}) where {p,T}
+    return unsafe_bsplinespace(Val{p}(),KnotVector{T}(knotvector(P)))
+end
+
+bsplinespace(P::AbstractBSplineSpace) = P
 
 @inline function degree(::AbstractBSplineSpace{p}) where p
     return p
@@ -115,7 +123,7 @@ function isdegenerate_R(P::AbstractBSplineSpace{p}, i::Integer) where p
 end
 
 function isdegenerate_I(P::AbstractBSplineSpace{p}, i::Integer) where p
-    return width(bsplinesupport(P,i) ∩ domain(P)) > 0
+    return iszero(width(bsplinesupport(P,i) ∩ domain(P)))
 end
 
 function _iszeros(P::AbstractBSplineSpace{p}) where p

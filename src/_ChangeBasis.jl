@@ -98,32 +98,26 @@ B_{(i,p_1,k_1)} = \sum_{j}A_{i,j}B_{(j,p_2,k_2)}
 Assumption:
 * ``P1 ≃ P2``
 """
-function _changebasis_sim(P1::AbstractBSplineSpace{p1,T1}, P2::AbstractBSplineSpace{p2,T2}) where {p1,p2,T1,T2}
+function _changebasis_sim(P1::AbstractBSplineSpace{p,T1}, P2::AbstractBSplineSpace{p,T2}) where {p,T1,T2}
     P1 ≃ P2 || throw(DomainError((P1,P2),"P1 ≃ P2 should be hold."))
     U = StaticArrays.arithmetic_closure(promote_type(T1,T2))
     n = dim(P1)
-    v = (knotvector(P1).vector)[p1+1:end-p1]
+    a, b = extrema(domain(P1))
 
-    if length(v) > p1
-        A = Matrix{U}(I, n, n)
-        # TODO: Fix below
-        vvv = [v[1] * (p1-i+1) / (p1+1) + v[i+1] * (i) / (p1+1) for i in 1:p1]
-        A1 = [bsplinebasis₊₀(P1,i,t) for i in 1:p1, t in vvv]
-        A2 = [bsplinebasis₊₀(P2,i,t) for i in 1:p1, t in vvv]
-        A[1:p1, 1:p1] = A1/A2
-        vvv = [v[end-p1+i-1] * (p1-i+1) / (p1+1) + v[end] * (i) / (p1+1) for i in 1:p1]
-        A1 = [bsplinebasis₋₀(P1,i,t) for i in n-p1+1:n, t in vvv]
-        A2 = [bsplinebasis₋₀(P2,i,t) for i in n-p1+1:n, t in vvv]
-        A[n-p1+1:n, n-p1+1:n] = A1/A2
-        # TODO: Fix above
-    else
-        # TODO: Fix below
-        vvv = [v[1] * (n - i + 1) / (n + 1) + v[end] * (i) / (n + 1) for i in 1:n]
-        A1 = [bsplinebasis₋₀(P1,i,t) for i in 1:n, t in vvv]
-        A2 = [bsplinebasis₋₀(P2,i,t) for i in 1:n, t in vvv]
-        A = A1/A2
-        # TODO: Fix above
+    # TODO: This can be faster with SMatrix
+    A = Matrix{U}(I, n, n)
+    A1 = zeros(U,p,p)
+    A2 = zeros(U,p,p)
+    for r in 1:p
+        A1[:,r] = bsplinebasis₊₀.(BSplineDerivativeSpace{r-1}(P1),1:p,a)
+        A2[:,r] = bsplinebasis₊₀.(BSplineDerivativeSpace{r-1}(P2),1:p,a)
     end
+    A[1:p, 1:p] = A1/A2
+    for r in 1:p
+        A1[:,r] = bsplinebasis₋₀.(BSplineDerivativeSpace{r-1}(P1),n-p+1:n,b)
+        A2[:,r] = bsplinebasis₋₀.(BSplineDerivativeSpace{r-1}(P2),n-p+1:n,b)
+    end
+    A[n-p+1:n, n-p+1:n] = A1/A2
     return A
 end
 

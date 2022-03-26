@@ -4,6 +4,24 @@
     ts = rand(10)
     dt = 1e-8
 
+    @testset "constructor" begin
+        P1 = BSplineSpace{2}(UniformKnotVector(1:8))
+        P2 = UniformBSplineSpace{2}(UniformKnotVector(1:8))
+        P3 = UniformBSplineSpace{2}(UniformKnotVector(1:1:8))
+        dP1 = BSplineDerivativeSpace{1}(P1)
+        dP2 = BSplineDerivativeSpace{1}(P2)
+        dP3 = BSplineDerivativeSpace{1}(P3)
+        dP4 = BSplineDerivativeSpace{2}(P3)
+        @test dP1 == dP2 == dP3 != dP4
+        @test dP1 !== dP2
+        @test_throws MethodError BSplineDerivativeSpace{1,typeof(P2)}(dP1)
+        @test dP3 === BSplineDerivativeSpace{1,typeof(P3)}(dP2)
+        @test dP2 !== BSplineDerivativeSpace{1,typeof(P3)}(dP2)
+        @test dP2 === BSplineDerivativeSpace{1,typeof(P2)}(dP2)
+        @test dP1 isa BSplineDerivativeSpace{1,<:BSplineSpace}
+        @test dP2 isa BSplineDerivativeSpace{1,<:UniformBSplineSpace}
+    end
+
     # Not sure why this @testset doesn't work fine.
     # @testset "$(p)-th degree basis" for p in 0:p_max
     for p in 0:p_max
@@ -62,28 +80,37 @@
 
     @testset "bsplinebasisall" begin
         Random.seed!(42)
-
         k = KnotVector(rand(10).-1) + KnotVector(rand(10)) + KnotVector(rand(10).+1)
         ts = rand(10)
-
         for p in 0:5
             P = BSplineSpace{p}(k)
-
             for r in 0:5
                 dP = BSplineDerivativeSpace{r}(P)
-
                 for t in ts
                     j = intervalindex(dP,t)
                     B = collect(bsplinebasisall(dP,j,t))
+                    @test bsplinebasis.(dP,j:j+p,t) ≈ B
+                    @test bsplinebasis₊₀.(dP,j:j+p,t) ≈ B
+                    @test bsplinebasis₋₀.(dP,j:j+p,t) ≈ B
+                end
+            end
+        end
+    end
 
-                    _B = bsplinebasis.(dP,j:j+p,t)
-                    @test _B ≈ B
-
-                    _B = bsplinebasis₊₀.(dP,j:j+p,t)
-                    @test _B ≈ B
-
-                    _B = bsplinebasis₋₀.(dP,j:j+p,t)
-                    @test _B ≈ B
+    @testset "bsplinebasisall (uniform)" begin
+        Random.seed!(42)
+        k = UniformKnotVector(1:20)
+        for p in 0:5
+            P = UniformBSplineSpace{p}(k)
+            for r in 0:5
+                dP = BSplineDerivativeSpace{r}(P)
+                for _ in 1:10
+                    t = rand_interval(domain(dP))
+                    j = intervalindex(dP,t)
+                    B = collect(bsplinebasisall(dP,j,t))
+                    @test bsplinebasis.(dP,j:j+p,t) ≈ B
+                    @test bsplinebasis₊₀.(dP,j:j+p,t) ≈ B
+                    @test bsplinebasis₋₀.(dP,j:j+p,t) ≈ B
                 end
             end
         end
