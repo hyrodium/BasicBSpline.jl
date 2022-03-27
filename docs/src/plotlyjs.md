@@ -21,10 +21,10 @@ ys_f = [M(t)[2] for t in ts]
 fig = Plot(scatter(x=xs_a, y=ys_a, name="control points", line_color="blue", marker_size=8))
 addtraces!(fig, scatter(x=xs_f, y=ys_f, name="B-spline curve", mode="lines", line_color="red"))
 relayout!(fig, width=500, height=500)
-savefig(fig,"a.html")
+savefig(fig,"cardioid.html")
 nothing # hide
 ```
 
 ```@raw html
-<object type="text/html" data="../a.html" style="width:100%;height:550px;"></object>
+<object type="text/html" data="../cardioid.html" style="width:100%;height:550px;"></object>
 ```
