@@ -20,6 +20,9 @@ This package provides basic (mathematical) operations for [B-spline](https://en.
 * Fitting control points for B-spline manifold
 
 ## Comparison to other julia packages for B-spline
+Note that the following comparison might not correct.
+If you have any thoughts, please help in [issue#161](https://github.com/hyrodium/BasicBSpline.jl/issues/161).
+
 * [Interpolations.jl](https://github.com/JuliaMath/Interpolations.jl)
     * >Currently this package's support is best for B-splines and also supports irregular grids.
     * But seems like no method for B-spline manifold.
@@ -33,6 +36,8 @@ This package provides basic (mathematical) operations for [B-spline](https://en.
     * Any degree of polynomial are supported.
     * Refinement algorithm for B-spline manifold.
     * Fitting algorithm by least squares.
+    * High performance on speed.
+    * Mathematically oriented.
 
 ## Installation
 Install this package
@@ -167,7 +172,7 @@ This is useful when you edit graphs (or curves) with your favorite vector graphi
 
 ![](docs/src/img/inkscape.png)
 
-## References
+## Citation
 If you use BasicBSpline.jl in your work, please consider citing it by
 
 ```bibtex
