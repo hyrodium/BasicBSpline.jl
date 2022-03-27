@@ -28,3 +28,33 @@ nothing # hide
 ```@raw html
 <object type="text/html" data="../cardioid.html" style="width:100%;height:550px;"></object>
 ```
+
+### Helix
+```@example
+using BasicBSpline
+using StaticArrays
+using PlotlyJS
+f(t) = SVector(cos(t),sin(t),t)
+p = 3
+k = KnotVector(range(0,6π,15)) + p * KnotVector(0,6π)
+P = BSplineSpace{p}(k)
+contolpoints = fittingcontrolpoints(f,(P,))
+M = BSplineManifold(contolpoints, (P,))
+
+ts = range(0,6π,250)
+xs_a = [a[1] for a in contolpoints]
+ys_a = [a[2] for a in contolpoints]
+zs_a = [a[3] for a in contolpoints]
+xs_f = [M(t)[1] for t in ts]
+ys_f = [M(t)[2] for t in ts]
+zs_f = [M(t)[3] for t in ts]
+fig = Plot(scatter3d(x=xs_a, y=ys_a, z=zs_a, name="control points", line_color="blue", marker_size=8))
+addtraces!(fig, scatter3d(x=xs_f, y=ys_f, z=zs_f, name="B-spline curve", mode="lines", line_color="red"))
+relayout!(fig, width=500, height=500)
+savefig(fig,"helix.html")
+nothing # hide
+```
+
+```@raw html
+<object type="text/html" data="../helix.html" style="width:100%;height:550px;"></object>
+```
