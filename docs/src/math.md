@@ -177,10 +177,12 @@ p = 2
 k = KnotVector(1:8)
 P = BSplineSpace{p}(k)
 plot([t->bsplinebasis₊₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(0,1), label=false)
-png("bsplinebasisplot") # hide
+savefig("bsplinebasisplot.html") # hide
 ```
 
-![](bsplinebasisplot.png)
+```@raw html
+<object type="text/html" data="../bsplinebasisplot.html" style="width:100%;height:420px;"></object>
+```
 
 You can choose the first terms in different ways.
 
@@ -202,10 +204,12 @@ p = 2
 k = KnotVector(1:8)
 P = BSplineSpace{p}(k)
 plot([t->bsplinebasis₋₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(0,1), label=false)
-png("bsplinebasisplot2") # hide
+savefig("bsplinebasisplot2.html") # hide
 ```
 
-![](bsplinebasisplot2.png)
+```@raw html
+<object type="text/html" data="../bsplinebasisplot2.html" style="width:100%;height:420px;"></object>
+```
 
 In these cases, each B-spline basis function ``B_{(i,2,k)}`` is coninuous, so `bsplinebasis₊₀` and `bsplinebasis₋₀` are equal.
 
@@ -223,7 +227,6 @@ i = 2
 k = KnotVector([5,12,13,13,14])
 p = 2
 P = BSplineSpace{p}(k)
-bsplinesupport(P) # [5..13, 12..14]
 bsplinesupport(P,i) # 12..14
 ```
 
@@ -246,10 +249,12 @@ p = 2
 k = KnotVector(1:8)
 P = BSplineSpace{p}(k)
 plot([t->bsplinebasis′₊₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(-2,2), label=false)
-png("bsplinebasisderivativeplot") # hide
+savefig("bsplinebasisderivativeplot.html") # hide
 ```
 
-![](bsplinebasisderivativeplot.png)
+```@raw html
+<object type="text/html" data="../bsplinebasisderivativeplot.html" style="width:100%;height:420px;"></object>
+```
 
 ## Partition of unity
 !!! info "Thm.  Partition of unity"
@@ -267,10 +272,12 @@ p = 2
 k = KnotVector(1:8)
 P = BSplineSpace{p}(k)
 plot(t->sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.1), label=false)
-png("sumofbsplineplot") # hide
+savefig("sumofbsplineplot.html") # hide
 ```
 
-![](sumofbsplineplot.png)
+```@raw html
+<object type="text/html" data="../sumofbsplineplot.html" style="width:100%;height:420px;"></object>
+```
 
 To satisfy the partition of unity on whole interval ``[1,8]``, sometimes more knots will be inserted to the endpoints of the interval.
 
@@ -281,10 +288,12 @@ p = 2
 k = KnotVector(1:8) + p * KnotVector([1,8])
 P = BSplineSpace{p}(k)
 plot(t->sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.1), label=false)
-png("sumofbsplineplot2") # hide
+savefig("sumofbsplineplot2.html") # hide
 ```
 
-![](sumofbsplineplot2.png)
+```@raw html
+<object type="text/html" data="../sumofbsplineplot2.html" style="width:100%;height:420px;"></object>
+```
 
 But, the sum ``\sum_{i} B_{(i,p,k)}(t)`` is not equal to ``1`` if ``t=8``.
 Therefore, to satisfy partition of unity on closed interval ``[k_{p+1}, k_{l-p}]``, the definition of first terms of B-spline basis functions are sometimes replaced:
@@ -308,10 +317,12 @@ p = 2
 k = KnotVector(1:8) + p * KnotVector([1,8])
 P = BSplineSpace{p}(k)
 plot(t->sum(bsplinebasis(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.1), label=false)
-png("sumofbsplineplot3") # hide
+savefig("sumofbsplineplot3.html") # hide
 ```
 
-![](sumofbsplineplot3.png)
+```@raw html
+<object type="text/html" data="../sumofbsplineplot3.html" style="width:100%;height:420px;"></object>
+```
 
 
 ## Inclusive relation between B-spline spaces
@@ -350,10 +361,12 @@ plot(
     layout=(3,1),
     link=:x
 )
-png("subbsplineplot") # hide
+savefig("subbsplineplot.html") # hide
 ```
 
-![](subbsplineplot.png)
+```@raw html
+<object type="text/html" data="../subbsplineplot.html" style="width:100%;height:420px;"></object>
+```
 
 This means, there exists a ``n \times n'`` matrix ``A`` which holds:
 
@@ -383,10 +396,12 @@ plot(
     layout=(3,1),
     link=:x
 )
-png("subbsplineplot2") # hide
+savefig("subbsplineplot2.html") # hide
 ```
 
-![](subbsplineplot2.png)
+```@raw html
+<object type="text/html" data="../subbsplineplot2.html" style="width:100%;height:420px;"></object>
+```
 
 ## Multi-dimensional B-spline
 tensor product
