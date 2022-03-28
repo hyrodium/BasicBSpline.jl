@@ -3,6 +3,7 @@ module BasicBSpline
 using LinearAlgebra
 using IntervalSets
 using StaticArrays
+using RecipesBase
 using FastGaussQuadrature
 
 # Types
@@ -49,5 +50,6 @@ include("_BSplineManifold.jl")
 include("_RationalBSplineManifold.jl")
 include("_Refinement.jl")
 include("_Fitting.jl")
+include("_PlotRecipes.jl")
 
 end # module
