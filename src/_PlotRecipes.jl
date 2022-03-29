@@ -8,7 +8,7 @@
         getindex.(a,1),getindex.(a,2)
     end
     t1,t2 = extrema(domain(bsplinespaces(M)[1]))
-    p = M.(range(t1,t2,300))
+    p = M.(range(t1,t2,length=300))
     getindex.(p,1),getindex.(p,2)
 end
 
@@ -22,7 +22,7 @@ end
         getindex.(a,1),getindex.(a,2),getindex.(a,3)
     end
     t1,t2 = extrema(domain(bsplinespaces(M)[1]))
-    p = M.(range(t1,t2,300))
+    p = M.(range(t1,t2,length=300))
     getindex.(p,1),getindex.(p,2),getindex.(p,3)
 end
 
