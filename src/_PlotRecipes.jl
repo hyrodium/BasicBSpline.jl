@@ -5,11 +5,11 @@
         markershape := :circle
         markercolor := :lightgray
         a = controlpoints(M)
-        getindex.(a,1),getindex.(a,2)
+        getindex.(a,1), getindex.(a,2)
     end
-    t1,t2 = extrema(domain(bsplinespaces(M)[1]))
-    p = M.(range(t1,t2,length=300))
-    getindex.(p,1),getindex.(p,2)
+    t_min, t_max = extrema(domain(bsplinespaces(M)[1]))
+    p = M.(range(t_min, t_max, length=300))
+    getindex.(p,1), getindex.(p,2)
 end
 
 @recipe function f(M::BSplineManifold{1,Deg,<:StaticVector{3,<:Real}}) where Deg
@@ -19,11 +19,11 @@ end
         markershape := :circle
         markercolor := :lightgray
         a = controlpoints(M)
-        getindex.(a,1),getindex.(a,2),getindex.(a,3)
+        getindex.(a,1), getindex.(a,2), getindex.(a,3)
     end
-    t1,t2 = extrema(domain(bsplinespaces(M)[1]))
-    p = M.(range(t1,t2,length=300))
-    getindex.(p,1),getindex.(p,2),getindex.(p,3)
+    t_min, t_max = extrema(domain(bsplinespaces(M)[1]))
+    p = M.(range(t_min, t_max, length=300))
+    getindex.(p,1), getindex.(p,2), getindex.(p,3)
 end
 
 #=
