@@ -5,6 +5,7 @@ using Test
 using Random
 using StaticArrays
 using GeometryBasics
+using Plots
 
 function rand_interval(D::ClosedInterval)
     a,b = endpoints(D)
@@ -24,4 +25,5 @@ end
     include("test_RationalBSplineManifold.jl")
     include("test_Refinement.jl")
     include("test_Fitting.jl")
+    include("test_Plots.jl")
 end
