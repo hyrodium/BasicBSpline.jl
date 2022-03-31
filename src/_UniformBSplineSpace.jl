@@ -4,7 +4,7 @@ Construct B-spline space from given polynominal degree and knot vector.
 ```math
 \mathcal{P}[p,k]
 ```
-It differs from `BSplineSpace`` in that the knot vector is uniform.
+It differs from `BSplineSpace` in that the knot vector is uniform.
 """
 struct UniformBSplineSpace{p, T<:Real, R} <: AbstractBSplineSpace{p,T}
     knotvector::UniformKnotVector{T,R}
