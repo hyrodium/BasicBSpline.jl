@@ -34,7 +34,17 @@ makedocs(;
     ),
     pages = [
         "Home" => "index.md",
-        "Mathematical properties of B-spline" => "math.md",
+        "Mathematical properties of B-spline" => [
+            "Introduction" => "math.md",
+            "KnotVector" => "math-knotvector.md",
+            "B-spline space" => "math-bsplinespace.md",
+            "B-spline basis function" => "math-bsplinebasis.md",
+            "B-spline manifold" => "math-bsplinemanifold.md",
+            "Derivative" => "math-derivative.md",
+            "Inclusive relationship" => "math-inclusive.md",
+            "Refinement" => "math-refinement.md",
+            "Fitting" => "math-fitting.md",
+        ],
         # "Differentiation" => [
         #     "BSplineDerivativeSpace" => "bsplinederivativespace.md",
         #     "ForwardDiff" => "forwarddiff.md",
