@@ -77,6 +77,13 @@
         @test KnotVector([1,2,2,3])   ⊈ KnotVector([1,2,3,5])
         @test KnotVector([1,2,2,3,5]) ⊇ KnotVector([1,2,2,3])
         @test KnotVector([1,2,3,5])   ⊉ KnotVector([1,2,2,3])
+
+        @test !(KnotVector([1,2,3,4]) ⊊ KnotVector([1,2,3]))
+        @test !(KnotVector([1,2,3]) ⊊ KnotVector([1,2,3]))
+        @test KnotVector([1,2,3]) ⊊ KnotVector([1,2,3,4])
+        @test !(KnotVector([1,2,3]) ⊋ KnotVector([1,2,3,4]))
+        @test !(KnotVector([1,2,3]) ⊋ KnotVector([1,2,3]))
+        @test KnotVector([1,2,3,4]) ⊋ KnotVector([1,2,3])
     end
 
     @testset "string" begin
