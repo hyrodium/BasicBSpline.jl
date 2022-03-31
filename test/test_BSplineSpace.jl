@@ -74,10 +74,26 @@
         P1 = BSplineSpace{1}(KnotVector([1, 3, 5, 8]))
         P2 = BSplineSpace{1}(KnotVector([1, 3, 5, 6, 8, 9]))
         P3 = BSplineSpace{2}(KnotVector([1, 1, 3, 3, 5, 5, 8, 8]))
+
+        @test P1 ⊆ P1
+        @test P2 ⊆ P2
+        @test P3 ⊆ P3
+
         @test P1 ⊆ P2
         @test P1 ⋢ P2
         @test P1 ⊆ P3
         @test P2 ⊈ P3
+
+        @test !(P1 ⊊ P1)
+        @test !(P2 ⊊ P2)
+        @test !(P3 ⊊ P3)
+        @test P1 ⊊ P2
+        @test P1 ⊊ P3
+        @test !(P1 ⊋ P1)
+        @test !(P2 ⊋ P2)
+        @test !(P3 ⊋ P3)
+        @test P2 ⊋ P1
+        @test P3 ⊋ P1
     end
 
     @testset "equality" begin
@@ -162,6 +178,8 @@
         @test P6 ≃ P7
         @test P6 ⊈ P7
         @test P7 ⊈ P6
+        @test P6 ⋤ P7
+        @test P7 ⋤ P6
         @test domain(P6) == domain(P7)
     end
 end
