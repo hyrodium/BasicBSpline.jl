@@ -1,6 +1,6 @@
 # BasicBSpline.jl
 
-Basic operations for B-spline functions and related things with julia
+Basic (mathematical) operations for B-spline functions and related things with julia
 
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://hyrodium.github.io/BasicBSpline.jl/stable)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://hyrodium.github.io/BasicBSpline.jl/dev)
@@ -11,13 +11,14 @@ Basic operations for B-spline functions and related things with julia
 ![](docs/src/img/BasicBSplineLogo.png)
 
 ## Summary
-This package provides basic (mathematical) operations for [B-spline](https://en.wikipedia.org/wiki/B-spline).
+This package provides basic mathematical operations for [B-spline](https://en.wikipedia.org/wiki/B-spline).
 
 * B-spline basis function
 * Some operations for knot vector
+* Some operations for B-spline space (piecewise polynomial space)
 * B-spline manifold (includes curve, surface and solid)
-* Refinement for B-spline manifold
-* Fitting control points for B-spline manifold
+* Refinement algorithm for B-spline manifold
+* Fitting control points for given function
 
 ## Comparison to other julia packages for B-spline
 Note that the following comparison might not correct.
