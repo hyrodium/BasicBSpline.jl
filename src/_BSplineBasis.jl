@@ -16,6 +16,7 @@ Right-sided limit version.
     &0\quad (\text{otherwise})
 \end{cases}
 \end{aligned}
+```
 """
 @generated function bsplinebasis₊₀(P::AbstractBSplineSpace{p,T}, i::Integer, t::S) where {p, T, S<:Real}
     U = StaticArrays.arithmetic_closure(promote_type(T,S))
@@ -59,6 +60,7 @@ Left-sided limit version.
     &0\quad (\text{otherwise})
 \end{cases}
 \end{aligned}
+```
 """
 @generated function bsplinebasis₋₀(P::AbstractBSplineSpace{p,T}, i::Integer, t::S) where {p, T, S<:Real}
     U = StaticArrays.arithmetic_closure(promote_type(T,S))
@@ -103,6 +105,7 @@ Modified version.
     &0\quad (\text{otherwise})
 \end{cases}
 \end{aligned}
+```
 """
 @generated function bsplinebasis(P::AbstractBSplineSpace{p,T}, i::Integer, t::S) where {p, T, S<:Real}
     U = StaticArrays.arithmetic_closure(promote_type(T,S))

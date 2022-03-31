@@ -1,3 +1,18 @@
+@doc raw"""
+Construct knot vector from given range.
+```math
+k=(k_1,\dots,k_l)
+```
+
+# Examples
+```jldoctest
+julia> k = UniformKnotVector(1:8)
+UniformKnotVector(1:8)
+
+julia> UniformKnotVector(8:-1:3)
+UniformKnotVector(3:1:8)
+```
+"""
 struct UniformKnotVector{T,R<:AbstractRange} <: AbstractKnotVector{T}
     vector::R
     global unsafe_uniformknotvector(::Type{T}, v::R) where R<:AbstractRange{T} where T = new{T,R}(v)
