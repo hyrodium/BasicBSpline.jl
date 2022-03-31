@@ -1,5 +1,10 @@
 # Space of derivative of B-spline basis function
-
+@doc raw"""
+Construct derivative of B-spline space from given differential order and B-spline space.
+```math
+D^{r}(\mathcal{P}[p,k])
+```
+"""
 struct BSplineDerivativeSpace{r, S<:AbstractBSplineSpace, T} <: AbstractFunctionSpace{T}
     bsplinespace::S
     function BSplineDerivativeSpace{r,S,T}(P::S) where {r, S<:AbstractBSplineSpace{p,T}} where {p,T}
