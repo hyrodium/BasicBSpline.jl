@@ -19,8 +19,7 @@ using Plots
     Note that ``\dot{B}_{(i,p,k)}\in\mathcal{P}[p-1,k]``.
 
 ```@repl math
-using Plots
-plotlyjs() # hide
+using Plots; plotlyjs()
 p = 2
 k = KnotVector(1:8)
 P = BSplineSpace{p}(k)

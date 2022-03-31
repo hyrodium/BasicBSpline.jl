@@ -33,8 +33,7 @@ using Plots
 
 
 ```@repl math
-using Plots
-plotlyjs() # hide
+using Plots; plotlyjs()
 p = 2
 k = KnotVector(1:8)
 P = BSplineSpace{p}(k)
@@ -60,8 +59,7 @@ You can choose the first terms in different ways.
 ```
 
 ```@repl math
-using Plots
-plotlyjs() # hide
+using Plots; plotlyjs()
 p = 2
 k = KnotVector(1:8)
 P = BSplineSpace{p}(k)
@@ -102,8 +100,7 @@ bsplinesupport(P,i) # 12..14
     ```
 
 ```@repl math
-using Plots
-plotlyjs() # hide
+using Plots; plotlyjs()
 p = 2
 k = KnotVector(1:8)
 P = BSplineSpace{p}(k)
@@ -118,8 +115,7 @@ savefig("sumofbsplineplot.html") # hide
 To satisfy the partition of unity on whole interval ``[1,8]``, sometimes more knots will be inserted to the endpoints of the interval.
 
 ```@repl math
-using Plots
-plotlyjs() # hide
+using Plots; plotlyjs()
 p = 2
 k = KnotVector(1:8) + p * KnotVector([1,8])
 P = BSplineSpace{p}(k)
@@ -147,8 +143,7 @@ Therefore, to satisfy partition of unity on closed interval ``[k_{p+1}, k_{l-p}]
 ```
 
 ```@repl math
-using Plots
-plotlyjs() # hide
+using Plots; plotlyjs()
 p = 2
 k = KnotVector(1:8) + p * KnotVector([1,8])
 P = BSplineSpace{p}(k)
