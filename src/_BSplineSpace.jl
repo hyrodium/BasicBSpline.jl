@@ -117,6 +117,11 @@ const ⊑ = issqsubset
 
 ≃(P1::AbstractBSplineSpace, P2::AbstractBSplineSpace) = (P1 ⊑ P2) & (P2 ⊑ P1)
 
+Base.:⊊(A::AbstractFunctionSpace, B::AbstractFunctionSpace) = (A ≠ B) & (A ⊆ B)
+Base.:⊋(A::AbstractFunctionSpace, B::AbstractFunctionSpace) = (A ≠ B) & (A ⊇ B)
+⋤(A::AbstractFunctionSpace, B::AbstractFunctionSpace) = (A ≠ B) & (A ⊑ B)
+# \sqsupsetneq seems missing
+
 function isdegenerate_R(P::AbstractBSplineSpace{p}, i::Integer) where p
     k = knotvector(P)
     return k[i] == k[i+p+1]
