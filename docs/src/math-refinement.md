@@ -7,6 +7,10 @@ using StaticArrays
 using Plots
 ```
 
+```@docs
+refinement
+```
+
 ```@repl math
 p = 2 # degree of polynomial
 k = KnotVector(1:8) # knot vector

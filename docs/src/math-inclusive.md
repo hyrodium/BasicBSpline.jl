@@ -81,3 +81,7 @@ savefig("subbsplineplot2.html") # hide
 ```@raw html
 <object type="text/html" data="../subbsplineplot2.html" style="width:100%;height:420px;"></object>
 ```
+
+```@docs
+issqsubset
+```

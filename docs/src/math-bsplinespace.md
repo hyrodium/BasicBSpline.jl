@@ -55,6 +55,14 @@ k = KnotVector([1,3,5,6,8,9])
 BSplineSpace{p}(k)
 ```
 
+```@docs
+BSplineSpace
+```
+
+```@docs
+UniformBSplineSpace
+```
+
 A B-spline space is said to be **non-degenerate** if its degree and knotvector satisfies following property:
 ```math
 \begin{aligned}
@@ -64,6 +72,10 @@ k_{i}&<k_{i+p+1} & (1 \le i \le l-p-1)
 
 ```@docs
 isnondegenerate
+```
+
+```@docs
+isdegenerate(P::AbstractBSplineSpace)
 ```
 
 The B-spline space is a linear space, and if a B-spline space is non-degenerate, its dimension is calculated by:

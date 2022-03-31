@@ -37,6 +37,13 @@ a = [SVector(i, j) for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.
 M = BSplineManifold(a, (P1, P2))
 ```
 
+```@docs
+BSplineManifold
+```
+
+```@docs
+RationalBSplineManifold
+```
 
 ### B-spline curve
 ```@repl math

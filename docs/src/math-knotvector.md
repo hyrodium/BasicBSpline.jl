@@ -56,3 +56,7 @@ unique(k::KnotVector)
 ```@docs
 countknots(k::AbstractKnotVector, t::Real)
 ```
+
+```@docs
+UniformKnotVector
+```

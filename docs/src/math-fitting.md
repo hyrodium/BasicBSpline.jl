@@ -7,7 +7,11 @@ using StaticArrays
 using Plots
 ```
 
-Least squares method.
+Fitting with least squares method.
+
+```@docs
+fittingcontrolpoints
+```
 
 [Try on Desmos graphing graphing calculator!](https://www.desmos.com/calculator/2hm3b1fbdf)
 ```@repl math

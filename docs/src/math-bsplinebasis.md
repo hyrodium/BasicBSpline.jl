@@ -154,3 +154,19 @@ savefig("sumofbsplineplot3.html") # hide
 ```@raw html
 <object type="text/html" data="../sumofbsplineplot3.html" style="width:100%;height:420px;"></object>
 ```
+
+```@docs
+bsplinebasis₊₀
+```
+
+```@docs
+bsplinebasis₋₀
+```
+
+```@docs
+bsplinebasis
+```
+
+```@docs
+bsplinebasisall
+```

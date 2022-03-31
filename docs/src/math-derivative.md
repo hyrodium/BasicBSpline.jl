@@ -30,3 +30,19 @@ savefig("bsplinebasisderivativeplot.html") # hide
 ```@raw html
 <object type="text/html" data="../bsplinebasisderivativeplot.html" style="width:100%;height:420px;"></object>
 ```
+
+```@docs
+BSplineDerivativeSpace
+```
+
+```@docs
+bsplinebasis′₊₀
+```
+
+```@docs
+bsplinebasis′₋₀
+```
+
+```@docs
+bsplinebasis′
+```
