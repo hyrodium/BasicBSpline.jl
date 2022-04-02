@@ -15,6 +15,18 @@ Construct B-spline space from given polynominal degree and knot vector.
 ```math
 \mathcal{P}[p,k]
 ```
+
+# Examples
+```jldoctest
+julia> p = 2
+2
+
+julia> k = KnotVector([1,3,5,6,8,9])
+KnotVector([1.0, 3.0, 5.0, 6.0, 8.0, 9.0])
+
+julia> BSplineSpace{p}(k)
+BSplineSpace{2, Float64}(KnotVector([1.0, 3.0, 5.0, 6.0, 8.0, 9.0]))
+```
 """
 struct BSplineSpace{p, T<:Real} <: AbstractBSplineSpace{p,T}
     knotvector::KnotVector{T}
