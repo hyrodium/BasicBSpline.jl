@@ -85,3 +85,15 @@ savefig("subbsplineplot2.html") # hide
 ```@docs
 issqsubset
 ```
+
+```@docs
+expandspace
+```
+
+```@docs
+expandspace_R
+```
+
+```@docs
+expandspace_I
+```
