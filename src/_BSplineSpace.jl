@@ -102,7 +102,7 @@ Check inclusive relationship between B-spline spaces.
 \sqsubseteq\mathcal{P}[p',k']
 \Leftrightarrow
 \mathcal{P}[p,k]|_{[k_{p+1},k_{l-p}]}
-\subseteq\mathcal{P}[p',k']|_{[\sharp k'_{p'+1},k'_{\sharp k'-p'}]}
+\subseteq\mathcal{P}[p',k']|_{[k'_{p'+1},k'_{l'-p'}]}
 ```
 """
 function issqsubset(P::AbstractBSplineSpace{p}, P′::AbstractBSplineSpace{p′}) where {p, p′}
