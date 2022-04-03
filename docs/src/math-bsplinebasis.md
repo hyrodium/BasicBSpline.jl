@@ -168,5 +168,13 @@ bsplinebasis
 ```
 
 ```@docs
+bsplinesupport
+```
+
+```@docs
 bsplinebasisall
+```
+
+```@docs
+intervalindex
 ```

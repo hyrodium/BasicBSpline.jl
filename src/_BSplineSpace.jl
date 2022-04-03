@@ -15,6 +15,18 @@ Construct B-spline space from given polynominal degree and knot vector.
 ```math
 \mathcal{P}[p,k]
 ```
+
+# Examples
+```jldoctest
+julia> p = 2
+2
+
+julia> k = KnotVector([1,3,5,6,8,9])
+KnotVector([1.0, 3.0, 5.0, 6.0, 8.0, 9.0])
+
+julia> BSplineSpace{p}(k)
+BSplineSpace{2, Float64}(KnotVector([1.0, 3.0, 5.0, 6.0, 8.0, 9.0]))
+```
 """
 struct BSplineSpace{p, T<:Real} <: AbstractBSplineSpace{p,T}
     knotvector::KnotVector{T}
@@ -90,7 +102,7 @@ Check inclusive relationship between B-spline spaces.
 \sqsubseteq\mathcal{P}[p',k']
 \Leftrightarrow
 \mathcal{P}[p,k]|_{[k_{p+1},k_{l-p}]}
-\subseteq\mathcal{P}[p',k']|_{[\sharp k'_{p'+1},k'_{\sharp k'-p'}]}
+\subseteq\mathcal{P}[p',k']|_{[k'_{p'+1},k'_{l'-p'}]}
 ```
 """
 function issqsubset(P::AbstractBSplineSpace{p}, P′::AbstractBSplineSpace{p′}) where {p, p′}
