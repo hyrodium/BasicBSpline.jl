@@ -180,6 +180,8 @@
         @test P7 ⊈ P6
         @test P6 ⋤ P7
         @test P7 ⋤ P6
+        @test P6 ⋥ P7
+        @test P7 ⋥ P6
         @test domain(P6) == domain(P7)
     end
 end
