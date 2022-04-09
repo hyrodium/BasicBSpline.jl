@@ -22,9 +22,9 @@ end
     ts = range(t_min, t_max, length=300)
     @series begin
         primary := false
-        linecolor := :lightgray
+        linecolor := :gray
         markershape := :circle
-        markercolor := :lightgray
+        markercolor := :gray
         a = controlpoints(M)
         getindex.(a,1), getindex.(a,2)
     end
@@ -39,9 +39,9 @@ end
     ts = range(t_min, t_max, length=300)
     @series begin
         primary := false
-        linecolor := :lightgray
+        linecolor := :gray
         markershape := :circle
-        markercolor := :lightgray
+        markercolor := :gray
         a = controlpoints(M)
         getindex.(a,1), getindex.(a,2), getindex.(a,3)
     end
@@ -58,9 +58,9 @@ end
     u2s = range(u2_min, u2_max, length=300)
     @series begin
         primary := false
-        linecolor := :lightgray
+        linecolor := :gray
         markershape := :circle
-        markercolor := :lightgray
+        markercolor := :gray
         seriestype := :scatter
         a = controlpoints(M)
         getindex.(a,1), getindex.(a,2), getindex.(a,3)
@@ -69,7 +69,7 @@ end
         primary := false
         linecolor := :gray
         markershape := :circle
-        markercolor := :lightgray
+        markercolor := :gray
         seriestype := :path
         a = controlpoints(M)
         getindex.(a,1), getindex.(a,2), getindex.(a,3)
@@ -78,7 +78,7 @@ end
         primary := false
         linecolor := :gray
         markershape := :circle
-        markercolor := :lightgray
+        markercolor := :gray
         seriestype := :path
         a = controlpoints(M)
         getindex.(a',1), getindex.(a',2), getindex.(a',3)
