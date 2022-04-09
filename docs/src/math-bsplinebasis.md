@@ -172,11 +172,11 @@ bsplinesupport
 ```
 
 ```@docs
-bsplinebasisall
+intervalindex
 ```
 
 ```@docs
-intervalindex
+bsplinebasisall
 ```
 
 The next figures illustlates the relation between `domain(P)`, `intervalindex(P,t)` and `bsplinebasisall(P,i,t)`.
