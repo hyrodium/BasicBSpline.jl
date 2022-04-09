@@ -1,7 +1,7 @@
 # B-spline space
 @recipe function f(P::AbstractBSplineSpace{p}) where p
     # TODO fix number of sampling points
-    N = 100(p+1)
+    N = 100
     k = knotvector(P)
     ts = Float64[]
     for i in 1:length(k)-1
@@ -52,10 +52,10 @@ end
 # B-spline surface
 @recipe function f(M::Union{BSplineManifold{2,Deg,<:StaticVector{3,<:Real}}, RationalBSplineManifold{2,Deg,<:StaticVector{3,<:Real}}}) where Deg
     # TODO fix number of sampling points
-    u1_min, u1_max = extrema(domain(bsplinespaces(M)[1]))
-    u2_min, u2_max = extrema(domain(bsplinespaces(M)[2]))
-    u1s = range(u1_min, u1_max, length=300)
-    u2s = range(u2_min, u2_max, length=300)
+    t1_min, t1_max = extrema(domain(bsplinespaces(M)[1]))
+    t2_min, t2_max = extrema(domain(bsplinespaces(M)[2]))
+    t1s = range(t1_min, t1_max, length=300)
+    t2s = range(t2_min, t2_max, length=300)
     @series begin
         primary := false
         linecolor := :gray
@@ -83,7 +83,7 @@ end
         a = controlpoints(M)
         getindex.(a',1), getindex.(a',2), getindex.(a',3)
     end
-    ps = M.(u1s,u2s')
+    ps = M.(t1s,t2s')
     xs = getindex.(ps,1)
     ys = getindex.(ps,2)
     zs = getindex.(ps,3)
@@ -93,7 +93,5 @@ end
 
 #=
 TODO
-* BSplineSurface
 * BSplineSolid
-* RationalBSplineManifold
 =#
