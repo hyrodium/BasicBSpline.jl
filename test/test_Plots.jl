@@ -50,4 +50,29 @@
         M = RationalBSplineManifold(a, w, (P,))
         plot(M)
     end
+
+    @testset "B-spline surface in 3d" begin
+        k1 = KnotVector(1:8)
+        k2 = KnotVector(1:10)
+        P1 = BSplineSpace{2}(k1)
+        P2 = BSplineSpace{2}(k2)
+        n1 = dim(P1)
+        n2 = dim(P2)
+        a = [SVector(i,j,sin(i+j)) for i in 1:n1, j in 1:n2]
+        M = BSplineManifold(a,(P1,P2))
+        plot(M)
+    end
+
+    @testset "Rational B-spline surface in 3d" begin
+        k1 = KnotVector(1:8)
+        k2 = KnotVector(1:10)
+        P1 = BSplineSpace{2}(k1)
+        P2 = BSplineSpace{2}(k2)
+        n1 = dim(P1)
+        n2 = dim(P2)
+        a = [SVector(i,j,sin(i+j)) for i in 1:n1, j in 1:n2]
+        w = rand(n1,n2)
+        M = RationalBSplineManifold(a,w,(P1,P2))
+        plot(M)
+    end
 end
