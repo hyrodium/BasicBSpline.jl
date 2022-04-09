@@ -172,9 +172,40 @@ bsplinesupport
 ```
 
 ```@docs
-bsplinebasisall
+intervalindex
 ```
 
 ```@docs
-intervalindex
+bsplinebasisall
+```
+
+The next figures illustlates the relation between `domain(P)`, `intervalindex(P,t)` and `bsplinebasisall(P,i,t)`.
+
+```@example
+using BasicBSpline
+using Plots; plotly()
+
+k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
+
+for p in 1:3
+    P = BSplineSpace{p}(k)
+    plot(P, legend=:topleft, label="B-spline basis (p=1)")
+    plot!(t->intervalindex(P,t),0,10, label="Interval index")
+    plot!(t->sum(bsplinebasis(P,i,t) for i in 1:dim(P)),0,10, label="Sum of B-spline basis")
+    scatter!(k.vector,zero(k.vector), label="knot vector")
+    plot!([t->bsplinebasisall(P,1,t)[i] for i in 1:p+1],0,10, color=:black, label="bsplinebasisall (i=1)", ylim=(-1,8-2p))
+    savefig("bsplinebasisall-$(p).html") # hide
+end
+```
+
+```@raw html
+<object type="text/html" data="../bsplinebasisall-1.html" style="width:100%;height:420px;"></object>
+```
+
+```@raw html
+<object type="text/html" data="../bsplinebasisall-2.html" style="width:100%;height:420px;"></object>
+```
+
+```@raw html
+<object type="text/html" data="../bsplinebasisall-3.html" style="width:100%;height:420px;"></object>
 ```

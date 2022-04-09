@@ -36,7 +36,7 @@ makedocs(;
         "Home" => "index.md",
         "Mathematical properties of B-spline" => [
             "Introduction" => "math.md",
-            "KnotVector" => "math-knotvector.md",
+            "Knot vector" => "math-knotvector.md",
             "B-spline space" => "math-bsplinespace.md",
             "B-spline basis function" => "math-bsplinebasis.md",
             "B-spline manifold" => "math-bsplinemanifold.md",
