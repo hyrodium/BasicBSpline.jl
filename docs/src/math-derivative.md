@@ -18,12 +18,16 @@ using Plots
     ```
     Note that ``\dot{B}_{(i,p,k)}\in\mathcal{P}[p-1,k]``.
 
-```@repl math
+```@example math
 using Plots; plotlyjs()
-p = 2
-k = KnotVector(1:8)
-P = BSplineSpace{p}(k)
-plot([t->bsplinebasis′₊₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(-2,2), label=false)
+k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
+P = BSplineSpace{3}(k)
+plot(
+    plot(BSplineDerivativeSpace{0}(P), label="0th derivative", color=:black),
+    plot(BSplineDerivativeSpace{1}(P), label="1st derivative", color=:red),
+    plot(BSplineDerivativeSpace{2}(P), label="2nd derivative", color=:green),
+    plot(BSplineDerivativeSpace{3}(P), label="3rd derivative", color=:blue),
+)
 savefig("bsplinebasisderivativeplot.html") # hide
 ```
 
