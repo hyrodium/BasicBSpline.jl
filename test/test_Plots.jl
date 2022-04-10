@@ -6,11 +6,18 @@
         plot(P)
     end
 
-    @testset "uniform B-spline space" begin
+    @testset "Uniform B-spline space" begin
         p = 3
         k = UniformKnotVector(0:8)
         P = UniformBSplineSpace{p}(k)
         plot(P)
+    end
+
+    @testset "Derivative B-spline space" begin
+        p = 3
+        k = UniformKnotVector(0:8)
+        dP = BSplineDerivativeSpace{1}(UniformBSplineSpace{p}(k))
+        plot(dP)
     end
 
     @testset "B-spline curve in 2d" begin
