@@ -1,7 +1,7 @@
 using Documenter, BasicBSpline, BasicBSplineExporter, Plots
 
 gr()
-plotlyjs()
+plotly()
 
 # Setup for doctests in docstrings
 DocMeta.setdocmeta!(BasicBSpline, :DocTestSetup, :(using LinearAlgebra, BasicBSpline))
@@ -51,8 +51,9 @@ makedocs(;
         #     "ChainRules" => "chainrules.md"
         # ],
         "Visualization" => [
+            "Plots.jl" => "plots.md",
+            "PlotlyJS.jl" => "plotlyjs.md",
             "BasicBSplineExporter.jl" => "basicbsplineexporter.md",
-            "PlotlyJS.jl" => "plotlyjs.md"
         ],
         "Contributing" => "contributing.md",
     ],
