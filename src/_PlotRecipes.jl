@@ -1,5 +1,5 @@
 # B-spline space
-@recipe function f(P::AbstractBSplineSpace{p}) where p
+@recipe function f(P::AbstractFunctionSpace)
     # TODO fix number of sampling points
     N = 100
     k = knotvector(P)
