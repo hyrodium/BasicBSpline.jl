@@ -4,7 +4,7 @@
 using BasicBSpline
 using BasicBSplineExporter
 using StaticArrays
-using Plots
+using Plots; plotly()
 ```
 
 Before defining B-spline space, we'll define polynomial space with degree ``p``.

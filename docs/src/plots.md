@@ -7,7 +7,7 @@ In this section, we will provide some plottig examples.
 ```@setup plots
 using BasicBSpline
 using StaticArrays
-using Plots
+using Plots; plotly()
 ```
 
 ## `BSplineSpace`

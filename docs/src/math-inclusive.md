@@ -4,7 +4,7 @@
 using BasicBSpline
 using BasicBSplineExporter
 using StaticArrays
-using Plots
+using Plots; plotly()
 ```
 
 !!! info "Thm.  Inclusive relation between B-spline spaces"

@@ -4,7 +4,7 @@
 using BasicBSpline
 using BasicBSplineExporter
 using StaticArrays
-using Plots
+using Plots; plotly()
 ```
 
 ## Basic properties of B-spline basis function
