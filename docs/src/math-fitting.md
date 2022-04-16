@@ -4,7 +4,7 @@
 using BasicBSpline
 using BasicBSplineExporter
 using StaticArrays
-using Plots
+using Plots; plotly()
 ```
 
 Fitting with least squares method.

@@ -17,6 +17,20 @@ Right-sided limit version.
 \end{cases}
 \end{aligned}
 ```
+
+# Examples
+```jldoctest
+julia> P = BSplineSpace{0}(KnotVector(1:6))
+BSplineSpace{0, Float64}(KnotVector([1.0, 2.0, 3.0, 4.0, 5.0, 6.0]))
+
+julia> bsplinebasis₊₀.(P,1:5,(1:6)')
+5×6 Matrix{Float64}:
+ 1.0  0.0  0.0  0.0  0.0  0.0
+ 0.0  1.0  0.0  0.0  0.0  0.0
+ 0.0  0.0  1.0  0.0  0.0  0.0
+ 0.0  0.0  0.0  1.0  0.0  0.0
+ 0.0  0.0  0.0  0.0  1.0  0.0
+```
 """
 @generated function bsplinebasis₊₀(P::AbstractBSplineSpace{p,T}, i::Integer, t::S) where {p, T, S<:Real}
     U = StaticArrays.arithmetic_closure(promote_type(T,S))
@@ -60,6 +74,20 @@ Left-sided limit version.
     &0\quad (\text{otherwise})
 \end{cases}
 \end{aligned}
+```
+
+# Examples
+```jldoctest
+julia> P = BSplineSpace{0}(KnotVector(1:6))
+BSplineSpace{0, Float64}(KnotVector([1.0, 2.0, 3.0, 4.0, 5.0, 6.0]))
+
+julia> bsplinebasis₋₀.(P,1:5,(1:6)')
+5×6 Matrix{Float64}:
+ 0.0  1.0  0.0  0.0  0.0  0.0
+ 0.0  0.0  1.0  0.0  0.0  0.0
+ 0.0  0.0  0.0  1.0  0.0  0.0
+ 0.0  0.0  0.0  0.0  1.0  0.0
+ 0.0  0.0  0.0  0.0  0.0  1.0
 ```
 """
 @generated function bsplinebasis₋₀(P::AbstractBSplineSpace{p,T}, i::Integer, t::S) where {p, T, S<:Real}
@@ -105,6 +133,20 @@ Modified version.
     &0\quad (\text{otherwise})
 \end{cases}
 \end{aligned}
+```
+
+# Examples
+```jldoctest
+julia> P = BSplineSpace{0}(KnotVector(1:6))
+BSplineSpace{0, Float64}(KnotVector([1.0, 2.0, 3.0, 4.0, 5.0, 6.0]))
+
+julia> bsplinebasis.(P,1:5,(1:6)')
+5×6 Matrix{Float64}:
+ 1.0  0.0  0.0  0.0  0.0  0.0
+ 0.0  1.0  0.0  0.0  0.0  0.0
+ 0.0  0.0  1.0  0.0  0.0  0.0
+ 0.0  0.0  0.0  1.0  0.0  0.0
+ 0.0  0.0  0.0  0.0  1.0  1.0
 ```
 """
 @generated function bsplinebasis(P::AbstractBSplineSpace{p,T}, i::Integer, t::S) where {p, T, S<:Real}

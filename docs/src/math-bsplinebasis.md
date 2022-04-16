@@ -4,7 +4,7 @@
 using BasicBSpline
 using BasicBSplineExporter
 using StaticArrays
-using Plots
+using Plots; plotly()
 ```
 
 ## Basic properties of B-spline basis function
@@ -33,7 +33,6 @@ using Plots
 
 
 ```@repl math
-using Plots; plotly()
 p = 2
 k = KnotVector(1:8)
 P = BSplineSpace{p}(k)
@@ -59,7 +58,6 @@ You can choose the first terms in different ways.
 ```
 
 ```@repl math
-using Plots; plotly()
 p = 2
 k = KnotVector(1:8)
 P = BSplineSpace{p}(k)
@@ -90,6 +88,10 @@ P = BSplineSpace{p}(k)
 bsplinesupport(P,i) # 12..14
 ```
 
+```@docs
+bsplinesupport
+```
+
 ## Partition of unity
 !!! info "Thm.  Partition of unity"
     ```math
@@ -100,7 +102,6 @@ bsplinesupport(P,i) # 12..14
     ```
 
 ```@repl math
-using Plots; plotly()
 p = 2
 k = KnotVector(1:8)
 P = BSplineSpace{p}(k)
@@ -115,7 +116,6 @@ savefig("sumofbsplineplot.html") # hide
 To satisfy the partition of unity on whole interval ``[1,8]``, sometimes more knots will be inserted to the endpoints of the interval.
 
 ```@repl math
-using Plots; plotly()
 p = 2
 k = KnotVector(1:8) + p * KnotVector([1,8])
 P = BSplineSpace{p}(k)
@@ -143,7 +143,6 @@ Therefore, to satisfy partition of unity on closed interval ``[k_{p+1}, k_{l-p}]
 ```
 
 ```@repl math
-using Plots; plotly()
 p = 2
 k = KnotVector(1:8) + p * KnotVector([1,8])
 P = BSplineSpace{p}(k)
@@ -167,9 +166,7 @@ bsplinebasis₋₀
 bsplinebasis
 ```
 
-```@docs
-bsplinesupport
-```
+## B-spline basis functions at specific point
 
 ```@docs
 intervalindex
@@ -181,9 +178,8 @@ bsplinebasisall
 
 The next figures illustlates the relation between `domain(P)`, `intervalindex(P,t)` and `bsplinebasisall(P,i,t)`.
 
-```@example
+```@example math
 using BasicBSpline
-using Plots; plotly()
 
 k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 
@@ -208,4 +204,31 @@ end
 
 ```@raw html
 <object type="text/html" data="../bsplinebasisall-3.html" style="width:100%;height:420px;"></object>
+```
+
+## Uniform B-spline basis and uniform distribution
+
+Let ``X_1, \dots, X_n`` be random variables with ``X_i \sim U(0,1)``, then the probability density function of ``X_1+\cdots+X_n`` can be obtained via `BasicBSpline.uniform_bsplinebasis_kernel(Val(n-1),t)`.
+
+```@example math
+N = 100000
+# polynomial degree 0
+plot1 = histogram([rand() for _ in 1:N], normalize=true, label=false)
+plot!(t->BasicBSpline.uniform_bsplinebasis_kernel(Val(0),t), label=false)
+# polynomial degree 1
+plot2 = histogram([rand()+rand() for _ in 1:N], normalize=true, label=false)
+plot!(t->BasicBSpline.uniform_bsplinebasis_kernel(Val(1),t), label=false)
+# polynomial degree 2
+plot3 = histogram([rand()+rand()+rand() for _ in 1:N], normalize=true, label=false)
+plot!(t->BasicBSpline.uniform_bsplinebasis_kernel(Val(2),t), label=false)
+# polynomial degree 3
+plot4 = histogram([rand()+rand()+rand()+rand() for _ in 1:N], normalize=true, label=false)
+plot!(t->BasicBSpline.uniform_bsplinebasis_kernel(Val(3),t), label=false)
+# plot all
+plot(plot1,plot2,plot3,plot4)
+savefig("histogram-uniform.html") # hide
+```
+
+```@raw html
+<object type="text/html" data="../histogram-uniform.html" style="width:100%;height:420px;"></object>
 ```
