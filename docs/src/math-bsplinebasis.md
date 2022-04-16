@@ -88,6 +88,10 @@ P = BSplineSpace{p}(k)
 bsplinesupport(P,i) # 12..14
 ```
 
+```@docs
+bsplinesupport
+```
+
 ## Partition of unity
 !!! info "Thm.  Partition of unity"
     ```math
@@ -162,9 +166,7 @@ bsplinebasis₋₀
 bsplinebasis
 ```
 
-```@docs
-bsplinesupport
-```
+## B-spline basis functions at specific point
 
 ```@docs
 intervalindex
@@ -176,7 +178,7 @@ bsplinebasisall
 
 The next figures illustlates the relation between `domain(P)`, `intervalindex(P,t)` and `bsplinebasisall(P,i,t)`.
 
-```@example
+```@example math
 using BasicBSpline
 
 k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
