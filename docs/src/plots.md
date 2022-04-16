@@ -13,7 +13,6 @@ using Plots; plotly()
 ## `BSplineSpace`
 
 ```@example plots
-using Plots; plotly()
 k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 P0 = BSplineSpace{0}(k) # 0th degree piecewise polynomial space
 P1 = BSplineSpace{1}(k) # 1st degree piecewise polynomial space
@@ -33,7 +32,6 @@ savefig("plots-bsplinebasis-raw.html") # hide
 ```
 
 ```@example plots
-using Plots; plotly()
 k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 P0 = BSplineSpace{0}(k) # 0th degree piecewise polynomial space
 P1 = BSplineSpace{1}(k) # 1st degree piecewise polynomial space
@@ -56,7 +54,6 @@ savefig("plots-bsplinebasis.html") # hide
 ## `BSplineDerivativeSpace`
 
 ```@example plots
-using Plots; plotly()
 k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 P = BSplineSpace{3}(k)
 plot(
@@ -76,7 +73,6 @@ savefig("plots-bsplinebasisderivative.html") # hide
 
 ### Cardioid (planar curve)
 ```@example plots
-using Plots; plotly()
 f(t) = SVector((1+cos(t))*cos(t),(1+cos(t))*sin(t))
 p = 3
 k = KnotVector(range(0,2π,15)) + p * KnotVector(0,2π) + 2 * KnotVector(π)
@@ -94,7 +90,6 @@ savefig("plots-cardioid.html") # hide
 
 ### Helix (spatial curve)
 ```@example plots
-using Plots; plotly()
 f(t) = SVector(cos(t),sin(t),t)
 p = 3
 k = KnotVector(range(0,6π,15)) + p * KnotVector(0,6π)
@@ -113,7 +108,6 @@ savefig("plots-helix.html") # hide
 ### B-spline surface
 
 ```@example plots
-using Plots; plotly()
 p1 = 2
 p2 = 3
 k1 = KnotVector(1:10)
@@ -135,7 +129,6 @@ savefig("plots-surface.html") # hide
 ## `RationalBSplineManifold`
 
 ```@example plots
-using Plots; plotly()
 k = KnotVector([0,0,0,1,1,1])
 P = BSplineSpace{2}(k)
 a = [SVector(1,0),SVector(1,1),SVector(0,1)]

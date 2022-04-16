@@ -33,7 +33,6 @@ using Plots; plotly()
 
 
 ```@repl math
-using Plots; plotly()
 p = 2
 k = KnotVector(1:8)
 P = BSplineSpace{p}(k)
@@ -59,7 +58,6 @@ You can choose the first terms in different ways.
 ```
 
 ```@repl math
-using Plots; plotly()
 p = 2
 k = KnotVector(1:8)
 P = BSplineSpace{p}(k)
@@ -100,7 +98,6 @@ bsplinesupport(P,i) # 12..14
     ```
 
 ```@repl math
-using Plots; plotly()
 p = 2
 k = KnotVector(1:8)
 P = BSplineSpace{p}(k)
@@ -115,7 +112,6 @@ savefig("sumofbsplineplot.html") # hide
 To satisfy the partition of unity on whole interval ``[1,8]``, sometimes more knots will be inserted to the endpoints of the interval.
 
 ```@repl math
-using Plots; plotly()
 p = 2
 k = KnotVector(1:8) + p * KnotVector([1,8])
 P = BSplineSpace{p}(k)
@@ -143,7 +139,6 @@ Therefore, to satisfy partition of unity on closed interval ``[k_{p+1}, k_{l-p}]
 ```
 
 ```@repl math
-using Plots; plotly()
 p = 2
 k = KnotVector(1:8) + p * KnotVector([1,8])
 P = BSplineSpace{p}(k)
@@ -183,7 +178,6 @@ The next figures illustlates the relation between `domain(P)`, `intervalindex(P,
 
 ```@example
 using BasicBSpline
-using Plots; plotly()
 
 k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 
