@@ -352,10 +352,15 @@ for (fname_fit, fname_inner) in ((:fittingcontrolpoints_I, :innerproduct_I), (:f
     end
 end
 
-function fittingcontrolpoints(func, P::Tuple; domain=:I)
-    if domain == :I
+function fittingcontrolpoints(func, P::Tuple; domain=nothing)
+    if isnothing(domain)
+        # Default is on I
+        fittingcontrolpoints_I(func,P)
+    elseif domain == :I
+        Base.depwarn("This method with `domain` keyward argument is deprecated. Please use `fittingcontrolpoints_I` instead.", :fittingcontrolpoints)
         fittingcontrolpoints_I(func,P)
     elseif domain == :R
+        Base.depwarn("This method with `domain` keyward argument is deprecated. Please use `fittingcontrolpoints_R` instead.", :fittingcontrolpoints)
         fittingcontrolpoints_R(func,P)
     end
 end
