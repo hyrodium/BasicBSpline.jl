@@ -321,56 +321,46 @@ function innerproduct_R(P::UniformBSplineSpace{p,T}) where {p,T}
     return Symmetric(A)
 end
 
-
-"""
-* func: Real -> ℝ-vector space
-"""
-function fittingcontrolpoints(func, P::Tuple{<:AbstractBSplineSpace{p1}}; domain=:I) where {p1}
-    P1, = P
-    if domain == :I
-        b = innerproduct_I(func, P)
-        A = innerproduct_I(P1)
-    elseif domain == :R
-        b = innerproduct_R(func, P)
-        A = innerproduct_R(P1)
+for (fname_fit, fname_inner) in ((:fittingcontrolpoints_I, :innerproduct_I), (:fittingcontrolpoints_R, :innerproduct_R))
+    @eval function $fname_fit(func, P::Tuple{<:AbstractBSplineSpace{p1}}) where {p1}
+        P1, = P
+        b = $fname_inner(func, P)
+        A = $fname_inner(P1)
+        return _leftdivision(A, b)
     end
-    return _leftdivision(A, b)
+
+    @eval function $fname_fit(func, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}}) where {p1,p2}
+        P1, P2 = P
+        n1, n2 = dim.(P)
+        A1, A2 = $fname_inner(P1), $fname_inner(P2)
+        b = $fname_inner(func, P)
+        A = [A1[i1, j1] * A2[i2, j2] for i1 in 1:n1, i2 in 1:n2, j1 in 1:n1, j2 in 1:n2]
+        _A = reshape(A, n1 * n2, n1 * n2)
+        _b = reshape(b, n1 * n2)
+        return reshape(_leftdivision(_A, _b), n1, n2)
+    end
+
+    @eval function $fname_fit(func, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}, <:AbstractBSplineSpace{p3}}) where {p1,p2,p3}
+        P1, P2, P3 = P
+        n1, n2, n3 = dim(P1), dim(P2), dim(P3)
+        A1, A2, A3 = $fname_inner(P1), $fname_inner(P2), $fname_inner(P3)
+        b = $fname_inner(func, P)
+        A = [A1[i1, j1] * A2[i2, j2] * A3[i3, j3] for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3, j1 in 1:n1, j2 in 1:n2, j3 in 1:n3]
+        _A = reshape(A, n1 * n2 * n3, n1 * n2 * n3)
+        _b = reshape(b, n1 * n2 * n3)
+        return reshape(_leftdivision(_A, _b), n1, n2, n3)
+    end
 end
 
-"""
-* func: (Real,Real) -> ℝ-vector space
-"""
-function fittingcontrolpoints(func, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}}; domain=:I) where {p1,p2}
-    P1, P2 = P
-    n1, n2 = dim.(P)
-    if domain == :I
-        A1, A2 = innerproduct_I(P1), innerproduct_I(P2)
-        b = innerproduct_I(func, P)
+function fittingcontrolpoints(func, P::Tuple; domain=nothing)
+    if isnothing(domain)
+        # Default is on I
+        fittingcontrolpoints_I(func,P)
+    elseif domain == :I
+        Base.depwarn("This method with `domain` keyward argument is deprecated. Please use `fittingcontrolpoints_I` instead.", :fittingcontrolpoints)
+        fittingcontrolpoints_I(func,P)
     elseif domain == :R
-        A1, A2 = innerproduct_R(P1), innerproduct_R(P2)
-        b = innerproduct_R(func, P)
+        Base.depwarn("This method with `domain` keyward argument is deprecated. Please use `fittingcontrolpoints_R` instead.", :fittingcontrolpoints)
+        fittingcontrolpoints_R(func,P)
     end
-    A = [A1[i1, j1] * A2[i2, j2] for i1 in 1:n1, i2 in 1:n2, j1 in 1:n1, j2 in 1:n2]
-    _A = reshape(A, n1 * n2, n1 * n2)
-    _b = reshape(b, n1 * n2)
-    return reshape(_leftdivision(_A, _b), n1, n2)
-end
-
-"""
-* func: (Real,Real,Real) -> ℝ-vector space
-"""
-function fittingcontrolpoints(func, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}, <:AbstractBSplineSpace{p3}}; domain=:I) where {p1,p2,p3}
-    P1, P2, P3 = P
-    n1, n2, n3 = dim(P1), dim(P2), dim(P3)
-    if domain == :I
-        A1, A2, A3 = innerproduct_I(P1), innerproduct_I(P2), innerproduct_I(P3)
-        b = innerproduct_I(func, P)
-    elseif domain == :R
-        A1, A2, A3 = innerproduct_R(P1), innerproduct_R(P2), innerproduct_R(P3)
-        b = innerproduct_R(func, P)
-    end
-    A = [A1[i1, j1] * A2[i2, j2] * A3[i3, j3] for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3, j1 in 1:n1, j2 in 1:n2, j3 in 1:n3]
-    _A = reshape(A, n1 * n2 * n3, n1 * n2 * n3)
-    _b = reshape(b, n1 * n2 * n3)
-    return reshape(_leftdivision(_A, _b), n1, n2, n3)
 end
