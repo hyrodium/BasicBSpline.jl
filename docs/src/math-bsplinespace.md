@@ -56,6 +56,10 @@ BSplineSpace{p}(k)
 ```
 
 ```@docs
+AbstractBSplineSpace
+```
+
+```@docs
 BSplineSpace
 ```
 
