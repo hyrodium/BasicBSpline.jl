@@ -13,8 +13,7 @@ Fitting with least squares method.
 fittingcontrolpoints
 ```
 
-[Try on Desmos graphing graphing calculator!](https://www.desmos.com/calculator/2hm3b1fbdf)
-```@repl math
+```@example math
 p1 = 2
 p2 = 2
 k1 = KnotVector(-10:10)+p1*KnotVector(-10,10)
@@ -28,5 +27,7 @@ a = fittingcontrolpoints(f, (P1, P2))
 M = BSplineManifold(a, (P1, P2))
 save_png("fitting.png", M, unitlength=50, xlims=(-10,10), ylims=(-10,10))
 ```
-![](img/fitting_desmos.png)
 ![](fitting.png)
+
+[Try on Desmos graphing graphing calculator!](https://www.desmos.com/calculator/2hm3b1fbdf)
+![](img/fitting_desmos.png)
