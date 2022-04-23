@@ -177,11 +177,14 @@ This is useful when you edit graphs (or curves) with your favorite vector graphi
 If you use BasicBSpline.jl in your work, please consider citing it by
 
 ```bibtex
-@misc{hyrodium:2020:BasicBSpline,
-  title={BasicBSpline.jl: Basic operations for B-spline functions and related things with julia},
-  author={Yuto Horikawa},
-  year={2020},
-  howpublished={\url{https://hyrodium.github.io/BasicBSpline.jl/stable/}},
-  doi={10.5281/zenodo.4356869}
+@software{yuto_horikawa_2022_6465801,
+  author       = {Yuto Horikawa},
+  title        = {hyrodium/BasicBSpline.jl: v0.5.6},
+  month        = apr,
+  year         = 2022,
+  publisher    = {Zenodo},
+  version      = {v0.5.6},
+  doi          = {10.5281/zenodo.6465801},
+  url          = {https://doi.org/10.5281/zenodo.6465801}
 }
 ```
