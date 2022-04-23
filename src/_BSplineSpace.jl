@@ -1,6 +1,18 @@
 # B-spline space
 
 abstract type AbstractFunctionSpace{T} end
+@doc raw"""
+Abstract type for B-spline space (piecewise polynomial space).
+
+# Examples
+```jldoctest
+julia> BSplineSpace <: AbstractBSplineSpace
+true
+
+julia> UniformBSplineSpace <: AbstractBSplineSpace
+true
+```
+"""
 abstract type AbstractBSplineSpace{p,T} <: AbstractFunctionSpace{T} end
 
 # Broadcast like a scalar
