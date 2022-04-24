@@ -202,6 +202,18 @@ isdegenerate(P::AbstractBSplineSpace) = isdegenerate_R(P)
 isnondegenerate(P::AbstractBSplineSpace, i::Integer) = isnondegenerate_R(P, i)
 isnondegenerate(P::AbstractBSplineSpace) = isnondegenerate_R(P)
 
+"""
+Exact dimension of a B-spline space.
+
+# Examples
+```jldoctest
+julia> exactdim(BSplineSpace{1}(KnotVector([1,2,3,4,5])))
+3
+
+julia> exactdim(BSplineSpace{1}(KnotVector([1,2,2,2,4])))
+2
+```
+"""
 function exactdim(P::AbstractBSplineSpace)
     n = dim(P)
     for i in 1:dim(P)
