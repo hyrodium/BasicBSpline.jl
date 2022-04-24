@@ -65,7 +65,7 @@ jobs:
           julia --project=docs -e '
             using Documenter
             using BasicBSpline
-            DocMeta.setdocmeta!(BasicBSpline, :DocTestSetup, :(using LinearAlgebra, BasicBSpline))
+            DocMeta.setdocmeta!(BasicBSpline, :DocTestSetup, :(using LinearAlgebra, BasicBSpline, StaticArrays))
             doctest(BasicBSpline)'
       - run: julia --project=docs docs/make.jl
         env:
