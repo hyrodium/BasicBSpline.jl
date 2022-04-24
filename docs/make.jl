@@ -4,7 +4,7 @@ gr()
 plotly()
 
 # Setup for doctests in docstrings
-DocMeta.setdocmeta!(BasicBSpline, :DocTestSetup, :(using LinearAlgebra, BasicBSpline))
+DocMeta.setdocmeta!(BasicBSpline, :DocTestSetup, :(using LinearAlgebra, BasicBSpline, StaticArrays))
 
 function generate_indexmd_from_readmemd()
     path_readme = "README.md"
