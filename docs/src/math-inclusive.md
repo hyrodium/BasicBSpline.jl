@@ -15,8 +15,6 @@ using Plots; plotly()
     \Leftrightarrow (m=p'-p \ge 0 \ \text{and} \ k+m\widehat{k}\subseteq k')
     ```
 
-(as linear subspace..)
-
 ```@repl math
 P1 = BSplineSpace{1}(KnotVector([1,3,5,8]))
 P2 = BSplineSpace{1}(KnotVector([1,3,5,6,8,9]))

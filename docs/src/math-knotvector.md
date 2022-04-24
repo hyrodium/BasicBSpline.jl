@@ -1,5 +1,6 @@
-## Knot vector
+# Knot vector
 
+## Definition
 ```@setup math
 using BasicBSpline
 using BasicBSplineExporter
@@ -24,6 +25,12 @@ KnotVector
 ```@docs
 KnotVector(knot::Real)
 ```
+
+```@docs
+UniformKnotVector
+```
+
+## Operations for knot vectors
 
 ```@docs
 length(k::KnotVector)
@@ -55,8 +62,4 @@ unique(k::KnotVector)
 
 ```@docs
 countknots(k::AbstractKnotVector, t::Real)
-```
-
-```@docs
-UniformKnotVector
 ```
