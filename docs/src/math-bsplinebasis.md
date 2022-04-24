@@ -34,9 +34,9 @@ using Plots; plotly()
 
 ```@repl math
 p = 2
-k = KnotVector(1:8)
+k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 P = BSplineSpace{p}(k)
-plot([t->bsplinebasis₊₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(0,1), label=false)
+plot([t->bsplinebasis₊₀(P,i,t) for i in 1:dim(P)], 0, 10, ylims=(0,1), label=false)
 savefig("bsplinebasisplot.html") # hide
 ```
 
@@ -59,9 +59,9 @@ You can choose the first terms in different ways.
 
 ```@repl math
 p = 2
-k = KnotVector(1:8)
+k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 P = BSplineSpace{p}(k)
-plot([t->bsplinebasis₋₀(P,i,t) for i in 1:dim(P)], 1, 8, ylims=(0,1), label=false)
+plot([t->bsplinebasis₋₀(P,i,t) for i in 1:dim(P)], 0, 10, ylims=(0,1), label=false)
 savefig("bsplinebasisplot2.html") # hide
 ```
 
@@ -103,9 +103,9 @@ bsplinesupport
 
 ```@repl math
 p = 2
-k = KnotVector(1:8)
+k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 P = BSplineSpace{p}(k)
-plot(t->sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.1), label=false)
+plot(t->sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 0, 10, ylims=(0,1.1), label=false)
 savefig("sumofbsplineplot.html") # hide
 ```
 
@@ -117,9 +117,9 @@ To satisfy the partition of unity on whole interval ``[1,8]``, sometimes more kn
 
 ```@repl math
 p = 2
-k = KnotVector(1:8) + p * KnotVector([1,8])
+k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]) + p * KnotVector([0,10])
 P = BSplineSpace{p}(k)
-plot(t->sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.1), label=false)
+plot(t->sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 0, 10, ylims=(0,1.1), label=false)
 savefig("sumofbsplineplot2.html") # hide
 ```
 
@@ -144,9 +144,9 @@ Therefore, to satisfy partition of unity on closed interval ``[k_{p+1}, k_{l-p}]
 
 ```@repl math
 p = 2
-k = KnotVector(1:8) + p * KnotVector([1,8])
+k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]) + p * KnotVector([0,10])
 P = BSplineSpace{p}(k)
-plot(t->sum(bsplinebasis(P,i,t) for i in 1:dim(P)), 1, 8, ylims=(0,1.1), label=false)
+plot(t->sum(bsplinebasis(P,i,t) for i in 1:dim(P)), 0, 10, ylims=(0,1.1), label=false)
 savefig("sumofbsplineplot3.html") # hide
 ```
 

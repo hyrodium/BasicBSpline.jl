@@ -196,7 +196,7 @@ julia> i = intervalindex(P,t)
 2
 
 julia> bsplinebasisall(P,i,t)
-3-element StaticArrays.SVector{3, Float64} with indices SOneTo(3):
+3-element SVector{3, Float64} with indices SOneTo(3):
  0.3847272727272727
  0.6107012987012989
  0.00457142857142858

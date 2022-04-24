@@ -10,6 +10,6 @@ using BasicBSpline
 using Plots; plotly()
 ```
 
-### Notice
+## Notice
 * A book ["Geometric Modeling with Splines"](https://www.routledge.com/p/book/9780367447243) by Elaine Cohen, Richard F. Riesenfeld, Gershon Elber is really recommended.
 * **Some of notations in this page are our original**, but these are well-considered results.

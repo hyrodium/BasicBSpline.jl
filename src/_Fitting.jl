@@ -352,6 +352,44 @@ for (fname_fit, fname_inner) in ((:fittingcontrolpoints_I, :innerproduct_I), (:f
     end
 end
 
+@doc raw"""
+Fitting controlpoints with least squares method.
+
+    fittingcontrolpoints(func, Ps::Tuple)
+
+This function will calculate ``\bm{a}_i`` to minimize the following integral.
+```math
+\int_I \left\|f(t)-\sum_i B_{(i,p,k)}(t) \bm{a}_i\right\| dt
+```
+Similarly, for the two-dimensional case, minimize the following integral.
+```math
+\int_I \left\|f(t^1, t^2)-\sum_{i,j} B_{(i,p^1,k^1)}(t^1)B_{(j,p^2,k^2)}(t^2) \bm{a}_{ij}\right\| dt^1dt^2
+```
+This function currently supports up to three dimensions.
+
+# Examples
+```jldoctest
+julia> f(t) = SVector(cos(t),sin(t),t);
+
+julia> P = BSplineSpace{3}(KnotVector(range(0,2π,30)) + 3*KnotVector([0,2π]));
+
+julia> a = fittingcontrolpoints(f, (P,));
+
+julia> M = BSplineManifold(a,(P,));
+
+julia> M(1)
+3-element SVector{3, Float64} with indices SOneTo(3):
+ 0.5403009911614278
+ 0.8414693485307193
+ 1.0
+
+julia> f(1)
+3-element SVector{3, Float64} with indices SOneTo(3):
+ 0.5403023058681398
+ 0.8414709848078965
+ 1.0
+```
+"""
 function fittingcontrolpoints(func, P::Tuple; domain=nothing)
     if isnothing(domain)
         # Default is on I
