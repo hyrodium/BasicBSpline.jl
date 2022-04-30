@@ -11,10 +11,10 @@ k=(k_1,\dots,k_l)
 # Examples
 ```jldoctest
 julia> k = KnotVector([1,2,3])
-KnotVector([1.0, 2.0, 3.0])
+KnotVector([1, 2, 3])
 
 julia> k = KnotVector(1:3)
-KnotVector([1.0, 2.0, 3.0])
+KnotVector([1, 2, 3])
 ```
 """
 struct KnotVector{T} <: AbstractKnotVector{T}
@@ -22,7 +22,7 @@ struct KnotVector{T} <: AbstractKnotVector{T}
     global unsafe_knotvector(::Type{T}, v) where T = new{T}(v)
 end
 KnotVector{T}(v::AbstractVector) where T = unsafe_knotvector(T,sort(v))
-KnotVector(v::AbstractVector{T}) where {T<:Real} = unsafe_knotvector(float(T),sort(v))
+KnotVector(v::AbstractVector{T}) where {T<:Real} = unsafe_knotvector(T,sort(v))
 
 KnotVector(k::KnotVector) = k
 KnotVector(k::AbstractKnotVector{T}) where T = unsafe_knotvector(T,_vec(k))
