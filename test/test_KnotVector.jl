@@ -20,8 +20,10 @@
     end
 
     @testset "eltype" begin
-        @test eltype(KnotVector([1,2,3])) == Float64
+        @test eltype(KnotVector([1,2,3])) == Int
         @test eltype(KnotVector{Int}([1,2,3])) == Int
+        @test eltype(KnotVector{Real}([1,2,3])) == Real
+        @test eltype(KnotVector{Float64}([1,2,3])) == Float64
         @test eltype(KnotVector{BigInt}([1,2,3])) == BigInt
         @test eltype(KnotVector{Rational{Int}}([1,2,3])) == Rational{Int}
     end
@@ -43,8 +45,8 @@
         end
         @test k1[1] == 1
         @test k2[end] == 3
-        @test collect(k2) isa Vector{Float64}
-        @test [k2...] isa Vector{Float64}
+        @test collect(k2) isa Vector{Int}
+        @test [k2...] isa Vector{Int}
         @test collect(k2) == [k2...]
         @test collect(k2) != k2
     end
