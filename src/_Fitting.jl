@@ -377,17 +377,8 @@ julia> a = fittingcontrolpoints(f, (P,));
 
 julia> M = BSplineManifold(a,(P,));
 
-julia> M(1)
-3-element SVector{3, Float64} with indices SOneTo(3):
- 0.5403009911614278
- 0.8414693485307193
- 1.0
-
-julia> f(1)
-3-element SVector{3, Float64} with indices SOneTo(3):
- 0.5403023058681398
- 0.8414709848078965
- 1.0
+julia> norm(M(1) - f(1)) < 1e-5
+true
 ```
 """
 function fittingcontrolpoints(func, P::Tuple; domain=nothing)
