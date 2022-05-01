@@ -79,7 +79,7 @@ end
 @doc raw"""
 Refinement of B-spline manifold with additional degree and knotvector.
 """
-function refinement(M::AbstractManifold{Dim}; p₊::Union{Nothing,NTuple{Dim,Int}}=nothing, k₊::Union{Nothing,NTuple{Dim,KnotVector{T}}}=nothing) where {Dim, T}
+function refinement(M::AbstractManifold{Dim}; p₊::Union{Nothing,NTuple{Dim,Int}}=nothing, k₊::Union{Nothing,NTuple{Dim,KnotVector{T} where T}}=nothing) where Dim
     Ps = bsplinespaces(M)
     if isnothing(p₊) & isnothing(k₊)
         Ps′ = Ps

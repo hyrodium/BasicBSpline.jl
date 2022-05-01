@@ -47,7 +47,7 @@ KnotVector([])
 ```
 """
 function KnotVector(knots::Real...)
-    return KnotVector(collect(knots))
+    return KnotVector(collect(promote(knots...)))
 end
 function KnotVector{T}(knots::Real...) where T<:Real
     return unsafe_knotvector(T, sort!(collect(knots)))
