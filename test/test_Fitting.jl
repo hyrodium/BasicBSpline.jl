@@ -16,11 +16,9 @@
 
         a_fit = fittingcontrolpoints_I(f, (P,))
         @test a_fit == fittingcontrolpoints(f, (P,))
-        @test a_fit == fittingcontrolpoints(f, (P,), domain=:I)
         @test norm(a_fit - a_org) < ε
 
         a_fit = fittingcontrolpoints_R(f, (P,))
-        @test a_fit == fittingcontrolpoints(f, (P,), domain=:R)
         @test norm(a_fit - a_org) < ε
     end
 
@@ -43,7 +41,6 @@
         @test norm(a_fit - a_ref) < ε
 
         a_fit = fittingcontrolpoints_R(M, (P1′,))
-        @test a_fit == fittingcontrolpoints(M, (P1′,), domain=:R)
         @test norm(a_fit - a_ref) < ε
     end
 
@@ -91,7 +88,6 @@
         @test norm(a_fit - a_ref) < ε
 
         a_fit = fittingcontrolpoints_R(M, (P1′, P2′))
-        @test a_fit == fittingcontrolpoints(M, (P1′, P2′), domain=:R)
         @test norm(a_fit - a_ref) < ε
     end
 
@@ -148,7 +144,6 @@
         @test norm(a_fit - a_ref) < ε
 
         a_fit = fittingcontrolpoints_R(M, (P1′, P2′, P3′))
-        @test a_fit == fittingcontrolpoints(M, (P1′, P2′, P3′), domain=:R)
         @test norm(a_fit - a_ref) < ε
     end
 

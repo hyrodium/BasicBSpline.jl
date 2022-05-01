@@ -127,4 +127,3 @@ end
 end
 
 # TODO add mappings higher dimensionnal B-spline manifold with @generated macro
-Base.@deprecate_binding CustomBSplineManifold BSplineManifold true

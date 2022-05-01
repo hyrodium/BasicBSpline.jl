@@ -260,5 +260,3 @@ function countknots(k::AbstractKnotVector, t::Real)
     # for large case, this is faster
     return length(searchsorted(k,t))
 end
-
-@deprecate 𝔫 countknots
