@@ -40,7 +40,7 @@ Construct knot vector from given real numbers.
 # Examples
 ```jldoctest
 julia> k = KnotVector(1,2,3)
-KnotVector([1.0, 2.0, 3.0])
+KnotVector([1, 2, 3])
 
 julia> k = KnotVector()
 KnotVector([])
@@ -102,7 +102,7 @@ julia> k1 = KnotVector(1,2,3,5);
 julia> k2 = KnotVector(4,5,8);
 
 julia> k1 + k2
-KnotVector([1.0, 2.0, 3.0, 4.0, 5.0, 5.0, 8.0])
+KnotVector([1, 2, 3, 4, 5, 5, 8])
 ```
 """
 Base.:+(k1::KnotVector{T}, k2::KnotVector{T}) where T = unsafe_knotvector(T,sort!(vcat(k1.vector,k2.vector)))
@@ -124,7 +124,7 @@ For example, ``2\cdot (1,2,2,5)=(1,1,2,2,2,2,5,5)``.
 julia> k = KnotVector(1,2,2,5);
 
 julia> 2 * k
-KnotVector([1.0, 1.0, 2.0, 2.0, 2.0, 2.0, 5.0, 5.0])
+KnotVector([1, 1, 2, 2, 2, 2, 5, 5])
 ```
 """
 function Base.:*(m::Integer, k::AbstractKnotVector)
@@ -184,7 +184,7 @@ For example, ``\widehat{(1,2,2,3)}=(1,2,3)``.
 julia> k = KnotVector([1,2,2,3]);
 
 julia> unique(k)
-KnotVector([1.0, 2.0, 3.0])
+KnotVector([1, 2, 3])
 ```
 """
 Base.unique(k::KnotVector) = KnotVector(unique(k.vector))

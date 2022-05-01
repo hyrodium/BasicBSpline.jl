@@ -34,10 +34,10 @@ julia> p = 2
 2
 
 julia> k = KnotVector([1,3,5,6,8,9])
-KnotVector([1.0, 3.0, 5.0, 6.0, 8.0, 9.0])
+KnotVector([1, 3, 5, 6, 8, 9])
 
 julia> BSplineSpace{p}(k)
-BSplineSpace{2, Float64}(KnotVector([1.0, 3.0, 5.0, 6.0, 8.0, 9.0]))
+BSplineSpace{2, Int64}(KnotVector([1, 3, 5, 6, 8, 9]))
 ```
 """
 struct BSplineSpace{p, T<:Real} <: AbstractBSplineSpace{p,T}
