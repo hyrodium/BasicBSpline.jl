@@ -22,7 +22,10 @@ struct KnotVector{T} <: AbstractKnotVector{T}
     global unsafe_knotvector(::Type{T}, v) where T = new{T}(v)
 end
 KnotVector{T}(v::AbstractVector) where T = unsafe_knotvector(T,sort(v))
-KnotVector(v::AbstractVector{T}) where {T<:Real} = unsafe_knotvector(float(T),sort(v))
+function KnotVector(v::AbstractVector{T}) where {T<:Real}
+    Base.depwarn("KnotVector([1, 2]) will not be converted to KnotVector([1.0, 2.0]) in the next breaking release", :KnotVector)
+    unsafe_knotvector(float(T),sort(v))
+end
 
 KnotVector(k::KnotVector) = k
 KnotVector(k::AbstractKnotVector{T}) where T = unsafe_knotvector(T,_vec(k))
