@@ -11,10 +11,10 @@ k=(k_1,\dots,k_l)
 # Examples
 ```jldoctest
 julia> k = KnotVector([1,2,3])
-KnotVector([1.0, 2.0, 3.0])
+KnotVector([1, 2, 3])
 
 julia> k = KnotVector(1:3)
-KnotVector([1.0, 2.0, 3.0])
+KnotVector([1, 2, 3])
 ```
 """
 struct KnotVector{T} <: AbstractKnotVector{T}
@@ -22,10 +22,7 @@ struct KnotVector{T} <: AbstractKnotVector{T}
     global unsafe_knotvector(::Type{T}, v) where T = new{T}(v)
 end
 KnotVector{T}(v::AbstractVector) where T = unsafe_knotvector(T,sort(v))
-function KnotVector(v::AbstractVector{T}) where {T<:Real}
-    Base.depwarn("KnotVector([1, 2]) will not be converted to KnotVector([1.0, 2.0]) in the next breaking release", :KnotVector)
-    unsafe_knotvector(float(T),sort(v))
-end
+KnotVector(v::AbstractVector{T}) where {T<:Real} = unsafe_knotvector(T,sort(v))
 
 KnotVector(k::KnotVector) = k
 KnotVector(k::AbstractKnotVector{T}) where T = unsafe_knotvector(T,_vec(k))
@@ -43,14 +40,14 @@ Construct knot vector from given real numbers.
 # Examples
 ```jldoctest
 julia> k = KnotVector(1,2,3)
-KnotVector([1.0, 2.0, 3.0])
+KnotVector([1, 2, 3])
 
 julia> k = KnotVector()
 KnotVector([])
 ```
 """
 function KnotVector(knots::Real...)
-    return KnotVector(collect(knots))
+    return KnotVector(collect(promote(knots...)))
 end
 function KnotVector{T}(knots::Real...) where T<:Real
     return unsafe_knotvector(T, sort!(collect(knots)))
@@ -105,7 +102,7 @@ julia> k1 = KnotVector(1,2,3,5);
 julia> k2 = KnotVector(4,5,8);
 
 julia> k1 + k2
-KnotVector([1.0, 2.0, 3.0, 4.0, 5.0, 5.0, 8.0])
+KnotVector([1, 2, 3, 4, 5, 5, 8])
 ```
 """
 Base.:+(k1::KnotVector{T}, k2::KnotVector{T}) where T = unsafe_knotvector(T,sort!(vcat(k1.vector,k2.vector)))
@@ -127,7 +124,7 @@ For example, ``2\cdot (1,2,2,5)=(1,1,2,2,2,2,5,5)``.
 julia> k = KnotVector(1,2,2,5);
 
 julia> 2 * k
-KnotVector([1.0, 1.0, 2.0, 2.0, 2.0, 2.0, 5.0, 5.0])
+KnotVector([1, 1, 2, 2, 2, 2, 5, 5])
 ```
 """
 function Base.:*(m::Integer, k::AbstractKnotVector)
@@ -187,7 +184,7 @@ For example, ``\widehat{(1,2,2,3)}=(1,2,3)``.
 julia> k = KnotVector([1,2,2,3]);
 
 julia> unique(k)
-KnotVector([1.0, 2.0, 3.0])
+KnotVector([1, 2, 3])
 ```
 """
 Base.unique(k::KnotVector) = KnotVector(unique(k.vector))

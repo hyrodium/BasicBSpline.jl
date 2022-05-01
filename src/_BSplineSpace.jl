@@ -34,10 +34,10 @@ julia> p = 2
 2
 
 julia> k = KnotVector([1,3,5,6,8,9])
-KnotVector([1.0, 3.0, 5.0, 6.0, 8.0, 9.0])
+KnotVector([1, 3, 5, 6, 8, 9])
 
 julia> BSplineSpace{p}(k)
-BSplineSpace{2, Float64}(KnotVector([1.0, 3.0, 5.0, 6.0, 8.0, 9.0]))
+BSplineSpace{2, Int64}(KnotVector([1, 3, 5, 6, 8, 9]))
 ```
 """
 struct BSplineSpace{p, T<:Real} <: AbstractBSplineSpace{p,T}
@@ -280,7 +280,7 @@ end
 """
 Expand B-spline space with given additional degree and knotvector.
 """
-function expandspace_I(P::BSplineSpace{p,T}; p₊::Integer=0, k₊::KnotVector{T}=KnotVector{T}()) where {p,T}
+function expandspace_I(P::BSplineSpace{p,T}; p₊::Integer=0, k₊::KnotVector=KnotVector{T}()) where {p,T}
     k = knotvector(P)
     k̂ = unique(k[1+p:end-p])
     p′ = p + p₊
@@ -292,7 +292,7 @@ end
 """
 Expand B-spline space with given additional degree and knotvector.
 """
-function expandspace_R(P::BSplineSpace{p,T}; p₊::Integer=0, k₊::KnotVector{T}=KnotVector{T}()) where {p,T}
+function expandspace_R(P::BSplineSpace{p,T}; p₊::Integer=0, k₊::KnotVector=KnotVector{T}()) where {p,T}
     k = knotvector(P)
     p′ = p + p₊
     k′ = k + p₊*k
@@ -303,6 +303,6 @@ end
 """
 Expand B-spline space with given additional degree and knotvector.
 """
-function expandspace(P::BSplineSpace{p,T}; p₊::Integer=0, k₊::KnotVector{T}=KnotVector{T}()) where {p,T}
+function expandspace(P::BSplineSpace{p,T}; p₊=0, k₊=KnotVector{T}()) where {p,T}
     expandspace_I(P,p₊=p₊,k₊=k₊)
 end

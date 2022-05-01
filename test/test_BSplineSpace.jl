@@ -7,7 +7,7 @@
         P3 = BSplineSpace{2,Int}(P1)
         P4 = BSplineSpace{2,Real}(P1)
         @test P1 == P2 == P3 == P4 == bsplinespace(P1) == bsplinespace(P2) == bsplinespace(P3) == bsplinespace(P4)
-        @test P1 isa BSplineSpace{2,Float64}
+        @test P1 isa BSplineSpace{2,Int}
         @test P3 isa BSplineSpace{2,Int}
         @test P4 isa BSplineSpace{2,Real}
         @test_throws MethodError BSplineSpace{3}(P1)

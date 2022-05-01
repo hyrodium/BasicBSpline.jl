@@ -3,11 +3,11 @@
     k2 = KnotVector([1,2,2,3])
     k3 = KnotVector([2,4,5])
     @testset "constructor" begin
-        @test k1 isa KnotVector{Float64}
-        @test k1 == KnotVector(1:3)::KnotVector{Float64}
-        @test k1 == KnotVector([1,3,2])::KnotVector{Float64}
-        @test k1 == KnotVector(1,2,3)::KnotVector{Float64}
-        @test k1 == KnotVector(1,3,2)::KnotVector{Float64}
+        @test k1 isa KnotVector{Int64}
+        @test k1 == KnotVector(1:3)::KnotVector{Int}
+        @test k1 == KnotVector([1,3,2])::KnotVector{Int64}
+        @test k1 == KnotVector(1,2,3)::KnotVector{Int64}
+        @test k1 == KnotVector(1,3,2)::KnotVector{Int64}
         @test k1 == KnotVector(1.,3,2)::KnotVector{Float64}
         @test k1 == KnotVector{Int}(1,3,2)::KnotVector{Int}
         @test k1 != k2
@@ -16,12 +16,14 @@
         @test KnotVector{Int}(1,2) isa KnotVector{Int}
         @test KnotVector{Int}(1,2.) isa KnotVector{Int}
         @test KnotVector{Int}(k1) isa KnotVector{Int}
-        @test KnotVector(k1) isa KnotVector{Float64}
+        @test KnotVector(k1) isa KnotVector{Int}
     end
 
     @testset "eltype" begin
-        @test eltype(KnotVector([1,2,3])) == Float64
+        @test eltype(KnotVector([1,2,3])) == Int
         @test eltype(KnotVector{Int}([1,2,3])) == Int
+        @test eltype(KnotVector{Real}([1,2,3])) == Real
+        @test eltype(KnotVector{Float64}([1,2,3])) == Float64
         @test eltype(KnotVector{BigInt}([1,2,3])) == BigInt
         @test eltype(KnotVector{Rational{Int}}([1,2,3])) == Rational{Int}
     end
@@ -43,8 +45,8 @@
         end
         @test k1[1] == 1
         @test k2[end] == 3
-        @test collect(k2) isa Vector{Float64}
-        @test [k2...] isa Vector{Float64}
+        @test collect(k2) isa Vector{Int}
+        @test [k2...] isa Vector{Int}
         @test collect(k2) == [k2...]
         @test collect(k2) != k2
     end
@@ -57,7 +59,7 @@
 
         # type promotion
         @test KnotVector{Int}(1,2) + KnotVector(3) == KnotVector(1,2,3)
-        @test KnotVector{Int}(1,2) + KnotVector(3) isa KnotVector{Float64}
+        @test KnotVector{Int}(1,2) + KnotVector(3) isa KnotVector{Int}
         @test KnotVector{Int}(1,2) + KnotVector{Rational{Int}}(3) == KnotVector(1,2,3)
         @test KnotVector{Int}(1,2) + KnotVector{Rational{Int}}(3) isa KnotVector{Rational{Int}}
         @test KnotVector{Int}(1,2)*0 == KnotVector()
@@ -88,7 +90,7 @@
 
     @testset "string" begin
         k = KnotVector([1,2,2,3])
-        @test string(k) == "KnotVector([1.0, 2.0, 2.0, 3.0])"
+        @test string(k) == "KnotVector([1, 2, 2, 3])"
         @test string(KnotVector()) == "KnotVector([])"
     end
 
