@@ -226,4 +226,12 @@
             @test BasicBSpline.innerproduct_R(BSplineSpace(P)) isa Symmetric{Float64,Matrix{Float64}}
         end
     end
+
+    @testset "specific issues" begin
+        # https://github.com/hyrodium/BasicBSpline.jl/issues/214
+        P = BSplineSpace{3}(KnotVector(1:12))
+        @test BasicBSpline.innerproduct_R(t->t, (P,)) ≈ 3:10
+        @test BasicBSpline.innerproduct_R((t1,t2)->t1+t2, (P,P)) ≈ [i+j for i in 3:10, j in 3:10]
+        @test BasicBSpline.innerproduct_R((t1,t2,t3)->t1+t2+t3, (P,P,P)) ≈ [i+j+k for i in 3:10, j in 3:10, k in 3:10]
+    end
 end

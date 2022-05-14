@@ -78,7 +78,7 @@ function innerproduct_I(func, Ps::Tuple{<:AbstractBSplineSpace{p₁}}) where {p�
     l₁ = length(k₁)
     nodes₁, weights₁ = SVector{p₁+1}.(gausslegendre(p₁+1))
 
-    sample_point = func(leftendpoint(domain(P₁)))
+    sample_point = func(float(leftendpoint(domain(P₁))))
     b = Array{typeof(sample_point),1}(undef, n₁)
     fill!(b, zero(sample_point))
 
@@ -106,7 +106,7 @@ function innerproduct_I(func, Ps::Tuple{<:AbstractBSplineSpace{p₁},<:AbstractB
     nodes₁, weights₁ = SVector{p₁+1}.(gausslegendre(p₁+1))
     nodes₂, weights₂ = SVector{p₂+1}.(gausslegendre(p₂+1))
 
-    sample_point = func(leftendpoint(domain(P₁)),leftendpoint(domain(P₂)))
+    sample_point = func(float(leftendpoint(domain(P₁))),float(leftendpoint(domain(P₂))))
     b = Array{typeof(sample_point),2}(undef, n₁, n₂)
     fill!(b, zero(sample_point))
 
@@ -146,7 +146,7 @@ function innerproduct_I(func, Ps::Tuple{<:AbstractBSplineSpace{p₁},<:AbstractB
     nodes₂, weights₂ = SVector{p₂+1}.(gausslegendre(p₂+1))
     nodes₃, weights₃ = SVector{p₃+1}.(gausslegendre(p₃+1))
 
-    sample_point = func(leftendpoint(domain(P₁)),leftendpoint(domain(P₂)),leftendpoint(domain(P₃)))
+    sample_point = func(float(leftendpoint(domain(P₁))),float(leftendpoint(domain(P₂))),float(leftendpoint(domain(P₃))))
     b = Array{typeof(sample_point),3}(undef, n₁, n₂, n₃)
     fill!(b, zero(sample_point))
 
