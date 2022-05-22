@@ -359,13 +359,13 @@ Fitting controlpoints with least squares method.
 
 This function will calculate ``\bm{a}_i`` to minimize the following integral.
 ```math
-\int_I \left\|f(t)-\sum_i B_{(i,p,k)}(t) \bm{a}_i\right\| dt
+\int_I \left\|f(t)-\sum_i B_{(i,p,k)}(t) \bm{a}_i\right\|^2 dt
 ```
 Similarly, for the two-dimensional case, minimize the following integral.
 ```math
-\int_I \left\|f(t^1, t^2)-\sum_{i,j} B_{(i,p^1,k^1)}(t^1)B_{(j,p^2,k^2)}(t^2) \bm{a}_{ij}\right\| dt^1dt^2
+\int_{I^1 \times I^2} \left\|f(t^1, t^2)-\sum_{i,j} B_{(i,p^1,k^1)}(t^1)B_{(j,p^2,k^2)}(t^2) \bm{a}_{ij}\right\|^2 dt^1dt^2
 ```
-This function currently supports up to three dimensions.
+Currently, this function currently supports up to three dimensions.
 
 # Examples
 ```jldoctest
