@@ -13,7 +13,7 @@ using Plots; plotly()
     The tensor product of B-spline spaces ``\mathcal{P}[p^1,k^1]\otimes\mathcal{P}[p^2,k^2]`` linear space with the following basis.
     ```math
     \mathcal{P}[p^1,k^1]\otimes\mathcal{P}[p^2,k^2]
-    = \operatorname*{span}_{i,j} B_{(i,p^1,k^1)} \otimes B_{(j,p^2,k^2)}
+    = \operatorname*{span}_{i,j} (B_{(i,p^1,k^1)} \otimes B_{(j,p^2,k^2)})
     ```
     where the basis are defined as
     ```math
@@ -21,14 +21,16 @@ using Plots; plotly()
     = B_{(i,p^1,k^1)}(t^1) \cdot B_{(j,p^2,k^2)}(t^2)
     ```
 
+Higher dimensional tensor products ``\mathcal{P}[p^1,k^1]\otimes\cdots\otimes\mathcal{P}[p^d,k^d]`` are defined similarly.
+
 ## B-spline manifold
 B-spline manifold is a parametric representation of a shape.
 
 !!! tip "Def.  B-spline manifold"
-    For given ``d``-dimensional B-spline basis functions ``B_{i^1,\dots,i^d}`` and given points ``\bm{a}_{i^1,\dots,i^d} \in \mathbb{R}^{\hat{d}}``, B-spline manifold is defined by following equality:
+    For given ``d``-dimensional B-spline basis functions ``B_{(i^1,p^1,k^1)} \otimes \cdots \otimes B_{(i^d,p^d,k^d)}`` and given points ``\bm{a}_{i^1,\dots,i^d} \in \mathbb{R}^{\hat{d}}``, B-spline manifold is defined by following equality:
     ```math
     \bm{p}(t^1,\dots,t^d;\bm{a}_{i^1,\dots,i^d})
-    =\sum_{i^1,\dots,i^d}B_{i^1,\dots,i^d}(t^1,\dots,t^d) \bm{a}_{i^1,\dots,i^d}
+    =\sum_{i^1,\dots,i^d}(B_{(i^1,p^1,k^1)} \otimes \cdots \otimes B_{(i^d,p^d,k^d)})(t^1,\dots,t^d) \bm{a}_{i^1,\dots,i^d}
     ```
     Where ``\bm{a}_{i^1,\dots,i^d}`` are called **control points**.
 
