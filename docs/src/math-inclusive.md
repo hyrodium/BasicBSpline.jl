@@ -19,10 +19,10 @@ using Plots; plotly()
 P1 = BSplineSpace{1}(KnotVector([1,3,5,8]))
 P2 = BSplineSpace{1}(KnotVector([1,3,5,6,8,9]))
 P3 = BSplineSpace{2}(KnotVector([1,1,3,3,5,5,8,8]))
-P1 ⊆ P2 # true
-P1 ⊆ P3 # true
-P2 ⊆ P3 # false
-P2 ⊈ P3 # true
+P1 ⊆ P2
+P1 ⊆ P3
+P2 ⊆ P3
+P2 ⊈ P3
 ```
 
 Here are plots of the B-spline basis functions of the spaces `P1`, `P2`, `P3`.
