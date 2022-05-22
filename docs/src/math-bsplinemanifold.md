@@ -8,12 +8,18 @@ using Plots; plotly()
 ```
 
 ## Multi-dimensional B-spline
-tensor product
 
-```math
-B_{i^1,\dots,i^d}(t^1,\dots,t^d)
-=B_{(i^1,p^1,k^1)}(t^1)\cdots B_{(i^d,p^d,k^d)}(t^d)
-```
+!!! info "Thm.  Basis of tensor product of B-spline spaces"
+    The tensor product of B-spline spaces ``\mathcal{P}[p^1,k^1]\otimes\mathcal{P}[p^2,k^2]`` linear space with the following basis.
+    ```math
+    \mathcal{P}[p^1,k^1]\otimes\mathcal{P}[p^2,k^2]
+    = \operatorname*{span}_{i,j} B_{(i,p^1,k^1)} \otimes B_{(j,p^2,k^2)}
+    ```
+    where the basis are defined as
+    ```math
+    (B_{(i,p^1,k^1)} \otimes B_{(j,p^2,k^2)})(t^1, t^2)
+    = B_{(i,p^1,k^1)}(t^1) \cdot B_{(j,p^2,k^2)}(t^2)
+    ```
 
 ## B-spline manifold
 B-spline manifold is a parametric representation of a shape.
