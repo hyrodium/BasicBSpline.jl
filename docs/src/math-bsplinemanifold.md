@@ -52,27 +52,36 @@ RationalBSplineManifold
 ```
 
 ### B-spline curve
-```@repl math
+```@example math
 ## 1-dim B-spline manifold
 p = 2 # degree of polynomial
 k = KnotVector(1:12) # knot vector
 P = BSplineSpace{p}(k) # B-spline space
 a = [SVector(i-5, 3*sin(i^2)) for i in 1:dim(P)] # control points
 M = BSplineManifold(a, (P,)) # Define B-spline manifold
-save_png("1dim.png", M, unitlength = 50)
+plot(M)
+savefig("1dim-manifold.html") # hide
 ```
-![](1dim.png)
 
+```@raw html
+<object type="text/html" data="../1dim-manifold.html" style="width:100%;height:420px;"></object>
+```
 
 ### B-spline surface
-```@repl math
+```@example math
+## 2-dim B-spline manifold
 p = 2 # degree of polynomial
 k = KnotVector(1:8) # knot vector
 P = BSplineSpace{p}(k) # B-spline space
-rand_a = [SVector(rand(), rand()) for i in 1:dim(P), j in 1:dim(P)]
-a = [SVector(2*i-6.5, 2*j-6.5) for i in 1:dim(P), j in 1:dim(P)] + rand_a # random generated control points
+rand_a = [SVector(rand(), rand(), rand()) for i in 1:dim(P), j in 1:dim(P)]
+a = [SVector(2*i-6.5, 2*j-6.5, 0) for i in 1:dim(P), j in 1:dim(P)] + rand_a # random generated control points
 M = BSplineManifold(a,(P,P)) # Define B-spline manifold
-save_png("2dim.png", M) # save image
+plot(M)
+savefig("2dim-manifold.html") # hide
+```
+
+```@raw html
+<object type="text/html" data="../2dim-manifold.html" style="width:100%;height:420px;"></object>
 ```
 
 ![](2dim.png)
