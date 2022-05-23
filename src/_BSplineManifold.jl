@@ -1,6 +1,10 @@
 # B-spline manifold
 
 abstract type AbstractManifold{Dim} end
+
+# Broadcast like a scalar
+Base.Broadcast.broadcastable(M::AbstractManifold) = Ref(M)
+
 abstract type AbstractBSplineManifold{Dim, Deg} <: AbstractManifold{Dim} end
 
 dim(::AbstractBSplineManifold{Dim}) where Dim = Dim
