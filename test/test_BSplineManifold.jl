@@ -42,6 +42,8 @@
                 @test M(t...) ≈ M′′(t...)
             end
             @test_throws DomainError M(-5)
+
+            @test map.(M,[0.2,0.5,0.6]) == M.([0.2,0.5,0.6])
         end
     end
 
