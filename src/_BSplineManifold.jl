@@ -163,4 +163,66 @@ end
     return BSplineManifold(b,(P1,))
 end
 
+# 3dim
+@inline function (M::AbstractManifold{3})(::Colon,::Colon,::Colon)
+    a = copy(controlpoints(M))
+    Ps = bsplinespaces(M)
+    return BSplineManifold(a,Ps)
+end
+@inline function (M::AbstractManifold{3})(t1::Real,::Colon,::Colon)
+    P1, P2, P3 = bsplinespaces(M)
+    a = controlpoints(M)
+    n1 = dim(P1)
+    B1 = bsplinebasis.(P1,1:n1,t1)
+    b = sum(a[i1,:,:]*B1[i1] for i1 in 1:n1)
+    return BSplineManifold(b,(P2,P3))
+end
+@inline function (M::AbstractManifold{3})(::Colon,t2::Real,::Colon)
+    P1, P2, P3 = bsplinespaces(M)
+    a = controlpoints(M)
+    n2 = dim(P2)
+    B2 = bsplinebasis.(P2,1:n2,t2)
+    b = sum(a[:,i2,:]*B2[i2] for i2 in 1:n2)
+    return BSplineManifold(b,(P1,P3))
+end
+@inline function (M::AbstractManifold{3})(::Colon,::Colon,t3::Real)
+    P1, P2, P3 = bsplinespaces(M)
+    a = controlpoints(M)
+    n3 = dim(P3)
+    B3 = bsplinebasis.(P3,1:n3,t3)
+    b = sum(a[:,:,i3]*B3[i3] for i3 in 1:n3)
+    return BSplineManifold(b,(P1,P2))
+end
+
+@inline function (M::AbstractManifold{3})(t1::Real,t2::Real,::Colon)
+    P1, P2, P3 = bsplinespaces(M)
+    a = controlpoints(M)
+    n1 = dim(P1)
+    n2 = dim(P2)
+    B1 = bsplinebasis.(P1,1:n1,t1)
+    B2 = bsplinebasis.(P2,1:n2,t2)
+    b = sum(a[i1,i2,:]*B1[i1]*B2[i2] for i1 in 1:n1, i2 in 1:n2)
+    return BSplineManifold(b,(P3,))
+end
+@inline function (M::AbstractManifold{3})(t1::Real,::Colon,t3::Real)
+    P1, P2, P3 = bsplinespaces(M)
+    a = controlpoints(M)
+    n1 = dim(P1)
+    n3 = dim(P3)
+    B1 = bsplinebasis.(P1,1:n1,t1)
+    B3 = bsplinebasis.(P3,1:n3,t3)
+    b = sum(a[i1,:,i3]*B1[i1]*B3[i3] for i1 in 1:n1, i3 in 1:n3)
+    return BSplineManifold(b,(P2,))
+end
+@inline function (M::AbstractManifold{3})(::Colon,t2::Real,t3::Real)
+    P1, P2, P3 = bsplinespaces(M)
+    a = controlpoints(M)
+    n2 = dim(P2)
+    n3 = dim(P3)
+    B2 = bsplinebasis.(P2,1:n2,t2)
+    B3 = bsplinebasis.(P3,1:n3,t3)
+    b = sum(a[:,i2,i3]*B2[i2]*B3[i3] for i2 in 1:n2, i3 in 1:n3)
+    return BSplineManifold(b,(P1,))
+end
+
 # TODO add mappings higher dimensionnal B-spline manifold with @generated macro
