@@ -132,11 +132,35 @@ end
     unsafe_mapping(M,t1,t2,t3)
 end
 
-# currying
+## currying
+# 1dim
 @inline function (M::AbstractManifold{1})(::Colon)
     a = copy(controlpoints(M))
     Ps = bsplinespaces(M)
     return BSplineManifold(a,Ps)
+end
+
+# 2dim
+@inline function (M::AbstractManifold{2})(::Colon,::Colon)
+    a = copy(controlpoints(M))
+    Ps = bsplinespaces(M)
+    return BSplineManifold(a,Ps)
+end
+@inline function (M::AbstractManifold{2})(t1::Real,::Colon)
+    P1, P2 = bsplinespaces(M)
+    a = controlpoints(M)
+    n1 = dim(P1)
+    B1 = bsplinebasis.(P1,1:n1,t1)
+    b = sum(a[i1,:]*B1[i1] for i1 in 1:n1)
+    return BSplineManifold(b,(P2,))
+end
+@inline function (M::AbstractManifold{2})(::Colon,t2::Real)
+    P1, P2 = bsplinespaces(M)
+    a = controlpoints(M)
+    n2 = dim(P2)
+    B2 = bsplinebasis.(P2,1:n2,t2)
+    b = sum(a[:,i2]*B2[i2] for i2 in 1:n2)
+    return BSplineManifold(b,(P1,))
 end
 
 # TODO add mappings higher dimensionnal B-spline manifold with @generated macro
