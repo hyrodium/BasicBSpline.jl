@@ -44,9 +44,9 @@
             @test_throws DomainError M(-5)
 
             @test map.(M,[0.2,0.5,0.6]) == M.([0.2,0.5,0.6])
-            @test_broken M(:) == M
+            @test M(:) == M
             @test Base.mightalias(controlpoints(M), controlpoints(M))
-            @test_broken !Base.mightalias(controlpoints(M), controlpoints(M(:)))
+            @test !Base.mightalias(controlpoints(M), controlpoints(M(:)))
         end
     end
 
