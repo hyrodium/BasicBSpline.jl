@@ -51,6 +51,8 @@ struct BSplineManifold{Dim,Deg,C,S<:Tuple} <: AbstractBSplineManifold{Dim,Deg}
     end
 end
 
+Base.:(==)(M1::AbstractBSplineManifold, M2::AbstractBSplineManifold) = (bsplinespaces(M1)==bsplinespaces(M2)) & (controlpoints(M1)==controlpoints(M2))
+
 bsplinespaces(M::BSplineManifold) = M.bsplinespaces
 controlpoints(M::BSplineManifold) = M.controlpoints
 
