@@ -132,96 +132,104 @@ end
     unsafe_mapping(M,t1,t2,t3)
 end
 
+
 ## currying
 # 1dim
-@inline function (M::AbstractManifold{1})(::Colon)
+@inline function (M::AbstractBSplineManifold{1})(::Colon)
     a = copy(controlpoints(M))
     Ps = bsplinespaces(M)
     return BSplineManifold(a,Ps)
 end
 
 # 2dim
-@inline function (M::AbstractManifold{2})(::Colon,::Colon)
+@inline function (M::AbstractBSplineManifold{2})(::Colon,::Colon)
     a = copy(controlpoints(M))
     Ps = bsplinespaces(M)
     return BSplineManifold(a,Ps)
 end
-@inline function (M::AbstractManifold{2})(t1::Real,::Colon)
+@inline function (M::AbstractBSplineManifold{2,p})(t1::Real,::Colon) where p
+    p1, p2 = p
     P1, P2 = bsplinespaces(M)
     a = controlpoints(M)
-    n1 = dim(P1)
-    B1 = bsplinebasis.(P1,1:n1,t1)
-    b = sum(a[i1,:]*B1[i1] for i1 in 1:n1)
+    j1 = intervalindex(P1,t1)
+    B1 = bsplinebasisall(P1,j1,t1)
+    b = sum(a[j1+i1,:]*B1[1+i1] for i1 in 0:p1)
     return BSplineManifold(b,(P2,))
 end
-@inline function (M::AbstractManifold{2})(::Colon,t2::Real)
+@inline function (M::AbstractBSplineManifold{2,p})(::Colon,t2::Real) where p
+    p1, p2 = p
     P1, P2 = bsplinespaces(M)
     a = controlpoints(M)
-    n2 = dim(P2)
-    B2 = bsplinebasis.(P2,1:n2,t2)
-    b = sum(a[:,i2]*B2[i2] for i2 in 1:n2)
+    j2 = intervalindex(P2,t2)
+    B2 = bsplinebasisall(P2,j2,t2)
+    b = sum(a[:,j2+i2]*B2[1+i2] for i2 in 0:p2)
     return BSplineManifold(b,(P1,))
 end
 
 # 3dim
-@inline function (M::AbstractManifold{3})(::Colon,::Colon,::Colon)
+@inline function (M::AbstractBSplineManifold{3})(::Colon,::Colon,::Colon)
     a = copy(controlpoints(M))
     Ps = bsplinespaces(M)
     return BSplineManifold(a,Ps)
 end
-@inline function (M::AbstractManifold{3})(t1::Real,::Colon,::Colon)
+@inline function (M::AbstractBSplineManifold{3,p})(t1::Real,::Colon,::Colon) where p
+    p1, p2, p3 = p
     P1, P2, P3 = bsplinespaces(M)
     a = controlpoints(M)
-    n1 = dim(P1)
-    B1 = bsplinebasis.(P1,1:n1,t1)
-    b = sum(a[i1,:,:]*B1[i1] for i1 in 1:n1)
+    j1 = intervalindex(P1,t1)
+    B1 = bsplinebasisall(P1,j1,t1)
+    b = sum(a[j1+i1,:,:]*B1[1+i1] for i1 in 0:p1)
     return BSplineManifold(b,(P2,P3))
 end
-@inline function (M::AbstractManifold{3})(::Colon,t2::Real,::Colon)
+@inline function (M::AbstractBSplineManifold{3,p})(::Colon,t2::Real,::Colon) where p
+    p1, p2, p3 = p
     P1, P2, P3 = bsplinespaces(M)
     a = controlpoints(M)
-    n2 = dim(P2)
-    B2 = bsplinebasis.(P2,1:n2,t2)
-    b = sum(a[:,i2,:]*B2[i2] for i2 in 1:n2)
+    j2 = intervalindex(P2,t2)
+    B2 = bsplinebasisall(P2,j2,t2)
+    b = sum(a[:,j2+i2,:]*B2[1+i2] for i2 in 0:p2)
     return BSplineManifold(b,(P1,P3))
 end
-@inline function (M::AbstractManifold{3})(::Colon,::Colon,t3::Real)
+@inline function (M::AbstractBSplineManifold{3,p})(::Colon,::Colon,t3::Real) where p
+    p1, p2, p3 = p
     P1, P2, P3 = bsplinespaces(M)
     a = controlpoints(M)
-    n3 = dim(P3)
-    B3 = bsplinebasis.(P3,1:n3,t3)
-    b = sum(a[:,:,i3]*B3[i3] for i3 in 1:n3)
+    j3 = intervalindex(P3,t3)
+    B3 = bsplinebasisall(P3,j3,t3)
+    b = sum(a[:,:,j3+i3]*B3[1+i3] for i3 in 0:p3)
     return BSplineManifold(b,(P1,P2))
 end
-
-@inline function (M::AbstractManifold{3})(t1::Real,t2::Real,::Colon)
+@inline function (M::AbstractBSplineManifold{3,p})(t1::Real,t2::Real,::Colon) where p
+    p1, p2, p3 = p
     P1, P2, P3 = bsplinespaces(M)
     a = controlpoints(M)
-    n1 = dim(P1)
-    n2 = dim(P2)
-    B1 = bsplinebasis.(P1,1:n1,t1)
-    B2 = bsplinebasis.(P2,1:n2,t2)
-    b = sum(a[i1,i2,:]*B1[i1]*B2[i2] for i1 in 1:n1, i2 in 1:n2)
+    j1 = intervalindex(P1,t1)
+    j2 = intervalindex(P2,t2)
+    B1 = bsplinebasisall(P1,j1,t1)
+    B2 = bsplinebasisall(P2,j2,t2)
+    b = sum(a[j1+i1,j2+i2,:]*B1[1+i1]*B2[1+i2] for i1 in 0:p1, i2 in 0:p2)
     return BSplineManifold(b,(P3,))
 end
-@inline function (M::AbstractManifold{3})(t1::Real,::Colon,t3::Real)
+@inline function (M::AbstractBSplineManifold{3,p})(t1::Real,::Colon,t3::Real) where p
+    p1, p2, p3 = p
     P1, P2, P3 = bsplinespaces(M)
     a = controlpoints(M)
-    n1 = dim(P1)
-    n3 = dim(P3)
-    B1 = bsplinebasis.(P1,1:n1,t1)
-    B3 = bsplinebasis.(P3,1:n3,t3)
-    b = sum(a[i1,:,i3]*B1[i1]*B3[i3] for i1 in 1:n1, i3 in 1:n3)
+    j1 = intervalindex(P1,t1)
+    j3 = intervalindex(P3,t3)
+    B1 = bsplinebasisall(P1,j1,t1)
+    B3 = bsplinebasisall(P3,j3,t3)
+    b = sum(a[j1+i1,:,j3+i3]*B1[1+i1]*B3[1+i3] for i1 in 0:p1, i3 in 0:p3)
     return BSplineManifold(b,(P2,))
 end
-@inline function (M::AbstractManifold{3})(::Colon,t2::Real,t3::Real)
+@inline function (M::AbstractBSplineManifold{3,p})(::Colon,t2::Real,t3::Real) where p
+    p1, p2, p3 = p
     P1, P2, P3 = bsplinespaces(M)
     a = controlpoints(M)
-    n2 = dim(P2)
-    n3 = dim(P3)
-    B2 = bsplinebasis.(P2,1:n2,t2)
-    B3 = bsplinebasis.(P3,1:n3,t3)
-    b = sum(a[:,i2,i3]*B2[i2]*B3[i3] for i2 in 1:n2, i3 in 1:n3)
+    j2 = intervalindex(P2,t2)
+    j3 = intervalindex(P3,t3)
+    B2 = bsplinebasisall(P2,j2,t2)
+    B3 = bsplinebasisall(P3,j3,t3)
+    b = sum(a[:,j2+i2,j3+i3]*B2[1+i2]*B3[1+i3] for i2 in 0:p2, i3 in 0:p3)
     return BSplineManifold(b,(P1,))
 end
 
