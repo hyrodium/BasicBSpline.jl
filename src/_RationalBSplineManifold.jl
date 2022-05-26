@@ -53,6 +53,8 @@ struct RationalBSplineManifold{Dim,Deg,C,S<:Tuple,T} <: AbstractRationalBSplineM
     end
 end
 
+Base.:(==)(M1::AbstractRationalBSplineManifold, M2::AbstractRationalBSplineManifold) = (bsplinespaces(M1)==bsplinespaces(M2)) & (controlpoints(M1)==controlpoints(M2)) & (weights(M1)==weights(M2))
+
 controlpoints(M::RationalBSplineManifold) = M.controlpoints
 weights(M::RationalBSplineManifold) = M.weights
 bsplinespaces(M::RationalBSplineManifold) = M.bsplinespaces
