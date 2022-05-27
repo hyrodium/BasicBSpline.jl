@@ -30,6 +30,44 @@
         n2 = dim(P2)
         n3 = dim(P3)
 
+        @testset "RationalBSpilneManifold definition" begin
+            @testset "1dim" begin
+                a = randn(ComplexF64,n1)
+                w = ones(n1)+rand(n1)
+                R = RationalBSplineManifold(a,w,(P1,))
+                A = BSplineManifold(a.*w,(P1,))
+                W = BSplineManifold(w,(P1,))
+                for _ in 1:10
+                    t1 = rand()
+                    @test R(t1) ≈ A(t1)/W(t1)
+                end
+            end
+            @testset "2dim" begin
+                a = randn(ComplexF64,n1,n2)
+                w = ones(n1,n2)+rand(n1,n2)
+                R = RationalBSplineManifold(a,w,(P1,P2))
+                A = BSplineManifold(a.*w,(P1,P2))
+                W = BSplineManifold(w,(P1,P2))
+                for _ in 1:10
+                    t1 = rand()
+                    t2 = rand()
+                    @test R(t1,t2) ≈ A(t1,t2)/W(t1,t2)
+                end
+            end
+            @testset "3dim" begin
+                a = randn(ComplexF64,n1,n2)
+                w = ones(n1,n2)+rand(n1,n2)
+                R = RationalBSplineManifold(a,w,(P1,P2))
+                A = BSplineManifold(a.*w,(P1,P2))
+                W = BSplineManifold(w,(P1,P2))
+                for _ in 1:10
+                    t1 = rand()
+                    t2 = rand()
+                    @test R(t1,t2) ≈ A(t1,t2)/W(t1,t2)
+                end
+            end
+        end
+
         @testset "compatibility with BSplineManifold" begin
             @testset "1dim" begin
                 a = randn(n1)
@@ -44,7 +82,6 @@
                     @test M(t1) ≈ M2(t1) atol=1e-14
                 end
             end
-
             @testset "2dim" begin
                 a = randn(n1,n2)
                 w1 = ones(n1,n2)
@@ -59,7 +96,6 @@
                     @test M(t1,t2) ≈ M2(t1,t2) atol=1e-14
                 end
             end
-
             @testset "3dim" begin
                 a = randn(n1,n2,n3)
                 w1 = ones(n1,n2,n3)
