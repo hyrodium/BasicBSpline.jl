@@ -149,8 +149,9 @@ end
     w = weights(M)
     j1 = intervalindex(P1,t1)
     B1 = bsplinebasisall(P1,j1,t1)
-    b = sum(a[j1+i1,:]*B1[1+i1] for i1 in 0:p1)
-    return RationalBSplineManifold(b,(P2,))
+    w′ = sum(w[j1+i1,:]*B1[1+i1] for i1 in 0:p1)
+    a′ = sum(a[j1+i1,:].*w[j1+i1,:].*B1[1+i1] for i1 in 0:p1) ./ w′
+    return RationalBSplineManifold(a′,w′,(P2,))
 end
 @inline function (M::AbstractRationalBSplineManifold{2,p})(::Colon,t2::Real) where p
     p1, p2 = p
@@ -159,8 +160,9 @@ end
     w = weights(M)
     j2 = intervalindex(P2,t2)
     B2 = bsplinebasisall(P2,j2,t2)
-    b = sum(a[:,j2+i2]*B2[1+i2] for i2 in 0:p2)
-    return RationalBSplineManifold(b,(P1,))
+    w′ = sum(w[:,j2+i2]*B2[1+i2] for i2 in 0:p2)
+    a′ = sum(a[:,j2+i2].*w[:,j2+i2].*B2[1+i2] for i2 in 0:p2) ./ w′
+    return RationalBSplineManifold(a′,w′,(P1,))
 end
 
 # 3dim
@@ -177,8 +179,9 @@ end
     w = weights(M)
     j1 = intervalindex(P1,t1)
     B1 = bsplinebasisall(P1,j1,t1)
-    b = sum(a[j1+i1,:,:]*B1[1+i1] for i1 in 0:p1)
-    return RationalBSplineManifold(b,(P2,P3))
+    w′ = sum(w[j1+i1,:,:]*B1[1+i1] for i1 in 0:p1)
+    a′ = sum(a[j1+i1,:,:].*w[j1+i1,:,:].*B1[1+i1] for i1 in 0:p1) ./ w′
+    return RationalBSplineManifold(a′,w′,(P2,P3))
 end
 @inline function (M::AbstractRationalBSplineManifold{3,p})(::Colon,t2::Real,::Colon) where p
     p1, p2, p3 = p
@@ -187,8 +190,9 @@ end
     w = weights(M)
     j2 = intervalindex(P2,t2)
     B2 = bsplinebasisall(P2,j2,t2)
-    b = sum(a[:,j2+i2,:]*B2[1+i2] for i2 in 0:p2)
-    return RationalBSplineManifold(b,(P1,P3))
+    w′ = sum(w[:,j2+i2,:]*B2[1+i2] for i2 in 0:p2)
+    a′ = sum(a[:,j2+i2,:].*w[:,j2+i2,:].*B2[1+i2] for i2 in 0:p2) ./ w′
+    return RationalBSplineManifold(a′,w′,(P1,P3))
 end
 @inline function (M::AbstractRationalBSplineManifold{3,p})(::Colon,::Colon,t3::Real) where p
     p1, p2, p3 = p
@@ -197,8 +201,9 @@ end
     w = weights(M)
     j3 = intervalindex(P3,t3)
     B3 = bsplinebasisall(P3,j3,t3)
-    b = sum(a[:,:,j3+i3]*B3[1+i3] for i3 in 0:p3)
-    return RationalBSplineManifold(b,(P1,P2))
+    w′ = sum(w[:,:,j3+i3]*B3[1+i3] for i3 in 0:p3)
+    a′ = sum(a[:,:,j3+i3].*w[:,:,j3+i3].*B3[1+i3] for i3 in 0:p3) ./ w′
+    return RationalBSplineManifold(a′,w′,(P1,P2))
 end
 @inline function (M::AbstractRationalBSplineManifold{3,p})(t1::Real,t2::Real,::Colon) where p
     p1, p2, p3 = p
@@ -209,8 +214,9 @@ end
     j2 = intervalindex(P2,t2)
     B1 = bsplinebasisall(P1,j1,t1)
     B2 = bsplinebasisall(P2,j2,t2)
-    b = sum(a[j1+i1,j2+i2,:]*B1[1+i1]*B2[1+i2] for i1 in 0:p1, i2 in 0:p2)
-    return RationalBSplineManifold(b,(P3,))
+    w′ = sum(w[j1+i1,j2+i2,:]*B1[1+i1]*B2[1+i2] for i1 in 0:p1, i2 in 0:p2)
+    a′ = sum(a[j1+i1,j2+i2,:].*w[j1+i1,j2+i2,:].*B1[1+i1].*B2[1+i2] for i1 in 0:p1, i2 in 0:p2) ./ w′
+    return RationalBSplineManifold(a′,w′,(P3,))
 end
 @inline function (M::AbstractRationalBSplineManifold{3,p})(t1::Real,::Colon,t3::Real) where p
     p1, p2, p3 = p
@@ -221,8 +227,9 @@ end
     j3 = intervalindex(P3,t3)
     B1 = bsplinebasisall(P1,j1,t1)
     B3 = bsplinebasisall(P3,j3,t3)
-    b = sum(a[j1+i1,:,j3+i3]*B1[1+i1]*B3[1+i3] for i1 in 0:p1, i3 in 0:p3)
-    return RationalBSplineManifold(b,(P2,))
+    w′ = sum(w[j1+i1,:,j3+i3]*B1[1+i1]*B3[1+i3] for i1 in 0:p1, i3 in 0:p3)
+    a′ = sum(a[j1+i1,:,j3+i3].*w[j1+i1,:,j3+i3].*B1[1+i1].*B3[1+i3] for i1 in 0:p1, i3 in 0:p3) ./ w′
+    return RationalBSplineManifold(a′,w′,(P2,))
 end
 @inline function (M::AbstractRationalBSplineManifold{3,p})(::Colon,t2::Real,t3::Real) where p
     p1, p2, p3 = p
@@ -233,6 +240,7 @@ end
     j3 = intervalindex(P3,t3)
     B2 = bsplinebasisall(P2,j2,t2)
     B3 = bsplinebasisall(P3,j3,t3)
-    b = sum(a[:,j2+i2,j3+i3]*B2[1+i2]*B3[1+i3] for i2 in 0:p2, i3 in 0:p3)
-    return RationalBSplineManifold(b,(P1,))
+    w′ = sum(w[:,j2+i2,j3+i3]*B2[1+i2]*B3[1+i3] for i2 in 0:p2, i3 in 0:p3)
+    a′ = sum(a[:,j2+i2,j3+i3].*w[:,j2+i2,j3+i3].*B2[1+i2].*B3[1+i3] for i2 in 0:p2, i3 in 0:p3) ./ w′
+    return RationalBSplineManifold(a′,w′,(P1,))
 end

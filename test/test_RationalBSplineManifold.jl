@@ -58,6 +58,8 @@
                     t1 = rand()
                     t2 = rand()
                     @test R(t1,t2) ≈ A(t1,t2)/W(t1,t2)
+                    @test R(t1,t2) ≈ R(t1,:)(t2)
+                    @test R(t1,t2) ≈ R(:,t2)(t1)
                 end
             end
             @testset "3dim" begin
@@ -74,6 +76,12 @@
                     t2 = rand()
                     t3 = rand()
                     @test R(t1,t2,t3) ≈ A(t1,t2,t3)/W(t1,t2,t3)
+                    @test R(t1,t2,t3) ≈ R(t1,:,:)(t2,t3)
+                    @test R(t1,t2,t3) ≈ R(:,t2,:)(t1,t3)
+                    @test R(t1,t2,t3) ≈ R(:,:,t3)(t1,t2)
+                    @test R(t1,t2,t3) ≈ R(t1,t2,:)(t3)
+                    @test R(t1,t2,t3) ≈ R(t1,:,t3)(t2)
+                    @test R(t1,t2,t3) ≈ R(:,t2,t3)(t1)
                 end
             end
         end
