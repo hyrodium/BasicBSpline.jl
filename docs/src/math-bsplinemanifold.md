@@ -86,8 +86,6 @@ savefig("2dim-manifold.html") # hide
 <object type="text/html" data="../2dim-manifold.html" style="width:100%;height:420px;"></object>
 ```
 
-![](2dim.png)
-
 ## Affine commutativity
 !!! info "Thm.  Affine commutativity"
     If ``T`` is a affine transform ``\mathbb{R}^d\to\mathbb{R}^d``, then the following equality holds.
@@ -96,3 +94,32 @@ savefig("2dim-manifold.html") # hide
     =\bm{p}(t; T(\bm{a}))
     ```
 
+## Currying
+
+```@repl math
+p = 2; # degree of polynomial
+k = KnotVector(1:8); # knot vector
+P = BSplineSpace{p}(k); # B-spline space
+rand_a = [SVector(rand(), rand(), rand()) for i in 1:dim(P), j in 1:dim(P)];
+a = [SVector(2*i-6.5, 2*j-6.5, 0) for i in 1:dim(P), j in 1:dim(P)] + rand_a; # random generated control points
+M = BSplineManifold(a,(P,P)); # Define B-spline manifold
+M isa BSplineManifold{2}
+M(:,:) isa BSplineManifold{2}
+M(4.3,:) isa BSplineManifold{1}
+```
+
+```@example math
+p = 2 # degree of polynomial
+k = KnotVector(1:8) # knot vector
+P = BSplineSpace{p}(k) # B-spline space
+rand_a = [SVector(rand(), rand(), rand()) for i in 1:dim(P), j in 1:dim(P)]
+a = [SVector(2*i-6.5, 2*j-6.5, 0) for i in 1:dim(P), j in 1:dim(P)] + rand_a # random generated control points
+M = BSplineManifold(a,(P,P)) # Define B-spline manifold
+plot(M)
+plot!(M(4.3,:), linewidth = 5, color=:white)
+savefig("2dim-manifold-currying.html") # hide
+```
+
+```@raw html
+<object type="text/html" data="../2dim-manifold-currying.html" style="width:100%;height:420px;"></object>
+```

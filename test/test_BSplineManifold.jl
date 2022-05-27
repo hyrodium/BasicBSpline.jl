@@ -44,6 +44,9 @@
             @test_throws DomainError M(-5)
 
             @test map.(M,[0.2,0.5,0.6]) == M.([0.2,0.5,0.6])
+            @test M(:) == M
+            @test Base.mightalias(controlpoints(M), controlpoints(M))
+            @test !Base.mightalias(controlpoints(M), controlpoints(M(:)))
         end
     end
 
@@ -71,10 +74,17 @@
             M′′ = refinement(M, p₊=p₊, k₊=k₊)
             ts = [[rand(), 1 + 2 * rand()] for _ in 1:10]
             for t in ts
-                @test M(t...) ≈ M′(t...)
-                @test M(t...) ≈ M′′(t...)
+                t1, t2 = t
+                @test M(t1,t2) ≈ M′(t1,t2)
+                @test M(t1,t2) ≈ M′′(t1,t2)
+                @test M(t1,t2) ≈ M(t1,:)(t2)
+                @test M(t1,t2) ≈ M(:,t2)(t1)
             end
             @test_throws DomainError M(-5,-8)
+
+            @test M(:,:) == M
+            @test Base.mightalias(controlpoints(M), controlpoints(M))
+            @test !Base.mightalias(controlpoints(M), controlpoints(M(:,:)))
         end
     end
 
@@ -98,9 +108,20 @@
             M′′ = refinement(M, p₊=p₊, k₊=k₊)
             ts = [[rand(), 1 + 2 * rand(), 0.5] for _ in 1:10]
             for t in ts
-                @test M(t...) ≈ M′′(t...)
+                t1, t2, t3 = t
+                @test M(t1,t2,t3) ≈ M′′(t1,t2,t3)
+                @test M(t1,t2,t3) ≈ M(t1,:,:)(t2,t3)
+                @test M(t1,t2,t3) ≈ M(:,t2,:)(t1,t3)
+                @test M(t1,t2,t3) ≈ M(:,:,t3)(t1,t2)
+                @test M(t1,t2,t3) ≈ M(t1,t2,:)(t3)
+                @test M(t1,t2,t3) ≈ M(t1,:,t3)(t2)
+                @test M(t1,t2,t3) ≈ M(:,t2,t3)(t1)
             end
             @test_throws DomainError M(-5,-8,-120)
+
+            @test M(:,:,:) == M
+            @test Base.mightalias(controlpoints(M), controlpoints(M))
+            @test !Base.mightalias(controlpoints(M), controlpoints(M(:,:,:)))
         end
     end
 end
