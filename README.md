@@ -172,19 +172,3 @@ save_svg("sine-curve_no-points.svg", M, unitlength=50, xlims=(-2,2), ylims=(-8,8
 This is useful when you edit graphs (or curves) with your favorite vector graphics editor.
 
 ![](docs/src/img/inkscape.png)
-
-## Citation
-If you use BasicBSpline.jl in your work, please consider citing it by
-
-```bibtex
-@software{yuto_horikawa_2022_6465801,
-  author       = {Yuto Horikawa},
-  title        = {hyrodium/BasicBSpline.jl: v0.5.6},
-  month        = apr,
-  year         = 2022,
-  publisher    = {Zenodo},
-  version      = {v0.5.6},
-  doi          = {10.5281/zenodo.6465801},
-  url          = {https://doi.org/10.5281/zenodo.6465801}
-}
-```
