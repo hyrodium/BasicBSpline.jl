@@ -7,11 +7,16 @@ using StaticArrays
 using Plots; plotly()
 ```
 
+## Documentation
+
 ```@docs
 refinement
 ```
 
-```@repl math
+## Example
+### Define original manifold
+
+```@example math
 p = 2 # degree of polynomial
 k = KnotVector(1:8) # knot vector
 P = BSplineSpace{p}(k) # B-spline space
@@ -20,7 +25,7 @@ a = [SVector(2*i-6.5, 2*j-6.5) for i in 1:dim(P), j in 1:dim(P)] + rand_a # rand
 M = BSplineManifold(a,(P,P)) # Define B-spline manifold
 ```
 
-## h-refinemnet
+### h-refinemnet
 Insert additional knots to knot vector.
 
 ```@repl math
@@ -33,7 +38,7 @@ save_png("2dim_h-refinement.png", M_h) # save image
 Note that this shape and the last shape are identical.
 
 
-## p-refinemnet
+### p-refinemnet
 Increase the polynomial degree of B-spline manifold.
 
 ```@repl math
