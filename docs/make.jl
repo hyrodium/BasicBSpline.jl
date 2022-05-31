@@ -1,7 +1,12 @@
-using Documenter, BasicBSpline, BasicBSplineExporter, Plots
+using Documenter
+using BasicBSpline
+using BasicBSplineExporter
+using Plots
+using Random
 
 gr()
 plotly()
+Random.seed!(42)
 
 # Setup for doctests in docstrings
 DocMeta.setdocmeta!(BasicBSpline, :DocTestSetup, :(using LinearAlgebra, BasicBSpline, StaticArrays))
