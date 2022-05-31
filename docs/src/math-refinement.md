@@ -23,6 +23,7 @@ P = BSplineSpace{p}(k) # B-spline space
 rand_a = [SVector(rand(), rand()) for i in 1:dim(P), j in 1:dim(P)]
 a = [SVector(2*i-6.5, 2*j-6.5) for i in 1:dim(P), j in 1:dim(P)] + rand_a # random 
 M = BSplineManifold(a,(P,P)) # Define B-spline manifold
+nothing # hide
 ```
 
 ### h-refinemnet
@@ -35,7 +36,7 @@ save_png("2dim_h-refinement.png", M_h) # save image
 ```
 ![](2dim_h-refinement.png)
 
-Note that this shape and the last shape are identical.
+Note that this shape and the last shape are equivalent.
 
 
 ### p-refinemnet
@@ -48,4 +49,4 @@ save_png("2dim_p-refinement.png", M_p) # save image
 ```
 ![](2dim_p-refinement.png)
 
-Note that this shape and the last shape are identical.
+Note that this shape and the last shape are equivalent.

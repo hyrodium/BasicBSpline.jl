@@ -39,8 +39,8 @@ We will also write ``\bm{p}(t^1,\dots,t^d; \bm{a})``, ``\bm{p}(t^1,\dots,t^d)``,
 ```@repl math
 P1 = BSplineSpace{1}(KnotVector([0,0,1,1]))
 P2 = BSplineSpace{1}(KnotVector([1,1,2,3,3]))
-n1 = dim(P1) # 2
-n2 = dim(P2) # 3
+n1 = dim(P1)
+n2 = dim(P2)
 a = [SVector(i, j) for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.
 M = BSplineManifold(a, (P1, P2))
 ```

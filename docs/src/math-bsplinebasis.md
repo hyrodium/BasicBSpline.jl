@@ -7,6 +7,13 @@ using StaticArrays
 using Plots; plotly()
 ```
 
+```@setup math2
+using BasicBSpline
+using BasicBSplineExporter
+using StaticArrays
+using Plots; plotly()
+```
+
 ## Basic properties of B-spline basis function
 
 !!! tip "Def.  B-spline space"
@@ -178,9 +185,7 @@ bsplinebasisall
 
 The next figures illustlates the relation between `domain(P)`, `intervalindex(P,t)` and `bsplinebasisall(P,i,t)`.
 
-```@example math
-using BasicBSpline
-
+```@example math2
 k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 
 for p in 1:3
