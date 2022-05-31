@@ -23,6 +23,7 @@ P = BSplineSpace{p}(k) # B-spline space
 rand_a = [SVector(rand(), rand()) for i in 1:dim(P), j in 1:dim(P)]
 a = [SVector(2*i-6.5, 2*j-6.5) for i in 1:dim(P), j in 1:dim(P)] + rand_a # random 
 M = BSplineManifold(a,(P,P)) # Define B-spline manifold
+nothing # hide
 ```
 
 ### h-refinemnet
