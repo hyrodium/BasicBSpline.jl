@@ -105,7 +105,7 @@ save_png("2dim_h-refinement.png", M_h) # save image
 ```
 ![](docs/src/img/2dim_h-refinement.png)
 
-Note that this shape and the last shape are identical.
+Note that this shape and the last shape are equivalent.
 
 #### p-refinemnet
 ```julia
@@ -115,7 +115,7 @@ save_png("2dim_p-refinement.png", M_p) # save image
 ```
 ![](docs/src/img/2dim_p-refinement.png)
 
-Note that this shape and the last shape are identical.
+Note that this shape and the last shape are equivalent.
 
 ### Fitting B-spline manifold
 [Try on Desmos graphing graphing calculator!](https://www.desmos.com/calculator/2hm3b1fbdf)

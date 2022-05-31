@@ -36,7 +36,7 @@ save_png("2dim_h-refinement.png", M_h) # save image
 ```
 ![](2dim_h-refinement.png)
 
-Note that this shape and the last shape are identical.
+Note that this shape and the last shape are equivalent.
 
 
 ### p-refinemnet
@@ -49,4 +49,4 @@ save_png("2dim_p-refinement.png", M_p) # save image
 ```
 ![](2dim_p-refinement.png)
 
-Note that this shape and the last shape are identical.
+Note that this shape and the last shape are equivalent.
