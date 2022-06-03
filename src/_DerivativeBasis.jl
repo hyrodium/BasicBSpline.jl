@@ -1,6 +1,6 @@
 # Derivative of B-spline basis function
 
-@generated function bsplinebasis₊₀(dP::BSplineDerivativeSpace{r,BSplineSpace{p,T}}, i::Integer, t::S) where {r, p, T, S<:Real}
+@generated function bsplinebasis₊₀(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p,T}}, i::Integer, t::S) where {r, p, T, S<:Real}
     U = StaticArrays.arithmetic_closure(promote_type(T,S))
     ks = [Symbol(:k,i) for i in 1:p+2]
     Ks = [Symbol(:K,i) for i in 1:p+1]
@@ -36,7 +36,7 @@
     end
 end
 
-@generated function bsplinebasis₋₀(dP::BSplineDerivativeSpace{r,BSplineSpace{p,T}}, i::Integer, t::S) where {r, p, T, S<:Real}
+@generated function bsplinebasis₋₀(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p,T}}, i::Integer, t::S) where {r, p, T, S<:Real}
     U = StaticArrays.arithmetic_closure(promote_type(T,S))
     ks = [Symbol(:k,i) for i in 1:p+2]
     Ks = [Symbol(:K,i) for i in 1:p+1]
@@ -72,7 +72,7 @@ end
     end
 end
 
-@generated function bsplinebasis(dP::BSplineDerivativeSpace{r,BSplineSpace{p,T}}, i::Integer, t::S) where {r, p, T, S<:Real}
+@generated function bsplinebasis(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p,T}}, i::Integer, t::S) where {r, p, T, S<:Real}
     U = StaticArrays.arithmetic_closure(promote_type(T,S))
     ks = [Symbol(:k,i) for i in 1:p+2]
     Ks = [Symbol(:K,i) for i in 1:p+1]
@@ -151,7 +151,7 @@ for suffix in ("", "₋₀", "₊₀")
     end
 end
 
-@generated function bsplinebasisall(dP::BSplineDerivativeSpace{r,BSplineSpace{p,T}}, i::Integer, t::S) where {r, p, T, S<:Real}
+@generated function bsplinebasisall(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p,T}}, i::Integer, t::S) where {r, p, T, S<:Real}
     U = StaticArrays.arithmetic_closure(promote_type(T,S))
     bs = [Symbol(:b,i) for i in 1:p]
     Bs = [Symbol(:B,i) for i in 1:p+1]
@@ -176,24 +176,17 @@ end
     end
 end
 
-@inline function bsplinebasisall(dP::BSplineDerivativeSpace{0,BSplineSpace{p,T}}, i::Integer, t::Real) where {p, T}
+@inline function bsplinebasisall(dP::BSplineDerivativeSpace{0,<:AbstractBSplineSpace{p,T}}, i::Integer, t::Real) where {p, T}
     P = bsplinespace(dP)
     bsplinebasisall(P,i,t)
 end
 
-function bsplinebasis(dP::BSplineDerivativeSpace{r,UniformBSplineSpace{p,T,R}}, i, t) where {r,p,T,R}
-    _dP = convert(BSplineDerivativeSpace{r,BSplineSpace{p,T}},dP)
-    return bsplinebasis(_dP, i, t)
-end
-function bsplinebasis₊₀(dP::BSplineDerivativeSpace{r,UniformBSplineSpace{p,T,R}}, i, t) where {r,p,T,R}
-    _dP = convert(BSplineDerivativeSpace{r,BSplineSpace{p,T}},dP)
-    return bsplinebasis₊₀(_dP, i, t)
-end
-function bsplinebasis₋₀(dP::BSplineDerivativeSpace{r,UniformBSplineSpace{p,T,R}}, i, t) where {r,p,T,R}
-    _dP = convert(BSplineDerivativeSpace{r,BSplineSpace{p,T}},dP)
-    return bsplinebasis₋₀(_dP, i, t)
-end
-function bsplinebasisall(dP::BSplineDerivativeSpace{r,UniformBSplineSpace{p,T,R}}, i, t) where {r,p,T,R}
-    _dP = convert(BSplineDerivativeSpace{r,BSplineSpace{p,T}},dP)
-    return bsplinebasisall(_dP, i, t)
-end
+# TODO: add methods for UniformBSplineSpace (and OpenUniformBSplineSpace)
+# function bsplinebasis(dP::BSplineDerivativeSpace{r,UniformBSplineSpace{p,T,R}}, i, t) where {r,p,T,R}
+# end
+# function bsplinebasis₊₀(dP::BSplineDerivativeSpace{r,UniformBSplineSpace{p,T,R}}, i, t) where {r,p,T,R}
+# end
+# function bsplinebasis₋₀(dP::BSplineDerivativeSpace{r,UniformBSplineSpace{p,T,R}}, i, t) where {r,p,T,R}
+# end
+# function bsplinebasisall(dP::BSplineDerivativeSpace{r,UniformBSplineSpace{p,T,R}}, i, t) where {r,p,T,R}
+# end

@@ -51,6 +51,15 @@
         @test length(k4) == 3
     end
 
+    @testset "step" begin
+        step(k1) == 1
+        step(k2) == 1
+        step(k3) == 1
+        step(k4) == 1
+        step(k5) == 1
+        step(k6) == 2
+    end
+
     @testset "iterator, getindex" begin
         for t in k2
             @test t in k3
