@@ -7,11 +7,6 @@ using StaticArrays
 using GeometryBasics
 using Plots
 
-function rand_interval(D::ClosedInterval)
-    a,b = endpoints(D)
-    return a+(b-a)*rand()
-end
-
 @testset "BasicBSpline.jl" begin
     include("test_KnotVector.jl")
     include("test_BSplineSpace.jl")

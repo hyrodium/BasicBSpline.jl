@@ -109,7 +109,7 @@
             for r in 0:5
                 dP = BSplineDerivativeSpace{r}(P)
                 for _ in 1:10
-                    t = rand_interval(domain(dP))
+                    t = rand(domain(dP))
                     j = intervalindex(dP,t)
                     B = collect(bsplinebasisall(dP,j,t))
                     @test bsplinebasis.(dP,j:j+p,t) ≈ B
