@@ -88,7 +88,7 @@ savefig("2dim-manifold.html") # hide
 
 ## Affine commutativity
 !!! info "Thm.  Affine commutativity"
-    Let ``T`` be a affine transform ``V \to W``, then the following is a equality holds.
+    Let ``T`` be a affine transform ``V \to W``, then the following equality holds.
     ```math
     T(\bm{p}(t; \bm{a}))
     =\bm{p}(t; T(\bm{a}))
