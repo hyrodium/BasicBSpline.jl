@@ -10,7 +10,7 @@ using Plots; plotly()
 ## Multi-dimensional B-spline
 
 !!! info "Thm.  Basis of tensor product of B-spline spaces"
-    The tensor product of B-spline spaces ``\mathcal{P}[p^1,k^1]\otimes\mathcal{P}[p^2,k^2]`` linear space with the following basis.
+    The tensor product of B-spline spaces ``\mathcal{P}[p^1,k^1]\otimes\mathcal{P}[p^2,k^2]`` is a linear space with the following basis.
     ```math
     \mathcal{P}[p^1,k^1]\otimes\mathcal{P}[p^2,k^2]
     = \operatorname*{span}_{i,j} (B_{(i,p^1,k^1)} \otimes B_{(j,p^2,k^2)})
