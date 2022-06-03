@@ -20,6 +20,10 @@
         @test dP2 === BSplineDerivativeSpace{1,typeof(P2)}(dP2)
         @test dP1 isa BSplineDerivativeSpace{1,<:BSplineSpace}
         @test dP2 isa BSplineDerivativeSpace{1,<:UniformBSplineSpace}
+
+        @test dP2 == convert(BSplineDerivativeSpace,dP2)
+        @test dP2 == convert(BSplineDerivativeSpace{1},dP2)
+        @test_throws MethodError convert(BSplineDerivativeSpace{2},dP2)
     end
 
     # Not sure why this @testset doesn't work fine.
