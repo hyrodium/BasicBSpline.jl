@@ -44,3 +44,5 @@ Base.collect(k::UniformKnotVector) = collect(k.vector)
 Base.:+(k1::UniformKnotVector{T1},k2::UniformKnotVector{T2}) where {T1,T2} = KnotVector{promote_type(T1,T2)}([k1.vector;k2.vector])
 
 Base.zero(::UniformKnotVector{T}) where T = KnotVector{T}()
+
+Base.step(k::UniformKnotVector) = step(_vec(k))
