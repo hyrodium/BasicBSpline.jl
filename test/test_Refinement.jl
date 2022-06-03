@@ -46,7 +46,7 @@
             R4 = refinement(R, (P1′,))
 
             for _ in 1:100
-                t1 = rand_interval(D1)
+                t1 = rand(D1)
                 @test M(t1) ≈ R(t1)
                 @test M(t1) ≈ M1(t1)
                 @test M(t1) ≈ M2(t1)
@@ -69,7 +69,7 @@
             R4 = refinement(R, (P1′,))
 
             for _ in 1:100
-                t1 = rand_interval(D1)
+                t1 = rand(D1)
                 @test R(t1) ≈ R1(t1)
                 @test R(t1) ≈ R2(t1)
                 @test R(t1) ≈ R3(t1)
@@ -100,8 +100,8 @@
             R4 = refinement(R, (P1′,P2′))
 
             for _ in 1:100
-                t1 = rand_interval(D1)
-                t2 = rand_interval(D2)
+                t1 = rand(D1)
+                t2 = rand(D2)
                 @test M(t1,t2) ≈ R(t1,t2)
                 @test M(t1,t2) ≈ M1(t1,t2)
                 @test M(t1,t2) ≈ M2(t1,t2)
@@ -125,8 +125,8 @@
             R4 = refinement(R, (P1′,P2′))
 
             for _ in 1:100
-                t1 = rand_interval(D1)
-                t2 = rand_interval(D2)
+                t1 = rand(D1)
+                t2 = rand(D2)
                 @test R(t1,t2) ≈ R1(t1,t2)
                 @test R(t1,t2) ≈ R2(t1,t2)
                 @test R(t1,t2) ≈ R3(t1,t2)
@@ -157,9 +157,9 @@
             R4 = refinement(R, (P1′,P2′,P3′))
 
             for _ in 1:100
-                t1 = rand_interval(D1)
-                t2 = rand_interval(D2)
-                t3 = rand_interval(D3)
+                t1 = rand(D1)
+                t2 = rand(D2)
+                t3 = rand(D3)
                 @test M(t1,t2,t3) ≈ R(t1,t2,t3)
                 @test M(t1,t2,t3) ≈ M1(t1,t2,t3)
                 @test M(t1,t2,t3) ≈ M2(t1,t2,t3)
@@ -183,9 +183,9 @@
             R4 = refinement(R, (P1′,P2′,P3′))
 
             for _ in 1:100
-                t1 = rand_interval(D1)
-                t2 = rand_interval(D2)
-                t3 = rand_interval(D3)
+                t1 = rand(D1)
+                t2 = rand(D2)
+                t3 = rand(D3)
                 @test R(t1,t2,t3) ≈ R1(t1,t2,t3)
                 @test R(t1,t2,t3) ≈ R2(t1,t2,t3)
                 @test R(t1,t2,t3) ≈ R3(t1,t2,t3)

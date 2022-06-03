@@ -68,7 +68,7 @@
             D = domain(P1)
             n = dim(P1)
             for _ in 1:100
-                t = rand_interval(D)
+                t = rand(D)
                 @test norm(bsplinebasis.(P1,1:n,t) - A*bsplinebasis.(P2,1:n,t), Inf) < 1e-14
             end
         end
