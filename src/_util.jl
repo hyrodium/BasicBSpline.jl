@@ -14,4 +14,6 @@ _leftdivision(A,b) = inv(A)*b
 _leftdivision(A,b::AbstractVector{<:Number}) = A\b
 # TODO: add more methods for left division (e.g. b::Vector{<:SVector})
 
+# TODO: generalize trinomial
+# https://mathworld.wolfram.com/TrinomialCoefficient.html
 trinomial(n,k) = sum((-1)^j*binomial(n,j)*binomial(2n-2j,n-k-j) for j in 0:n)
