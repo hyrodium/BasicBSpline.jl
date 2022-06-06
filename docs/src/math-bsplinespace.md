@@ -52,12 +52,6 @@ Note that each element of the space ``\mathcal{P}[p,k]`` is a piecewise polynomi
 
 [TODO: fig]
 
-```@repl math
-p = 2
-k = KnotVector([1,3,5,6,8,9])
-BSplineSpace{p}(k)
-```
-
 ```@docs
 AbstractBSplineSpace
 ```
