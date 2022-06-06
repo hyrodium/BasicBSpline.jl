@@ -10,7 +10,7 @@ B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p',k')}
 Assumption:
 * ``P ⊆ P′``
 """
-_changebasis_R
+function _changebasis_R end
 
 function _changebasis_R(P::AbstractBSplineSpace{0,T}, P′::AbstractBSplineSpace{p′,T′}) where {p′,T,T′}
     P ⊆ P′ || throw(DomainError((P,P′),"P ⊆ P′ should be hold."))

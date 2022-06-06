@@ -15,14 +15,8 @@ using Plots; plotly()
     \Leftrightarrow (m=p'-p \ge 0 \ \text{and} \ k+m\widehat{k}\subseteq k')
     ```
 
-```@repl math
-P1 = BSplineSpace{1}(KnotVector([1,3,5,8]))
-P2 = BSplineSpace{1}(KnotVector([1,3,5,6,8,9]))
-P3 = BSplineSpace{2}(KnotVector([1,1,3,3,5,5,8,8]))
-P1 ⊆ P2
-P1 ⊆ P3
-P2 ⊆ P3
-P2 ⊈ P3
+```@docs
+Base.issubset(P::AbstractBSplineSpace{p}, P′::AbstractBSplineSpace{p′}) where {p, p′}
 ```
 
 Here are plots of the B-spline basis functions of the spaces `P1`, `P2`, `P3`.

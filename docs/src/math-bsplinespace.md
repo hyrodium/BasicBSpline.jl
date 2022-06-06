@@ -33,6 +33,7 @@ B_{(i,p)}(t)
 ```
 
 Where ``\binom{p}{i-1}`` is a [binomial coefficient](https://en.wikipedia.org/wiki/Binomial_coefficient).
+You can try Bernstein polynomial on [desmos graphing calculator](https://www.desmos.com/calculator/yc2qe6j6re)!
 
 !!! tip "Def.  B-spline space"
     For given polynomial degree ``p\ge 0`` and knot vector ``k=(k_1,\dots,k_l)``, B-spline space ``\mathcal{P}[p,k]`` is defined as follows:
@@ -50,12 +51,6 @@ Where ``\binom{p}{i-1}`` is a [binomial coefficient](https://en.wikipedia.org/wi
 Note that each element of the space ``\mathcal{P}[p,k]`` is a piecewise polynomial.
 
 [TODO: fig]
-
-```@repl math
-p = 2
-k = KnotVector([1,3,5,6,8,9])
-BSplineSpace{p}(k)
-```
 
 ```@docs
 AbstractBSplineSpace
@@ -90,7 +85,7 @@ isdegenerate(P::AbstractBSplineSpace)
 
 The B-spline space is a linear space, and if a B-spline space is non-degenerate, its dimension is calculated by:
 ```math
-\dim(\mathcal{P}[p,k])=\sharp k - p -1
+\dim(\mathcal{P}[p,k])=\# k - p -1
 ```
 
 ```@repl math

@@ -49,6 +49,7 @@ makedocs(;
             "Inclusive relationship" => "math-inclusive.md",
             "Refinement" => "math-refinement.md",
             "Fitting" => "math-fitting.md",
+            "Rational B-spline manifold" => "math-rationalbsplinemanifold.md",
         ],
         # "Differentiation" => [
         #     "BSplineDerivativeSpace" => "bsplinederivativespace.md",
