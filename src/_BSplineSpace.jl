@@ -84,7 +84,7 @@ end
 Return dimention of a B-spline space.
 ```math
 \dim(\mathcal{P}[p,k])
-=\sharp k - p -1
+=\# k - p -1
 ```
 """
 function dim(bsplinespace::AbstractBSplineSpace{p}) where p

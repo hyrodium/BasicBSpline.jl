@@ -85,7 +85,7 @@ isdegenerate(P::AbstractBSplineSpace)
 
 The B-spline space is a linear space, and if a B-spline space is non-degenerate, its dimension is calculated by:
 ```math
-\dim(\mathcal{P}[p,k])=\sharp k - p -1
+\dim(\mathcal{P}[p,k])=\# k - p -1
 ```
 
 ```@repl math
