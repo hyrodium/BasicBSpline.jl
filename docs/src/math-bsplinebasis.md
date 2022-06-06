@@ -131,7 +131,7 @@ savefig("sumofbsplineplot2.html") # hide
 <object type="text/html" data="../sumofbsplineplot2.html" style="width:100%;height:420px;"></object>
 ```
 
-But, the sum ``\sum_{i} B_{(i,p,k)}(t)`` is not equal to ``1`` if ``t=8``.
+But, the sum ``\sum_{i} B_{(i,p,k)}(t)`` is not equal to ``1`` at ``t=8``.
 Therefore, to satisfy partition of unity on closed interval ``[k_{p+1}, k_{l-p}]``, the definition of first terms of B-spline basis functions are sometimes replaced:
 
 ```math
