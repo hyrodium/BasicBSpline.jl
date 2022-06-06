@@ -98,6 +98,27 @@ Check inclusive relationship between B-spline spaces.
 \mathcal{P}[p,k]
 \subseteq\mathcal{P}[p',k']
 ```
+
+# Examples
+```jldoctest
+julia> P1 = BSplineSpace{1}(KnotVector([1,3,5,8]));
+
+julia> P2 = BSplineSpace{1}(KnotVector([1,3,5,6,8,9]));
+
+julia> P3 = BSplineSpace{2}(KnotVector([1,1,3,3,5,5,8,8]));
+
+julia> P1 ⊆ P2
+true
+
+julia> P1 ⊆ P3
+true
+
+julia> P2 ⊆ P3
+false
+
+julia> P2 ⊈ P3
+true
+```
 """
 function Base.issubset(P::AbstractBSplineSpace{p}, P′::AbstractBSplineSpace{p′}) where {p, p′}
     k = knotvector(P)
