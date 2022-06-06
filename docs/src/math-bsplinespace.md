@@ -33,6 +33,7 @@ B_{(i,p)}(t)
 ```
 
 Where ``\binom{p}{i-1}`` is a [binomial coefficient](https://en.wikipedia.org/wiki/Binomial_coefficient).
+You can try Bernstein polynomial on [desmos graphing calculator](https://www.desmos.com/calculator/yc2qe6j6re)!
 
 !!! tip "Def.  B-spline space"
     For given polynomial degree ``p\ge 0`` and knot vector ``k=(k_1,\dots,k_l)``, B-spline space ``\mathcal{P}[p,k]`` is defined as follows:
