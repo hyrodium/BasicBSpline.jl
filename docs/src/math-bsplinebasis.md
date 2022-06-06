@@ -87,20 +87,13 @@ In these cases, each B-spline basis function ``B_{(i,2,k)}`` is coninuous, so `b
 
 [TODO: fig]
 
-```@repl math
-i = 2
-k = KnotVector([5,12,13,13,14])
-p = 2
-P = BSplineSpace{p}(k)
-bsplinesupport(P,i) # 12..14
-```
-
 ```@docs
 bsplinesupport
 ```
 
 ## Partition of unity
 !!! info "Thm.  Partition of unity"
+    Let ``B_{(i,p,k)}`` be a B-spline basis function, then the following equation is satisfied.
     ```math
     \begin{aligned}
     \sum_{i}B_{(i,p,k)}(t) &= 1 & (k_{p+1} \le t < k_{l-p}) \\
