@@ -88,10 +88,6 @@ The B-spline space is a linear space, and if a B-spline space is non-degenerate,
 \dim(\mathcal{P}[p,k])=\# k - p -1
 ```
 
-```@repl math
-dim(BSplineSpace{2}(KnotVector([1,3,5,6,8,9])))
-```
-
 ```@docs
 dim
 ```

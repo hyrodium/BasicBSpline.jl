@@ -86,6 +86,15 @@ Return dimention of a B-spline space.
 \dim(\mathcal{P}[p,k])
 =\# k - p -1
 ```
+
+# Examples
+```jldoctest
+julia> dim(BSplineSpace{1}(KnotVector([1,2,3,4,5])))
+3
+
+julia> dim(BSplineSpace{1}(KnotVector([1,2,2,2,4])))
+3
+```
 """
 function dim(bsplinespace::AbstractBSplineSpace{p}) where p
     k = knotvector(bsplinespace)
