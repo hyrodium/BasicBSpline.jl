@@ -34,6 +34,7 @@ generate_indexmd_from_readmemd()
 makedocs(;
     modules = [BasicBSpline],
     format = Documenter.HTML(
+        ansicolor=true,
         canonical = "https://hyrodium.github.io/BasicBSpline.jl/stable/",
         assets = ["assets/favicon.ico", "assets/custom.css"],
     ),
