@@ -171,6 +171,18 @@ bsplinebasis
 ```
 
 ## B-spline basis functions at specific point
+Sometimes, you may need the non-zero values of B-spline basis functions at specific point.
+The `bsplinebasisall` function is much more efficient than evaluating B-spline functions one by one with `bsplinebasis` function.
+
+```@repl
+using BenchmarkTools, BasicBSpline
+P = BSplineSpace{3}(KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]))
+t = 6.3
+bsplinebasis.(P, 1:4, t)
+bsplinebasisall(P, 1, t)
+@benchmark bsplinebasis.($P, 1:4, $t)
+@benchmark bsplinebasisall($P, 1, $t)
+```
 
 ```@docs
 intervalindex
