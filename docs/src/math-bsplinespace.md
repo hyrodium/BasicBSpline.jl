@@ -66,12 +66,13 @@ UniformBSplineSpace
 
 ## Degeneration
 
-A B-spline space is said to be **non-degenerate** if its degree and knotvector satisfies following property:
-```math
-\begin{aligned}
-k_{i}&<k_{i+p+1} & (1 \le i \le l-p-1)
-\end{aligned}
-```
+!!! tip "Def.  Degeneration"
+    A B-spline space is said to be **non-degenerate** if its degree and knotvector satisfies following property:
+    ```math
+    \begin{aligned}
+    k_{i}&<k_{i+p+1} & (1 \le i \le l-p-1)
+    \end{aligned}
+    ```
 
 ```@docs
 isnondegenerate
@@ -83,10 +84,11 @@ isdegenerate(P::AbstractBSplineSpace)
 
 ## Dimensions
 
-The B-spline space is a linear space, and if a B-spline space is non-degenerate, its dimension is calculated by:
-```math
-\dim(\mathcal{P}[p,k])=\# k - p -1
-```
+!!! info "Thm.  Dimension of B-spline space"
+    The B-spline space is a linear space, and if a B-spline space is non-degenerate, its dimension is calculated by:
+    ```math
+    \dim(\mathcal{P}[p,k])=\# k - p -1
+    ```
 
 ```@docs
 dim
