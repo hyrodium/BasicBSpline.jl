@@ -128,8 +128,8 @@ Modified version.
 {B}_{(i,0,k)}(t)
 &=
 \begin{cases}
-    &1\quad (k_{i}\le t<k_{i+1}<k_{l})\\
-    &1\quad (k_{i}\le t\le k_{i+1}=k_{l})\\
+    &1\quad (k_{i} \le t<k_{i+1})\\
+    &1\quad (k_{i} < t = k_{i+1}=k_{l})\\
     &0\quad (\text{otherwise})
 \end{cases}
 \end{aligned}

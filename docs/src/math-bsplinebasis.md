@@ -131,7 +131,7 @@ savefig("sumofbsplineplot2.html") # hide
 <object type="text/html" data="../sumofbsplineplot2.html" style="width:100%;height:420px;"></object>
 ```
 
-But, the sum ``\sum_{i} B_{(i,p,k)}(t)`` is not equal to ``1`` if ``t=8``.
+But, the sum ``\sum_{i} B_{(i,p,k)}(t)`` is not equal to ``1`` at ``t=8``.
 Therefore, to satisfy partition of unity on closed interval ``[k_{p+1}, k_{l-p}]``, the definition of first terms of B-spline basis functions are sometimes replaced:
 
 ```math
@@ -171,6 +171,18 @@ bsplinebasis
 ```
 
 ## B-spline basis functions at specific point
+Sometimes, you may need the non-zero values of B-spline basis functions at specific point.
+The `bsplinebasisall` function is much more efficient than evaluating B-spline functions one by one with `bsplinebasis` function.
+
+```@repl
+using BenchmarkTools, BasicBSpline
+P = BSplineSpace{2}(KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]))
+t = 6.3
+(bsplinebasis(P, 2, t), bsplinebasis(P, 3, t), bsplinebasis(P, 4, t))
+bsplinebasisall(P, 2, t)
+@benchmark (bsplinebasis($P, 2, $t), bsplinebasis($P, 3, $t), bsplinebasis($P, 4, $t))
+@benchmark bsplinebasisall($P, 2, $t)
+```
 
 ```@docs
 intervalindex
@@ -210,7 +222,7 @@ end
 
 ## Uniform B-spline basis and uniform distribution
 
-Let ``X_1, \dots, X_n`` be random variables with ``X_i \sim U(0,1)``, then the probability density function of ``X_1+\cdots+X_n`` can be obtained via `BasicBSpline.uniform_bsplinebasis_kernel(Val(n-1),t)`.
+Let ``X_1, \dots, X_n`` be i.i.d. random variables with ``X_i \sim U(0,1)``, then the probability density function of ``X_1+\cdots+X_n`` can be obtained via `BasicBSpline.uniform_bsplinebasis_kernel(Val(n-1),t)`.
 
 ```@example math
 N = 100000
