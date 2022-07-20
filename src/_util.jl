@@ -31,8 +31,6 @@ function r_nomial(n::T,k::T,r::T) where T<:Integer
         return n*(n+1)÷2
     elseif (r-1)*n < 2k
         return r_nomial(n,(r-one(T))*n-k,r)
-    elseif (r-1)*n < k
-        return zero(T)
     elseif n == 1
         return one(T)
     elseif n == 2
