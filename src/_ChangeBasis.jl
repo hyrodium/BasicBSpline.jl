@@ -8,7 +8,7 @@ B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p',k')}
 ```
 
 Assumption:
-* ``P ⊆ P′``
+* ``P ⊆ P^{\prime}``
 """
 function _changebasis_R end
 
@@ -96,7 +96,7 @@ B_{(i,p_1,k_1)} = \sum_{j}A_{i,j}B_{(j,p_2,k_2)}
 ```
 
 Assumption:
-* ``P1 ≃ P2``
+* ``P_1 ≃ P_2``
 """
 function _changebasis_sim(P1::AbstractBSplineSpace{p,T1}, P2::AbstractBSplineSpace{p,T2}) where {p,T1,T2}
     P1 ≃ P2 || throw(DomainError((P1,P2),"P1 ≃ P2 should be hold."))
@@ -128,7 +128,7 @@ B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p',k')}
 ```
 
 Assumption:
-* ``P ⊑ P′``
+* ``P ⊑ P^{\prime}``
 """
 function _changebasis_I(P::AbstractBSplineSpace{p,T}, P′::AbstractBSplineSpace{p′,T′}) where {p,p′,T,T′}
     P ⊑ P′ || throw(DomainError((P,P′),"P ⊑ P′ should be hold."))
