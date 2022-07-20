@@ -14,7 +14,7 @@ _leftdivision(A,b) = inv(A)*b
 _leftdivision(A,b::AbstractVector{<:Number}) = A\b
 # TODO: add more methods for left division (e.g. b::Vector{<:SVector})
 
-function _multinomial(n::T,k::T,r::T) where T<:Integer
+function r_nomial(n::T,k::T,r::T) where T<:Integer
     # n must be non-negative
     # r must be larger or equal to one
     if r == 1
@@ -30,7 +30,7 @@ function _multinomial(n::T,k::T,r::T) where T<:Integer
     elseif k == 2
         return n*(n+1)÷2
     elseif (r-1)*n < 2k
-        return _multinomial(n,(r-one(T))*n-k,r)
+        return r_nomial(n,(r-one(T))*n-k,r)
     elseif (r-1)*n < k
         return zero(T)
     elseif n == 1
@@ -38,9 +38,9 @@ function _multinomial(n::T,k::T,r::T) where T<:Integer
     elseif n == 2
         return k+one(T)
     else
-        m = _multinomial(n-one(T),k,r)
+        m = r_nomial(n-one(T),k,r)
         for i in 1:r-1
-            m += _multinomial(n-one(T),k-i,r)
+            m += r_nomial(n-one(T),k-i,r)
         end
         return m
     end
