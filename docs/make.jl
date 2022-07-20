@@ -62,6 +62,7 @@ makedocs(;
             "PlotlyJS.jl" => "plotlyjs.md",
             "BasicBSplineExporter.jl" => "basicbsplineexporter.md",
         ],
+        "Private API" => "internal.md",
         "Contributing" => "contributing.md",
     ],
     repo = "https://github.com/hyrodium/BasicBSpline.jl/blob/{commit}{path}#L{line}",
