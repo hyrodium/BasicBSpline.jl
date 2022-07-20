@@ -100,7 +100,7 @@
     @testset "uniform" begin
         for r in 1:5
             k = UniformKnotVector(0:r:50)
-            for p in 0:4  # This should be 0:5 but that will throw error for A4.
+            for p in 0:4
                 P = UniformBSplineSpace{p}(k)
 
                 k′ = UniformKnotVector(0:50)
