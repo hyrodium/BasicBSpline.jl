@@ -145,12 +145,45 @@ function _changebasis_I(P::AbstractBSplineSpace{p,T}, P′::AbstractBSplineSpace
     return A
 end
 
-function changebasis(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
-    P ⊆ P′ && return _changebasis_R(P, P′)
-    P ⊑ P′ && return _changebasis_I(P, P′)
-    throw(DomainError((P, P′),"𝒫[p,k] ⊆ 𝒫[p′,k′] or 𝒫[p,k] ⊑ 𝒫[p′,k′] must hold."))
+## UniformBSplineSpace
+function _changebasis_R(P::UniformBSplineSpace{p,T}, P′::UniformBSplineSpace{p,T′}) where {p,T,T′}
+    P ⊆ P′ || throw(DomainError((P,P′),"P ⊆ P′ should be hold."))
+    k = knotvector(P)
+    k′ = knotvector(P′)
+    r = round(Int, step(k)/step(k′))
+    block = [r_nomial(p+1,i,r) for i in 0:(r-1)*(p+1)]/r^p
+    n = dim(P)
+    n′ = dim(P′)
+    j = findfirst(==(k[1]), _vec(k′))
+    A = zeros(StaticArrays.arithmetic_closure(T), n, n′)
+    for i in 1:n
+        A[i, j+r*(i-1):j+(r-1)*(p+1)+r*(i-1)] = block
+    end
+    return A
+end
+function _changebasis_I(P::UniformBSplineSpace{p,T}, P′::UniformBSplineSpace{p,T′}) where {p,T,T′}
+    P ⊑ P′ || throw(DomainError((P,P′),"P ⊑ P′ should be hold."))
+    k = knotvector(P)
+    k′ = knotvector(P′)
+    r = round(Int, step(k)/step(k′))
+    block = [r_nomial(p+1,i,r) for i in 0:(r-1)*(p+1)]/r^p
+    n = dim(P)
+    n′ = dim(P′)
+    A = zeros(StaticArrays.arithmetic_closure(T), n, n′)
+    for i in 1:n
+        a = r*i-(r-1)*(p+1)
+        b = r*i
+        rr = a:b
+        if rr ⊆ 1:n′
+            A[i,rr] = block
+        else
+            A[i,max(a,1):min(b,n′)] = block[max(a,1)-a+1:min(b,n′)-b+(r-1)*(p+1)+1]
+        end
+    end
+    return A
 end
 
+## BSplineDerivativeSpace
 function _changebasis_R(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}, P′::AbstractBSplineSpace) where {r,p}
     dP ⊆ P′ || throw(DomainError((P,P′),"dP ⊆ P′ should be hold."))
     k = knotvector(dP)
@@ -190,4 +223,10 @@ end
 function _changebasis_R(P::AbstractBSplineSpace, dP′::BSplineDerivativeSpace{0})
     P′ = bsplinespace(dP′)
     return _changebasis_R(P, P′)
+end
+
+function changebasis(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
+    P ⊆ P′ && return _changebasis_R(P, P′)
+    P ⊑ P′ && return _changebasis_I(P, P′)
+    throw(DomainError((P, P′),"𝒫[p,k] ⊆ 𝒫[p′,k′] or 𝒫[p,k] ⊑ 𝒫[p′,k′] must hold."))
 end

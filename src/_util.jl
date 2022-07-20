@@ -13,3 +13,33 @@ eulertriangle(n,k) = sum((-1)^j*binomial(n+1,j)*(k-j+1)^n for j in 0:k)
 _leftdivision(A,b) = inv(A)*b
 _leftdivision(A,b::AbstractVector{<:Number}) = A\b
 # TODO: add more methods for left division (e.g. b::Vector{<:SVector})
+
+function r_nomial(n::T,k::T,r::T) where T<:Integer
+    # n must be non-negative
+    # r must be larger or equal to one
+    if r == 1
+        return T(iszero(k))
+    elseif r == 2
+        return binomial(n,k)
+    elseif k < 0
+        return zero(T)
+    elseif k == 0
+        return one(T)
+    elseif k == 1
+        return n
+    elseif k == 2
+        return n*(n+1)÷2
+    elseif (r-1)*n < 2k
+        return r_nomial(n,(r-one(T))*n-k,r)
+    elseif n == 1
+        return one(T)
+    elseif n == 2
+        return k+one(T)
+    else
+        m = r_nomial(n-one(T),k,r)
+        for i in 1:r-1
+            m += r_nomial(n-one(T),k-i,r)
+        end
+        return m
+    end
+end
