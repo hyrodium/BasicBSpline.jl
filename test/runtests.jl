@@ -8,6 +8,7 @@ using GeometryBasics
 using Plots
 
 @testset "BasicBSpline.jl" begin
+    include("test_util.jl")
     include("test_KnotVector.jl")
     include("test_BSplineSpace.jl")
     include("test_BSplineBasis.jl")
