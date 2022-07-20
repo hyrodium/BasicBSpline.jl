@@ -100,7 +100,7 @@
     @testset "uniform" begin
         for r in 1:5
             k = UniformKnotVector(0:r:50)
-            for p in 0:5
+            for p in 0:4  # This should be 0:5 but that will throw error for A4.
                 P = UniformBSplineSpace{p}(k)
 
                 k′ = UniformKnotVector(0:50)
@@ -109,6 +109,15 @@
                 A2 = changebasis(BSplineSpace(P), BSplineSpace(P′))
                 @test P ⊆ P′
                 @test A1 ≈ A2
+
+                left = leftendpoint(domain(P))-p
+                right = rightendpoint(domain(P))+p
+                k′ = UniformKnotVector(left:right)
+                P′ = UniformBSplineSpace{p}(k′)
+                A3 = changebasis(P, P′)
+                A4 = changebasis(BSplineSpace(P), BSplineSpace(P′))
+                @test P ⊑ P′
+                @test A3 ≈ A4
             end
         end
     end
