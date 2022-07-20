@@ -169,10 +169,16 @@ function _changebasis_I(P::UniformBSplineSpace{p,T}, P′::UniformBSplineSpace{p
     block = [r_nomial(p+1,i,r) for i in 0:(r-1)*(p+1)]/r^p
     n = dim(P)
     n′ = dim(P′)
-    j = findfirst(==(k[1]), _vec(k′))
     A = zeros(StaticArrays.arithmetic_closure(T), n, n′)
     for i in 1:n
-        A[i, j+r*(i-1):j+(r-1)*(p+1)+r*(i-1)] = block
+        a = r*i-(r-1)*(p+1)
+        b = r*i
+        rr = a:b
+        if rr ⊆ 1:n′
+            A[i,rr] = block
+        else
+            A[i,max(a,1):min(b,n′)] = block[max(a,1)-a+1:min(b,n′)-b+(r-1)*(p+1)+1]
+        end
     end
     return A
 end
