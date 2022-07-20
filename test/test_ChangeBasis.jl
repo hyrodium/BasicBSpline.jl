@@ -97,6 +97,22 @@
         @test BasicBSpline._changebasis_sim(P,P) isa Matrix{BigFloat}
     end
 
+    @testset "uniform" begin
+        for r in 1:5
+            k = UniformKnotVector(0:r:50)
+            for p in 0:5
+                P = UniformBSplineSpace{p}(k)
+
+                k′ = UniformKnotVector(0:50)
+                P′ = UniformBSplineSpace{p}(k′)
+                A1 = changebasis(P, P′)
+                A2 = changebasis(BSplineSpace(P), BSplineSpace(P′))
+                @test P ⊆ P′
+                @test A1 ≈ A2
+            end
+        end
+    end
+
     @testset "derivative" begin
         k1 = KnotVector(5*rand(12))
         k2 = k1 + KnotVector(rand(3)*3 .+ 1)
