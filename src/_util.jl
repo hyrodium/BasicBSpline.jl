@@ -14,6 +14,15 @@ _leftdivision(A,b) = inv(A)*b
 _leftdivision(A,b::AbstractVector{<:Number}) = A\b
 # TODO: add more methods for left division (e.g. b::Vector{<:SVector})
 
+@doc raw"""
+Calculate ``r``-nomial coefficient
+
+    r_nomial(n, k, r)
+
+```math
+(1+x+\cdots+x^r)^n = \sum_{k} a_{n,k,r} x^k
+```
+"""
 function r_nomial(n::T,k::T,r::T) where T<:Integer
     # n must be non-negative
     # r must be larger or equal to one
