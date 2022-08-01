@@ -104,7 +104,6 @@ function _changebasis_sim(P1::AbstractBSplineSpace{p,T1}, P2::AbstractBSplineSpa
     n = dim(P1)
     a, b = extrema(domain(P1))
 
-    # TODO: This can be faster with SMatrix
     A = Matrix{U}(I, n, n)
     A1 = @MMatrix zeros(U,p,p)
     A2 = @MMatrix zeros(U,p,p)
