@@ -102,22 +102,46 @@ function _changebasis_sim(P1::AbstractBSplineSpace{p,T1}, P2::AbstractBSplineSpa
     P1 ≃ P2 || throw(DomainError((P1,P2),"P1 ≃ P2 should be hold."))
     U = StaticArrays.arithmetic_closure(promote_type(T1,T2))
     n = dim(P1)
-    a, b = extrema(domain(P1))
 
     A = Matrix{U}(I, n, n)
-    A1 = @MMatrix zeros(U,p,p)
-    A2 = @MMatrix zeros(U,p,p)
-    for r in 1:p
-        A1[:,r] = bsplinebasisall(BSplineDerivativeSpace{r-1}(P1),1,a)[1:end-1] # end == p+1
-        A2[:,r] = bsplinebasisall(BSplineDerivativeSpace{r-1}(P2),1,a)[1:end-1]
-    end
+    A1 = _derivatives_at_left(P1)
+    A2 = _derivatives_at_left(P2)
     A[1:p, 1:p] = A1/A2
-    for r in 1:p
-        A1[:,r] = bsplinebasisall(BSplineDerivativeSpace{r-1}(P1),n-p,b)[2:end]
-        A2[:,r] = bsplinebasisall(BSplineDerivativeSpace{r-1}(P2),n-p,b)[2:end]
-    end
+    A1 = _derivatives_at_right(P1)
+    A2 = _derivatives_at_right(P2)
     A[n-p+1:n, n-p+1:n] = A1/A2
     return A
+end
+
+@generated function _derivatives_at_left(P::AbstractBSplineSpace{p,T}) where {p, T}
+    hcat_args = Any[:hcat]
+    for r in 0:p-1
+        push!(hcat_args, :(pop(bsplinebasisall(BSplineDerivativeSpace{$(r)}(P),1,a))))
+    end
+    quote
+        a, _ = extrema(domain(P))
+        $(Expr(:call, hcat_args...))
+    end
+end
+function _derivatives_at_left(::AbstractBSplineSpace{0,T}) where {T}
+    U = StaticArrays.arithmetic_closure(T)
+    SMatrix{0,0,U}()
+end
+
+@generated function _derivatives_at_right(P::AbstractBSplineSpace{p,T}) where {p, T}
+    hcat_args = Any[:hcat]
+    for r in 0:p-1
+        push!(hcat_args, :(popfirst(bsplinebasisall(BSplineDerivativeSpace{$(r)}(P),n-p,b))))
+    end
+    quote
+        n = dim(P)
+        _, b = extrema(domain(P))
+        $(Expr(:call, hcat_args...))
+    end
+end
+function _derivatives_at_right(::AbstractBSplineSpace{0,T}) where {T}
+    U = StaticArrays.arithmetic_closure(T)
+    SMatrix{0,0,U}()
 end
 
 @doc raw"""
