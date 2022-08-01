@@ -108,13 +108,13 @@ function _changebasis_sim(P1::AbstractBSplineSpace{p,T1}, P2::AbstractBSplineSpa
     A1 = @MMatrix zeros(U,p,p)
     A2 = @MMatrix zeros(U,p,p)
     for r in 1:p
-        A1[:,r] = bsplinebasis₊₀.(BSplineDerivativeSpace{r-1}(P1),1:p,a)
-        A2[:,r] = bsplinebasis₊₀.(BSplineDerivativeSpace{r-1}(P2),1:p,a)
+        A1[:,r] = bsplinebasisall(BSplineDerivativeSpace{r-1}(P1),1,a)[1:end-1] # end == p+1
+        A2[:,r] = bsplinebasisall(BSplineDerivativeSpace{r-1}(P2),1,a)[1:end-1]
     end
     A[1:p, 1:p] = A1/A2
     for r in 1:p
-        A1[:,r] = bsplinebasis₋₀.(BSplineDerivativeSpace{r-1}(P1),n-p+1:n,b)
-        A2[:,r] = bsplinebasis₋₀.(BSplineDerivativeSpace{r-1}(P2),n-p+1:n,b)
+        A1[:,r] = bsplinebasisall(BSplineDerivativeSpace{r-1}(P1),n-p,b)[2:end]
+        A2[:,r] = bsplinebasisall(BSplineDerivativeSpace{r-1}(P2),n-p,b)[2:end]
     end
     A[n-p+1:n, n-p+1:n] = A1/A2
     return A
