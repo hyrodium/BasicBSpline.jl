@@ -106,8 +106,8 @@ function _changebasis_sim(P1::AbstractBSplineSpace{p,T1}, P2::AbstractBSplineSpa
 
     # TODO: This can be faster with SMatrix
     A = Matrix{U}(I, n, n)
-    A1 = zeros(U,p,p)
-    A2 = zeros(U,p,p)
+    A1 = @MMatrix zeros(U,p,p)
+    A2 = @MMatrix zeros(U,p,p)
     for r in 1:p
         A1[:,r] = bsplinebasis₊₀.(BSplineDerivativeSpace{r-1}(P1),1:p,a)
         A2[:,r] = bsplinebasis₊₀.(BSplineDerivativeSpace{r-1}(P2),1:p,a)
