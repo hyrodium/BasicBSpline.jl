@@ -24,9 +24,6 @@ end
 function BSplineDerivativeSpace{r,S}(dP::BSplineDerivativeSpace{r}) where {r,S}
     BSplineDerivativeSpace{r,S}(S(bsplinespace(dP)))
 end
-function Base.convert(::Type{BSplineDerivativeSpace{r,S}}, dP) where {r,S}
-    BSplineDerivativeSpace{r,S}(dP)
-end
 
 # Broadcast like a scalar
 Base.Broadcast.broadcastable(dP::BSplineDerivativeSpace) = Ref(dP)
