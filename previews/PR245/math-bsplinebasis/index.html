@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>B-spline basis function · BasicBSpline.jl</title><script data-outdated-warner src="../assets/warner.js"></script><link rel="canonical" href="https://hyrodium.github.io/BasicBSpline.jl/stable/math-bsplinebasis/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script><link href="../assets/favicon.ico" rel="icon" type="image/x-icon"/><link href="../assets/custom.css" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../"><img class="docs-light-only" src="../assets/logo.svg" alt="BasicBSpline.jl logo"/><img class="docs-dark-only" src="../assets/logo-dark.svg" alt="BasicBSpline.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../">BasicBSpline.jl</a></span></div><form class="docs-search" action="../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../">Home</a></li><li><span class="tocitem">Mathematical properties of B-spline</span><ul><li><a class="tocitem" href="../math/">Introduction</a></li><li><a class="tocitem" href="../math-knotvector/">Knot vector</a></li><li><a class="tocitem" href="../math-bsplinespace/">B-spline space</a></li><li class="is-active"><a class="tocitem" href>B-spline basis function</a><ul class="internal"><li><a class="tocitem" href="#Basic-properties-of-B-spline-basis-function"><span>Basic properties of B-spline basis function</span></a></li><li><a class="tocitem" href="#Support-of-B-spline-basis-function"><span>Support of B-spline basis function</span></a></li><li><a class="tocitem" href="#Partition-of-unity"><span>Partition of unity</span></a></li><li><a class="tocitem" href="#B-spline-basis-functions-at-specific-point"><span>B-spline basis functions at specific point</span></a></li><li><a class="tocitem" href="#Uniform-B-spline-basis-and-uniform-distribution"><span>Uniform B-spline basis and uniform distribution</span></a></li></ul></li><li><a class="tocitem" href="../math-bsplinemanifold/">B-spline manifold</a></li><li><a class="tocitem" href="../math-derivative/">Derivative</a></li><li><a class="tocitem" href="../math-inclusive/">Inclusive relationship</a></li><li><a class="tocitem" href="../math-refinement/">Refinement</a></li><li><a class="tocitem" href="../math-fitting/">Fitting</a></li><li><a class="tocitem" href="../math-rationalbsplinemanifold/">Rational B-spline manifold</a></li></ul></li><li><span class="tocitem">Visualization</span><ul><li><a class="tocitem" href="../plots/">Plots.jl</a></li><li><a class="tocitem" href="../plotlyjs/">PlotlyJS.jl</a></li><li><a class="tocitem" href="../basicbsplineexporter/">BasicBSplineExporter.jl</a></li></ul></li><li><a class="tocitem" href="../internal/">Private API</a></li><li><a class="tocitem" href="../contributing/">Contributing</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Mathematical properties of B-spline</a></li><li class="is-active"><a href>B-spline basis function</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>B-spline basis function</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/hyrodium/BasicBSpline.jl/blob/master/docs/src/math-bsplinebasis.md#L" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="B-spline-basis-function"><a class="docs-heading-anchor" href="#B-spline-basis-function">B-spline basis function</a><a id="B-spline-basis-function-1"></a><a class="docs-heading-anchor-permalink" href="#B-spline-basis-function" title="Permalink"></a></h1><h2 id="Basic-properties-of-B-spline-basis-function"><a class="docs-heading-anchor" href="#Basic-properties-of-B-spline-basis-function">Basic properties of B-spline basis function</a><a id="Basic-properties-of-B-spline-basis-function-1"></a><a class="docs-heading-anchor-permalink" href="#Basic-properties-of-B-spline-basis-function" title="Permalink"></a></h2><div class="admonition is-success"><header class="admonition-header">Def.  B-spline space</header><div class="admonition-body"><p>B-spline basis function is defined by <a href="https://en.wikipedia.org/wiki/De_Boor%27s_algorithm">Cox–de Boor recursion formula</a>.</p><p class="math-container">\[\begin{aligned}
+{B}_{(i,p,k)}(t)
+&amp;=
+\frac{t-k_{i}}{k_{i+p}-k_{i}}{B}_{(i,p-1,k)}(t)
++\frac{k_{i+p+1}-t}{k_{i+p+1}-k_{i+1}}{B}_{(i+1,p-1,k)}(t) \\
+{B}_{(i,0,k)}(t)
+&amp;=
+\begin{cases}
+    &amp;1\quad (k_{i}\le t&lt; k_{i+1})\\
+    &amp;0\quad (\text{otherwise})
+\end{cases}
+\end{aligned}\]</p><p>If the denominator is zero, then the term is assumed to be zero.</p></div></div><p>The next figure shows the plot of B-spline basis functions. You can manipulate these plots on <a href="https://www.desmos.com/calculator/ql6jqgdabs">desmos graphing calculator</a>!</p><p><img src="../img/bsplinebasis.png" alt/></p><div class="admonition is-info"><header class="admonition-header">Thm.  Basis of B-spline space</header><div class="admonition-body"><p>The set of functions <span>$\{B_{(i,p,k)}\}_i$</span> is a basis of B-spline space <span>$\mathcal{P}[p,k]$</span>.</p></div></div><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; p = 2</code><code class="nohighlight hljs ansi" style="display:block;">2</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])</code><code class="nohighlight hljs ansi" style="display:block;">KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P = BSplineSpace{p}(k)</code><code class="nohighlight hljs ansi" style="display:block;">BSplineSpace{2, Float64}(KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]))</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; plot([t-&gt;bsplinebasis₊₀(P,i,t) for i in 1:dim(P)], 0, 10, ylims=(0,1), label=false)</code><code class="nohighlight hljs ansi" style="display:block;">Plot{Plots.PlotlyBackend() n=5}</code><code class="nohighlight hljs ansi" style="display:block;"></code></pre><object type="text/html" data="../bsplinebasisplot.html" style="width:100%;height:420px;"></object><p>You can choose the first terms in different ways.</p><p class="math-container">\[\begin{aligned}
+{B}_{(i,0,k)}(t)
+&amp;=
+\begin{cases}
+    &amp;1\quad (k_{i} &lt; t \le k_{i+1}) \\
+    &amp;0\quad (\text{otherwise})
+\end{cases}
+\end{aligned}\]</p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; p = 2</code><code class="nohighlight hljs ansi" style="display:block;">2</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])</code><code class="nohighlight hljs ansi" style="display:block;">KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P = BSplineSpace{p}(k)</code><code class="nohighlight hljs ansi" style="display:block;">BSplineSpace{2, Float64}(KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]))</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; plot([t-&gt;bsplinebasis₋₀(P,i,t) for i in 1:dim(P)], 0, 10, ylims=(0,1), label=false)</code><code class="nohighlight hljs ansi" style="display:block;">Plot{Plots.PlotlyBackend() n=5}</code><code class="nohighlight hljs ansi" style="display:block;"></code></pre><object type="text/html" data="../bsplinebasisplot2.html" style="width:100%;height:420px;"></object><p>In these cases, each B-spline basis function <span>$B_{(i,2,k)}$</span> is coninuous, so <code>bsplinebasis₊₀</code> and <code>bsplinebasis₋₀</code> are equal.</p><h2 id="Support-of-B-spline-basis-function"><a class="docs-heading-anchor" href="#Support-of-B-spline-basis-function">Support of B-spline basis function</a><a id="Support-of-B-spline-basis-function-1"></a><a class="docs-heading-anchor-permalink" href="#Support-of-B-spline-basis-function" title="Permalink"></a></h2><div class="admonition is-info"><header class="admonition-header">Thm.  Support of B-spline basis function</header><div class="admonition-body"><p>If a B-spline space<span>$\mathcal{P}[p,k]$</span> is non-degenerate, the support of its basis function is calculated as follows:</p><p class="math-container">\[\operatorname{supp}(B_{(i,p,k)})=[k_{i},k_{i+p+1}]\]</p></div></div><p>[TODO: fig]</p><article class="docstring"><header><a class="docstring-binding" id="BasicBSpline.bsplinesupport" href="#BasicBSpline.bsplinesupport"><code>BasicBSpline.bsplinesupport</code></a> — <span class="docstring-category">Function</span></header><section><div><p>Return the support of <span>$i$</span>-th B-spline basis function.</p><p class="math-container">\[\operatorname{supp}(B_{(i,p,k)})=[k_{i},k_{i+p+1}]\]</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
+KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
+
+julia&gt; P = BSplineSpace{2}(k)
+BSplineSpace{2, Float64}(KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]))
+
+julia&gt; bsplinesupport(P,1)
+0.0..5.5
+
+julia&gt; bsplinesupport(P,2)
+1.5..8.0</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/f546a5557f2cc781fda4fea984b0ed47f2989ec2/src/_BSplineSpace.jl#LL255-L275">source</a></section></article><h2 id="Partition-of-unity"><a class="docs-heading-anchor" href="#Partition-of-unity">Partition of unity</a><a id="Partition-of-unity-1"></a><a class="docs-heading-anchor-permalink" href="#Partition-of-unity" title="Permalink"></a></h2><div class="admonition is-info"><header class="admonition-header">Thm.  Partition of unity</header><div class="admonition-body"><p>Let <span>$B_{(i,p,k)}$</span> be a B-spline basis function, then the following equation is satisfied.</p><p class="math-container">\[\begin{aligned}
+\sum_{i}B_{(i,p,k)}(t) &amp;= 1 &amp; (k_{p+1} \le t &lt; k_{l-p}) \\
+0 \le B_{(i,p,k)}(t) &amp;\le 1
+\end{aligned}\]</p></div></div><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; p = 2</code><code class="nohighlight hljs ansi" style="display:block;">2</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])</code><code class="nohighlight hljs ansi" style="display:block;">KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P = BSplineSpace{p}(k)</code><code class="nohighlight hljs ansi" style="display:block;">BSplineSpace{2, Float64}(KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]))</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; plot(t-&gt;sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 0, 10, ylims=(0,1.1), label=false)</code><code class="nohighlight hljs ansi" style="display:block;">Plot{Plots.PlotlyBackend() n=1}</code><code class="nohighlight hljs ansi" style="display:block;"></code></pre><object type="text/html" data="../sumofbsplineplot.html" style="width:100%;height:420px;"></object><p>To satisfy the partition of unity on whole interval <span>$[1,8]$</span>, sometimes more knots will be inserted to the endpoints of the interval.</p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; p = 2</code><code class="nohighlight hljs ansi" style="display:block;">2</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]) + p * KnotVector([0,10])</code><code class="nohighlight hljs ansi" style="display:block;">KnotVector([0.0, 0.0, 0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0, 10.0, 10.0])</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P = BSplineSpace{p}(k)</code><code class="nohighlight hljs ansi" style="display:block;">BSplineSpace{2, Float64}(KnotVector([0.0, 0.0, 0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0, 10.0, 10.0]))</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; plot(t-&gt;sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 0, 10, ylims=(0,1.1), label=false)</code><code class="nohighlight hljs ansi" style="display:block;">Plot{Plots.PlotlyBackend() n=1}</code><code class="nohighlight hljs ansi" style="display:block;"></code></pre><object type="text/html" data="../sumofbsplineplot2.html" style="width:100%;height:420px;"></object><p>But, the sum <span>$\sum_{i} B_{(i,p,k)}(t)$</span> is not equal to <span>$1$</span> at <span>$t=8$</span>. Therefore, to satisfy partition of unity on closed interval <span>$[k_{p+1}, k_{l-p}]$</span>, the definition of first terms of B-spline basis functions are sometimes replaced:</p><p class="math-container">\[\begin{aligned}
+{B}_{(i,0,k)}(t)
+&amp;=
+\begin{cases}
+    &amp;1\quad (k_{i} \le t&lt;k_{i+1})\\
+    &amp;1\quad (k_{i} &lt; t = k_{i+1}=k_{l})\\
+    &amp;0\quad (\text{otherwise})
+\end{cases}
+\end{aligned}\]</p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; p = 2</code><code class="nohighlight hljs ansi" style="display:block;">2</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]) + p * KnotVector([0,10])</code><code class="nohighlight hljs ansi" style="display:block;">KnotVector([0.0, 0.0, 0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0, 10.0, 10.0])</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P = BSplineSpace{p}(k)</code><code class="nohighlight hljs ansi" style="display:block;">BSplineSpace{2, Float64}(KnotVector([0.0, 0.0, 0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0, 10.0, 10.0]))</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; plot(t-&gt;sum(bsplinebasis(P,i,t) for i in 1:dim(P)), 0, 10, ylims=(0,1.1), label=false)</code><code class="nohighlight hljs ansi" style="display:block;">Plot{Plots.PlotlyBackend() n=1}</code><code class="nohighlight hljs ansi" style="display:block;"></code></pre><object type="text/html" data="../sumofbsplineplot3.html" style="width:100%;height:420px;"></object><article class="docstring"><header><a class="docstring-binding" id="BasicBSpline.bsplinebasis₊₀" href="#BasicBSpline.bsplinebasis₊₀"><code>BasicBSpline.bsplinebasis₊₀</code></a> — <span class="docstring-category">Function</span></header><section><div><p><span>$i$</span>-th B-spline basis function. Right-sided limit version.</p><p class="math-container">\[\begin{aligned}
+{B}_{(i,p,k)}(t)
+&amp;=
+\frac{t-k_{i}}{k_{i+p}-k_{i}}{B}_{(i,p-1,k)}(t)
++\frac{k_{i+p+1}-t}{k_{i+p+1}-k_{i+1}}{B}_{(i+1,p-1,k)}(t) \\
+{B}_{(i,0,k)}(t)
+&amp;=
+\begin{cases}
+    &amp;1\quad (k_{i}\le t&lt; k_{i+1})\\
+    &amp;0\quad (\text{otherwise})
+\end{cases}
+\end{aligned}\]</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; P = BSplineSpace{0}(KnotVector(1:6))
+BSplineSpace{0, Int64}(KnotVector([1, 2, 3, 4, 5, 6]))
+
+julia&gt; bsplinebasis₊₀.(P,1:5,(1:6)&#39;)
+5×6 Matrix{Float64}:
+ 1.0  0.0  0.0  0.0  0.0  0.0
+ 0.0  1.0  0.0  0.0  0.0  0.0
+ 0.0  0.0  1.0  0.0  0.0  0.0
+ 0.0  0.0  0.0  1.0  0.0  0.0
+ 0.0  0.0  0.0  0.0  1.0  0.0</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/f546a5557f2cc781fda4fea984b0ed47f2989ec2/src/_BSplineBasis.jl#LL3-L34">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="BasicBSpline.bsplinebasis₋₀" href="#BasicBSpline.bsplinebasis₋₀"><code>BasicBSpline.bsplinebasis₋₀</code></a> — <span class="docstring-category">Function</span></header><section><div><p><span>$i$</span>-th B-spline basis function. Left-sided limit version.</p><p class="math-container">\[\begin{aligned}
+{B}_{(i,p,k)}(t)
+&amp;=
+\frac{t-k_{i}}{k_{i+p}-k_{i}}{B}_{(i,p-1,k)}(t)
++\frac{k_{i+p+1}-t}{k_{i+p+1}-k_{i+1}}{B}_{(i+1,p-1,k)}(t) \\
+{B}_{(i,0,k)}(t)
+&amp;=
+\begin{cases}
+    &amp;1\quad (k_{i}&lt; t\le k_{i+1})\\
+    &amp;0\quad (\text{otherwise})
+\end{cases}
+\end{aligned}\]</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; P = BSplineSpace{0}(KnotVector(1:6))
+BSplineSpace{0, Int64}(KnotVector([1, 2, 3, 4, 5, 6]))
+
+julia&gt; bsplinebasis₋₀.(P,1:5,(1:6)&#39;)
+5×6 Matrix{Float64}:
+ 0.0  1.0  0.0  0.0  0.0  0.0
+ 0.0  0.0  1.0  0.0  0.0  0.0
+ 0.0  0.0  0.0  1.0  0.0  0.0
+ 0.0  0.0  0.0  0.0  1.0  0.0
+ 0.0  0.0  0.0  0.0  0.0  1.0</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/f546a5557f2cc781fda4fea984b0ed47f2989ec2/src/_BSplineBasis.jl#LL61-L92">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="BasicBSpline.bsplinebasis" href="#BasicBSpline.bsplinebasis"><code>BasicBSpline.bsplinebasis</code></a> — <span class="docstring-category">Function</span></header><section><div><p><span>$i$</span>-th B-spline basis function. Modified version.</p><p class="math-container">\[\begin{aligned}
+{B}_{(i,p,k)}(t)
+&amp;=
+\frac{t-k_{i}}{k_{i+p}-k_{i}}{B}_{(i,p-1,k)}(t)
++\frac{k_{i+p+1}-t}{k_{i+p+1}-k_{i+1}}{B}_{(i+1,p-1,k)}(t) \\
+{B}_{(i,0,k)}(t)
+&amp;=
+\begin{cases}
+    &amp;1\quad (k_{i} \le t&lt;k_{i+1})\\
+    &amp;1\quad (k_{i} &lt; t = k_{i+1}=k_{l})\\
+    &amp;0\quad (\text{otherwise})
+\end{cases}
+\end{aligned}\]</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; P = BSplineSpace{0}(KnotVector(1:6))
+BSplineSpace{0, Int64}(KnotVector([1, 2, 3, 4, 5, 6]))
+
+julia&gt; bsplinebasis.(P,1:5,(1:6)&#39;)
+5×6 Matrix{Float64}:
+ 1.0  0.0  0.0  0.0  0.0  0.0
+ 0.0  1.0  0.0  0.0  0.0  0.0
+ 0.0  0.0  1.0  0.0  0.0  0.0
+ 0.0  0.0  0.0  1.0  0.0  0.0
+ 0.0  0.0  0.0  0.0  1.0  1.0</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/f546a5557f2cc781fda4fea984b0ed47f2989ec2/src/_BSplineBasis.jl#LL119-L151">source</a></section></article><h2 id="B-spline-basis-functions-at-specific-point"><a class="docs-heading-anchor" href="#B-spline-basis-functions-at-specific-point">B-spline basis functions at specific point</a><a id="B-spline-basis-functions-at-specific-point-1"></a><a class="docs-heading-anchor-permalink" href="#B-spline-basis-functions-at-specific-point" title="Permalink"></a></h2><p>Sometimes, you may need the non-zero values of B-spline basis functions at specific point. The <code>bsplinebasisall</code> function is much more efficient than evaluating B-spline functions one by one with <code>bsplinebasis</code> function.</p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; using BenchmarkTools, BasicBSpline</code><code class="nohighlight hljs ansi" style="display:block;"></code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P = BSplineSpace{2}(KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]))</code><code class="nohighlight hljs ansi" style="display:block;">BSplineSpace{2, Float64}(KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]))</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; t = 6.3</code><code class="nohighlight hljs ansi" style="display:block;">6.3</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; (bsplinebasis(P, 2, t), bsplinebasis(P, 3, t), bsplinebasis(P, 4, t))</code><code class="nohighlight hljs ansi" style="display:block;">(0.2101818181818182, 0.7166753246753247, 0.0731428571428571)</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; bsplinebasisall(P, 2, t)</code><code class="nohighlight hljs ansi" style="display:block;">3-element StaticArraysCore.SVector{3, Float64} with indices SOneTo(3):
+ 0.21018181818181822
+ 0.7166753246753247
+ 0.0731428571428571</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; @benchmark (bsplinebasis($P, 2, $t), bsplinebasis($P, 3, $t), bsplinebasis($P, 4, $t))</code><code class="nohighlight hljs ansi" style="display:block;">BenchmarkTools.Trial: 10000 samples with 995 evaluations.
+ Range <span class="sgr90">(</span><span class="sgr36"><span class="sgr1">min</span></span> … <span class="sgr35">max</span><span class="sgr90">):  </span><span class="sgr36"><span class="sgr1">30.250 ns</span></span> … <span class="sgr35">55.879 ns</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>min … max<span class="sgr90">): </span>0.00% … 0.00%
+ Time  <span class="sgr90">(</span><span class="sgr34"><span class="sgr1">median</span></span><span class="sgr90">):     </span><span class="sgr34"><span class="sgr1">30.955 ns              </span></span><span class="sgr90">┊</span> GC <span class="sgr90">(</span>median<span class="sgr90">):    </span>0.00%
+ Time  <span class="sgr90">(</span><span class="sgr32"><span class="sgr1">mean</span></span> ± <span class="sgr32">σ</span><span class="sgr90">):   </span><span class="sgr32"><span class="sgr1">31.072 ns</span></span> ± <span class="sgr32"> 0.807 ns</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>mean ± σ<span class="sgr90">):  </span>0.00% ± 0.00%
+
+        ▃ ▃ ▃  ▅ <span class="sgr34">█</span> ▇<span class="sgr32"> </span>▄ ▁                                      
+  ▂▁▃▁▇▁█▁█▁█▁▁█▁<span class="sgr34">█</span>▁█<span class="sgr32">▁</span>█▁█▁▁▆▁▄▁▄▁▄▁▃▁▃▁▁▃▁▃▁▃▁▂▁▂▁▁▃▁▂▁▂▁▂▁▂▁▂ ▃
+  30.3 ns<span class="sgr90">         Histogram: frequency by time</span>          33 ns <span class="sgr1">&lt;</span>
+
+ Memory estimate<span class="sgr90">: </span><span class="sgr33">0 bytes</span>, allocs estimate<span class="sgr90">: </span><span class="sgr33">0</span>.</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; @benchmark bsplinebasisall($P, 2, $t)</code><code class="nohighlight hljs ansi" style="display:block;">BenchmarkTools.Trial: 10000 samples with 1000 evaluations.
+ Range <span class="sgr90">(</span><span class="sgr36"><span class="sgr1">min</span></span> … <span class="sgr35">max</span><span class="sgr90">):  </span><span class="sgr36"><span class="sgr1">9.599 ns</span></span> … <span class="sgr35">25.600 ns</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>min … max<span class="sgr90">): </span>0.00% … 0.00%
+ Time  <span class="sgr90">(</span><span class="sgr34"><span class="sgr1">median</span></span><span class="sgr90">):     </span><span class="sgr34"><span class="sgr1">9.700 ns              </span></span><span class="sgr90">┊</span> GC <span class="sgr90">(</span>median<span class="sgr90">):    </span>0.00%
+ Time  <span class="sgr90">(</span><span class="sgr32"><span class="sgr1">mean</span></span> ± <span class="sgr32">σ</span><span class="sgr90">):   </span><span class="sgr32"><span class="sgr1">9.680 ns</span></span> ± <span class="sgr32"> 0.383 ns</span>  <span class="sgr90">┊</span> GC <span class="sgr90">(</span>mean ± σ<span class="sgr90">):  </span>0.00% ± 0.00%
+
+  ▃                                              <span class="sgr32"> </span>         █<span class="sgr34"> </span>
+  █▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁<span class="sgr32">▁</span>▁▁▁▁▁▁▁▁▁█<span class="sgr34"> </span>▂
+  9.6 ns<span class="sgr90">         Histogram: frequency by time</span>         9.7 ns <span class="sgr1">&lt;</span>
+
+ Memory estimate<span class="sgr90">: </span><span class="sgr33">0 bytes</span>, allocs estimate<span class="sgr90">: </span><span class="sgr33">0</span>.</code></pre><article class="docstring"><header><a class="docstring-binding" id="BasicBSpline.intervalindex" href="#BasicBSpline.intervalindex"><code>BasicBSpline.intervalindex</code></a> — <span class="docstring-category">Function</span></header><section><div><p>Return an index of a interval in the domain of B-spline space</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]);
+
+julia&gt; P = BSplineSpace{2}(k);
+
+julia&gt; domain(P)
+2.5..9.0
+
+julia&gt; intervalindex(P,2.6)
+1
+
+julia&gt; intervalindex(P,5.6)
+2
+
+julia&gt; intervalindex(P,8.5)
+3
+
+julia&gt; intervalindex(P,9.5)
+3</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/f546a5557f2cc781fda4fea984b0ed47f2989ec2/src/_BSplineSpace.jl#LL300-L324">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="BasicBSpline.bsplinebasisall" href="#BasicBSpline.bsplinebasisall"><code>BasicBSpline.bsplinebasisall</code></a> — <span class="docstring-category">Function</span></header><section><div><p>B-spline basis functions at point <code>t</code> on <code>i</code>-th interval.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
+KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
+
+julia&gt; p = 2
+2
+
+julia&gt; P = BSplineSpace{p}(k)
+BSplineSpace{2, Float64}(KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]))
+
+julia&gt; t = 5.7
+5.7
+
+julia&gt; i = intervalindex(P,t)
+2
+
+julia&gt; bsplinebasisall(P,i,t)
+3-element SVector{3, Float64} with indices SOneTo(3):
+ 0.3847272727272727
+ 0.6107012987012989
+ 0.00457142857142858
+
+julia&gt; bsplinebasis.(P,i:i+p,t)
+3-element Vector{Float64}:
+ 0.38472727272727264
+ 0.6107012987012989
+ 0.00457142857142858</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/f546a5557f2cc781fda4fea984b0ed47f2989ec2/src/_BSplineBasis.jl#LL178-L210">source</a></section></article><p>The next figures illustlates the relation between <code>domain(P)</code>, <code>intervalindex(P,t)</code> and <code>bsplinebasisall(P,i,t)</code>.</p><pre><code class="language-julia hljs">k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
+
+for p in 1:3
+    P = BSplineSpace{p}(k)
+    plot(P, legend=:topleft, label=&quot;B-spline basis (p=1)&quot;)
+    plot!(t-&gt;intervalindex(P,t),0,10, label=&quot;Interval index&quot;)
+    plot!(t-&gt;sum(bsplinebasis(P,i,t) for i in 1:dim(P)),0,10, label=&quot;Sum of B-spline basis&quot;)
+    scatter!(k.vector,zero(k.vector), label=&quot;knot vector&quot;)
+    plot!([t-&gt;bsplinebasisall(P,1,t)[i] for i in 1:p+1],0,10, color=:black, label=&quot;bsplinebasisall (i=1)&quot;, ylim=(-1,8-2p))
+end</code></pre><object type="text/html" data="../bsplinebasisall-1.html" style="width:100%;height:420px;"></object><object type="text/html" data="../bsplinebasisall-2.html" style="width:100%;height:420px;"></object><object type="text/html" data="../bsplinebasisall-3.html" style="width:100%;height:420px;"></object><h2 id="Uniform-B-spline-basis-and-uniform-distribution"><a class="docs-heading-anchor" href="#Uniform-B-spline-basis-and-uniform-distribution">Uniform B-spline basis and uniform distribution</a><a id="Uniform-B-spline-basis-and-uniform-distribution-1"></a><a class="docs-heading-anchor-permalink" href="#Uniform-B-spline-basis-and-uniform-distribution" title="Permalink"></a></h2><p>Let <span>$X_1, \dots, X_n$</span> be i.i.d. random variables with <span>$X_i \sim U(0,1)$</span>, then the probability density function of <span>$X_1+\cdots+X_n$</span> can be obtained via <code>BasicBSpline.uniform_bsplinebasis_kernel(Val(n-1),t)</code>.</p><pre><code class="language-julia hljs">N = 100000
+# polynomial degree 0
+plot1 = histogram([rand() for _ in 1:N], normalize=true, label=false)
+plot!(t-&gt;BasicBSpline.uniform_bsplinebasis_kernel(Val(0),t), label=false)
+# polynomial degree 1
+plot2 = histogram([rand()+rand() for _ in 1:N], normalize=true, label=false)
+plot!(t-&gt;BasicBSpline.uniform_bsplinebasis_kernel(Val(1),t), label=false)
+# polynomial degree 2
+plot3 = histogram([rand()+rand()+rand() for _ in 1:N], normalize=true, label=false)
+plot!(t-&gt;BasicBSpline.uniform_bsplinebasis_kernel(Val(2),t), label=false)
+# polynomial degree 3
+plot4 = histogram([rand()+rand()+rand()+rand() for _ in 1:N], normalize=true, label=false)
+plot!(t-&gt;BasicBSpline.uniform_bsplinebasis_kernel(Val(3),t), label=false)
+# plot all
+plot(plot1,plot2,plot3,plot4)</code></pre><object type="text/html" data="../histogram-uniform.html" style="width:100%;height:420px;"></object></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../math-bsplinespace/">« B-spline space</a><a class="docs-footer-nextpage" href="../math-bsplinemanifold/">B-spline manifold »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.22 on <span class="colophon-date" title="Wednesday 10 August 2022 07:08">Wednesday 10 August 2022</span>. Using Julia version 1.7.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
