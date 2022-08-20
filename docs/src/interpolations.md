@@ -5,6 +5,7 @@ Currently, BasicBSpline.jl doesn't have APIs for interpolations, but it is not h
 ```@setup interpolation
 using BasicBSpline
 using IntervalSets
+using Random; Random.seed!(42)
 using Plots; plotly()
 ```
 
@@ -123,15 +124,16 @@ savefig("interpolation_periodic.html") # hide
 Note that the periodic interpolation supports any degree of polynomial.
 
 ```@example interpolation
-xs = 2π*rand(5)
+xs = 2π*rand(10)
 sort!(push!(xs, 0, 2π))
 fs = sin.(xs)
-scatter(xs, fs)
 f1 = interpolate_periodic(xs,fs,Val(1))
 f2 = interpolate_periodic(xs,fs,Val(2))
 f3 = interpolate_periodic(xs,fs,Val(3))
 f4 = interpolate_periodic(xs,fs,Val(4))
 f5 = interpolate_periodic(xs,fs,Val(5))
+scatter(xs, fs, label="sampling points")
+plot!(sin, label="sine curve", color=:black)
 plot!(t->f1(t), label="polynomial degree 1")
 plot!(t->f2(t), label="polynomial degree 2")
 plot!(t->f3(t), label="polynomial degree 3")
