@@ -24,3 +24,4 @@ If you want to learn more, the following resources are recommended.
 * [スプライン関数とその応用 by 市田浩三, 吉本富士市](https://www.kyoiku-shuppan.co.jp/book/book/cate5/cate524/sho-463.html)
 * [NURBS多様体による形状表現](https://hyrodium.github.io/ja/pdf/#NURBS%E5%A4%9A%E6%A7%98%E4%BD%93%E3%81%AB%E3%82%88%E3%82%8B%E5%BD%A2%E7%8A%B6%E8%A1%A8%E7%8F%BE)
 * [BasicBSpline.jlを作ったので宣伝です！](https://zenn.dev/hyrodium/articles/5fb08f98d4a918)
+* [B-spline入門（線形代数がすこし分かる人向け）](https://www.youtube.com/watch?v=GOdY02PA_WI)
