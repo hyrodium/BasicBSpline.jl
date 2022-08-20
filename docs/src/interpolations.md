@@ -47,3 +47,35 @@ savefig("interpolation_cubic.html") # hide
 ```@raw html
 <object type="text/html" data="../interpolation_cubic.html" style="width:100%;height:420px;"></object>
 ```
+
+## Interpolation with linear B-spline
+
+```@example interpolation
+function interpolate_linear(xs::AbstractVector, fs::AbstractVector{T}) where T
+    # Linear open B-spline space
+    p = 1
+    k = KnotVector(xs) + KnotVector(xs[1],xs[end])
+    P = BSplineSpace{p}(k)
+
+    # dimensions
+    m = length(xs)
+    n = dim(P)
+
+    # Compute the interpolant function (1-dim B-spline manifold)
+    return BSplineManifold(fs, (P,))
+end
+
+## Example inputs
+xs = [1, 2, 3, 4, 6, 7]
+fs = [1.3, 1.5, 2, 2.1, 1.9, 1.3]
+f = interpolate_linear(xs,fs)
+
+## Plot
+scatter(xs, fs)
+plot!(t->f(t))
+savefig("interpolation_linear.html") # hide
+```
+
+```@raw html
+<object type="text/html" data="../interpolation_linear.html" style="width:100%;height:420px;"></object>
+```
