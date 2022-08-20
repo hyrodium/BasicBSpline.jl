@@ -1,7 +1,7 @@
 # Mathematical properties of B-spline
 
 ## Introduction
-[B-spline](https://en.wikipedia.org/wiki/B-spline) is a mathematical object, and it has a lot of application. (e.g. [NURBS](https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline), [IGA](https://en.wikipedia.org/wiki/Isogeometric_analysis))
+[B-spline](https://en.wikipedia.org/wiki/B-spline) is a mathematical object, and it has a lot of application. (e.g. Geometric representation: [NURBS](https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline), Interpolation, Numerical analysis: [IGA](https://en.wikipedia.org/wiki/Isogeometric_analysis))
 
 In this page, we'll explain the mathematical definitions and properties of B-spline with Julia code.
 Before running the code in the following section, you need to import packages:
