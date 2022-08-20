@@ -1,6 +1,6 @@
 # Interpolations
 
-Currently, BasicBSpline.jl doesn't have APIs for interpolations, but it is not hard to implement the basic interpolation algorithms.
+Currently, BasicBSpline.jl doesn't have APIs for interpolations, but it is not hard to implement some basic interpolation algorithms with this package.
 
 ```@setup interpolation
 using BasicBSpline
