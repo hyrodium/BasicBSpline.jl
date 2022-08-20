@@ -1,4 +1,4 @@
-# Interpolation
+# Interpolations
 
 Currently, BasicBSpline.jl doesn't have APIs for interpolations, but it is not hard to implement the basic interpolation algorithms.
 
