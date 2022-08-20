@@ -62,6 +62,7 @@ makedocs(;
             "PlotlyJS.jl" => "plotlyjs.md",
             "BasicBSplineExporter.jl" => "basicbsplineexporter.md",
         ],
+        "Interpolations" => "interpolations.md",
         "Private API" => "internal.md",
         "Contributing" => "contributing.md",
     ],
