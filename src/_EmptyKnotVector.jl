@@ -27,3 +27,5 @@ end
 Base.zero(::Type{<:EmptyKnotVector{T}}) where {T<:Real} = EmptyKnotVector{T}()
 Base.zero(::Type{EmptyKnotVector}) = EmptyKnotVector()
 Base.zero(::T) where {T<:EmptyKnotVector} = zero(T)
+Base.zero(::Type{<:AbstractKnotVector{T}}) where {T<:Real} = EmptyKnotVector{T}()
+Base.zero(::Type{AbstractKnotVector}) = EmptyKnotVector()
