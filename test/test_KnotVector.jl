@@ -17,6 +17,7 @@
         @test KnotVector{Int}(1,2.) isa KnotVector{Int}
         @test KnotVector{Int}(k1) isa KnotVector{Int}
         @test KnotVector(k1) isa KnotVector{Int}
+        @test AbstractKnotVector{Float64}(k1) isa KnotVector{Float64}
     end
 
     @testset "eltype" begin
