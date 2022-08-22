@@ -9,6 +9,8 @@ Base.:(==)(k1::EmptyKnotVector, k2::AbstractKnotVector) = (k2 == k1)
 
 Base.isempty(::EmptyKnotVector) = true
 
+_vec(::EmptyKnotVector{T}) where T = T[]
+
 # + AbstractKnotVector
 Base.:+(k::AbstractKnotVector{T}, ::EmptyKnotVector{T}) where T<:Real = k
 Base.:+(k::AbstractKnotVector{T1}, ::EmptyKnotVector{T2}) where {T1<:Real, T2<:Real} = AbstractKnotVector{promote_type(T1, T2)}(k)
