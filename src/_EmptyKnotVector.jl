@@ -2,6 +2,12 @@ struct EmptyKnotVector{T} <: AbstractKnotVector{T} end
 
 EmptyKnotVector() = EmptyKnotVector{Bool}()
 
+# ==
+Base.:(==)(k::AbstractKnotVector, ::EmptyKnotVector) = isempty(k)
+Base.:(==)(k::EmptyKnotVector, ::EmptyKnotVector) = true
+
+Base.isempty(::EmptyKnotVector) = true
+
 # + AbstractKnotVector
 Base.:+(k::AbstractKnotVector{T}, ::EmptyKnotVector{T}) where T<:Real = k
 Base.:+(k::AbstractKnotVector{T1}, ::EmptyKnotVector{T2}) where {T1<:Real, T2<:Real} = AbstractKnotVector{promote_type(T1, T2)}(k)
