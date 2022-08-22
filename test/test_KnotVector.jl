@@ -71,7 +71,7 @@
         @test KnotVector([-1,2,3]) + KnotVector([2,5]) * 2 == KnotVector([-1,2,2,2,3,5,5])
         @test k1 + k3 == KnotVector([1,2,2,3,4,5])
         @test 2 * KnotVector([2,3]) == KnotVector([2,2,3,3])
-        
+
         # EmptyKnotVector
         _k1 = k1 + EmptyKnotVector()
         _k2 = k2 + EmptyKnotVector{Int}()
