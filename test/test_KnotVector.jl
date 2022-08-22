@@ -86,6 +86,7 @@
     @testset "unique" begin
         @test unique(k1) == k1
         @test unique(k2) == k1
+        @test unique(EmptyKnotVector()) === EmptyKnotVector()
     end
 
     @testset "inclusive relation" begin
