@@ -7,7 +7,7 @@ using RecipesBase
 using FastGaussQuadrature
 
 # Types
-export AbstractKnotVector, KnotVector, UniformKnotVector, EmptyKnotVector
+export AbstractKnotVector, KnotVector, UniformKnotVector
 export AbstractBSplineSpace, BSplineSpace, UniformBSplineSpace
 export AbstractBSplineManifold, BSplineManifold, RationalBSplineManifold
 export BSplineDerivativeSpace

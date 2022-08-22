@@ -1,4 +1,5 @@
 using BasicBSpline
+import BasicBSpline.EmptyKnotVector
 using IntervalSets
 using LinearAlgebra
 using Test
