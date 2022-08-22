@@ -13,7 +13,14 @@ _vec(::EmptyKnotVector{T}) where T = T[]
 
 # + AbstractKnotVector
 Base.:+(k::AbstractKnotVector{T}, ::EmptyKnotVector{T}) where T<:Real = k
-Base.:+(k::AbstractKnotVector{T1}, ::EmptyKnotVector{T2}) where {T1<:Real, T2<:Real} = AbstractKnotVector{promote_type(T1, T2)}(k)
+function Base.:+(k::AbstractKnotVector{T1}, ::EmptyKnotVector{T2}) where {T1<:Real, T2<:Real}
+    T = promote_type(T1, T2)
+    if T == T1
+        return k
+    else
+        return AbstractKnotVector{T}(k)
+    end
+end
 # + EmptyKnotVector
 Base.:+(::EmptyKnotVector{T}, ::EmptyKnotVector{T}) where T<:Real = EmptyKnotVector{T}()
 Base.:+(::EmptyKnotVector{T1}, ::EmptyKnotVector{T2}) where {T1<:Real, T2<:Real} = EmptyKnotVector{promote_type(T1, T2)}()
