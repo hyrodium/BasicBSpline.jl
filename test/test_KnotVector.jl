@@ -33,6 +33,17 @@
         @test KnotVector() == zero(KnotVector)
         @test KnotVector() == 0*k1 == k1*0 == zero(k1)
         @test KnotVector() == KnotVector(Float64[])
+        @test KnotVector() == EmptyKnotVector()
+        @test KnotVector() |> isempty
+        @test KnotVector() |> iszero
+        @test EmptyKnotVector{Bool}() === EmptyKnotVector()
+        @test EmptyKnotVector{Int}() == EmptyKnotVector()
+        @test EmptyKnotVector{Int}() == EmptyKnotVector{Int}()
+        @test EmptyKnotVector{Int}() == EmptyKnotVector{Float64}()
+        @test EmptyKnotVector{Int}() === zero(EmptyKnotVector{Int}())
+        @test EmptyKnotVector{Int}() === zero(AbstractKnotVector{Int})
+        @test EmptyKnotVector{Int}() !== zero(AbstractKnotVector)
+        @test EmptyKnotVector{Bool}() === zero(AbstractKnotVector)
     end
 
     @testset "length" begin
@@ -66,6 +77,10 @@
         @test KnotVector{Int}(1,2)*0 == KnotVector()
         @test KnotVector{Int}(1,2)*0 isa KnotVector{Int}
         @test KnotVector{Int}() isa KnotVector{Int}
+        @test EmptyKnotVector{Int}()*0 === EmptyKnotVector{Int}()
+        @test EmptyKnotVector{Float64}()*1 === EmptyKnotVector{Float64}()
+        @test EmptyKnotVector{BigFloat}()*2 === EmptyKnotVector{BigFloat}()
+        @test_throws DomainError EmptyKnotVector()*(-1)
     end
 
     @testset "unique" begin
