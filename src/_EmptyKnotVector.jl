@@ -5,6 +5,7 @@ EmptyKnotVector() = EmptyKnotVector{Bool}()
 # ==
 Base.:(==)(k::AbstractKnotVector, ::EmptyKnotVector) = isempty(k)
 Base.:(==)(k::EmptyKnotVector, ::EmptyKnotVector) = true
+Base.:(==)(k1::EmptyKnotVector, k2::AbstractKnotVector) = (k2 == k1)
 
 Base.isempty(::EmptyKnotVector) = true
 
