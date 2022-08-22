@@ -7,7 +7,7 @@ using RecipesBase
 using FastGaussQuadrature
 
 # Types
-export AbstractKnotVector, KnotVector, UniformKnotVector
+export AbstractKnotVector, KnotVector, UniformKnotVector, EmptyKnotVector
 export AbstractBSplineSpace, BSplineSpace, UniformBSplineSpace
 export AbstractBSplineManifold, BSplineManifold, RationalBSplineManifold
 export BSplineDerivativeSpace
@@ -39,6 +39,7 @@ export fittingcontrolpoints, fittingcontrolpoints_R, fittingcontrolpoints_I
 
 include("_util.jl")
 include("_KnotVector.jl")
+include("_EmptyKnotVector.jl")
 include("_BSplineSpace.jl")
 include("_BSplineBasis.jl")
 include("_UniformKnotVector.jl")
