@@ -14,3 +14,7 @@ Base.:+(k1::EmptyKnotVector, k2::AbstractKnotVector) = k2 + k1
 function Base.show(io::IO, ::T) where T<:EmptyKnotVector
     print(io, "$(T)()")
 end
+
+Base.zero(::Type{<:EmptyKnotVector{T}}) where {T<:Real} = EmptyKnotVector{T}()
+Base.zero(::Type{EmptyKnotVector}) = EmptyKnotVector()
+Base.zero(::T) where {T<:EmptyKnotVector} = zero(T)
