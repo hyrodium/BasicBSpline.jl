@@ -114,25 +114,21 @@ end
     )
 end
 
-@inline function (M::AbstractManifold{1})(t1::Real)
-    Ps = bsplinespaces(M)
-    t1 in domain(Ps[1]) || throw(DomainError(t1, "The input $(t1) is out of range."))
-    unsafe_mapping(M,t1)
-end
-
-@inline function (M::AbstractManifold{2})(t1::Real,t2::Real)
-    Ps = bsplinespaces(M)
-    t1 in domain(Ps[1]) || throw(DomainError(t1, "The input $(t1) is out of range."))
-    t2 in domain(Ps[2]) || throw(DomainError(t2, "The input $(t2) is out of range."))
-    unsafe_mapping(M,t1,t2)
-end
-
-@inline function (M::AbstractManifold{3})(t1::Real,t2::Real,t3::Real)
-    Ps = bsplinespaces(M)
-    t1 in domain(Ps[1]) || throw(DomainError(t1, "The input $(t1) is out of range."))
-    t2 in domain(Ps[2]) || throw(DomainError(t2, "The input $(t2) is out of range."))
-    t3 in domain(Ps[3]) || throw(DomainError(t3, "The input $(t3) is out of range."))
-    unsafe_mapping(M,t1,t2,t3)
+@generated function (M::AbstractManifold{Dim})(t::Vararg{Real, Dim}) where Dim
+    Ps = [Symbol(:P,i) for i in 1:Dim]
+    P = Expr(:tuple, Ps...)
+    ts = [Symbol(:t,i) for i in 1:Dim]
+    T = Expr(:tuple, ts...)
+    exs = [:($(Symbol(:t,i)) in domain($(Symbol(:P,i))) || throw(DomainError($(Symbol(:t,i)), "The input "*string($(Symbol(:t,i)))*" is out of range."))) for i in 1:Dim]
+    ret = Expr(:call,:unsafe_mapping,:M,[Symbol(:t,i) for i in 1:Dim]...)
+    Expr(
+        :block,
+        :($(Expr(:meta, :inline))),
+        :($T = t),
+        :($P = bsplinespaces(M)),
+        exs...,
+        :(return $(ret))
+    )
 end
 
 
