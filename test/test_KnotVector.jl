@@ -36,10 +36,13 @@
         @test KnotVector() == EmptyKnotVector()
         @test KnotVector() |> isempty
         @test KnotVector() |> iszero
-        @test EmptyKnotVector{Bool}() === EmptyKnotVector()
+        @test EmptyKnotVector{Bool}() === EmptyKnotVector() === zero(EmptyKnotVector) === zero(EmptyKnotVector{Bool})
         @test EmptyKnotVector{Int}() == EmptyKnotVector()
         @test EmptyKnotVector{Int}() == EmptyKnotVector{Int}()
         @test EmptyKnotVector{Int}() == EmptyKnotVector{Float64}()
+        @test EmptyKnotVector() == EmptyKnotVector{Int}()
+        @test EmptyKnotVector{Int}() == EmptyKnotVector{Int}()
+        @test EmptyKnotVector{Float64}() == EmptyKnotVector{Int}()
         @test EmptyKnotVector{Int}() === zero(EmptyKnotVector{Int}())
         @test EmptyKnotVector{Int}() === zero(AbstractKnotVector{Int})
         @test EmptyKnotVector{Int}() !== zero(AbstractKnotVector)
@@ -68,6 +71,20 @@
         @test KnotVector([-1,2,3]) + KnotVector([2,5]) * 2 == KnotVector([-1,2,2,2,3,5,5])
         @test k1 + k3 == KnotVector([1,2,2,3,4,5])
         @test 2 * KnotVector([2,3]) == KnotVector([2,2,3,3])
+        
+        # EmptyKnotVector
+        _k1 = k1 + EmptyKnotVector()
+        _k2 = k2 + EmptyKnotVector{Int}()
+        _k3 = k3 + EmptyKnotVector{Float64}()
+        @test _k1.vector === k1.vector
+        @test _k2.vector === k2.vector
+        @test _k3.vector !== k3.vector
+        _k1 = EmptyKnotVector() + k1
+        _k2 = EmptyKnotVector{Int}() + k2
+        _k3 = EmptyKnotVector{Float64}() + k3
+        @test _k1.vector === k1.vector
+        @test _k2.vector === k2.vector
+        @test _k3.vector !== k3.vector
 
         # type promotion
         @test KnotVector{Int}(1,2) + KnotVector(3) == KnotVector(1,2,3)
