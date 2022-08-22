@@ -375,7 +375,7 @@ julia> k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]);
 julia> P = BSplineSpace{2}(k);
 
 julia> P′ = expandspace_R(P, p₊=1, k₊=KnotVector([6.0]))
-BSplineSpace{3, Float64}(KnotVector([0.0, 0.0, 1.5, 1.5, 2.5, 2.5, 5.5, 5.5, 8.0, 8.0, 9.0, 9.0, 9.5, 9.5, 10.0, 10.0]))
+BSplineSpace{3, Float64}(KnotVector([0.0, 0.0, 1.5, 1.5, 2.5, 2.5, 5.5, 5.5, 6.0, 8.0, 8.0, 9.0, 9.0, 9.5, 9.5, 10.0, 10.0]))
 
 julia> P ⊆ P′
 true
@@ -393,7 +393,7 @@ julia> domain(P′)
 function expandspace_R(P::BSplineSpace{p,T}; p₊::Integer=0, k₊::KnotVector=KnotVector{T}()) where {p,T}
     k = knotvector(P)
     p′ = p + p₊
-    k′ = k + p₊*k
+    k′ = k + p₊*k + k₊
     P′ = BSplineSpace{p′}(k′)
     return P′
 end
