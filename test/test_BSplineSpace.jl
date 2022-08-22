@@ -129,6 +129,16 @@
         @test P3 ⊆ expandspace_R(P3, p₊=1)
         @test P4 ⊆ expandspace_R(P4, p₊=1)
 
+        @test P1 ⊆ expandspace_R(P1, k₊=KnotVector([1,2,3]))
+        @test P2 ⊆ expandspace_R(P2, k₊=KnotVector([1,2,3]))
+        @test P3 ⊆ expandspace_R(P3, k₊=KnotVector([1,2,3]))
+        @test P4 ⊆ expandspace_R(P4, k₊=KnotVector([1,2,3]))
+
+        @test knotvector(P1) + KnotVector([1,2,3]) ⊆ knotvector(expandspace_R(P1, k₊=KnotVector([1,2,3])))
+        @test knotvector(P2) + KnotVector([1,2,3]) ⊆ knotvector(expandspace_R(P2, k₊=KnotVector([1,2,3])))
+        @test knotvector(P3) + KnotVector([1,2,3]) ⊆ knotvector(expandspace_R(P3, k₊=KnotVector([1,2,3])))
+        @test knotvector(P4) + KnotVector([1,2,3]) ⊆ knotvector(expandspace_R(P4, k₊=KnotVector([1,2,3])))
+
         # P1 and P4 is not subset of expandspace_I.
         @test P1 ⋢ expandspace_I(P1, p₊=1) == expandspace(P1, p₊=1)
         @test P2 ⊑ expandspace_I(P2, p₊=1) == expandspace(P2, p₊=1)
