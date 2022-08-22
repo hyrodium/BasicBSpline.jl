@@ -10,10 +10,10 @@ This struct is intended for internal use.
 julia> import BasicBSpline.EmptyKnotVector
 
 julia> EmptyKnotVector()
-EmptyKnotVector{Bool}()
+BasicBSpline.EmptyKnotVector{Bool}()
 
 julia> EmptyKnotVector{Float64}()
-EmptyKnotVector{Float64}()
+BasicBSpline.EmptyKnotVector{Float64}()
 ```
 """
 struct EmptyKnotVector{T} <: AbstractKnotVector{T} end
