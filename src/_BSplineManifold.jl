@@ -56,7 +56,7 @@ Base.:(==)(M1::AbstractBSplineManifold, M2::AbstractBSplineManifold) = (bsplines
 bsplinespaces(M::BSplineManifold) = M.bsplinespaces
 controlpoints(M::BSplineManifold) = M.controlpoints
 
-@generated function unsafe_mapping(M::BSplineManifold{1,Deg},t1::Real) where {Deg}
+@generated function unsafe_mapping(M::BSplineManifold{1,Deg},t::Vararg{Real,1}) where {Deg}
     p1, = Deg
     exs = Expr[]
     for j1 in 1:p1
@@ -64,6 +64,7 @@ controlpoints(M::BSplineManifold) = M.controlpoints
     end
     Expr(:block,
         :((P1,) = bsplinespaces(M)),
+        :((t1,) = t),
         :(a = controlpoints(M)),
         :(i1 = intervalindex(P1,t1)),
         :(b1 = bsplinebasisall(P1,i1,t1)),
@@ -73,7 +74,7 @@ controlpoints(M::BSplineManifold) = M.controlpoints
     )
 end
 
-@generated function unsafe_mapping(M::BSplineManifold{2,Deg},t1::Real,t2::Real) where {Deg}
+@generated function unsafe_mapping(M::BSplineManifold{2,Deg},t::Vararg{Real,2}) where {Deg}
     p1, p2 = Deg
     exs = Expr[]
     for j2 in 1:p2+1, j1 in 1:p1+1
@@ -83,6 +84,7 @@ end
     Expr(
         :block,
         :((P1, P2) = bsplinespaces(M)),
+        :((t1, t2) = t),
         :(a = controlpoints(M)),
         :((i1, i2) = (intervalindex(P1,t1), intervalindex(P2,t2))),
         :((b1, b2) = (bsplinebasisall(P1,i1,t1), bsplinebasisall(P2,i2,t2))),
@@ -92,7 +94,7 @@ end
     )
 end
 
-@generated function unsafe_mapping(M::BSplineManifold{3,Deg},t1::Real,t2::Real,t3::Real) where {Deg}
+@generated function unsafe_mapping(M::BSplineManifold{3,Deg},t::Vararg{Real,3}) where {Deg}
     p1, p2, p3 = Deg
     exs = Expr[]
     for j3 in 1:p3+1, j2 in 1:p2+1, j1 in 1:p1+1
@@ -102,6 +104,7 @@ end
     Expr(
         :block,
         :((P1, P2, P3) = bsplinespaces(M)),
+        :((t1, t2, t3) = t),
         :(a = controlpoints(M)),
         :((i1, i2, i3) = (intervalindex(P1,t1), intervalindex(P2,t2), intervalindex(P3,t3))),
         :((b1, b2, b3) = (bsplinebasisall(P1,i1,t1), bsplinebasisall(P2,i2,t2), bsplinebasisall(P3,i3,t3))),
@@ -111,25 +114,21 @@ end
     )
 end
 
-@inline function (M::AbstractManifold{1})(t1::Real)
-    Ps = bsplinespaces(M)
-    t1 in domain(Ps[1]) || throw(DomainError(t1, "The input $(t1) is out of range."))
-    unsafe_mapping(M,t1)
-end
-
-@inline function (M::AbstractManifold{2})(t1::Real,t2::Real)
-    Ps = bsplinespaces(M)
-    t1 in domain(Ps[1]) || throw(DomainError(t1, "The input $(t1) is out of range."))
-    t2 in domain(Ps[2]) || throw(DomainError(t2, "The input $(t2) is out of range."))
-    unsafe_mapping(M,t1,t2)
-end
-
-@inline function (M::AbstractManifold{3})(t1::Real,t2::Real,t3::Real)
-    Ps = bsplinespaces(M)
-    t1 in domain(Ps[1]) || throw(DomainError(t1, "The input $(t1) is out of range."))
-    t2 in domain(Ps[2]) || throw(DomainError(t2, "The input $(t2) is out of range."))
-    t3 in domain(Ps[3]) || throw(DomainError(t3, "The input $(t3) is out of range."))
-    unsafe_mapping(M,t1,t2,t3)
+@generated function (M::AbstractManifold{Dim})(t::Vararg{Real, Dim}) where Dim
+    Ps = [Symbol(:P,i) for i in 1:Dim]
+    P = Expr(:tuple, Ps...)
+    ts = [Symbol(:t,i) for i in 1:Dim]
+    T = Expr(:tuple, ts...)
+    exs = [:($(Symbol(:t,i)) in domain($(Symbol(:P,i))) || throw(DomainError($(Symbol(:t,i)), "The input "*string($(Symbol(:t,i)))*" is out of range."))) for i in 1:Dim]
+    ret = Expr(:call,:unsafe_mapping,:M,[Symbol(:t,i) for i in 1:Dim]...)
+    Expr(
+        :block,
+        :($(Expr(:meta, :inline))),
+        :($T = t),
+        :($P = bsplinespaces(M)),
+        exs...,
+        :(return $(ret))
+    )
 end
 
 
