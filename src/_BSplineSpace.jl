@@ -329,6 +329,14 @@ function intervalindex(P::AbstractBSplineSpace{p},t::Real) where p
     return searchsortedlast(v,t)+1
 end
 
+# TODO remove these methods in the next breaking release
+for fname in (:expandspace, :expandspace_I, :expandspace_R)
+    @eval function $fname(P::BSplineSpace{p,T}; p₊::Integer=0, k₊=KnotVector{T}()) where {p,T}
+        P′ = $fname(P, Val(p₊), k₊)
+        return P′
+    end
+end
+
 """
 Expand B-spline space with given additional degree and knotvector.
 This function is compatible with `issqsubset` (`⊑`)
@@ -424,9 +432,6 @@ function expandspace(P::BSplineSpace{p,T}, _p₊::Val{p₊}, k₊::AbstractKnotV
     expandspace_I(P,_p₊,k₊)
 end
 
-for fname in (:expandspace, :expandspace_I, :expandspace_R)
-    @eval function $fname(P::BSplineSpace{p,T}; p₊::Integer=0, k₊=KnotVector{T}()) where {p,T}
-        P′ = $fname(P, Val(p₊), k₊)
-        return P′
-    end
+function expandspace(P::BSplineSpace{p,T}, k₊::AbstractKnotVector=EmptyKnotVector{T}()) where {p,T}
+    expandspace_I(P,k₊)
 end
