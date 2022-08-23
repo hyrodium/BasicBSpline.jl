@@ -93,3 +93,11 @@ function refinement(M::AbstractManifold{Dim}; p₊::Union{Nothing,NTuple{Dim,Int
 
     return refinement(M, tuple(Ps′...))
 end
+
+function refinement(M::AbstractManifold{Dim},
+                    p₊::Tuple{Val}=ntuple(i->Val(0), Val(Dim)),
+                    k₊::Tuple{AbstractKnotVector}=ntuple(i->EmptyKnotVector(), Val(Dim))) where Dim
+    Ps = bsplinespaces(M)
+    Ps′ = ntuple(i->expandspace(Ps[i], p₊[i], k₊[i]), Val(Dim))
+    return refinement(M, Ps′)
+end
