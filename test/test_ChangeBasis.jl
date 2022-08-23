@@ -4,7 +4,7 @@
 
     function test_changebasis_R(P,P′)
         @test P ⊆ P′
-        A = changebasis(P,P′)
+        A = @inferred changebasis(P,P′)
         @test A == BasicBSpline._changebasis_R(P,P′)
         n = dim(P)
         n′ = dim(P′)
@@ -38,7 +38,7 @@
         @test P4 ⋣ P5
 
         n4, n5 = dim(P4), dim(P5)
-        A45 = changebasis(P4, P5)
+        A45 = @inferred changebasis(P4, P5)
         @test size(A45) == (n4, n5)
         Δ45 = [bsplinebasis(P4, i, t) - sum(A45[i, j] * bsplinebasis(P5, j, t) for j in 1:n5) for i in 1:n4, t in 2 * rand(10) .+ 2]
         @test norm(Δ45) < ε
@@ -49,7 +49,7 @@
         @test P6 ⊈ P7
 
         n6, n7 = dim(P6), dim(P7)
-        A67 = changebasis(P6, P7)
+        A67 = @inferred changebasis(P6, P7)
         @test size(A67) == (n6, n7)
         Δ67 = [bsplinebasis(P6, i, t) - sum(A67[i, j] * bsplinebasis(P7, j, t) for j in 1:n7) for i in 1:n6, t in 2 * rand(10) .+ 2]
         @test norm(Δ67) < ε
@@ -64,7 +64,7 @@
             @test domain(P1) == domain(P2)
             @test dim(P1) == dim(P2)
             @test P1 ≃ P2
-            A = BasicBSpline._changebasis_sim(P1,P2)
+            A = @inferred BasicBSpline._changebasis_sim(P1,P2)
             D = domain(P1)
             n = dim(P1)
             for _ in 1:100
@@ -105,8 +105,8 @@
 
                 k′ = UniformKnotVector(0:50)
                 P′ = UniformBSplineSpace{p}(k′)
-                A1 = changebasis(P, P′)
-                A2 = changebasis(BSplineSpace(P), BSplineSpace(P′))
+                A1 = @inferred changebasis(P, P′)
+                A2 = @inferred changebasis(BSplineSpace(P), BSplineSpace(P′))
                 @test P ⊆ P′
                 @test A1 ≈ A2
 
@@ -114,8 +114,8 @@
                 right = rightendpoint(domain(P))+p
                 k′ = UniformKnotVector(left:right)
                 P′ = UniformBSplineSpace{p}(k′)
-                A3 = changebasis(P, P′)
-                A4 = changebasis(BSplineSpace(P), BSplineSpace(P′))
+                A3 = @inferred changebasis(P, P′)
+                A4 = @inferred changebasis(BSplineSpace(P), BSplineSpace(P′))
                 @test P ⊑ P′
                 @test A3 ≈ A4
             end
