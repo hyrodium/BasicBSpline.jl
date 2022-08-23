@@ -36,7 +36,7 @@ function _changebasis_R(P::AbstractBSplineSpace{p,T}, P′::AbstractBSplineSpace
     Z = _iszeros(_lower(P′))
     W = findall(Z)
     K′ = [k′[i+p′] - k′[i] for i in 1:n′+1]
-    K = [ifelse(k[i+p] ≠ k[i], 1 / (k[i+p] - k[i]), 0.0) for i in 1:n+1]
+    K = U[ifelse(k[i+p] ≠ k[i], U(1 / (k[i+p] - k[i])), zero(U)) for i in 1:n+1]
     Δ = (p / p′) * [K′[j] * (K[i] * Aᵖ⁻¹[i, j] - K[i+1] * Aᵖ⁻¹[i+1, j]) for i in 1:n, j in 1:n′+1]
     Aᵖ[:, 1] = Δ[:, 1]
     Aᵖ[:, n′] = -Δ[:, n′+1]
@@ -85,8 +85,8 @@ function _changebasis_R(P::AbstractBSplineSpace{p,T}, P′::AbstractBSplineSpace
             Ãᵖ[ȷ] = (A₊ + A₋) / 2
         end
     end
-    Aᵖ = hcat(Ãᵖ...) # n × n′ matrix
-    return Aᵖ .* T[bsplinesupport(P′,j) ⊆ bsplinesupport(P,i) for i in 1:n, j in 1:n′]
+    _Aᵖ = reduce(hcat, Ãᵖ) # n × n′ matrix
+    return _Aᵖ .* U[bsplinesupport(P′,j) ⊆ bsplinesupport(P,i) for i in 1:n, j in 1:n′]
 end
 
 @doc raw"""
