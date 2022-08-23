@@ -355,7 +355,7 @@ julia> domain(P′)
 2.5..9.0
 ```
 """
-function expandspace_I(P::BSplineSpace{p,T}; p₊::Integer=0, k₊::KnotVector=KnotVector{T}()) where {p,T}
+function expandspace_I(P::BSplineSpace{p,T}; p₊::Integer=0, k₊::AbstractKnotVector=EmptyKnotVector{T}()) where {p,T}
     k = knotvector(P)
     k̂ = unique(k[1+p:end-p])
     p′ = p + p₊
@@ -390,7 +390,7 @@ julia> domain(P′)
 1.5..9.5
 ```
 """
-function expandspace_R(P::BSplineSpace{p,T}; p₊::Integer=0, k₊::KnotVector=KnotVector{T}()) where {p,T}
+function expandspace_R(P::BSplineSpace{p,T}; p₊::Integer=0, k₊::AbstractKnotVector=EmptyKnotVector{T}()) where {p,T}
     k = knotvector(P)
     p′ = p + p₊
     k′ = k + p₊*k + k₊

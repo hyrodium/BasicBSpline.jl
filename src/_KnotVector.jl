@@ -23,13 +23,14 @@ struct KnotVector{T} <: AbstractKnotVector{T}
 end
 KnotVector{T}(v::AbstractVector) where T = unsafe_knotvector(T,sort(v))
 KnotVector(v::AbstractVector{T}) where {T<:Real} = unsafe_knotvector(T,sort(v))
+AbstractKnotVector{S}(k::KnotVector{T}) where {S, T} = unsafe_knotvector(promote_type(S,T), _vec(k))
 
 KnotVector(k::KnotVector) = k
 KnotVector(k::AbstractKnotVector{T}) where T = unsafe_knotvector(T,_vec(k))
 KnotVector{T}(k::KnotVector{T}) where T = k
 KnotVector{T}(k::AbstractKnotVector) where T = unsafe_knotvector(T,_vec(k))
 
-Base.convert(T::Type{<:KnotVector},k::AbstractKnotVector) = T(k)
+Base.convert(T::Type{<:AbstractKnotVector}, k::AbstractKnotVector) = T(k)
 function Base.promote_rule(::Type{KnotVector{T}}, ::Type{KnotVector{S}}) where {T,S}
     KnotVector{promote_type(T,S)}
 end

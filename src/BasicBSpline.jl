@@ -39,6 +39,7 @@ export fittingcontrolpoints, fittingcontrolpoints_R, fittingcontrolpoints_I
 
 include("_util.jl")
 include("_KnotVector.jl")
+include("_EmptyKnotVector.jl")
 include("_BSplineSpace.jl")
 include("_BSplineBasis.jl")
 include("_UniformKnotVector.jl")

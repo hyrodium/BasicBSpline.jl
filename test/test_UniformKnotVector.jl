@@ -90,6 +90,8 @@
         @test zero(k5) isa KnotVector{Float64}
         @test k1 * 0 == zero(k1)
         @test k1 + zero(k1) == k1
+        @test zero(k1) |> isempty
+        @test zero(k1) |> iszero
     end
 
     @testset "unique" begin
