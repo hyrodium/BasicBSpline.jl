@@ -366,8 +366,10 @@ function expandspace_I(P::BSplineSpace{p,T}, ::Val{p₊}, k₊::AbstractKnotVect
     return P′
 end
 
-function expandspace_I(P::BSplineSpace{p,T}; p₊::Integer=0, k₊::AbstractKnotVector=EmptyKnotVector{T}()) where {p,T}
-    P′ = expandspace_I(P, Val(p₊), k₊)
+function expandspace_I(P::BSplineSpace{p,T}, k₊::AbstractKnotVector=EmptyKnotVector{T}()) where {p,T}
+    k = knotvector(P)
+    k′ = k + k₊
+    P′ = BSplineSpace{p}(k′)
     return P′
 end
 
@@ -407,8 +409,10 @@ function expandspace_R(P::BSplineSpace{p,T}, ::Val{p₊}, k₊::AbstractKnotVect
     return P′
 end
 
-function expandspace_R(P::BSplineSpace{p,T}; p₊::Integer=0, k₊::AbstractKnotVector=EmptyKnotVector{T}()) where {p,T}
-    P′ = expandspace_R(P, Val(p₊), k₊)
+function expandspace_R(P::BSplineSpace{p,T}, k₊::AbstractKnotVector=EmptyKnotVector{T}()) where {p,T}
+    k = knotvector(P)
+    k′ = k + k₊
+    P′ = BSplineSpace{p}(k′)
     return P′
 end
 
@@ -420,7 +424,9 @@ function expandspace(P::BSplineSpace{p,T}, _p₊::Val{p₊}, k₊::AbstractKnotV
     expandspace_I(P,_p₊,k₊)
 end
 
-function expandspace(P::BSplineSpace{p,T}; p₊=0, k₊=KnotVector{T}()) where {p,T}
-    P′ = expandspace(P, Val(p₊), k₊)
-    return P′
+for fname in (:expandspace, :expandspace_I, :expandspace_R)
+    @eval function $fname(P::BSplineSpace{p,T}; p₊::Integer=0, k₊=KnotVector{T}()) where {p,T}
+        P′ = $fname(P, Val(p₊), k₊)
+        return P′
+    end
 end
