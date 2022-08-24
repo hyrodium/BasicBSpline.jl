@@ -86,8 +86,8 @@
     @testset "zeros" begin
         @test_throws MethodError zero(UniformKnotVector)
         @test_throws MethodError zeros(UniformKnotVector,3)
-        @test zero(k1) isa KnotVector{Int}
-        @test zero(k5) isa KnotVector{Float64}
+        @test zero(k1) isa EmptyKnotVector{Int}
+        @test zero(k5) isa EmptyKnotVector{Float64}
         @test k1 * 0 == zero(k1)
         @test k1 + zero(k1) == k1
         @test zero(k1) |> isempty

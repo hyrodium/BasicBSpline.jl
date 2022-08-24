@@ -329,15 +329,6 @@ function intervalindex(P::AbstractBSplineSpace{p},t::Real) where p
     return searchsortedlast(v,t)+1
 end
 
-# TODO remove these methods in the next breaking release
-for fname in (:expandspace, :expandspace_I, :expandspace_R)
-    @eval function $fname(P::BSplineSpace{p,T}; p₊::Integer=0, k₊=KnotVector{T}()) where {p,T}
-        Base.depwarn("The keyword arguments in expandspace is deprecated. Use positional arguments with Val.", Symbol($fname))
-        P′ = $fname(P, Val(p₊), k₊)
-        return P′
-    end
-end
-
 """
 Expand B-spline space with given additional degree and knotvector.
 This function is compatible with `issqsubset` (`⊑`)
