@@ -1,7 +1,7 @@
 name = "BasicBSpline"
 uuid = "4c5d9882-2acf-4ea4-9e48-968fd4518195"
 authors = ["hyrodium <hyrodium@gmail.com>"]
-version = "0.6.6"
+version = "0.6.7"
 
 [deps]
 FastGaussQuadrature = "442a2c76-b920-505d-bb47-c5924d526838"
