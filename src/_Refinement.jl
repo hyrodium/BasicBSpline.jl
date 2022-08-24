@@ -104,6 +104,7 @@ end
 Refinement of B-spline manifold with additional degree and knotvector.
 """
 function refinement(M::AbstractManifold{Dim}; p₊::Union{Nothing,NTuple{Dim,Int}}=nothing, k₊::Union{Nothing,NTuple{Dim,KnotVector{T} where T}}=nothing) where Dim
+    Base.depwarn("The keyword arguments in refinement is deprecated. Use positional arguments with Val.", :refinement)
     Ps = bsplinespaces(M)
     if isnothing(p₊) & isnothing(k₊)
         Ps′ = Ps
