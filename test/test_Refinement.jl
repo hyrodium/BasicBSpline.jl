@@ -144,17 +144,17 @@
             w = ones(n1,n2,n3)
 
             M = BSplineManifold(a, (P1,P2,P3))
-            M0 = refinement(M) # TODO: use @inferred
-            M1 = refinement(M, k₊) # TODO: use @inferred
-            M2 = refinement(M, p₊) # TODO: use @inferred
-            M3 = refinement(M, p₊, k₊) # TODO: use @inferred
-            M4 = refinement(M, (P1′,P2′,P3′)) # TODO: use @inferred
+            M0 = @inferred refinement(M)
+            M1 = @inferred refinement(M, k₊)
+            M2 = @inferred refinement(M, p₊)
+            M3 = @inferred refinement(M, p₊, k₊)
+            M4 = @inferred refinement(M, (P1′,P2′,P3′))
             R = RationalBSplineManifold(a, w, (P1,P2,P3))
-            R0 = refinement(R) # TODO: use @inferred
-            R1 = refinement(R, k₊) # TODO: use @inferred
-            R2 = refinement(R, p₊) # TODO: use @inferred
-            R3 = refinement(R, p₊, k₊) # TODO: use @inferred
-            R4 = refinement(R, (P1′,P2′,P3′)) # TODO: use @inferred
+            R0 = @inferred refinement(R)
+            R1 = @inferred refinement(R, k₊)
+            R2 = @inferred refinement(R, p₊)
+            R3 = @inferred refinement(R, p₊, k₊)
+            R4 = @inferred refinement(R, (P1′,P2′,P3′))
 
             for _ in 1:100
                 t1 = rand(D1)
@@ -176,11 +176,11 @@
             w = rand(n1,n2,n3) .+ 1
 
             R = RationalBSplineManifold(a, w, (P1,P2,P3))
-            R0 = refinement(R) # TODO: use @inferred
-            R1 = refinement(R, k₊) # TODO: use @inferred
-            R2 = refinement(R, p₊) # TODO: use @inferred
-            R3 = refinement(R, p₊, k₊) # TODO: use @inferred
-            R4 = refinement(R, (P1′,P2′,P3′)) # TODO: use @inferred
+            R0 = @inferred refinement(R)
+            R1 = @inferred refinement(R, k₊)
+            R2 = @inferred refinement(R, p₊)
+            R3 = @inferred refinement(R, p₊, k₊)
+            R4 = @inferred refinement(R, (P1′,P2′,P3′))
 
             for _ in 1:100
                 t1 = rand(D1)
