@@ -29,13 +29,13 @@
             @test dim(M) == 1
 
             P1′ = BSplineSpace{2}(KnotVector([-2, 0, 0, 1, 1, 2]))
-            p₊ = (1,)
+            p₊ = (Val(1),)
             k₊ = (KnotVector(),)
 
             @test P1 ⊑ P1′
 
             M′ = refinement(M, (P1′,))
-            M′′ = refinement(M, p₊=p₊, k₊=k₊)
+            M′′ = refinement(M, p₊, k₊)
             ts = [[rand()] for _ in 1:10]
             for t in ts
                 @test M(t...) ≈ M′(t...)
@@ -64,14 +64,14 @@
 
             P1′ = BSplineSpace{2}(KnotVector([0, 0, 0, 1, 1, 1]))
             P2′ = BSplineSpace{1}(KnotVector([1, 1, 2, 1.45, 3, 3]))
-            p₊ = (1, 0)
+            p₊ = (Val(1), Val(0))
             k₊ = (KnotVector(), KnotVector(1.45))
 
             @test P1 ⊆ P1′
             @test P2 ⊆ P2′
 
             M′ = refinement(M, (P1′, P2′))
-            M′′ = refinement(M, p₊=p₊, k₊=k₊)
+            M′′ = refinement(M, p₊, k₊)
             ts = [[rand(), 1 + 2 * rand()] for _ in 1:10]
             for t in ts
                 t1, t2 = t
@@ -102,10 +102,10 @@
             M = BSplineManifold(a, (P1, P2, P3))
             @test dim(M) == 3
 
-            p₊ = (1, 0, 1)
+            p₊ = (Val(1), Val(0), Val(1))
             k₊ = (KnotVector(), KnotVector(1.45), KnotVector())
 
-            M′′ = refinement(M, p₊=p₊, k₊=k₊)
+            M′′ = refinement(M, p₊, k₊)
             ts = [[rand(), 1 + 2 * rand(), 0.5] for _ in 1:10]
             for t in ts
                 t1, t2, t3 = t
