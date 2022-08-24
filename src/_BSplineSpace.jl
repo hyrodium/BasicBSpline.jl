@@ -329,6 +329,14 @@ function intervalindex(P::AbstractBSplineSpace{p},t::Real) where p
     return searchsortedlast(v,t)+1
 end
 
+# TODO remove these methods in the next breaking release
+for fname in (:expandspace, :expandspace_I, :expandspace_R)
+    @eval function $fname(P::BSplineSpace{p,T}; p₊::Integer=0, k₊=KnotVector{T}()) where {p,T}
+        P′ = $fname(P, Val(p₊), k₊)
+        return P′
+    end
+end
+
 """
 Expand B-spline space with given additional degree and knotvector.
 This function is compatible with `issqsubset` (`⊑`)
@@ -355,12 +363,21 @@ julia> domain(P′)
 2.5..9.0
 ```
 """
-function expandspace_I(P::BSplineSpace{p,T}; p₊::Integer=0, k₊::AbstractKnotVector=EmptyKnotVector{T}()) where {p,T}
+function expandspace_I end
+
+function expandspace_I(P::BSplineSpace{p,T}, ::Val{p₊}, k₊::AbstractKnotVector=EmptyKnotVector{T}()) where {p,p₊,T}
     k = knotvector(P)
     k̂ = unique(k[1+p:end-p])
     p′ = p + p₊
     k′ = k + p₊*k̂ + k₊
     P′ = BSplineSpace{p′}(k′)
+    return P′
+end
+
+function expandspace_I(P::BSplineSpace{p,T}, k₊::AbstractKnotVector=EmptyKnotVector{T}()) where {p,T}
+    k = knotvector(P)
+    k′ = k + k₊
+    P′ = BSplineSpace{p}(k′)
     return P′
 end
 
@@ -390,7 +407,9 @@ julia> domain(P′)
 1.5..9.5
 ```
 """
-function expandspace_R(P::BSplineSpace{p,T}; p₊::Integer=0, k₊::AbstractKnotVector=EmptyKnotVector{T}()) where {p,T}
+function expandspace_R end
+
+function expandspace_R(P::BSplineSpace{p,T}, ::Val{p₊}, k₊::AbstractKnotVector=EmptyKnotVector{T}()) where {p,p₊,T}
     k = knotvector(P)
     p′ = p + p₊
     k′ = k + p₊*k + k₊
@@ -398,10 +417,21 @@ function expandspace_R(P::BSplineSpace{p,T}; p₊::Integer=0, k₊::AbstractKnot
     return P′
 end
 
+function expandspace_R(P::BSplineSpace{p,T}, k₊::AbstractKnotVector=EmptyKnotVector{T}()) where {p,T}
+    k = knotvector(P)
+    k′ = k + k₊
+    P′ = BSplineSpace{p}(k′)
+    return P′
+end
+
 """
 Expand B-spline space with given additional degree and knotvector.
 The behavior of `expandspace` is same as `expandspace_I`.
 """
-function expandspace(P::BSplineSpace{p,T}; p₊=0, k₊=KnotVector{T}()) where {p,T}
-    expandspace_I(P,p₊=p₊,k₊=k₊)
+function expandspace(P::BSplineSpace{p,T}, _p₊::Val{p₊}, k₊::AbstractKnotVector=EmptyKnotVector{T}()) where {p,p₊,T}
+    expandspace_I(P,_p₊,k₊)
+end
+
+function expandspace(P::BSplineSpace{p,T}, k₊::AbstractKnotVector=EmptyKnotVector{T}()) where {p,T}
+    expandspace_I(P,k₊)
 end

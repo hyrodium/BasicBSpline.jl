@@ -32,7 +32,7 @@
         a_org = [Point(i1, rand()) for i1 in 1:n1]
         M = BSplineManifold(a_org, (P1,))
 
-        P1′ = expandspace(P1, p₊=1, k₊=KnotVector(rand(2)))
+        P1′ = expandspace(P1, Val(1), KnotVector(rand(2)))
 
         M′ = refinement(M, (P1′,))
         a_ref = controlpoints(M′)
@@ -54,7 +54,7 @@
         a_org = [Point(i1, rand()) for i1 in 1:n1]
         M = BSplineManifold(a_org, (P1,))
 
-        P1′ = expandspace(P1, p₊=1, k₊=KnotVector(rand(2)))
+        P1′ = expandspace(P1, Val(1), KnotVector(rand(2)))
 
         M′ = refinement(M, (P1′,))
         a_ref = controlpoints(M′)
@@ -78,8 +78,8 @@
         a_org = [Point(i1, i2, rand()) for i1 in 1:n1, i2 in 1:n2]
         M = BSplineManifold(a_org, (P1, P2))
 
-        P1′ = expandspace(P1, p₊=1, k₊=KnotVector(rand(2)))
-        P2′ = expandspace(P2, p₊=1, k₊=KnotVector(rand(2)))
+        P1′ = expandspace(P1, Val(1), KnotVector(rand(2)))
+        P2′ = expandspace(P2, Val(1), KnotVector(rand(2)))
 
         M′ = refinement(M, (P1′, P2′))
         a_ref = controlpoints(M′)
@@ -105,8 +105,8 @@
         a_org = [Point(i1, i2, rand()) for i1 in 1:n1, i2 in 1:n2]
         M = BSplineManifold(a_org, (P1, P2))
 
-        P1′ = expandspace(P1, p₊=1, k₊=KnotVector(rand(2)))
-        P2′ = expandspace(P2, p₊=1, k₊=KnotVector(rand(2)))
+        P1′ = expandspace(P1, Val(1), KnotVector(rand(2)))
+        P2′ = expandspace(P2, Val(1), KnotVector(rand(2)))
 
         M′ = refinement(M, (P1′, P2′))
         a_ref = controlpoints(M′)
@@ -133,9 +133,9 @@
         a_org = [Point(i1, i2, i3, rand()) for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3]
         M = BSplineManifold(a_org, (P1, P2, P3))
 
-        P1′ = expandspace(P1, p₊=1, k₊=KnotVector(rand(2)))
-        P2′ = expandspace(P2, p₊=1, k₊=KnotVector(rand(2)))
-        P3′ = expandspace(P3, p₊=1, k₊=KnotVector(rand(2)))
+        P1′ = expandspace(P1, Val(1), KnotVector(rand(2)))
+        P2′ = expandspace(P2, Val(1), KnotVector(rand(2)))
+        P3′ = expandspace(P3, Val(1), KnotVector(rand(2)))
 
         M′ = refinement(M, (P1′, P2′, P3′))
         a_ref = controlpoints(M′)
@@ -165,9 +165,9 @@
         a_org = [Point(i1, i2, i3, rand()) for i1 in 1:n1, i2 in 1:n2, i3 in 1:n3]
         M = BSplineManifold(a_org, (P1, P2, P3))
 
-        P1′ = expandspace(P1, p₊=1, k₊=KnotVector(rand(2)))
-        P2′ = expandspace(P2, p₊=1, k₊=KnotVector(rand(2)))
-        P3′ = expandspace(P3, p₊=1, k₊=KnotVector(rand(2)))
+        P1′ = expandspace(P1, Val(1), KnotVector(rand(2)))
+        P2′ = expandspace(P2, Val(1), KnotVector(rand(2)))
+        P3′ = expandspace(P3, Val(1), KnotVector(rand(2)))
 
         M′ = refinement(M, (P1′, P2′, P3′))
         a_ref = controlpoints(M′)
@@ -190,8 +190,8 @@
         a_org = [rand(ComplexF64) for i1 in 1:n1, i2 in 1:n2]
         M = BSplineManifold(a_org, (P1, P2))
 
-        P1′ = expandspace(P1, p₊=1, k₊=KnotVector(rand(2)))
-        P2′ = expandspace(P2, p₊=1, k₊=KnotVector(rand(2)))
+        P1′ = expandspace(P1, Val(1), KnotVector(rand(2)))
+        P2′ = expandspace(P2, Val(1), KnotVector(rand(2)))
 
         M′ = refinement(M, (P1′, P2′))
         a_ref = controlpoints(M′)

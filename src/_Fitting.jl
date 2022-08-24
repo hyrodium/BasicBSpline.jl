@@ -71,7 +71,7 @@ function innerproduct_R(P::AbstractBSplineSpace{p}) where p
     return Symmetric(A)
 end
 
-function innerproduct_I(func, Ps::Tuple{<:AbstractBSplineSpace{p₁}}) where {p₁}
+function innerproduct_I(func, Ps::Tuple{AbstractBSplineSpace{p₁}}) where {p₁}
     P₁, = Ps
     n₁ = dim(P₁)
     k₁ = knotvector(P₁)
@@ -98,7 +98,7 @@ function innerproduct_I(func, Ps::Tuple{<:AbstractBSplineSpace{p₁}}) where {p�
     return b
 end
 
-function innerproduct_I(func, Ps::Tuple{<:AbstractBSplineSpace{p₁},<:AbstractBSplineSpace{p₂}}) where {p₁,p₂}
+function innerproduct_I(func, Ps::Tuple{AbstractBSplineSpace{p₁},AbstractBSplineSpace{p₂}}) where {p₁,p₂}
     P₁,P₂ = Ps
     n₁,n₂ = dim.(Ps)
     k₁,k₂ = knotvector.(Ps)
@@ -137,7 +137,7 @@ function innerproduct_I(func, Ps::Tuple{<:AbstractBSplineSpace{p₁},<:AbstractB
     return b
 end
 
-function innerproduct_I(func, Ps::Tuple{<:AbstractBSplineSpace{p₁},<:AbstractBSplineSpace{p₂},<:AbstractBSplineSpace{p₃}}) where {p₁,p₂,p₃}
+function innerproduct_I(func, Ps::Tuple{AbstractBSplineSpace{p₁},AbstractBSplineSpace{p₂},AbstractBSplineSpace{p₃}}) where {p₁,p₂,p₃}
     P₁,P₂,P₃ = Ps
     n₁,n₂,n₃ = dim.(Ps)
     k₁,k₂,k₃ = knotvector.(Ps)
@@ -191,7 +191,7 @@ function innerproduct_I(func, Ps::Tuple{<:AbstractBSplineSpace{p₁},<:AbstractB
     return b
 end
 
-function innerproduct_R(func, Ps::Tuple{<:AbstractBSplineSpace{p₁}}) where {p₁}
+function innerproduct_R(func, Ps::Tuple{AbstractBSplineSpace{p₁}}) where {p₁}
     P₁, = Ps
     n₁ = dim(P₁)
     k₁ = knotvector(P₁)
@@ -214,7 +214,7 @@ function innerproduct_R(func, Ps::Tuple{<:AbstractBSplineSpace{p₁}}) where {p�
     return b
 end
 
-function innerproduct_R(func, Ps::Tuple{<:AbstractBSplineSpace{p₁},<:AbstractBSplineSpace{p₂}}) where {p₁,p₂}
+function innerproduct_R(func, Ps::Tuple{AbstractBSplineSpace{p₁},AbstractBSplineSpace{p₂}}) where {p₁,p₂}
     P₁,P₂ = Ps
     n₁,n₂ = dim.(Ps)
     k₁,k₂ = knotvector.(Ps)
@@ -246,7 +246,7 @@ function innerproduct_R(func, Ps::Tuple{<:AbstractBSplineSpace{p₁},<:AbstractB
     return b
 end
 
-function innerproduct_R(func, Ps::Tuple{<:AbstractBSplineSpace{p₁},<:AbstractBSplineSpace{p₂},<:AbstractBSplineSpace{p₃}}) where {p₁,p₂,p₃}
+function innerproduct_R(func, Ps::Tuple{AbstractBSplineSpace{p₁},AbstractBSplineSpace{p₂},AbstractBSplineSpace{p₃}}) where {p₁,p₂,p₃}
     P₁,P₂,P₃ = Ps
     n₁,n₂,n₃ = dim.(Ps)
     k₁,k₂,k₃ = knotvector.(Ps)
@@ -322,14 +322,14 @@ function innerproduct_R(P::UniformBSplineSpace{p,T}) where {p,T}
 end
 
 for (fname_fit, fname_inner) in ((:fittingcontrolpoints_I, :innerproduct_I), (:fittingcontrolpoints_R, :innerproduct_R))
-    @eval function $fname_fit(func, P::Tuple{<:AbstractBSplineSpace{p1}}) where {p1}
+    @eval function $fname_fit(func, P::Tuple{AbstractBSplineSpace{p1}}) where {p1}
         P1, = P
         b = $fname_inner(func, P)
         A = $fname_inner(P1)
         return _leftdivision(A, b)
     end
 
-    @eval function $fname_fit(func, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}}) where {p1,p2}
+    @eval function $fname_fit(func, P::Tuple{AbstractBSplineSpace{p1}, AbstractBSplineSpace{p2}}) where {p1,p2}
         P1, P2 = P
         n1, n2 = dim.(P)
         A1, A2 = $fname_inner(P1), $fname_inner(P2)
@@ -340,7 +340,7 @@ for (fname_fit, fname_inner) in ((:fittingcontrolpoints_I, :innerproduct_I), (:f
         return reshape(_leftdivision(_A, _b), n1, n2)
     end
 
-    @eval function $fname_fit(func, P::Tuple{<:AbstractBSplineSpace{p1}, <:AbstractBSplineSpace{p2}, <:AbstractBSplineSpace{p3}}) where {p1,p2,p3}
+    @eval function $fname_fit(func, P::Tuple{AbstractBSplineSpace{p1}, AbstractBSplineSpace{p2}, AbstractBSplineSpace{p3}}) where {p1,p2,p3}
         P1, P2, P3 = P
         n1, n2, n3 = dim(P1), dim(P2), dim(P3)
         A1, A2, A3 = $fname_inner(P1), $fname_inner(P2), $fname_inner(P3)
