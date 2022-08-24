@@ -114,13 +114,10 @@ function _changebasis_sim(P1::AbstractBSplineSpace{p,T1}, P2::AbstractBSplineSpa
 end
 
 @generated function _derivatives_at_left(P::AbstractBSplineSpace{p,T}) where {p, T}
-    hcat_args = Any[:hcat]
-    for r in 0:p-1
-        push!(hcat_args, :(pop(bsplinebasisall(BSplineDerivativeSpace{$(r)}(P),1,a))))
-    end
+    args = [:(pop(bsplinebasisall(BSplineDerivativeSpace{$(r)}(P),1,a))) for r in 0:p-1]
     quote
         a, _ = extrema(domain(P))
-        $(Expr(:call, hcat_args...))
+        $(Expr(:call, :hcat, args...))
     end
 end
 function _derivatives_at_left(::AbstractBSplineSpace{0,T}) where {T}
@@ -129,14 +126,11 @@ function _derivatives_at_left(::AbstractBSplineSpace{0,T}) where {T}
 end
 
 @generated function _derivatives_at_right(P::AbstractBSplineSpace{p,T}) where {p, T}
-    hcat_args = Any[:hcat]
-    for r in 0:p-1
-        push!(hcat_args, :(popfirst(bsplinebasisall(BSplineDerivativeSpace{$(r)}(P),n-p,b))))
-    end
+    args = [:(popfirst(bsplinebasisall(BSplineDerivativeSpace{$(r)}(P),n-p,b))) for r in 0:p-1]
     quote
         n = dim(P)
         _, b = extrema(domain(P))
-        $(Expr(:call, hcat_args...))
+        $(Expr(:call, :hcat, args...))
     end
 end
 function _derivatives_at_right(::AbstractBSplineSpace{0,T}) where {T}
