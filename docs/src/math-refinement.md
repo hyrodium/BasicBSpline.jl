@@ -30,8 +30,8 @@ nothing # hide
 Insert additional knots to knot vector.
 
 ```@repl math
-k₊=(KnotVector(3.3,4.2),KnotVector(3.8,3.2,5.3)) # additional knotvectors
-M_h = refinement(M,k₊=k₊) # refinement of B-spline manifold
+k₊ = (KnotVector(3.3,4.2),KnotVector(3.8,3.2,5.3)) # additional knotvectors
+M_h = refinement(M, k₊) # refinement of B-spline manifold
 save_png("2dim_h-refinement.png", M_h) # save image
 ```
 ![](2dim_h-refinement.png)
@@ -43,8 +43,8 @@ Note that this shape and the last shape are equivalent.
 Increase the polynomial degree of B-spline manifold.
 
 ```@repl math
-p₊=(1,2) # additional degrees
-M_p = refinement(M,p₊=p₊) # refinement of B-spline manifold
+p₊ = (Val(1), Val(2)) # additional degrees
+M_p = refinement(M, p₊) # refinement of B-spline manifold
 save_png("2dim_p-refinement.png", M_p) # save image
 ```
 ![](2dim_p-refinement.png)

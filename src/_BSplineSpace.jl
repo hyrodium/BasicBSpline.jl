@@ -332,6 +332,7 @@ end
 # TODO remove these methods in the next breaking release
 for fname in (:expandspace, :expandspace_I, :expandspace_R)
     @eval function $fname(P::BSplineSpace{p,T}; p₊::Integer=0, k₊=KnotVector{T}()) where {p,T}
+        Base.depwarn("The keyword arguments in expandspace is deprecated. Use positional arguments with Val.", Symbol($fname))
         P′ = $fname(P, Val(p₊), k₊)
         return P′
     end
@@ -347,7 +348,7 @@ julia> k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]);
 
 julia> P = BSplineSpace{2}(k);
 
-julia> P′ = expandspace_I(P, p₊=1, k₊=KnotVector([6.0]))
+julia> P′ = expandspace_I(P, Val(1), KnotVector([6.0]))
 BSplineSpace{3, Float64}(KnotVector([0.0, 1.5, 2.5, 2.5, 5.5, 5.5, 6.0, 8.0, 8.0, 9.0, 9.0, 9.5, 10.0]))
 
 julia> P ⊆ P′
@@ -391,7 +392,7 @@ julia> k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]);
 
 julia> P = BSplineSpace{2}(k);
 
-julia> P′ = expandspace_R(P, p₊=1, k₊=KnotVector([6.0]))
+julia> P′ = expandspace_R(P, Val(1), KnotVector([6.0]))
 BSplineSpace{3, Float64}(KnotVector([0.0, 0.0, 1.5, 1.5, 2.5, 2.5, 5.5, 5.5, 6.0, 8.0, 8.0, 9.0, 9.0, 9.5, 9.5, 10.0, 10.0]))
 
 julia> P ⊆ P′

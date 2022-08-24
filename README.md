@@ -100,7 +100,7 @@ save_png("2dim.png", M) # save image
 #### h-refinemnet
 ```julia
 k₊=(KnotVector(3.3,4.2),KnotVector(0.3,0.5)) # additional knotvectors
-M_h = refinement(M,k₊=k₊) # refinement of B-spline manifold
+M_h = refinement(M, k₊) # refinement of B-spline manifold
 save_png("2dim_h-refinement.png", M_h) # save image
 ```
 ![](docs/src/img/2dim_h-refinement.png)
@@ -109,8 +109,8 @@ Note that this shape and the last shape are equivalent.
 
 #### p-refinemnet
 ```julia
-p₊=(1,2) # additional degrees
-M_p = refinement(M,p₊=p₊) # refinement of B-spline manifold
+p₊=(Val(1),Val(2)) # additional degrees
+M_p = refinement(M, p₊) # refinement of B-spline manifold
 save_png("2dim_p-refinement.png", M_p) # save image
 ```
 ![](docs/src/img/2dim_p-refinement.png)
