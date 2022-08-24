@@ -8,68 +8,92 @@ Refinement of B-spline manifold with given B-spline spaces.
 """
 refinement
 
-function refinement(M::BSplineManifold{1}, Ps′::Tuple{AbstractBSplineSpace})
-    Ps = bsplinespaces(M)
+function refinement(M::BSplineManifold{1}, Ps′::NTuple{1, AbstractBSplineSpace})
+    P1, = bsplinespaces(M)
+    P1′, = Ps′
+    n1 = dim(P1)
+    n1′ = dim(P1′)
+    A1 = changebasis(P1, P1′)
     a = controlpoints(M)
-    (n1,) = dim.(Ps)
-    (n1′,) = dim.(Ps′)
-    (A1,) = changebasis.(Ps, Ps′)
 
     a′ = [sum(A1[I₁,J₁] * a[I₁] for I₁ in 1:n1) for J₁ in 1:n1′]
     return BSplineManifold(a′, Ps′)
 end
-function refinement(M::BSplineManifold{2}, Ps′::Tuple{AbstractBSplineSpace, AbstractBSplineSpace})
-    Ps = bsplinespaces(M)
+function refinement(M::BSplineManifold{2}, Ps′::NTuple{2, AbstractBSplineSpace})
+    P1, P2 = bsplinespaces(M)
+    P1′, P2′ = Ps′
+    n1 = dim(P1)
+    n2 = dim(P2)
+    n1′ = dim(P1′)
+    n2′ = dim(P2′)
+    A1 = changebasis(P1, P1′)
+    A2 = changebasis(P2, P2′)
     a = controlpoints(M)
-    (n1,n2) = dim.(Ps)
-    (n1′,n2′) = dim.(Ps′)
-    (A1,A2) = changebasis.(Ps, Ps′)
 
     a′ = [sum(A1[I₁,J₁] * A2[I₂,J₂] * a[I₁,I₂] for I₁ in 1:n1, I₂ in 1:n2) for J₁ in 1:n1′, J₂ in 1:n2′]
     return BSplineManifold(a′, Ps′)
 end
-function refinement(M::BSplineManifold{3}, Ps′::Tuple{AbstractBSplineSpace, AbstractBSplineSpace, AbstractBSplineSpace})
-    Ps = bsplinespaces(M)
+function refinement(M::BSplineManifold{3}, Ps′::NTuple{3, AbstractBSplineSpace})
+    P1, P2, P3 = bsplinespaces(M)
+    P1′, P2′, P3′ = Ps′
+    n1 = dim(P1)
+    n2 = dim(P2)
+    n3 = dim(P3)
+    n1′ = dim(P1′)
+    n2′ = dim(P2′)
+    n3′ = dim(P3′)
+    A1 = changebasis(P1, P1′)
+    A2 = changebasis(P2, P2′)
+    A3 = changebasis(P3, P3′)
     a = controlpoints(M)
-    (n1,n2,n3) = dim.(Ps)
-    (n1′,n2′,n3′) = dim.(Ps′)
-    (A1,A2,A3) = changebasis.(Ps, Ps′)
 
     a′ = [sum(A1[I₁,J₁] * A2[I₂,J₂] * A3[I₃,J₃] * a[I₁,I₂,I₃] for I₁ in 1:n1, I₂ in 1:n2, I₃ in 1:n3) for J₁ in 1:n1′, J₂ in 1:n2′, J₃ in 1:n3′]
     return BSplineManifold(a′, Ps′)
 end
 
-function refinement(M::RationalBSplineManifold{1}, Ps′::Tuple{AbstractBSplineSpace})
-    Ps = bsplinespaces(M)
+function refinement(M::RationalBSplineManifold{1}, Ps′::NTuple{1, AbstractBSplineSpace})
+    P1, = bsplinespaces(M)
+    P1′, = Ps′
+    n1 = dim(P1)
+    n1′ = dim(P1′)
+    A1 = changebasis(P1, P1′)
     a = controlpoints(M)
     w = weights(M)
-    (n1,) = dim.(Ps)
-    (n1′,) = dim.(Ps′)
-    (A1,) = changebasis.(Ps, Ps′)
 
     w′ = [sum(A1[I₁,J₁] * w[I₁] for I₁ in 1:n1) for J₁ in 1:n1′]
     a′ = [sum(A1[I₁,J₁] * a[I₁] * w[I₁] for I₁ in 1:n1) for J₁ in 1:n1′] ./ w′
     return RationalBSplineManifold(a′, w′, Ps′)
 end
-function refinement(M::RationalBSplineManifold{2}, Ps′::Tuple{AbstractBSplineSpace, AbstractBSplineSpace})
-    Ps = bsplinespaces(M)
+function refinement(M::RationalBSplineManifold{2}, Ps′::NTuple{2, AbstractBSplineSpace})
+    P1, P2 = bsplinespaces(M)
+    P1′, P2′ = Ps′
+    n1 = dim(P1)
+    n2 = dim(P2)
+    n1′ = dim(P1′)
+    n2′ = dim(P2′)
+    A1 = changebasis(P1, P1′)
+    A2 = changebasis(P2, P2′)
     a = controlpoints(M)
     w = weights(M)
-    (n1,n2) = dim.(Ps)
-    (n1′,n2′) = dim.(Ps′)
-    (A1,A2) = changebasis.(Ps, Ps′)
 
     w′ = [sum(A1[I₁,J₁] * A2[I₂,J₂] * w[I₁,I₂] for I₁ in 1:n1, I₂ in 1:n2) for J₁ in 1:n1′, J₂ in 1:n2′]
     a′ = [sum(A1[I₁,J₁] * A2[I₂,J₂] * a[I₁,I₂] * w[I₁,I₂] for I₁ in 1:n1, I₂ in 1:n2) for J₁ in 1:n1′, J₂ in 1:n2′] ./ w′
     return RationalBSplineManifold(a′, w′, Ps′)
 end
-function refinement(M::RationalBSplineManifold{3}, Ps′::Tuple{AbstractBSplineSpace, AbstractBSplineSpace, AbstractBSplineSpace})
-    Ps = bsplinespaces(M)
+function refinement(M::RationalBSplineManifold{3}, Ps′::NTuple{3, AbstractBSplineSpace})
+    P1, P2, P3 = bsplinespaces(M)
+    P1′, P2′, P3′ = Ps′
+    n1 = dim(P1)
+    n2 = dim(P2)
+    n3 = dim(P3)
+    n1′ = dim(P1′)
+    n2′ = dim(P2′)
+    n3′ = dim(P3′)
+    A1 = changebasis(P1, P1′)
+    A2 = changebasis(P2, P2′)
+    A3 = changebasis(P3, P3′)
     a = controlpoints(M)
     w = weights(M)
-    (n1,n2,n3) = dim.(Ps)
-    (n1′,n2′,n3′) = dim.(Ps′)
-    (A1,A2,A3) = changebasis.(Ps, Ps′)
 
     w′ = [sum(A1[I₁,J₁] * A2[I₂,J₂] * A3[I₃,J₃] * w[I₁,I₂,I₃] for I₁ in 1:n1, I₂ in 1:n2, I₃ in 1:n3) for J₁ in 1:n1′, J₂ in 1:n2′, J₃ in 1:n3′]
     a′ = [sum(A1[I₁,J₁] * A2[I₂,J₂] * A3[I₃,J₃] * a[I₁,I₂,I₃] * w[I₁,I₂,I₃] for I₁ in 1:n1, I₂ in 1:n2, I₃ in 1:n3) for J₁ in 1:n1′, J₂ in 1:n2′, J₃ in 1:n3′] ./ w′
@@ -94,20 +118,44 @@ function refinement(M::AbstractManifold{Dim}; p₊::Union{Nothing,NTuple{Dim,Int
     return refinement(M, tuple(Ps′...))
 end
 
-# TODO: use @generated macro
-function refinement(M::AbstractManifold{Dim},
-                    p₊::NTuple{Dim, Val},
-                    k₊::NTuple{Dim, AbstractKnotVector}=ntuple(i->EmptyKnotVector(), Val(Dim))) where Dim
-    Ps = bsplinespaces(M)
-    Ps′ = ntuple(i->expandspace(Ps[i], p₊[i], k₊[i]), Val(Dim))
-    return refinement(M, Ps′)
+@generated function refinement(M::AbstractManifold{Dim},
+                               p₊::NTuple{Dim, Val},
+                               k₊::NTuple{Dim, AbstractKnotVector}=ntuple(i->EmptyKnotVector(), Val(Dim))) where Dim
+    Ps = [Symbol(:P,i) for i in 1:Dim]
+    Ps′ = [Symbol(:P,i,"′") for i in 1:Dim]
+    ks = [Symbol(:k,i,:₊) for i in 1:Dim]
+    ps = [Symbol(:p,i,:₊) for i in 1:Dim]
+    exP = Expr(:tuple, Ps...)
+    exP′ = Expr(:tuple, Ps′...)
+    exk = Expr(:tuple, ks...)
+    exp = Expr(:tuple, ps...)
+    exs = [:($(Symbol(:P,i,"′")) = expandspace($(Symbol(:P,i)), $(Symbol(:p,i,:₊)), $(Symbol(:k,i,:₊)))) for i in 1:Dim]
+    Expr(
+        :block,
+        :($exP = bsplinespaces(M)),
+        :($exp = p₊),
+        :($exk = k₊),
+        exs...,
+        :(return refinement(M, $(exP′)))
+    )
 end
 
-function refinement(M::AbstractManifold{Dim},
-    k₊::NTuple{Dim, AbstractKnotVector}=ntuple(i->EmptyKnotVector(), Val(Dim))) where Dim
-    Ps = bsplinespaces(M)
-    Ps′ = ntuple(i->expandspace(Ps[i], k₊[i]), Val(Dim))
-    return refinement(M, Ps′)
+@generated function refinement(M::AbstractManifold{Dim},
+                               k₊::NTuple{Dim, AbstractKnotVector}=ntuple(i->EmptyKnotVector(), Val(Dim))) where Dim
+    Ps = [Symbol(:P,i) for i in 1:Dim]
+    Ps′ = [Symbol(:P,i,"′") for i in 1:Dim]
+    ks = [Symbol(:k,i,:₊) for i in 1:Dim]
+    exP = Expr(:tuple, Ps...)
+    exP′ = Expr(:tuple, Ps′...)
+    exk = Expr(:tuple, ks...)
+    exs = [:($(Symbol(:P,i,"′")) = expandspace($(Symbol(:P,i)), $(Symbol(:k,i,:₊)))) for i in 1:Dim]
+    Expr(
+        :block,
+        :($exP = bsplinespaces(M)),
+        :($exk = k₊),
+        exs...,
+        :(return refinement(M, $(exP′)))
+    )
 end
 
 # resolve ambiguities
