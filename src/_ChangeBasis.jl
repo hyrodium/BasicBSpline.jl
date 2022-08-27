@@ -107,17 +107,15 @@ function _changebasis_sim(P1::AbstractBSplineSpace{p,T1}, P2::AbstractBSplineSpa
     A1 = _derivatives_at_left(P1)
     A2 = _derivatives_at_left(P2)
     A12 = A1/A2
-    for i in 1:p, j in 1:p
-        # A12 must be lower-triangular
-        i ≥ j || continue
+    # A12 must be lower-triangular
+    for i in 1:p, j in 1:i
         A[i, j] = A12[i,j]
     end
     A1 = _derivatives_at_right(P1)
     A2 = _derivatives_at_right(P2)
     A12 = A1/A2
-    for i in 1:p, j in 1:p
-        # A12 must be upper-triangular
-        i ≤ j || continue
+    # A12 must be upper-triangular
+    for i in 1:p, j in i:p
         A[n-p+i, n-p+j] = A12[i,j]
     end
     return A
