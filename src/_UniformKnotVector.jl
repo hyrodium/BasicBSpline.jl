@@ -29,6 +29,8 @@ Base.length(k::UniformKnotVector) = length(k.vector)
 Base.firstindex(k::UniformKnotVector) = 1
 Base.lastindex(k::UniformKnotVector) = length(k)
 
+copy(k::UniformKnotVector{T}) where T = unsafe_uniformknotvector(T,copy(_vec(k)))
+
 function Base.convert(::Type{UniformKnotVector{T,R}},k::UniformKnotVector) where {T,R}
     UniformKnotVector{T,R}(k)
 end
