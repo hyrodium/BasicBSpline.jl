@@ -45,7 +45,7 @@ function _changebasis_R(P::AbstractBSplineSpace{p,T}, P′::AbstractBSplineSpace
     if length(W) == 0
         Q = [1:n′]
     else
-        Q = [1:W[1]-1, [W[i]:W[i+1]-1 for i in 1:length(W)-1]..., W[end]:n′]
+        Q = push!(pushfirst!([W[i]:W[i+1]-1 for i in 1:length(W)-1], 1:W[1]-1), W[end]:n′)
     end
     λ = length(Q)
     Λ = length.(Q)
@@ -61,6 +61,7 @@ function _changebasis_R(P::AbstractBSplineSpace{p,T}, P′::AbstractBSplineSpace
         if Λ[ȷ] ≥ 2
             t = k′[W[ȷ]]
             for i in 1:n
+                # TODO: this can be faster with bsplinebasisall
                 Ãᵖ[ȷ][i, end] = bsplinebasis₋₀(P,i,t)
             end
         end
@@ -69,6 +70,7 @@ function _changebasis_R(P::AbstractBSplineSpace{p,T}, P′::AbstractBSplineSpace
         if Λ[ȷ] ≥ 2
             t = k′[W[ȷ-1]+p]
             for i in 1:n
+                # TODO: this can be faster with bsplinebasisall
                 Ãᵖ[ȷ][i, 1] = bsplinebasis₊₀(P,i,t)
             end
         end
