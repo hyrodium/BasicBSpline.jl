@@ -29,7 +29,7 @@ Base.isempty(::EmptyKnotVector) = true
 
 _vec(::EmptyKnotVector{T}) where T = T[]
 
-copy(k::EmptyKnotVector{T}) where T = k
+Base.copy(k::EmptyKnotVector{T}) where T = k
 
 # + AbstractKnotVector
 Base.:+(k::AbstractKnotVector{T}, ::EmptyKnotVector{T}) where T<:Real = k
