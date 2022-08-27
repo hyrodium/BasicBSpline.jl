@@ -11,6 +11,7 @@
         @test k1 == KnotVector(1.,3,2)::KnotVector{Float64}
         @test k1 == KnotVector{Int}(1,3,2)::KnotVector{Int}
         @test k1 != k2
+        @test k1.vector !== copy(k1).vector
 
         @test KnotVector{Int}([1,2]) isa KnotVector{Int}
         @test KnotVector{Int}(1,2) isa KnotVector{Int}
@@ -32,6 +33,11 @@
     @testset "_vec" begin
         @test BasicBSpline._vec(KnotVector([1,2,3])) isa Vector{Int}
         @test BasicBSpline._vec(EmptyKnotVector()) isa Vector{Bool}
+    end
+
+    @testset "EmptyKnotVector" begin
+        k = EmptyKnotVector()
+        @test k === copy(k)
     end
 
     @testset "zeros" begin

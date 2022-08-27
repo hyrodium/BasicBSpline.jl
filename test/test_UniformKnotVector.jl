@@ -14,6 +14,8 @@
         @test k4 != k2
         @test k2 == KnotVector(1:3)
         @test k2 != 1:3
+        @test k1.vector === copy(k1).vector
+        @test k1 === copy(k1)
     end
 
     @testset "constructor, conversion" begin
