@@ -101,25 +101,39 @@ Assumption:
 function _changebasis_sim(P1::AbstractBSplineSpace{p,T1}, P2::AbstractBSplineSpace{p,T2}) where {p,T1,T2}
     P1 ≃ P2 || throw(DomainError((P1,P2),"P1 ≃ P2 should be hold."))
     U = StaticArrays.arithmetic_closure(promote_type(T1,T2))
-    n = dim(P1)
-
+    k1 = knotvector(P1)
+    k2 = knotvector(P2)
+    n = dim(P1)     # == dim(P2)
+    l = length(k1)  # == length(k2)
+    
     A = Matrix{U}(I, n, n)
+
     A1 = _derivatives_at_left(P1)
     A2 = _derivatives_at_left(P2)
     A12 = A1/A2
-    for i in 1:p, j in 1:p
-        # A12 must be lower-triangular
-        i ≥ j || continue
+    Δ = p
+    for i in reverse(1:p)
+        k1[i] ≠ k2[i] && break
+        Δ -= 1
+    end
+    # A12 must be lower-triangular
+    for i in 1:Δ, j in 1:i
         A[i, j] = A12[i,j]
     end
+
     A1 = _derivatives_at_right(P1)
     A2 = _derivatives_at_right(P2)
     A12 = A1/A2
-    for i in 1:p, j in 1:p
-        # A12 must be upper-triangular
-        i ≤ j || continue
-        A[n-p+i, n-p+j] = A12[i,j]
+    Δ = p
+    for i in l-p+1:l
+        k1[i] ≠ k2[i] && break
+        Δ -= 1
     end
+    # A12 must be upper-triangular
+    for i in 1:Δ, j in i:Δ
+        A[n-Δ+i, n-Δ+j] = A12[i+p-Δ,j+p-Δ]
+    end
+
     return A
 end
 
