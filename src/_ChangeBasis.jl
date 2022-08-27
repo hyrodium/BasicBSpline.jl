@@ -101,14 +101,17 @@ Assumption:
 function _changebasis_sim(P1::AbstractBSplineSpace{p,T1}, P2::AbstractBSplineSpace{p,T2}) where {p,T1,T2}
     P1 ≃ P2 || throw(DomainError((P1,P2),"P1 ≃ P2 should be hold."))
     U = StaticArrays.arithmetic_closure(promote_type(T1,T2))
-    n = dim(P1)
+    n = dim(P1)  # == dim(P2)
+    k1 = knotvector(P1)
+    k2 = knotvector(P2)
 
     A = Matrix{U}(I, n, n)
     A1 = _derivatives_at_left(P1)
     A2 = _derivatives_at_left(P2)
     A12 = A1/A2
+    Δ = findlast(iszero, k1[1:p] .== k2[1:p])
     # A12 must be lower-triangular
-    for i in 1:p, j in 1:i
+    for i in 1:Δ, j in 1:i
         A[i, j] = A12[i,j]
     end
     A1 = _derivatives_at_right(P1)
