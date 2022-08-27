@@ -101,11 +101,11 @@ Assumption:
 function _changebasis_sim(P1::AbstractBSplineSpace{p,T1}, P2::AbstractBSplineSpace{p,T2}) where {p,T1,T2}
     P1 ≃ P2 || throw(DomainError((P1,P2),"P1 ≃ P2 should be hold."))
     U = StaticArrays.arithmetic_closure(promote_type(T1,T2))
-    n = dim(P1)     # == dim(P2)
-    l = length(k1)  # == length(k2)
     k1 = knotvector(P1)
     k2 = knotvector(P2)
-
+    n = dim(P1)     # == dim(P2)
+    l = length(k1)  # == length(k2)
+    
     A = Matrix{U}(I, n, n)
 
     A1 = _derivatives_at_left(P1)
