@@ -109,7 +109,11 @@ function _changebasis_sim(P1::AbstractBSplineSpace{p,T1}, P2::AbstractBSplineSpa
     A1 = _derivatives_at_left(P1)
     A2 = _derivatives_at_left(P2)
     A12 = A1/A2
-    Δ = findlast(iszero, k1[1:p] .== k2[1:p])
+    Δ = p
+    for i in reverse(1:p)
+        k1[i] ≠ k2[i] && break
+        Δ -= 1
+    end
     # A12 must be lower-triangular
     for i in 1:Δ, j in 1:i
         A[i, j] = A12[i,j]
