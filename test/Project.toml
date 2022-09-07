@@ -1,5 +1,6 @@
 [deps]
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
+ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
 ChainRulesTestUtils = "cdddcdb0-9152-4a09-a978-84456f9df70a"
 GeometryBasics = "5c1252a2-5f33-56bf-86c9-59e7332b4326"
 IntervalSets = "8197267c-284f-5f27-9208-e0e47529a953"

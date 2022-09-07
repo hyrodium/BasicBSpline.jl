@@ -1,6 +1,7 @@
 using BasicBSpline
 import BasicBSpline.EmptyKnotVector
 using ChainRulesTestUtils
+using ChainRulesCore
 using IntervalSets
 using LinearAlgebra
 using Test
@@ -10,7 +11,8 @@ using GeometryBasics
 using Plots
 using Aqua
 
-Aqua.test_all(BasicBSpline)
+# Disable ambiguities tests for ChainRulesCore.frule
+Aqua.test_ambiguities(BasicBSpline; exclude=[ChainRulesCore.frule])
 
 include("test_util.jl")
 include("test_KnotVector.jl")
