@@ -1,5 +1,6 @@
 using BasicBSpline
 import BasicBSpline.EmptyKnotVector
+using ChainRulesTestUtils
 using IntervalSets
 using LinearAlgebra
 using Test
