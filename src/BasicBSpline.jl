@@ -5,6 +5,7 @@ using IntervalSets
 using StaticArrays
 using RecipesBase
 using FastGaussQuadrature
+using ChainRulesCore
 
 # Types
 export AbstractKnotVector, KnotVector, UniformKnotVector
@@ -52,6 +53,7 @@ include("_BSplineManifold.jl")
 include("_RationalBSplineManifold.jl")
 include("_Refinement.jl")
 include("_Fitting.jl")
+include("_ChainRules.jl")
 include("_PlotRecipes.jl")
 
 end # module
