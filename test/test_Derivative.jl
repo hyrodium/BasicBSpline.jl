@@ -92,7 +92,7 @@
             for r in 0:5
                 Q = BasicBSpline.derivative(Q)
                 dP = BSplineDerivativeSpace{r}(P)
-                dP == Q
+                @test dP == Q
                 for t in ts
                     j = intervalindex(dP,t)
                     B = collect(bsplinebasisall(dP,j,t))
