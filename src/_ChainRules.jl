@@ -2,6 +2,7 @@ const BSPLINESPACE_INFO = """
 derivatives of B-spline basis functions with respect to BSplineSpace not implemented currently.
 """
 
+# bsplinebasis
 function ChainRulesCore.frule((_, ΔP, Δi, Δt), ::typeof(bsplinebasis), P::BSplineSpace, i::Integer, t::Real)
     B = bsplinebasis(P,i,t)
     ∂B_∂P = @not_implemented BSPLINESPACE_INFO
@@ -9,7 +10,6 @@ function ChainRulesCore.frule((_, ΔP, Δi, Δt), ::typeof(bsplinebasis), P::BSp
     ∂B_∂t = bsplinebasis′(P,i,t)
     return (B, ∂B_∂P*ΔP + ∂B_∂t*Δt)
 end
-
 function ChainRulesCore.rrule(::typeof(bsplinebasis), P::BSplineSpace, i::Integer, t::Real)
     B = bsplinebasis(P,i,t)
     # project_t = ProjectTo(t)  # Not sure we need this ProjectTo.
@@ -22,6 +22,7 @@ function ChainRulesCore.rrule(::typeof(bsplinebasis), P::BSplineSpace, i::Intege
     return (B, bsplinebasis_pullback)
 end
 
+# bsplinebasis₊₀
 function ChainRulesCore.frule((_, ΔP, Δi, Δt), ::typeof(bsplinebasis₊₀), P::BSplineSpace, i::Integer, t::Real)
     B = bsplinebasis₊₀(P,i,t)
     ∂B_∂P = @not_implemented BSPLINESPACE_INFO
@@ -29,7 +30,6 @@ function ChainRulesCore.frule((_, ΔP, Δi, Δt), ::typeof(bsplinebasis₊₀), 
     ∂B_∂t = bsplinebasis′₊₀(P,i,t)
     return (B, ∂B_∂P*ΔP + ∂B_∂t*Δt)
 end
-
 function ChainRulesCore.rrule(::typeof(bsplinebasis₊₀), P::BSplineSpace, i::Integer, t::Real)
     B = bsplinebasis₊₀(P,i,t)
     # project_t = ProjectTo(t)  # Not sure we need this ProjectTo.
@@ -42,6 +42,7 @@ function ChainRulesCore.rrule(::typeof(bsplinebasis₊₀), P::BSplineSpace, i::
     return (B, bsplinebasis_pullback)
 end
 
+# bsplinebasis₋₀
 function ChainRulesCore.frule((_, ΔP, Δi, Δt), ::typeof(bsplinebasis₋₀), P::BSplineSpace, i::Integer, t::Real)
     B = bsplinebasis₋₀(P,i,t)
     ∂B_∂P = @not_implemented BSPLINESPACE_INFO
@@ -49,7 +50,6 @@ function ChainRulesCore.frule((_, ΔP, Δi, Δt), ::typeof(bsplinebasis₋₀), 
     ∂B_∂t = bsplinebasis′₋₀(P,i,t)
     return (B, ∂B_∂P*ΔP + ∂B_∂t*Δt)
 end
-
 function ChainRulesCore.rrule(::typeof(bsplinebasis₋₀), P::BSplineSpace, i::Integer, t::Real)
     B = bsplinebasis₋₀(P,i,t)
     # project_t = ProjectTo(t)  # Not sure we need this ProjectTo.
