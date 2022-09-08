@@ -3,14 +3,14 @@ derivatives of B-spline basis functions with respect to BSplineSpace not impleme
 """
 
 # bsplinebasis
-function ChainRulesCore.frule((_, ΔP, Δi, Δt), ::typeof(bsplinebasis), P::BSplineSpace, i::Integer, t::Real)
+function ChainRulesCore.frule((_, ΔP, Δi, Δt), ::typeof(bsplinebasis), P::AbstractFunctionSpace, i::Integer, t::Real)
     B = bsplinebasis(P,i,t)
     ∂B_∂P = @not_implemented BSPLINESPACE_INFO
     # ∂B_∂i = NoTangent()
     ∂B_∂t = bsplinebasis′(P,i,t)
     return (B, ∂B_∂P*ΔP + ∂B_∂t*Δt)
 end
-function ChainRulesCore.rrule(::typeof(bsplinebasis), P::BSplineSpace, i::Integer, t::Real)
+function ChainRulesCore.rrule(::typeof(bsplinebasis), P::AbstractFunctionSpace, i::Integer, t::Real)
     B = bsplinebasis(P,i,t)
     # project_t = ProjectTo(t)  # Not sure we need this ProjectTo.
     function bsplinebasis_pullback(ΔB)
@@ -23,14 +23,14 @@ function ChainRulesCore.rrule(::typeof(bsplinebasis), P::BSplineSpace, i::Intege
 end
 
 # bsplinebasis₊₀
-function ChainRulesCore.frule((_, ΔP, Δi, Δt), ::typeof(bsplinebasis₊₀), P::BSplineSpace, i::Integer, t::Real)
+function ChainRulesCore.frule((_, ΔP, Δi, Δt), ::typeof(bsplinebasis₊₀), P::AbstractFunctionSpace, i::Integer, t::Real)
     B = bsplinebasis₊₀(P,i,t)
     ∂B_∂P = @not_implemented BSPLINESPACE_INFO
     # ∂B_∂i = NoTangent()
     ∂B_∂t = bsplinebasis′₊₀(P,i,t)
     return (B, ∂B_∂P*ΔP + ∂B_∂t*Δt)
 end
-function ChainRulesCore.rrule(::typeof(bsplinebasis₊₀), P::BSplineSpace, i::Integer, t::Real)
+function ChainRulesCore.rrule(::typeof(bsplinebasis₊₀), P::AbstractFunctionSpace, i::Integer, t::Real)
     B = bsplinebasis₊₀(P,i,t)
     # project_t = ProjectTo(t)  # Not sure we need this ProjectTo.
     function bsplinebasis_pullback(ΔB)
@@ -43,14 +43,14 @@ function ChainRulesCore.rrule(::typeof(bsplinebasis₊₀), P::BSplineSpace, i::
 end
 
 # bsplinebasis₋₀
-function ChainRulesCore.frule((_, ΔP, Δi, Δt), ::typeof(bsplinebasis₋₀), P::BSplineSpace, i::Integer, t::Real)
+function ChainRulesCore.frule((_, ΔP, Δi, Δt), ::typeof(bsplinebasis₋₀), P::AbstractFunctionSpace, i::Integer, t::Real)
     B = bsplinebasis₋₀(P,i,t)
     ∂B_∂P = @not_implemented BSPLINESPACE_INFO
     # ∂B_∂i = NoTangent()
     ∂B_∂t = bsplinebasis′₋₀(P,i,t)
     return (B, ∂B_∂P*ΔP + ∂B_∂t*Δt)
 end
-function ChainRulesCore.rrule(::typeof(bsplinebasis₋₀), P::BSplineSpace, i::Integer, t::Real)
+function ChainRulesCore.rrule(::typeof(bsplinebasis₋₀), P::AbstractFunctionSpace, i::Integer, t::Real)
     B = bsplinebasis₋₀(P,i,t)
     # project_t = ProjectTo(t)  # Not sure we need this ProjectTo.
     function bsplinebasis_pullback(ΔB)
@@ -63,14 +63,14 @@ function ChainRulesCore.rrule(::typeof(bsplinebasis₋₀), P::BSplineSpace, i::
 end
 
 # bsplinebasisall
-function ChainRulesCore.frule((_, ΔP, Δi, Δt), ::typeof(bsplinebasisall), P::BSplineSpace, i::Integer, t::Real)
+function ChainRulesCore.frule((_, ΔP, Δi, Δt), ::typeof(bsplinebasisall), P::AbstractFunctionSpace, i::Integer, t::Real)
     B = bsplinebasisall(P,i,t)
     ∂B_∂P = @not_implemented BSPLINESPACE_INFO
     # ∂B_∂i = NoTangent()
     ∂B_∂t = bsplinebasisall(derivative(P),i,t)
     return (B, ∂B_∂P*ΔP + ∂B_∂t*Δt)
 end
-function ChainRulesCore.rrule(::typeof(bsplinebasisall), P::BSplineSpace, i::Integer, t::Real)
+function ChainRulesCore.rrule(::typeof(bsplinebasisall), P::AbstractFunctionSpace, i::Integer, t::Real)
     B = bsplinebasisall(P,i,t)
     # project_t = ProjectTo(t)  # Not sure we need this ProjectTo.
     function bsplinebasis_pullback(ΔB)
