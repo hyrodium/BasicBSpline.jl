@@ -7,6 +7,10 @@
             for i in 1:dim(P)
                 test_frule(bsplinebasis, P, i, t)
                 test_rrule(bsplinebasis, P, i, t)
+                test_frule(bsplinebasis₊₀, P, i, t)
+                test_rrule(bsplinebasis₊₀, P, i, t)
+                test_frule(bsplinebasis₋₀, P, i, t)
+                test_rrule(bsplinebasis₋₀, P, i, t)
             end
         end
     end
