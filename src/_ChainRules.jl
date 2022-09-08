@@ -61,3 +61,23 @@ function ChainRulesCore.rrule(::typeof(bsplinebasis₋₀), P::BSplineSpace, i::
     end
     return (B, bsplinebasis_pullback)
 end
+
+# bsplinebasisall
+function ChainRulesCore.frule((_, ΔP, Δi, Δt), ::typeof(bsplinebasisall), P::BSplineSpace, i::Integer, t::Real)
+    B = bsplinebasisall(P,i,t)
+    ∂B_∂P = @not_implemented BSPLINESPACE_INFO
+    # ∂B_∂i = NoTangent()
+    ∂B_∂t = bsplinebasisall(derivative(P),i,t)
+    return (B, ∂B_∂P*ΔP + ∂B_∂t*Δt)
+end
+function ChainRulesCore.rrule(::typeof(bsplinebasisall), P::BSplineSpace, i::Integer, t::Real)
+    B = bsplinebasisall(P,i,t)
+    # project_t = ProjectTo(t)  # Not sure we need this ProjectTo.
+    function bsplinebasis_pullback(ΔB)
+        P̄ = @not_implemented BSPLINESPACE_INFO
+        ī = NoTangent()
+        t̄ = bsplinebasisall(derivative(P),i,t)' * ΔB
+        return (NoTangent(), P̄, ī, t̄)
+    end
+    return (B, bsplinebasis_pullback)
+end
