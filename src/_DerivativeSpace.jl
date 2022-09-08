@@ -41,7 +41,7 @@ intervalindex(dP::BSplineDerivativeSpace,t::Real) = intervalindex(bsplinespace(d
 domain(dP::BSplineDerivativeSpace) = domain(bsplinespace(dP))
 _lower(dP::BSplineDerivativeSpace{r}) where r = BSplineDerivativeSpace{r-1}(_lower(bsplinespace(dP)))
 derivative(P::BSplineSpace) = BSplineDerivativeSpace{1}(P)
-derivative(dP::BSplineDerivativeSpace{r}) where r = BSplineDerivativeSpace{r-1}(bsplinespace(dP))
+derivative(dP::BSplineDerivativeSpace{r}) where r = BSplineDerivativeSpace{r+1}(bsplinespace(dP))
 
 function Base.issubset(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}, P′::AbstractBSplineSpace) where {r,p}
     k = knotvector(dP)
