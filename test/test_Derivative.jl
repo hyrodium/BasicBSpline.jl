@@ -88,8 +88,11 @@
         ts = rand(10)
         for p in 0:5
             P = BSplineSpace{p}(k)
+            Q = P
             for r in 0:5
+                Q = BasicBSpline.derivative(Q)
                 dP = BSplineDerivativeSpace{r}(P)
+                dP == Q
                 for t in ts
                     j = intervalindex(dP,t)
                     B = collect(bsplinebasisall(dP,j,t))
