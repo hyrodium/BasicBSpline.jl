@@ -31,6 +31,10 @@ julia> M(0.4)
 2-element SVector{2, Float64} with indices SOneTo(2):
  0.84
  0.64
+
+julia> M(1.2)
+ERROR: DomainError with 1.2:
+The input 1.2 is out of range.
 ```
 """
 struct BSplineManifold{Dim,Deg,C,S<:Tuple} <: AbstractBSplineManifold{Dim,Deg}
