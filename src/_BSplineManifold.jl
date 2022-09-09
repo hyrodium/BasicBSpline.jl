@@ -56,6 +56,10 @@ Base.:(==)(M1::AbstractBSplineManifold, M2::AbstractBSplineManifold) = (bsplines
 bsplinespaces(M::BSplineManifold) = M.bsplinespaces
 controlpoints(M::BSplineManifold) = M.controlpoints
 
+function unbounded_mapping end
+
+@deprecate unsafe_mapping unbounded_mapping false
+
 @generated function unbounded_mapping(M::BSplineManifold{1,Deg},t::Vararg{Real,1}) where {Deg}
     p1, = Deg
     exs = Expr[]
