@@ -15,7 +15,7 @@ using Plots; plotly()
 function interpolate(xs::AbstractVector, fs::AbstractVector{T}) where T
     # Cubic open B-spline space
     p = 3
-    k = KnotVector(xs) + KnotVector(xs[1],xs[end]) * p
+    k = KnotVector(xs) + KnotVector([xs[1],xs[end]]) * p
     P = BSplineSpace{p}(k)
 
     # dimensions
@@ -55,7 +55,7 @@ savefig("interpolation_cubic.html") # hide
 function interpolate_linear(xs::AbstractVector, fs::AbstractVector{T}) where T
     # Linear open B-spline space
     p = 1
-    k = KnotVector(xs) + KnotVector(xs[1],xs[end])
+    k = KnotVector(xs) + KnotVector([xs[1],xs[end]])
     P = BSplineSpace{p}(k)
 
     # dimensions

@@ -18,7 +18,7 @@ end
         Random.seed!(42)
 
         v = rand(10)
-        k = KnotVector(v) + (p+1)*KnotVector(0, 1) + KnotVector(v[2], v[3])
+        k = KnotVector(v) + (p+1)*KnotVector([0, 1]) + KnotVector(v[2:3])
         P = BSplineSpace{p}(k)
         n = dim(P)
 
@@ -124,7 +124,7 @@ end
     @testset "Endpoints" begin
         p = 2
 
-        k = KnotVector(1:2) + (p+1)*KnotVector(0,3)
+        k = KnotVector(1:2) + (p+1)*KnotVector([0,3])
         P0 = BSplineSpace{0}(k)
         P1 = BSplineSpace{1}(k)
         P2 = BSplineSpace{2}(k)

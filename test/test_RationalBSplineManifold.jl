@@ -20,9 +20,9 @@
         p1 = 2
         p2 = 3
         p3 = 4
-        k1 = KnotVector(rand(30)) + (p1+1)*KnotVector(0,1)
-        k2 = KnotVector(rand(30)) + (p2+1)*KnotVector(0,1)
-        k3 = KnotVector(rand(30)) + (p3+1)*KnotVector(0,1)
+        k1 = KnotVector(rand(30)) + (p1+1)*KnotVector([0,1])
+        k2 = KnotVector(rand(30)) + (p2+1)*KnotVector([0,1])
+        k3 = KnotVector(rand(30)) + (p3+1)*KnotVector([0,1])
         P1 = BSplineSpace{p1}(k1)
         P2 = BSplineSpace{p2}(k2)
         P3 = BSplineSpace{p3}(k3)

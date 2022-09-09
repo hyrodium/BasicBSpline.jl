@@ -16,8 +16,8 @@ fittingcontrolpoints
 ```@example math
 p1 = 2
 p2 = 2
-k1 = KnotVector(-10:10)+p1*KnotVector(-10,10)
-k2 = KnotVector(-10:10)+p2*KnotVector(-10,10)
+k1 = KnotVector(-10:10)+p1*KnotVector([-10,10])
+k2 = KnotVector(-10:10)+p2*KnotVector([-10,10])
 P1 = BSplineSpace{p1}(k1)
 P2 = BSplineSpace{p2}(k2)
 

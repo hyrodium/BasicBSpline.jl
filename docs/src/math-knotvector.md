@@ -23,11 +23,11 @@ KnotVector
 ```
 
 ```@docs
-KnotVector(knot::Real)
+UniformKnotVector
 ```
 
 ```@docs
-UniformKnotVector
+EmptyKnotVector
 ```
 
 ## Operations for knot vectors

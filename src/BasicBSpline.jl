@@ -8,7 +8,7 @@ using FastGaussQuadrature
 using ChainRulesCore
 
 # Types
-export AbstractKnotVector, KnotVector, UniformKnotVector
+export AbstractKnotVector, KnotVector, UniformKnotVector, EmptyKnotVector
 export AbstractBSplineSpace, BSplineSpace, UniformBSplineSpace
 export AbstractBSplineManifold, BSplineManifold, RationalBSplineManifold
 export BSplineDerivativeSpace

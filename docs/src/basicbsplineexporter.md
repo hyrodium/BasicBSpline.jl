@@ -18,7 +18,7 @@ using StaticArrays
 
 p = 2 # degree of polynomial
 k1 = KnotVector(1:8) # knot vector
-k2 = KnotVector(rand(7))+(p+1)*KnotVector(1)
+k2 = KnotVector(rand(7))+(p+1)*KnotVector([1])
 P1 = BSplineSpace{p}(k1) # B-spline space
 P2 = BSplineSpace{p}(k2)
 n1 = dim(P1) # dimension of B-spline space

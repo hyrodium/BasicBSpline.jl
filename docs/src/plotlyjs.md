@@ -8,7 +8,7 @@ using StaticArrays
 using PlotlyJS
 f(t) = SVector((1+cos(t))*cos(t),(1+cos(t))*sin(t))
 p = 3
-k = KnotVector(range(0,2π,15)) + p * KnotVector(0,2π) + 2 * KnotVector(π)
+k = KnotVector(range(0,2π,15)) + p * KnotVector([0,2π]) + 2 * KnotVector([π])
 P = BSplineSpace{p}(k)
 a = fittingcontrolpoints(f,(P,))
 M = BSplineManifold(a, (P,))
@@ -36,7 +36,7 @@ using StaticArrays
 using PlotlyJS
 f(t) = SVector(cos(t),sin(t),t)
 p = 3
-k = KnotVector(range(0,6π,15)) + p * KnotVector(0,6π)
+k = KnotVector(range(0,6π,15)) + p * KnotVector([0,6π])
 P = BSplineSpace{p}(k)
 a = fittingcontrolpoints(f,(P,))
 M = BSplineManifold(a, (P,))

@@ -69,7 +69,7 @@
         @test k1[1] == 1
         @test k2[end] == 3
         @test k4[2] == 3
-        @test k4[[1,2]] == KnotVector(2,3)
+        @test k4[[1,2]] == KnotVector([2,3])
         @test k3[2:4] == k4
         @test collect(k2) isa Vector{Int}
         @test [k2...] isa Vector{Int}

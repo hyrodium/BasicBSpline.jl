@@ -6,16 +6,16 @@
         @test k1 isa KnotVector{Int64}
         @test k1 == KnotVector(1:3)::KnotVector{Int}
         @test k1 == KnotVector([1,3,2])::KnotVector{Int64}
-        @test k1 == KnotVector(1,2,3)::KnotVector{Int64}
-        @test k1 == KnotVector(1,3,2)::KnotVector{Int64}
-        @test k1 == KnotVector(1.,3,2)::KnotVector{Float64}
-        @test k1 == KnotVector{Int}(1,3,2)::KnotVector{Int}
+        @test k1 == KnotVector([1,2,3])::KnotVector{Int64}
+        @test k1 == KnotVector([1,3,2])::KnotVector{Int64}
+        @test k1 == KnotVector([1.,3,2])::KnotVector{Float64}
+        @test k1 == KnotVector{Int}([1,3,2])::KnotVector{Int}
         @test k1 != k2
         @test k1.vector !== copy(k1).vector
 
         @test KnotVector{Int}([1,2]) isa KnotVector{Int}
-        @test KnotVector{Int}(1,2) isa KnotVector{Int}
-        @test KnotVector{Int}(1,2.) isa KnotVector{Int}
+        @test KnotVector{Int}([1,2]) isa KnotVector{Int}
+        @test KnotVector{Int}([1,2.]) isa KnotVector{Int}
         @test KnotVector{Int}(k1) isa KnotVector{Int}
         @test KnotVector(k1) isa KnotVector{Int}
         @test AbstractKnotVector{Float64}(k1) isa KnotVector{Float64}
@@ -41,16 +41,16 @@
     end
 
     @testset "zeros" begin
-        @test KnotVector() == zero(KnotVector)
-        @test KnotVector() == 0*k1 == k1*0 == zero(k1)
-        @test KnotVector() == KnotVector(Float64[])
-        @test KnotVector() == EmptyKnotVector()
-        @test KnotVector() |> isempty
-        @test KnotVector() |> iszero
+        @test KnotVector(Float64[]) == zero(KnotVector)
+        @test KnotVector(Float64[]) == 0*k1 == k1*0 == zero(k1)
+        @test KnotVector(Float64[]) == EmptyKnotVector()
+        @test KnotVector(Float64[]) |> isempty
+        @test KnotVector(Float64[]) |> iszero
+        # @test KnotVector() this shold be return error
         @test EmptyKnotVector() |> isempty
         @test EmptyKnotVector() |> iszero
-        @test EmptyKnotVector() == KnotVector()
-        @test KnotVector() == EmptyKnotVector()
+        @test EmptyKnotVector() == KnotVector(Float64[])
+        @test KnotVector(Float64[]) == EmptyKnotVector()
         @test EmptyKnotVector{Bool}() === EmptyKnotVector() === zero(EmptyKnotVector) === zero(EmptyKnotVector{Bool})
         @test EmptyKnotVector{Int}() == EmptyKnotVector()
         @test EmptyKnotVector{Int}() == EmptyKnotVector{Int}()
@@ -65,7 +65,7 @@
     end
 
     @testset "length" begin
-        @test length(KnotVector()) == 0
+        @test length(KnotVector(Float64[])) == 0
         @test length(KnotVector([1,2,2,3])) == 4
     end
 
@@ -107,13 +107,13 @@
         @test_throws DomainError EmptyKnotVector()*(-1)
 
         # type promotion
-        @test KnotVector{Int}(1,2) + KnotVector(3) == KnotVector(1,2,3)
-        @test KnotVector{Int}(1,2) + KnotVector(3) isa KnotVector{Int}
-        @test KnotVector{Int}(1,2) + KnotVector{Rational{Int}}(3) == KnotVector(1,2,3)
-        @test KnotVector{Int}(1,2) + KnotVector{Rational{Int}}(3) isa KnotVector{Rational{Int}}
-        @test KnotVector{Int}(1,2)*0 == KnotVector()
-        @test KnotVector{Int}(1,2)*0 isa KnotVector{Int}
-        @test KnotVector{Int}() isa KnotVector{Int}
+        @test KnotVector{Int}([1,2]) + KnotVector([3]) == KnotVector([1,2,3])
+        @test KnotVector{Int}([1,2]) + KnotVector([3]) isa KnotVector{Int}
+        @test KnotVector{Int}([1,2]) + KnotVector{Rational{Int}}([3]) == KnotVector([1,2,3])
+        @test KnotVector{Int}([1,2]) + KnotVector{Rational{Int}}([3]) isa KnotVector{Rational{Int}}
+        @test KnotVector{Int}([1,2])*0 == KnotVector(Float64[])
+        @test KnotVector{Int}([1,2])*0 isa KnotVector{Int}
+        @test KnotVector{Int}(Int[]) isa KnotVector{Int}
     end
 
     @testset "unique" begin
@@ -131,17 +131,18 @@
         @test KnotVector([1,2,3,5])   ⊉ KnotVector([1,2,2,3])
 
         @test !(KnotVector([1,2,3,4]) ⊊ KnotVector([1,2,3]))
-        @test !(KnotVector([1,2,3]) ⊊ KnotVector([1,2,3]))
-        @test KnotVector([1,2,3]) ⊊ KnotVector([1,2,3,4])
-        @test !(KnotVector([1,2,3]) ⊋ KnotVector([1,2,3,4]))
-        @test !(KnotVector([1,2,3]) ⊋ KnotVector([1,2,3]))
-        @test KnotVector([1,2,3,4]) ⊋ KnotVector([1,2,3])
+        @test !(KnotVector([1,2,3])   ⊊ KnotVector([1,2,3]))
+        @test KnotVector([1,2,3])     ⊊ KnotVector([1,2,3,4])
+        @test !(KnotVector([1,2,3])   ⊋ KnotVector([1,2,3,4]))
+        @test !(KnotVector([1,2,3])   ⊋ KnotVector([1,2,3]))
+        @test KnotVector([1,2,3,4])   ⊋ KnotVector([1,2,3])
     end
 
     @testset "string" begin
         k = KnotVector([1,2,2,3])
         @test string(k) == "KnotVector([1, 2, 2, 3])"
-        @test string(KnotVector()) == "KnotVector([])"
+        @test string(KnotVector(Float64[])) == "KnotVector(Float64[])"
+        @test string(KnotVector(Int[])) == "KnotVector(Int64[])"
     end
 
     @testset "other operators" begin
@@ -151,5 +152,19 @@
         @test countknots(k, 2.0) == 2
         @test 1 ∈ k
         @test 1.5 ∉ k
+    end
+
+    @testset "deprecated" begin
+        @test_deprecated KnotVector()
+        @test_deprecated KnotVector{Int}()
+        @test_deprecated KnotVector(1,2)
+        @test_deprecated KnotVector{Int}(1,2)
+
+        @test iszero(KnotVector())
+        @test iszero(KnotVector{Int}())
+        @test KnotVector() isa KnotVector{Float64}
+        @test KnotVector{Int}() isa KnotVector{Int}
+        @test KnotVector(1,2) == KnotVector([1,2])
+        @test KnotVector{Int}(1,2) == KnotVector([1,2])
     end
 end

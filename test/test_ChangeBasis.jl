@@ -58,7 +58,7 @@
     @testset "changebasis_sim" begin
         for p in 1:3, L in 1:8
             k1 = UniformKnotVector(1:L+2p+1)
-            k2 = UniformKnotVector(p+1:p+L+1) + p*KnotVector(p+1) + KnotVector(p+L+1:2p+L)
+            k2 = UniformKnotVector(p+1:p+L+1) + p*KnotVector([p+1]) + KnotVector(p+L+1:2p+L)
             P1 = UniformBSplineSpace{p}(k1)
             P2 = BSplineSpace{p}(k2)
             @test domain(P1) == domain(P2)
