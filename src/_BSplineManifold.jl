@@ -10,7 +10,7 @@ abstract type AbstractBSplineManifold{Dim, Deg} <: AbstractManifold{Dim} end
 dim(::AbstractBSplineManifold{Dim}) where Dim = Dim
 
 @doc raw"""
-Construct Rational B-spline manifold from given control points and B-spline spaces.
+Construct B-spline manifold from given control points and B-spline spaces.
 
 # Examples
 ```jldoctest
