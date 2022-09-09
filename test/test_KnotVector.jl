@@ -153,4 +153,11 @@
         @test 1 ∈ k
         @test 1.5 ∉ k
     end
+
+    @testset "deprecated" begin
+        @test_deprecated KnotVector()
+        @test_deprecated KnotVector{Int}()
+        @test_deprecated KnotVector(1,2)
+        @test_deprecated KnotVector{Int}(1,2)
+    end
 end
