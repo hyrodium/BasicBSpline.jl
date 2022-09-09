@@ -38,7 +38,7 @@
         @test dim(P2) == 4
         @test exactdim(P2) == 3
 
-        P3 = BSplineSpace{2}(KnotVector(0,0,0,1,1,1,2))
+        P3 = BSplineSpace{2}(KnotVector([0,0,0,1,1,1,2]))
         @test domain(P3) == 0..1
         @test dim(P3) == 4
         @test exactdim(P3) == 4
@@ -114,10 +114,10 @@
     end
 
     @testset "expandspace" begin
-        P1 = BSplineSpace{1}(KnotVector(0,0,0,0,0))
+        P1 = BSplineSpace{1}(KnotVector([0,0,0,0,0]))
         P2 = BSplineSpace{3}(KnotVector(1:8))
         P3 = BSplineSpace{2}(KnotVector(1:8)+3*KnotVector(0))
-        P4 = BSplineSpace{2}(KnotVector(0,0,0,1,1,1,2))
+        P4 = BSplineSpace{2}(KnotVector([0,0,0,1,1,1,2]))
 
         @test P1 == expandspace_R(P1) == expandspace_I(P1) == expandspace(P1)
         @test P2 == expandspace_R(P2) == expandspace_I(P2) == expandspace(P2)
@@ -181,8 +181,8 @@
     end
 
     @testset "sqsubset but not subset" begin
-        P6 = BSplineSpace{2}(KnotVector(1,2,3,4,5,6,7))
-        P7 = BSplineSpace{2}(KnotVector(0,1,3,4,5,8,9))
+        P6 = BSplineSpace{2}(KnotVector([1,2,3,4,5,6,7]))
+        P7 = BSplineSpace{2}(KnotVector([0,1,3,4,5,8,9]))
         @test P6 ⊑ P7
         @test P7 ⊑ P6
         @test P6 ≃ P7

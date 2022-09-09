@@ -8,7 +8,7 @@ Construct Rational B-spline manifold from given control points, weights and B-sp
 ```jldoctest
 julia> using StaticArrays, LinearAlgebra
 
-julia> P = BSplineSpace{2}(KnotVector(0,0,0,1,1,1))
+julia> P = BSplineSpace{2}(KnotVector([0,0,0,1,1,1]))
 BSplineSpace{2, Int64}(KnotVector([0, 0, 0, 1, 1, 1]))
 
 julia> w = [1, 1/√2, 1]

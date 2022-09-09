@@ -6,10 +6,10 @@
         @test k1 isa KnotVector{Int64}
         @test k1 == KnotVector(1:3)::KnotVector{Int}
         @test k1 == KnotVector([1,3,2])::KnotVector{Int64}
-        @test k1 == KnotVector(1,2,3)::KnotVector{Int64}
-        @test k1 == KnotVector(1,3,2)::KnotVector{Int64}
-        @test k1 == KnotVector(1.,3,2)::KnotVector{Float64}
-        @test k1 == KnotVector{Int}(1,3,2)::KnotVector{Int}
+        @test k1 == KnotVector([1,2,3])::KnotVector{Int64}
+        @test k1 == KnotVector([1,3,2])::KnotVector{Int64}
+        @test k1 == KnotVector([1.,3,2])::KnotVector{Float64}
+        @test k1 == KnotVector{Int}([1,3,2])::KnotVector{Int}
         @test k1 != k2
         @test k1.vector !== copy(k1).vector
 
@@ -107,9 +107,9 @@
         @test_throws DomainError EmptyKnotVector()*(-1)
 
         # type promotion
-        @test KnotVector{Int}(1,2) + KnotVector(3) == KnotVector(1,2,3)
+        @test KnotVector{Int}(1,2) + KnotVector(3) == KnotVector([1,2,3])
         @test KnotVector{Int}(1,2) + KnotVector(3) isa KnotVector{Int}
-        @test KnotVector{Int}(1,2) + KnotVector{Rational{Int}}(3) == KnotVector(1,2,3)
+        @test KnotVector{Int}(1,2) + KnotVector{Rational{Int}}(3) == KnotVector([1,2,3])
         @test KnotVector{Int}(1,2) + KnotVector{Rational{Int}}(3) isa KnotVector{Rational{Int}}
         @test KnotVector{Int}(1,2)*0 == KnotVector()
         @test KnotVector{Int}(1,2)*0 isa KnotVector{Int}

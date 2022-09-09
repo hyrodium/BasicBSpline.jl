@@ -42,7 +42,7 @@ Construct knot vector from given real numbers.
 
 # Examples
 ```jldoctest
-julia> k = KnotVector(1,2,3)
+julia> k = KnotVector([1,2,3])
 KnotVector([1, 2, 3])
 
 julia> k = KnotVector()
@@ -100,9 +100,9 @@ For example, ``(1,2,3,5)+(4,5,8)=(1,2,3,4,5,5,8)``.
 
 # Examples
 ```jldoctest
-julia> k1 = KnotVector(1,2,3,5);
+julia> k1 = KnotVector([1,2,3,5]);
 
-julia> k2 = KnotVector(4,5,8);
+julia> k2 = KnotVector([4,5,8]);
 
 julia> k1 + k2
 KnotVector([1, 2, 3, 4, 5, 5, 8])
@@ -124,7 +124,7 @@ For example, ``2\cdot (1,2,2,5)=(1,1,2,2,2,2,5,5)``.
 
 # Examples
 ```jldoctest
-julia> k = KnotVector(1,2,2,5);
+julia> k = KnotVector([1,2,2,5]);
 
 julia> 2 * k
 KnotVector([1, 1, 2, 2, 2, 2, 5, 5])
@@ -159,7 +159,7 @@ For example, ``\#{(1,2,2,3)}=4``.
 
 # Examples
 ```jldoctest
-julia> k = KnotVector(1,2,2,3);
+julia> k = KnotVector([1,2,2,3]);
 
 julia> length(k)
 4
@@ -210,13 +210,13 @@ Check a inclusive relationship ``k\subseteq k'``, for example:
 
 # Examples
 ```jldoctest
-julia> KnotVector(1,2) ⊆ KnotVector(1,2,3)
+julia> KnotVector([1,2]) ⊆ KnotVector([1,2,3])
 true
 
-julia> KnotVector(1,2,2) ⊆ KnotVector(1,2,3)
+julia> KnotVector([1,2,2]) ⊆ KnotVector([1,2,3])
 false
 
-julia> KnotVector(1,2,3) ⊆ KnotVector(1,2,3)
+julia> KnotVector([1,2,3]) ⊆ KnotVector([1,2,3])
 true
 ```
 """

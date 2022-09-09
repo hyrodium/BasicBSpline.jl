@@ -2,8 +2,8 @@
     p1,p2,p3 = 3,2,4
 
     k1 = KnotVector(1:8)
-    k2 = KnotVector(1,3) + p2*KnotVector(1,3)
-    k3 = KnotVector(0,2) + p3*KnotVector(1,2)
+    k2 = KnotVector([1,3]) + p2*KnotVector([1,3])
+    k3 = KnotVector([0,2]) + p3*KnotVector([1,2])
 
     P1 = BSplineSpace{p1}(k1)
     P2 = BSplineSpace{p2}(k2)

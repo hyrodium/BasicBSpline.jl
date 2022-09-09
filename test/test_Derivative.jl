@@ -29,7 +29,7 @@
     # Not sure why this @testset doesn't work fine.
     # @testset "$(p)-th degree basis" for p in 0:p_max
     for p in 0:p_max
-        k = KnotVector(rand(20)) + (p+1)*KnotVector(0,1)
+        k = KnotVector(rand(20)) + (p+1)*KnotVector([0,1])
         P = BSplineSpace{p}(k)
         P0 = BSplineDerivativeSpace{0}(P)
         for t in ts, i in 1:dim(P)
@@ -172,7 +172,7 @@
     @testset "Endpoints" begin
         p = 2
 
-        k = KnotVector(1:2) + (p+1)*KnotVector(0,3)
+        k = KnotVector(1:2) + (p+1)*KnotVector([0,3])
         P0 = BSplineSpace{0}(k)
         P1 = BSplineSpace{1}(k)
         P2 = BSplineSpace{2}(k)
