@@ -28,6 +28,7 @@ export isdegenerate, isdegenerate_R, isdegenerate_I
 export isnondegenerate, isnondegenerate_R, isnondegenerate_I
 export countknots
 export degree
+export unbounded_mapping
 
 # Getter methods
 export bsplinespaces, controlpoints, weights
