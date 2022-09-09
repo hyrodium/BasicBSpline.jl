@@ -7,13 +7,11 @@ This struct is intended for internal use.
 
 # Examples
 ```jldoctest
-julia> import BasicBSpline.EmptyKnotVector
-
 julia> EmptyKnotVector()
-BasicBSpline.EmptyKnotVector{Bool}()
+EmptyKnotVector{Bool}()
 
 julia> EmptyKnotVector{Float64}()
-BasicBSpline.EmptyKnotVector{Float64}()
+EmptyKnotVector{Float64}()
 ```
 """
 struct EmptyKnotVector{T} <: AbstractKnotVector{T} end
