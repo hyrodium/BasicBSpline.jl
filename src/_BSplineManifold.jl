@@ -56,7 +56,7 @@ Base.:(==)(M1::AbstractBSplineManifold, M2::AbstractBSplineManifold) = (bsplines
 bsplinespaces(M::BSplineManifold) = M.bsplinespaces
 controlpoints(M::BSplineManifold) = M.controlpoints
 
-@generated function unsafe_mapping(M::BSplineManifold{1,Deg},t::Vararg{Real,1}) where {Deg}
+@generated function unbounded_mapping(M::BSplineManifold{1,Deg},t::Vararg{Real,1}) where {Deg}
     p1, = Deg
     exs = Expr[]
     for j1 in 1:p1
@@ -74,7 +74,7 @@ controlpoints(M::BSplineManifold) = M.controlpoints
     )
 end
 
-@generated function unsafe_mapping(M::BSplineManifold{2,Deg},t::Vararg{Real,2}) where {Deg}
+@generated function unbounded_mapping(M::BSplineManifold{2,Deg},t::Vararg{Real,2}) where {Deg}
     p1, p2 = Deg
     exs = Expr[]
     for j2 in 1:p2+1, j1 in 1:p1+1
@@ -94,7 +94,7 @@ end
     )
 end
 
-@generated function unsafe_mapping(M::BSplineManifold{3,Deg},t::Vararg{Real,3}) where {Deg}
+@generated function unbounded_mapping(M::BSplineManifold{3,Deg},t::Vararg{Real,3}) where {Deg}
     p1, p2, p3 = Deg
     exs = Expr[]
     for j3 in 1:p3+1, j2 in 1:p2+1, j1 in 1:p1+1
@@ -120,7 +120,7 @@ end
     ts = [Symbol(:t,i) for i in 1:Dim]
     T = Expr(:tuple, ts...)
     exs = [:($(Symbol(:t,i)) in domain($(Symbol(:P,i))) || throw(DomainError($(Symbol(:t,i)), "The input "*string($(Symbol(:t,i)))*" is out of range."))) for i in 1:Dim]
-    ret = Expr(:call,:unsafe_mapping,:M,[Symbol(:t,i) for i in 1:Dim]...)
+    ret = Expr(:call,:unbounded_mapping,:M,[Symbol(:t,i) for i in 1:Dim]...)
     Expr(
         :block,
         :($(Expr(:meta, :inline))),

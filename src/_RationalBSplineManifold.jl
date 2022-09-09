@@ -59,7 +59,7 @@ controlpoints(M::RationalBSplineManifold) = M.controlpoints
 weights(M::RationalBSplineManifold) = M.weights
 bsplinespaces(M::RationalBSplineManifold) = M.bsplinespaces
 
-@generated function unsafe_mapping(M::RationalBSplineManifold{1,Deg},t1::Real) where {Deg}
+@generated function unbounded_mapping(M::RationalBSplineManifold{1,Deg},t1::Real) where {Deg}
     p1, = Deg
     exs = Expr[]
     for j1 in 1:p1
@@ -79,7 +79,7 @@ bsplinespaces(M::RationalBSplineManifold) = M.bsplinespaces
     )
 end
 
-@generated function unsafe_mapping(M::RationalBSplineManifold{2,Deg},t1::Real,t2::Real) where {Deg}
+@generated function unbounded_mapping(M::RationalBSplineManifold{2,Deg},t1::Real,t2::Real) where {Deg}
     p1, p2 = Deg
     exs = Expr[]
     for j2 in 1:p2+1, j1 in 1:p1+1
@@ -102,7 +102,7 @@ end
     )
 end
 
-@generated function unsafe_mapping(M::RationalBSplineManifold{3,Deg},t1::Real,t2::Real,t3::Real) where {Deg}
+@generated function unbounded_mapping(M::RationalBSplineManifold{3,Deg},t1::Real,t2::Real,t3::Real) where {Deg}
     p1, p2, p3 = Deg
     exs = Expr[]
     for j3 in 1:p3+1, j2 in 1:p2+1, j1 in 1:p1+1
