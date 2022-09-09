@@ -55,11 +55,7 @@ function KnotVector{T}() where T<:Real
 end
 
 function Base.show(io::IO, k::KnotVector)
-    if k.vector == Float64[]
-        print(io, "KnotVector([])")
-    else
-        print(io, "KnotVector($(k.vector))")
-    end
+    print(io, "KnotVector($(k.vector))")
 end
 
 function Base.show(io::IO, k::T) where T<:AbstractKnotVector
