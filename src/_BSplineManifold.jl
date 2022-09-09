@@ -56,6 +56,34 @@ Base.:(==)(M1::AbstractBSplineManifold, M2::AbstractBSplineManifold) = (bsplines
 bsplinespaces(M::BSplineManifold) = M.bsplinespaces
 controlpoints(M::BSplineManifold) = M.controlpoints
 
+@doc raw"""
+
+    unbounded_mapping(M::BSplineManifold{Dim}, t::Vararg{Real,Dim})
+
+# Examples
+```jldoctest
+julia> P = BSplineSpace{1}(KnotVector([0,0,1,1]))
+BSplineSpace{1, Int64}(KnotVector([0, 0, 1, 1]))
+
+julia> domain(P)
+0..1
+
+julia> M = BSplineManifold([0,1], (P,));
+
+julia> unbounded_mapping(M, 0.1)
+0.1
+
+julia> M(0.1)
+0.1
+
+julia> unbounded_mapping(M, 1.2)
+1.2
+
+julia> M(1.2)
+ERROR: DomainError with 1.2:
+The input 1.2 is out of range.
+```
+"""
 function unbounded_mapping end
 
 @deprecate unsafe_mapping unbounded_mapping false
