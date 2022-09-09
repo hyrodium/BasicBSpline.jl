@@ -107,7 +107,9 @@ M(4.3,:) isa BSplineManifold{1}  # Fix first argument
 
 ```@example math
 plot(M)
-plot!(M(4.3,:), linewidth = 5, color=:white)
+plot!(M(4.3,:), linewidth = 5, color=:cyan)
+plot!(M(4.4,:), linewidth = 5, color=:red)
+plot!(M(:,5.2), linewidth = 5, color=:green)
 savefig("2dim-manifold-currying.html") # hide
 ```
 
