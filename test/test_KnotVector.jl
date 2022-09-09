@@ -141,7 +141,8 @@
     @testset "string" begin
         k = KnotVector([1,2,2,3])
         @test string(k) == "KnotVector([1, 2, 2, 3])"
-        @test string(KnotVector(Float64[])) == "KnotVector([])"
+        @test string(KnotVector(Float64[])) == "KnotVector(Float64[])"
+        @test string(KnotVector(Int[])) == "KnotVector(Int64[])"
     end
 
     @testset "other operators" begin
