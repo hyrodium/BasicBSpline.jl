@@ -159,5 +159,12 @@
         @test_deprecated KnotVector{Int}()
         @test_deprecated KnotVector(1,2)
         @test_deprecated KnotVector{Int}(1,2)
+
+        iszero(KnotVector())
+        iszero(KnotVector{Int}())
+        KnotVector() isa KnotVector{Float64}
+        KnotVector{Int}() isa KnotVector{Int}
+        KnotVector(1,2) == KnotVector([1,2])
+        KnotVector{Int}(1,2) == KnotVector([1,2])
     end
 end
