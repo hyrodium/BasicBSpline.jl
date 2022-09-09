@@ -18,7 +18,7 @@ end
         Random.seed!(42)
 
         v = rand(10)
-        k = KnotVector(v) + (p+1)*KnotVector([0, 1]) + KnotVector(v[2], v[3])
+        k = KnotVector(v) + (p+1)*KnotVector([0, 1]) + KnotVector(v[2:3])
         P = BSplineSpace{p}(k)
         n = dim(P)
 

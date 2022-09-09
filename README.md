@@ -85,7 +85,7 @@ using StaticArrays
 
 p = 2 # degree of polynomial
 k1 = KnotVector(1:8)     # knot vector
-k2 = KnotVector(rand(7))+(p+1)*KnotVector(1)
+k2 = KnotVector(rand(7))+(p+1)*KnotVector([1])
 P1 = BSplineSpace{p}(k1) # B-spline space
 P2 = BSplineSpace{p}(k2)
 n1 = dim(P1) # dimension of B-spline space
@@ -99,7 +99,7 @@ save_png("2dim.png", M) # save image
 ### Refinement
 #### h-refinemnet
 ```julia
-k₊=(KnotVector(3.3,4.2),KnotVector(0.3,0.5)) # additional knotvectors
+k₊=(KnotVector([3.3,4.2]),KnotVector([0.3,0.5])) # additional knotvectors
 M_h = refinement(M, k₊) # refinement of B-spline manifold
 save_png("2dim_h-refinement.png", M_h) # save image
 ```
@@ -122,8 +122,8 @@ Note that this shape and the last shape are equivalent.
 ```julia
 p1 = 2
 p2 = 2
-k1 = KnotVector(-10:10)+p1*KnotVector(-10,10)
-k2 = KnotVector(-10:10)+p2*KnotVector(-10,10)
+k1 = KnotVector(-10:10)+p1*KnotVector([-10,10])
+k2 = KnotVector(-10:10)+p2*KnotVector([-10,10])
 P1 = BSplineSpace{p1}(k1)
 P2 = BSplineSpace{p2}(k2)
 
@@ -140,8 +140,8 @@ If the knotvector span is too coarse, the approximation will be coarse.
 ```julia
 p1 = 2
 p2 = 2
-k1 = KnotVector(-10:5:10)+p1*KnotVector(-10,10)
-k2 = KnotVector(-10:5:10)+p2*KnotVector(-10,10)
+k1 = KnotVector(-10:5:10)+p1*KnotVector([-10,10])
+k2 = KnotVector(-10:5:10)+p2*KnotVector([-10,10])
 P1 = BSplineSpace{p1}(k1)
 P2 = BSplineSpace{p2}(k2)
 

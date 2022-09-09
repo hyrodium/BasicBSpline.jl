@@ -9,8 +9,8 @@
     P2 = BSplineSpace{p2}(k2)
     P3 = BSplineSpace{p3}(k3)
 
-    P1′ = BSplineSpace{3}(k1+KnotVector(1.2,5.5,7.2,8.5))
-    P2′ = expandspace(P2, Val(1), KnotVector(1.8))
+    P1′ = BSplineSpace{3}(k1+KnotVector([1.2,5.5,7.2,8.5]))
+    P2′ = expandspace(P2, Val(1), KnotVector([1.8]))
     P3′ = BSplineSpace{4}(UniformKnotVector(-3:6))
 
     n1,n2,n3 = dim(P1),dim(P2),dim(P3)
@@ -27,8 +27,8 @@
     @testset "1dim" begin
         a = [Point(i, rand()) for i in 1:n1]
         p₊ = (Val(1),)
-        k₊ = (KnotVector(4.5),)
-        # k₊ = (KnotVector(4.5,4.95),)
+        k₊ = (KnotVector([4.5]),)
+        # k₊ = (KnotVector([4.5,4.95]),)
 
         @testset "BSplineManifold" begin
             w = ones(n1)
@@ -81,7 +81,7 @@
     @testset "2dim" begin
         a = [Point(i, rand()) for i in 1:n1, j in 1:n2]
         p₊ = (Val(1), Val(2))
-        k₊ = (KnotVector(4.5,4.7),KnotVector())
+        k₊ = (KnotVector([4.5,4.7]),KnotVector(Float64[]))
 
         @testset "BSplineManifold" begin
             w = ones(n1,n2)
@@ -138,7 +138,7 @@
     @testset "3dim" begin
         a = [Point(i, rand()) for i in 1:n1, j in 1:n2, k in 1:n3]
         p₊ = (Val(1), Val(2), Val(0))
-        k₊ = (KnotVector(4.4,4.7),KnotVector(),KnotVector(42))
+        k₊ = (KnotVector([4.4,4.7]),KnotVector(Float64[]),KnotVector([42]))
 
         @testset "BSplineManifold" begin
             w = ones(n1,n2,n3)

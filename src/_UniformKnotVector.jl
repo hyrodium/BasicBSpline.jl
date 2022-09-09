@@ -1,5 +1,5 @@
 @doc raw"""
-Construct knot vector from given range.
+Construct uniform knot vector from given range.
 ```math
 k=(k_1,\dots,k_l)
 ```

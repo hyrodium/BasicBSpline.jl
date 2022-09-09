@@ -178,8 +178,8 @@ function _changebasis_I(P::AbstractBSplineSpace{p,T}, P′::AbstractBSplineSpace
     k = knotvector(P)
     k′ = knotvector(P′)
 
-    _P = BSplineSpace{p}(k[1+p:end-p] + p * KnotVector{T}(k[1+p], k[end-p]))
-    _P′ = BSplineSpace{p′}(k′[1+p′:end-p′] + p′ * KnotVector{T′}(k′[1+p′], k′[end-p′]))
+    _P = BSplineSpace{p}(k[1+p:end-p] + p * KnotVector{T}([k[1+p], k[end-p]]))
+    _P′ = BSplineSpace{p′}(k′[1+p′:end-p′] + p′ * KnotVector{T′}([k′[1+p′], k′[end-p′]]))
     _A = _changebasis_R(_P, _P′)
     Asim = _changebasis_sim(P, _P)
     Asim′ = _changebasis_sim(_P′, P′)

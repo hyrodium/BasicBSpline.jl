@@ -116,7 +116,7 @@
     @testset "expandspace" begin
         P1 = BSplineSpace{1}(KnotVector([0,0,0,0,0]))
         P2 = BSplineSpace{3}(KnotVector(1:8))
-        P3 = BSplineSpace{2}(KnotVector(1:8)+3*KnotVector(0))
+        P3 = BSplineSpace{2}(KnotVector(1:8)+3*KnotVector([0]))
         P4 = BSplineSpace{2}(KnotVector([0,0,0,1,1,1,2]))
 
         @test P1 == expandspace_R(P1) == expandspace_I(P1) == expandspace(P1)

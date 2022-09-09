@@ -45,18 +45,18 @@ Construct knot vector from given real numbers.
 julia> k = KnotVector([1,2,3])
 KnotVector([1, 2, 3])
 
-julia> k = KnotVector()
+julia> k = KnotVector(Float64[])
 KnotVector([])
 ```
 """
-function KnotVector(knots::Real...)
-    return KnotVector(collect(promote(knots...)))
-end
-function KnotVector{T}(knots::Real...) where T<:Real
-    return unsafe_knotvector(T, sort!(collect(knots)))
-end
-KnotVector() = unsafe_knotvector(Float64, Float64[])
-KnotVector{T}() where T<:Real = unsafe_knotvector(T, T[])
+# function KnotVector(knots::Real...)
+#     return KnotVector(collect(promote(knots...)))
+# end
+# function KnotVector{T}(knots::Real...) where T<:Real
+#     return unsafe_knotvector(T, sort!(collect(knots)))
+# end
+# KnotVector() = unsafe_knotvector(Float64, Float64[])
+# KnotVector{T}() where T<:Real = unsafe_knotvector(T, T[])
 
 function Base.show(io::IO, k::KnotVector)
     if k.vector == Float64[]
@@ -77,8 +77,9 @@ _vec
 
 _vec(k::KnotVector) = k.vector
 
-Base.zero(::Type{<:KnotVector}) = KnotVector()
-Base.zero(::KnotVector{T}) where T = KnotVector{T}()
+Base.zero(::Type{KnotVector}) = zero(KnotVector{Float64})
+Base.zero(::Type{KnotVector{T}}) where T = unsafe_knotvector(T, T[])
+Base.zero(::KnotVector{T}) where T = unsafe_knotvector(T, T[])
 Base.:(==)(k₁::AbstractKnotVector, k₂::AbstractKnotVector) = (_vec(k₁) == _vec(k₂))
 
 Base.eltype(::AbstractKnotVector{T}) where T = T
