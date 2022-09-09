@@ -37,26 +37,22 @@ function Base.promote_rule(::Type{KnotVector{T}}, ::Type{KnotVector{S}}) where {
     KnotVector{promote_type(T,S)}
 end
 
-@doc raw"""
-Construct knot vector from given real numbers.
-
-# Examples
-```jldoctest
-julia> k = KnotVector([1,2,3])
-KnotVector([1, 2, 3])
-
-julia> k = KnotVector(Float64[])
-KnotVector([])
-```
-"""
-# function KnotVector(knots::Real...)
-#     return KnotVector(collect(promote(knots...)))
-# end
-# function KnotVector{T}(knots::Real...) where T<:Real
-#     return unsafe_knotvector(T, sort!(collect(knots)))
-# end
-# KnotVector() = unsafe_knotvector(Float64, Float64[])
-# KnotVector{T}() where T<:Real = unsafe_knotvector(T, T[])
+function KnotVector(knots::Real...)
+    Base.depwarn("Method calls such as `KnotVector(1,2,3)` is deprecated. Use `KnotVector([1,2,3])` instead.", :KnotVector)
+    return KnotVector(collect(promote(knots...)))
+end
+function KnotVector{T}(knots::Real...) where T<:Real
+    Base.depwarn("Method calls such as `KnotVector(1,2,3)` is deprecated. Use `KnotVector([1,2,3])` instead.", :KnotVector)
+    return unsafe_knotvector(T, sort!(collect(knots)))
+end
+function KnotVector()
+    Base.depwarn("KnotVector() is deprecated. Use EmptyKnotVector() instead.", :KnotVector)
+    unsafe_knotvector(Float64, Float64[])
+end
+function KnotVector{T}() where T<:Real
+    Base.depwarn("KnotVector{$T}() is deprecated. Use EmptyKnotVector{$T}() or KnotVector($T[]) instead.", :KnotVector)
+    unsafe_knotvector(T, T[])
+end
 
 function Base.show(io::IO, k::KnotVector)
     if k.vector == Float64[]
