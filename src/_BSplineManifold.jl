@@ -10,7 +10,7 @@ abstract type AbstractBSplineManifold{Dim, Deg} <: AbstractManifold{Dim} end
 dim(::AbstractBSplineManifold{Dim}) where Dim = Dim
 
 @doc raw"""
-Construct Rational B-spline manifold from given control points and B-spline spaces.
+Construct B-spline manifold from given control points and B-spline spaces.
 
 # Examples
 ```jldoctest
@@ -31,6 +31,10 @@ julia> M(0.4)
 2-element SVector{2, Float64} with indices SOneTo(2):
  0.84
  0.64
+
+julia> M(1.2)
+ERROR: DomainError with 1.2:
+The input 1.2 is out of range.
 ```
 """
 struct BSplineManifold{Dim,Deg,C,S<:Tuple} <: AbstractBSplineManifold{Dim,Deg}
@@ -56,7 +60,39 @@ Base.:(==)(M1::AbstractBSplineManifold, M2::AbstractBSplineManifold) = (bsplines
 bsplinespaces(M::BSplineManifold) = M.bsplinespaces
 controlpoints(M::BSplineManifold) = M.controlpoints
 
-@generated function unsafe_mapping(M::BSplineManifold{1,Deg},t::Vararg{Real,1}) where {Deg}
+@doc raw"""
+
+    unbounded_mapping(M::BSplineManifold{Dim}, t::Vararg{Real,Dim})
+
+# Examples
+```jldoctest
+julia> P = BSplineSpace{1}(KnotVector([0,0,1,1]))
+BSplineSpace{1, Int64}(KnotVector([0, 0, 1, 1]))
+
+julia> domain(P)
+0..1
+
+julia> M = BSplineManifold([0,1], (P,));
+
+julia> unbounded_mapping(M, 0.1)
+0.1
+
+julia> M(0.1)
+0.1
+
+julia> unbounded_mapping(M, 1.2)
+1.2
+
+julia> M(1.2)
+ERROR: DomainError with 1.2:
+The input 1.2 is out of range.
+```
+"""
+function unbounded_mapping end
+
+@deprecate unsafe_mapping unbounded_mapping false
+
+@generated function unbounded_mapping(M::BSplineManifold{1,Deg},t::Vararg{Real,1}) where {Deg}
     p1, = Deg
     exs = Expr[]
     for j1 in 1:p1
@@ -74,7 +110,7 @@ controlpoints(M::BSplineManifold) = M.controlpoints
     )
 end
 
-@generated function unsafe_mapping(M::BSplineManifold{2,Deg},t::Vararg{Real,2}) where {Deg}
+@generated function unbounded_mapping(M::BSplineManifold{2,Deg},t::Vararg{Real,2}) where {Deg}
     p1, p2 = Deg
     exs = Expr[]
     for j2 in 1:p2+1, j1 in 1:p1+1
@@ -94,7 +130,7 @@ end
     )
 end
 
-@generated function unsafe_mapping(M::BSplineManifold{3,Deg},t::Vararg{Real,3}) where {Deg}
+@generated function unbounded_mapping(M::BSplineManifold{3,Deg},t::Vararg{Real,3}) where {Deg}
     p1, p2, p3 = Deg
     exs = Expr[]
     for j3 in 1:p3+1, j2 in 1:p2+1, j1 in 1:p1+1
@@ -120,7 +156,7 @@ end
     ts = [Symbol(:t,i) for i in 1:Dim]
     T = Expr(:tuple, ts...)
     exs = [:($(Symbol(:t,i)) in domain($(Symbol(:P,i))) || throw(DomainError($(Symbol(:t,i)), "The input "*string($(Symbol(:t,i)))*" is out of range."))) for i in 1:Dim]
-    ret = Expr(:call,:unsafe_mapping,:M,[Symbol(:t,i) for i in 1:Dim]...)
+    ret = Expr(:call,:unbounded_mapping,:M,[Symbol(:t,i) for i in 1:Dim]...)
     Expr(
         :block,
         :($(Expr(:meta, :inline))),

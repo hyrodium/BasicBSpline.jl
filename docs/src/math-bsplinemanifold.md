@@ -36,18 +36,19 @@ B-spline manifold is a parametric representation of a shape.
 
 We will also write ``\bm{p}(t^1,\dots,t^d; \bm{a})``, ``\bm{p}(t^1,\dots,t^d)``, ``\bm{p}(t; \bm{a})`` or ``\bm{p}(t)`` for simplicity.
 
-```@repl math
-P1 = BSplineSpace{1}(KnotVector([0,0,1,1]))
-P2 = BSplineSpace{1}(KnotVector([1,1,2,3,3]))
-n1 = dim(P1)
-n2 = dim(P2)
-a = [SVector(i, j) for i in 1:n1, j in 1:n2]  # n1 × n2 array of d̂ array.
-M = BSplineManifold(a, (P1, P2))
-```
+Note that the `BSplineManifold` objects are callable, and the arguments will be checked if it fits in the domain of `BSplineSpace`.
 
 ```@docs
 BSplineManifold
 ```
+
+If you need extension of `BSplineManifold` or don't need the arguments check, you can call `unbounded_mapping`.
+
+```@docs
+unbounded_mapping
+```
+
+`unbounded_mapping(M,t...)` is a little bit faster than `M(t...)` because it does not check the domain.
 
 ### B-spline curve
 ```@example math
@@ -106,7 +107,9 @@ M(4.3,:) isa BSplineManifold{1}  # Fix first argument
 
 ```@example math
 plot(M)
-plot!(M(4.3,:), linewidth = 5, color=:white)
+plot!(M(4.3,:), linewidth = 5, color=:cyan)
+plot!(M(4.4,:), linewidth = 5, color=:red)
+plot!(M(:,5.2), linewidth = 5, color=:green)
 savefig("2dim-manifold-currying.html") # hide
 ```
 
