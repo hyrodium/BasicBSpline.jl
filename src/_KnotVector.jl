@@ -133,14 +133,24 @@ julia> 2 * k
 KnotVector([1, 1, 2, 2, 2, 2, 5, 5])
 ```
 """
-function Base.:*(m::Integer, k::AbstractKnotVector)
+function Base.:*(m::Integer, k::KnotVector{T}) where T
     if m == 0
         return zero(k)
-    elseif m > 0
-        return sum(k for _ in 1:m)
+    elseif m == 1
+        return k
+    elseif m > 1
+        n = length(k)
+        v = Vector{T}(undef, m*n)
+        for i in 1:m
+            v[i:m:m*(n-1)+i] .= k.vector
+        end
+        return BasicBSpline.unsafe_knotvector(T,v)
     else
         throw(DomainError(m, "The number to be multiplied must be non-negative."))
     end
+end
+function Base.:*(m::Integer, k::AbstractKnotVector) where T
+    return m*KnotVector(k)
 end
 Base.:*(k::AbstractKnotVector, m::Integer) = m*k
 
