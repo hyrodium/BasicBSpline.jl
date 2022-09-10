@@ -100,6 +100,10 @@ function refinement(M::RationalBSplineManifold{3}, Ps′::NTuple{3, AbstractBSpl
     return RationalBSplineManifold(a′, w′, Ps′)
 end
 
+function refinement(M::AbstractManifold{Dim}, Ps′::Vararg{AbstractBSplineSpace, Dim}) where Dim
+    return refinement(M, Ps′)
+end
+
 @doc raw"""
 Refinement of B-spline manifold with additional degree and knotvector.
 """

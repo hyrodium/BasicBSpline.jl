@@ -161,8 +161,8 @@ P = BSplineSpace{p}(k)
 
 f(u) = SVector(u,sin(u))
 
-a = fittingcontrolpoints(f, (P,))
-M = BSplineManifold(a, (P,))
+a = fittingcontrolpoints(f, P)
+M = BSplineManifold(a, P)
 save_svg("sine-curve.svg", M, unitlength=50, xlims=(-2,2), ylims=(-8,8))
 save_svg("sine-curve_no-points.svg", M, unitlength=50, xlims=(-2,2), ylims=(-8,8), points=false)
 ```

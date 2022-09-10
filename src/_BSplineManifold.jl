@@ -25,7 +25,7 @@ julia> a = [SVector(1,0), SVector(1,1), SVector(0,1)]
  [1, 1]
  [0, 1]
 
-julia> M = BSplineManifold(a,(P,));
+julia> M = BSplineManifold(a, P);
 
 julia> M(0.4)
 2-element SVector{2, Float64} with indices SOneTo(2):
@@ -50,6 +50,8 @@ struct BSplineManifold{Dim,Deg,C,S<:NTuple{Dim, AbstractBSplineSpace}} <: Abstra
     end
 end
 
+BSplineManifold(a::Array{C,Dim},Ps::Vararg{AbstractBSplineSpace, Dim}) where {C,Dim} = BSplineManifold(a,Ps)
+
 Base.:(==)(M1::AbstractBSplineManifold, M2::AbstractBSplineManifold) = (bsplinespaces(M1)==bsplinespaces(M2)) & (controlpoints(M1)==controlpoints(M2))
 
 bsplinespaces(M::BSplineManifold) = M.bsplinespaces
@@ -67,7 +69,7 @@ BSplineSpace{1, Int64}(KnotVector([0, 0, 1, 1]))
 julia> domain(P)
 0..1
 
-julia> M = BSplineManifold([0,1], (P,));
+julia> M = BSplineManifold([0,1], P);
 
 julia> unbounded_mapping(M, 0.1)
 0.1

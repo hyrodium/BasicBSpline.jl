@@ -322,14 +322,16 @@ function innerproduct_R(P::UniformBSplineSpace{p,T}) where {p,T}
 end
 
 for (fname_fit, fname_inner) in ((:fittingcontrolpoints_I, :innerproduct_I), (:fittingcontrolpoints_R, :innerproduct_R))
-    @eval function $fname_fit(func, P::Tuple{AbstractBSplineSpace{p1}}) where {p1}
+    # 1-dim
+    @eval function $fname_fit(func, P::NTuple{1, AbstractBSplineSpace})
         P1, = P
         b = $fname_inner(func, P)
         A = $fname_inner(P1)
         return _leftdivision(A, b)
     end
 
-    @eval function $fname_fit(func, P::Tuple{AbstractBSplineSpace{p1}, AbstractBSplineSpace{p2}}) where {p1,p2}
+    # 2-dim
+    @eval function $fname_fit(func, P::NTuple{2, AbstractBSplineSpace})
         P1, P2 = P
         n1, n2 = dim.(P)
         A1, A2 = $fname_inner(P1), $fname_inner(P2)
@@ -340,7 +342,8 @@ for (fname_fit, fname_inner) in ((:fittingcontrolpoints_I, :innerproduct_I), (:f
         return reshape(_leftdivision(_A, _b), n1, n2)
     end
 
-    @eval function $fname_fit(func, P::Tuple{AbstractBSplineSpace{p1}, AbstractBSplineSpace{p2}, AbstractBSplineSpace{p3}}) where {p1,p2,p3}
+    # 3-dim
+    @eval function $fname_fit(func, P::NTuple{3, AbstractBSplineSpace})
         P1, P2, P3 = P
         n1, n2, n3 = dim(P1), dim(P2), dim(P3)
         A1, A2, A3 = $fname_inner(P1), $fname_inner(P2), $fname_inner(P3)
@@ -373,14 +376,30 @@ julia> f(t) = SVector(cos(t),sin(t),t);
 
 julia> P = BSplineSpace{3}(KnotVector(range(0,2π,30)) + 3*KnotVector([0,2π]));
 
-julia> a = fittingcontrolpoints(f, (P,));
+julia> a = fittingcontrolpoints(f, P);
 
-julia> M = BSplineManifold(a,(P,));
+julia> M = BSplineManifold(a, P);
 
 julia> norm(M(1) - f(1)) < 1e-5
 true
 ```
 """
-function fittingcontrolpoints(func, P::Tuple)
+function fittingcontrolpoints(func, P::NTuple{Dim, AbstractBSplineSpace}) where Dim
     fittingcontrolpoints_I(func,P)
+end
+
+function innerproduct_R(func, P::Vararg{AbstractBSplineSpace})
+    innerproduct_R(func,P)
+end
+function innerproduct_I(func, P::Vararg{AbstractBSplineSpace})
+    innerproduct_I(func,P)
+end
+function fittingcontrolpoints(func, P::Vararg{AbstractBSplineSpace})
+    fittingcontrolpoints_I(func,P)
+end
+function fittingcontrolpoints_I(func, P::Vararg{AbstractBSplineSpace})
+    fittingcontrolpoints_I(func,P)
+end
+function fittingcontrolpoints_R(func, P::Vararg{AbstractBSplineSpace})
+    fittingcontrolpoints_R(func,P)
 end

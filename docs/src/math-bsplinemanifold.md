@@ -57,7 +57,7 @@ p = 2 # degree of polynomial
 k = KnotVector(1:12) # knot vector
 P = BSplineSpace{p}(k) # B-spline space
 a = [SVector(i-5, 3*sin(i^2)) for i in 1:dim(P)] # control points
-M = BSplineManifold(a, (P,)) # Define B-spline manifold
+M = BSplineManifold(a, P) # Define B-spline manifold
 plot(M)
 savefig("1dim-manifold.html") # hide
 ```

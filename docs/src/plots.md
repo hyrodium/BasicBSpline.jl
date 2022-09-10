@@ -77,8 +77,8 @@ f(t) = SVector((1+cos(t))*cos(t),(1+cos(t))*sin(t))
 p = 3
 k = KnotVector(range(0,2π,15)) + p * KnotVector([0,2π]) + 2 * KnotVector([π])
 P = BSplineSpace{p}(k)
-a = fittingcontrolpoints(f,(P,))
-M = BSplineManifold(a, (P,))
+a = fittingcontrolpoints(f, P)
+M = BSplineManifold(a, P)
 
 plot(M)
 savefig("plots-cardioid.html") # hide
@@ -94,8 +94,8 @@ f(t) = SVector(cos(t),sin(t),t)
 p = 3
 k = KnotVector(range(0,6π,15)) + p * KnotVector([0,6π])
 P = BSplineSpace{p}(k)
-a = fittingcontrolpoints(f,(P,))
-M = BSplineManifold(a, (P,))
+a = fittingcontrolpoints(f, P)
+M = BSplineManifold(a, P)
 
 plot(M)
 savefig("plots-helix.html") # hide
@@ -133,8 +133,8 @@ k = KnotVector([0,0,0,1,1,1])
 P = BSplineSpace{2}(k)
 a = [SVector(1,0),SVector(1,1),SVector(0,1)]
 w = [1,1/√2,1]
-M = BSplineManifold(a,(P,))
-R = RationalBSplineManifold(a,w,(P,))
+M = BSplineManifold(a,P)
+R = RationalBSplineManifold(a,w,P)
 ts = 0:0.01:2
 plot(cospi.(ts),sinpi.(ts), label="circle")
 plot!(M, label="B-spline curve")

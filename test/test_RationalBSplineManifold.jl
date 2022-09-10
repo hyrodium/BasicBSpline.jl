@@ -7,7 +7,7 @@
         p = 2
         P = BSplineSpace{p}(k)
 
-        M = RationalBSplineManifold(a,w,(P,))
+        M = RationalBSplineManifold(a,w,P)
         for _ in 1:100
             t1 = 2rand()
             @test norm(M(t1)) ≈ 1
@@ -91,9 +91,9 @@
                 a = randn(n1)
                 w1 = ones(n1)
                 w2 = 2ones(n1)
-                M = BSplineManifold(a,(P1,))
-                M1 = RationalBSplineManifold(a,w1,(P1,))
-                M2 = RationalBSplineManifold(a,w2,(P1,))
+                M = BSplineManifold(a,P1)
+                M1 = RationalBSplineManifold(a,w1,P1)
+                M2 = RationalBSplineManifold(a,w2,P1)
                 for _ in 1:100
                     t1 = rand()
                     @test M(t1) ≈ M1(t1) atol=1e-14
@@ -104,9 +104,9 @@
                 a = randn(n1,n2)
                 w1 = ones(n1,n2)
                 w2 = 2ones(n1,n2)
-                M = BSplineManifold(a,(P1,P2))
-                M1 = RationalBSplineManifold(a,w1,(P1,P2))
-                M2 = RationalBSplineManifold(a,w2,(P1,P2))
+                M = BSplineManifold(a,P1,P2)
+                M1 = RationalBSplineManifold(a,w1,P1,P2)
+                M2 = RationalBSplineManifold(a,w2,P1,P2)
                 for _ in 1:100
                     t1 = rand()
                     t2 = rand()
@@ -118,9 +118,9 @@
                 a = randn(n1,n2,n3)
                 w1 = ones(n1,n2,n3)
                 w2 = 2ones(n1,n2,n3)
-                M = BSplineManifold(a,(P1,P2,P3))
-                M1 = RationalBSplineManifold(a,w1,(P1,P2,P3))
-                M2 = RationalBSplineManifold(a,w2,(P1,P2,P3))
+                M = BSplineManifold(a,P1,P2,P3)
+                M1 = RationalBSplineManifold(a,w1,P1,P2,P3)
+                M2 = RationalBSplineManifold(a,w2,P1,P2,P3)
                 for _ in 1:100
                     t1 = rand()
                     t2 = rand()

@@ -23,7 +23,7 @@ julia> a = [SVector(1,0), SVector(1,1), SVector(0,1)]
  [1, 1]
  [0, 1]
 
-julia> M = RationalBSplineManifold(a,w,(P,));  # 1/4 arc
+julia> M = RationalBSplineManifold(a,w,P);  # 1/4 arc
 
 julia> M(0.3)
 2-element SVector{2, Float64} with indices SOneTo(2):
@@ -47,6 +47,8 @@ struct RationalBSplineManifold{Dim,Deg,C,S<:NTuple{Dim, AbstractBSplineSpace},T}
         new{Dim,Deg,C,S,T}(Ps,a,w)
     end
 end
+
+RationalBSplineManifold(a::Array{C,Dim},w::Array{T,Dim},Ps::Vararg{AbstractBSplineSpace, Dim}) where {C,Dim,T<:Real} = RationalBSplineManifold(a,w,Ps)
 
 Base.:(==)(M1::AbstractRationalBSplineManifold, M2::AbstractRationalBSplineManifold) = (bsplinespaces(M1)==bsplinespaces(M2)) & (controlpoints(M1)==controlpoints(M2)) & (weights(M1)==weights(M2))
 
