@@ -45,6 +45,11 @@ Base.:+(::EmptyKnotVector{T1}, ::EmptyKnotVector{T2}) where {T1<:Real, T2<:Real}
 # + swap
 Base.:+(k1::EmptyKnotVector, k2::AbstractKnotVector) = k2 + k1
 
+function Base.:*(m::Integer, k::EmptyKnotVector) where T
+    m < 0 && throw(DomainError(m, "The number to be multiplied must be non-negative."))
+    return k
+end
+
 function Base.show(io::IO, ::T) where T<:EmptyKnotVector
     print(io, "$(T)()")
 end
