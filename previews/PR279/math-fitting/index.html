@@ -8,7 +8,7 @@ julia&gt; a = fittingcontrolpoints(f, P);
 julia&gt; M = BSplineManifold(a, P);
 
 julia&gt; norm(M(1) - f(1)) &lt; 1e-5
-true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/7b730c6bae47466febd0cb011df1f22cedd036eb/src/_Fitting.jl#LL358-L386">source</a></section></article><pre><code class="language-julia hljs">p1 = 2
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/342ef75491b44e70b029e941d0f0df9467042eb0/src/_Fitting.jl#LL358-L386">source</a></section></article><pre><code class="language-julia hljs">p1 = 2
 p2 = 2
 k1 = KnotVector(-10:10)+p1*KnotVector([-10,10])
 k2 = KnotVector(-10:10)+p2*KnotVector([-10,10])
