@@ -34,16 +34,11 @@ julia> norm(M(0.3))
 1.0
 ```
 """
-struct RationalBSplineManifold{Dim,Deg,C,S<:Tuple,T} <: AbstractRationalBSplineManifold{Dim,Deg}
+struct RationalBSplineManifold{Dim,Deg,C,S<:NTuple{Dim, AbstractBSplineSpace},T} <: AbstractRationalBSplineManifold{Dim,Deg}
     bsplinespaces::S
     controlpoints::Array{C,Dim}
     weights::Array{T,Dim}
-    function RationalBSplineManifold(a::Array{C,Dim},w::Array{T,Dim},Ps::S) where {S<:Tuple,C,Dim,T<:Real}
-        for P in Ps
-            if !(P isa AbstractBSplineSpace)
-                throw(TypeError(:BSplineManifold,AbstractBSplineSpace,P))
-            end
-        end
+    function RationalBSplineManifold(a::Array{C,Dim},w::Array{T,Dim},Ps::S) where {S<:NTuple{Dim, AbstractBSplineSpace},C,T<:Real} where Dim
         if size(a) != dim.(Ps)
             msg = "The size of control points array $(size(a)) and dimensions of B-spline spaces $(dim.(Ps)) must be equal."
             throw(DimensionMismatch(msg))
