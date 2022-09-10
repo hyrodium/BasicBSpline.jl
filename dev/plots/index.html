@@ -31,15 +31,15 @@ plot(
 p = 3
 k = KnotVector(range(0,2π,15)) + p * KnotVector([0,2π]) + 2 * KnotVector([π])
 P = BSplineSpace{p}(k)
-a = fittingcontrolpoints(f,(P,))
-M = BSplineManifold(a, (P,))
+a = fittingcontrolpoints(f, P)
+M = BSplineManifold(a, P)
 
 plot(M)</code></pre><object type="text/html" data="../plots-cardioid.html" style="width:100%;height:550px;"></object><h3 id="Helix-(spatial-curve)"><a class="docs-heading-anchor" href="#Helix-(spatial-curve)">Helix (spatial curve)</a><a id="Helix-(spatial-curve)-1"></a><a class="docs-heading-anchor-permalink" href="#Helix-(spatial-curve)" title="Permalink"></a></h3><pre><code class="language-julia hljs">f(t) = SVector(cos(t),sin(t),t)
 p = 3
 k = KnotVector(range(0,6π,15)) + p * KnotVector([0,6π])
 P = BSplineSpace{p}(k)
-a = fittingcontrolpoints(f,(P,))
-M = BSplineManifold(a, (P,))
+a = fittingcontrolpoints(f, P)
+M = BSplineManifold(a, P)
 
 plot(M)</code></pre><object type="text/html" data="../plots-helix.html" style="width:100%;height:550px;"></object><h3 id="B-spline-surface"><a class="docs-heading-anchor" href="#B-spline-surface">B-spline surface</a><a id="B-spline-surface-1"></a><a class="docs-heading-anchor-permalink" href="#B-spline-surface" title="Permalink"></a></h3><pre><code class="language-julia hljs">p1 = 2
 p2 = 3
@@ -53,9 +53,9 @@ plot(M)</code></pre><object type="text/html" data="../plots-surface.html" style=
 P = BSplineSpace{2}(k)
 a = [SVector(1,0),SVector(1,1),SVector(0,1)]
 w = [1,1/√2,1]
-M = BSplineManifold(a,(P,))
-R = RationalBSplineManifold(a,w,(P,))
+M = BSplineManifold(a,P)
+R = RationalBSplineManifold(a,w,P)
 ts = 0:0.01:2
 plot(cospi.(ts),sinpi.(ts), label=&quot;circle&quot;)
 plot!(M, label=&quot;B-spline curve&quot;)
-plot!(R, label=&quot;Rational B-spline curve&quot;)</code></pre><object type="text/html" data="../plots-arc.html" style="width:100%;height:550px;"></object></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../math-rationalbsplinemanifold/">« Rational B-spline manifold</a><a class="docs-footer-nextpage" href="../plotlyjs/">PlotlyJS.jl »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Saturday 10 September 2022 04:07">Saturday 10 September 2022</span>. Using Julia version 1.8.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+plot!(R, label=&quot;Rational B-spline curve&quot;)</code></pre><object type="text/html" data="../plots-arc.html" style="width:100%;height:550px;"></object></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../math-rationalbsplinemanifold/">« Rational B-spline manifold</a><a class="docs-footer-nextpage" href="../plotlyjs/">PlotlyJS.jl »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Saturday 10 September 2022 05:11">Saturday 10 September 2022</span>. Using Julia version 1.8.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
