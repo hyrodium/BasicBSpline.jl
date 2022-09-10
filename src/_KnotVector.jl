@@ -37,23 +37,6 @@ function Base.promote_rule(::Type{KnotVector{T}}, ::Type{KnotVector{S}}) where {
     KnotVector{promote_type(T,S)}
 end
 
-function KnotVector(knots::Real...)
-    Base.depwarn("Method calls such as `KnotVector(1,2,3)` is deprecated. Use `KnotVector([1,2,3])` instead.", :KnotVector)
-    return KnotVector(collect(promote(knots...)))
-end
-function KnotVector{T}(knots::Real...) where T<:Real
-    Base.depwarn("Method calls such as `KnotVector(1,2,3)` is deprecated. Use `KnotVector([1,2,3])` instead.", :KnotVector)
-    return unsafe_knotvector(T, sort!(collect(knots)))
-end
-function KnotVector()
-    Base.depwarn("KnotVector() is deprecated. Use EmptyKnotVector() instead.", :KnotVector)
-    unsafe_knotvector(Float64, Float64[])
-end
-function KnotVector{T}() where T<:Real
-    Base.depwarn("KnotVector{$T}() is deprecated. Use EmptyKnotVector{$T}() or KnotVector($T[]) instead.", :KnotVector)
-    unsafe_knotvector(T, T[])
-end
-
 function Base.show(io::IO, k::KnotVector)
     print(io, "KnotVector($(k.vector))")
 end
