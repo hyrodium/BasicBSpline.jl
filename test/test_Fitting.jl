@@ -14,11 +14,11 @@
         a_org = [rand() for i in 1:n]
         f(t) = sum(bsplinebasis(P,i,t)*a_org[i] for i in 1:n)
 
-        a_fit = fittingcontrolpoints_I(f, (P,))
-        @test a_fit == fittingcontrolpoints(f, (P,))
+        a_fit = fittingcontrolpoints_I(f, P)
+        @test a_fit == fittingcontrolpoints(f, P)
         @test norm(a_fit - a_org) < ε
 
-        a_fit = fittingcontrolpoints_R(f, (P,))
+        a_fit = fittingcontrolpoints_R(f, P)
         @test norm(a_fit - a_org) < ε
     end
 
@@ -230,7 +230,7 @@
     @testset "specific issues" begin
         # https://github.com/hyrodium/BasicBSpline.jl/issues/214
         P = BSplineSpace{3}(KnotVector(1:12))
-        @test BasicBSpline.innerproduct_R(t->t, (P,)) ≈ 3:10
+        @test BasicBSpline.innerproduct_R(t->t, P) ≈ 3:10
         @test BasicBSpline.innerproduct_R((t1,t2)->t1+t2, (P,P)) ≈ [i+j for i in 3:10, j in 3:10]
         @test BasicBSpline.innerproduct_R((t1,t2,t3)->t1+t2+t3, (P,P,P)) ≈ [i+j+k for i in 3:10, j in 3:10, k in 3:10]
     end

@@ -34,7 +34,7 @@
 
             @test P1 ⊑ P1′
 
-            M′ = refinement(M, (P1′,))
+            M′ = refinement(M, P1′)
             M′′ = refinement(M, p₊, k₊)
             ts = [[rand()] for _ in 1:10]
             for t in ts

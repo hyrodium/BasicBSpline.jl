@@ -25,7 +25,7 @@
         p = 3
         k = KnotVector(0:3)+p*KnotVector([0,3])
         P = BSplineSpace{p}(k)
-        M = BSplineManifold(a, (P,))
+        M = BSplineManifold(a, P)
         plot(M)
     end
 
@@ -34,7 +34,7 @@
         p = 3
         k = KnotVector(0:3)+p*KnotVector([0,3])
         P = BSplineSpace{p}(k)
-        M = BSplineManifold(a, (P,))
+        M = BSplineManifold(a, P)
         plot(M)
     end
 
@@ -44,7 +44,7 @@
         p = 3
         k = KnotVector(0:3)+p*KnotVector([0,3])
         P = BSplineSpace{p}(k)
-        M = RationalBSplineManifold(a, w, (P,))
+        M = RationalBSplineManifold(a, w, P)
         plot(M)
     end
 
@@ -54,7 +54,7 @@
         p = 3
         k = KnotVector(0:3)+p*KnotVector([0,3])
         P = BSplineSpace{p}(k)
-        M = RationalBSplineManifold(a, w, (P,))
+        M = RationalBSplineManifold(a, w, P)
         plot(M)
     end
 

@@ -31,7 +31,7 @@ function interpolate(xs::AbstractVector, fs::AbstractVector{T}) where T
     M = [bsplinebasis(P,j,xs[i]) for i in 1:m, j in 1:n]
     M = vcat(dda', M, ddb')
     y = vcat(zero(T), fs, zero(T))
-    return BSplineManifold(M\y, (P,))
+    return BSplineManifold(M\y, P)
 end
 
 # Example inputs
@@ -63,7 +63,7 @@ function interpolate_linear(xs::AbstractVector, fs::AbstractVector{T}) where T
     n = dim(P)
 
     # Compute the interpolant function (1-dim B-spline manifold)
-    return BSplineManifold(fs, (P,))
+    return BSplineManifold(fs, P)
 end
 
 # Example inputs
@@ -101,7 +101,7 @@ function interpolate_periodic(xs::AbstractVector, fs::AbstractVector, ::Val{p}) 
     end
     b = A \ fs[begin:end-1]
     # Compute the interpolant function (1-dim B-spline manifold)
-    return BSplineManifold(vcat(b,b[1:p]), (P,))
+    return BSplineManifold(vcat(b,b[1:p]), P)
 end
 
 # Example inputs
