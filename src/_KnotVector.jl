@@ -87,9 +87,8 @@ KnotVector([1, 2, 3, 4, 5, 5, 8])
 function Base.:+(k1::KnotVector{T}, k2::KnotVector{T}) where T
     v1, v2 = k1.vector, k2.vector
     n1, n2 = length(v1), length(v2)
-    # TODO: maybe we don't need copy here?
-    iszero(n1) && return copy(k2)
-    iszero(n2) && return copy(k1)
+    iszero(n1) && return k2
+    iszero(n2) && return k1
     n = n1 + n2
     v = Vector{T}(undef, n)
     i1 = i2 = 1
