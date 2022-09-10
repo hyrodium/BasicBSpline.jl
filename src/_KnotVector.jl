@@ -84,7 +84,33 @@ julia> k1 + k2
 KnotVector([1, 2, 3, 4, 5, 5, 8])
 ```
 """
-Base.:+(k1::KnotVector{T}, k2::KnotVector{T}) where T = unsafe_knotvector(T,sort!(vcat(k1.vector,k2.vector)))
+function Base.:+(k1::KnotVector{T}, k2::KnotVector{T}) where T
+    v1, v2 = k1.vector, k2.vector
+    n1, n2 = length(v1), length(v2)
+    iszero(n1) && return copy(k2)
+    iszero(n2) && return copy(k1)
+    n = n1 + n2
+    v = Vector{T}(undef, n)
+    i1 = i2 = 1
+    for i in 1:n
+        if isless(v1[i1], v2[i2])
+            v[i] = v1[i1]
+            i1 += 1
+            if i1 > n1
+                v[i+1:n] = view(v2, i2:n2)
+                break
+            end
+        else
+            v[i] = v2[i2]
+            i2 += 1
+            if i2 > n2
+                v[i+1:n] = view(v1, i1:n1)
+                break
+            end
+        end
+    end
+    return BasicBSpline.unsafe_knotvector(T,v)
+end
 Base.:+(k1::AbstractKnotVector, k2::AbstractKnotVector) = +(promote(k1,k2)...)
 
 @doc raw"""
