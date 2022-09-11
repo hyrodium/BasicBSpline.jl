@@ -1,8 +1,32 @@
 # Space of derivative of B-spline basis function
 @doc raw"""
+    BSplineDerivativeSpace{r}(P::AbstractBSplineSpace)
+
 Construct derivative of B-spline space from given differential order and B-spline space.
 ```math
 D^{r}(\mathcal{P}[p,k])
+=\left\{t \mapsto \left. \frac{d^r f}{dt^r}(t) \  \right| \ f \in \mathcal{P}[p,k] \right\}
+```
+
+# Examples
+```jldoctest
+julia> P = BSplineSpace{2}(KnotVector([1,2,3,4,5,6]))
+BSplineSpace{2, Int64}(KnotVector([1, 2, 3, 4, 5, 6]))
+
+julia> dP = BSplineDerivativeSpace{1}(P)
+BSplineDerivativeSpace{1, BSplineSpace{2, Int64}, Int64}(BSplineSpace{2, Int64}(KnotVector([1, 2, 3, 4, 5, 6])))
+
+julia> degree(P), degree(dP)
+(2, 1)
+
+julia> P = UniformBSplineSpace{2}(UniformKnotVector(1:6))
+UniformBSplineSpace{2, Int64, UnitRange{Int64}}(UniformKnotVector(1:6))
+
+julia> dP = BSplineDerivativeSpace{2}(P)
+BSplineDerivativeSpace{2, UniformBSplineSpace{2, Int64, UnitRange{Int64}}, Int64}(UniformBSplineSpace{2, Int64, UnitRange{Int64}}(UniformKnotVector(1:6)))
+
+julia> degree(P), degree(dP)
+(2, 0)
 ```
 """
 struct BSplineDerivativeSpace{r, S<:AbstractBSplineSpace, T} <: AbstractFunctionSpace{T}
@@ -40,6 +64,25 @@ exactdim(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}) where {r,p} = 
 intervalindex(dP::BSplineDerivativeSpace,t::Real) = intervalindex(bsplinespace(dP),t)
 domain(dP::BSplineDerivativeSpace) = domain(bsplinespace(dP))
 _lower(dP::BSplineDerivativeSpace{r}) where r = BSplineDerivativeSpace{r-1}(_lower(bsplinespace(dP)))
+
+@doc raw"""
+    derivative(::BSplineDerivativeSpace{r}) -> BSplineDerivativeSpace{r+1}
+    derivative(::AbstractBSplineSpace) -> BSplineDerivativeSpace{1}
+
+Derivative of B-spline related space.
+
+# Examples
+```jldoctest
+julia> BSplineSpace{2}(KnotVector(0:5))
+BSplineSpace{2, Int64}(KnotVector([0, 1, 2, 3, 4, 5]))
+
+julia> BasicBSpline.derivative(ans)
+BSplineDerivativeSpace{1, BSplineSpace{2, Int64}, Int64}(BSplineSpace{2, Int64}(KnotVector([0, 1, 2, 3, 4, 5])))
+
+julia> BasicBSpline.derivative(ans)
+BSplineDerivativeSpace{2, BSplineSpace{2, Int64}, Int64}(BSplineSpace{2, Int64}(KnotVector([0, 1, 2, 3, 4, 5])))
+```
+"""
 derivative(P::BSplineSpace) = BSplineDerivativeSpace{1}(P)
 derivative(dP::BSplineDerivativeSpace{r}) where r = BSplineDerivativeSpace{r+1}(bsplinespace(dP))
 

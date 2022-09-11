@@ -109,45 +109,50 @@ end
 end
 
 @doc raw"""
+    bsplinebasis′₊₀(::AbstractFunctionSpace, ::Integer, ::Real) -> Real
+
 1st derivative of B-spline basis function.
 Right-sided limit version.
 ```math
 \dot{B}_{(i,p,k)}(t)
 =p\left(\frac{1}{k_{i+p}-k_{i}}B_{(i,p-1,k)}(t)-\frac{1}{k_{i+p+1}-k_{i+1}}B_{(i+1,p-1,k)}(t)\right)
 ```
+`bsplinebasis′₊₀(P, i, t)` is equivalent to `bsplinebasis₊₀(derivative(P), i, t)`.
 """
 bsplinebasis′₊₀
 
 
 @doc raw"""
+    bsplinebasis′₋₀(::AbstractFunctionSpace, ::Integer, ::Real) -> Real
+
 1st derivative of B-spline basis function.
 Left-sided limit version.
 ```math
 \dot{B}_{(i,p,k)}(t)
 =p\left(\frac{1}{k_{i+p}-k_{i}}B_{(i,p-1,k)}(t)-\frac{1}{k_{i+p+1}-k_{i+1}}B_{(i+1,p-1,k)}(t)\right)
 ```
+`bsplinebasis′₋₀(P, i, t)` is equivalent to `bsplinebasis₋₀(derivative(P), i, t)`.
 """
 bsplinebasis′₋₀
 
 @doc raw"""
+    bsplinebasis′(::AbstractFunctionSpace, ::Integer, ::Real) -> Real
+
 1st derivative of B-spline basis function.
 Modified version.
 ```math
 \dot{B}_{(i,p,k)}(t)
 =p\left(\frac{1}{k_{i+p}-k_{i}}B_{(i,p-1,k)}(t)-\frac{1}{k_{i+p+1}-k_{i+1}}B_{(i+1,p-1,k)}(t)\right)
 ```
+`bsplinebasis′₊₀(P, i, t)` is equivalent to `bsplinebasis₊₀(derivative(P), i, t)`.
 """
 bsplinebasis′
 
 for suffix in ("", "₋₀", "₊₀")
     fname = Symbol(:bsplinebasis, suffix)
     fname′ = Symbol(:bsplinebasis, "′" ,suffix)
-    @eval function $(fname′)(P::AbstractBSplineSpace, i::Integer, t::Real)
-        return $(fname)(BSplineDerivativeSpace{1}(P), i, t)
-    end
-    @eval function $(fname′)(dP::BSplineDerivativeSpace{r}, i::Integer, t::Real) where r
-        P = bsplinespace(dP)
-        return $(fname)(BSplineDerivativeSpace{r+1}(P), i, t)
+    @eval function $(fname′)(P::AbstractFunctionSpace, i::Integer, t::Real)
+        return $(fname)(derivative(P), i, t)
     end
 end
 

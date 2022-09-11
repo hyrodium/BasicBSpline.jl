@@ -39,6 +39,10 @@ BSplineDerivativeSpace
 ```
 
 ```@docs
+BasicBSpline.derivative
+```
+
+```@docs
 bsplinebasis′₊₀
 ```
 

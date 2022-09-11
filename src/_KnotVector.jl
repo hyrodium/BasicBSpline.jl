@@ -132,6 +132,9 @@ julia> 2 * k
 KnotVector([1, 1, 2, 2, 2, 2, 5, 5])
 ```
 """
+function Base.:*(m::Integer, k::AbstractKnotVector)
+    return m*KnotVector(k)
+end
 function Base.:*(m::Integer, k::KnotVector{T}) where T
     if m == 0
         return zero(k)
@@ -147,9 +150,6 @@ function Base.:*(m::Integer, k::KnotVector{T}) where T
     else
         throw(DomainError(m, "The number to be multiplied must be non-negative."))
     end
-end
-function Base.:*(m::Integer, k::AbstractKnotVector) where T
-    return m*KnotVector(k)
 end
 Base.:*(k::AbstractKnotVector, m::Integer) = m*k
 
