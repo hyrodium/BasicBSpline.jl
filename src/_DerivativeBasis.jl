@@ -142,12 +142,8 @@ bsplinebasis′
 for suffix in ("", "₋₀", "₊₀")
     fname = Symbol(:bsplinebasis, suffix)
     fname′ = Symbol(:bsplinebasis, "′" ,suffix)
-    @eval function $(fname′)(P::AbstractBSplineSpace, i::Integer, t::Real)
-        return $(fname)(BSplineDerivativeSpace{1}(P), i, t)
-    end
-    @eval function $(fname′)(dP::BSplineDerivativeSpace{r}, i::Integer, t::Real) where r
-        P = bsplinespace(dP)
-        return $(fname)(BSplineDerivativeSpace{r+1}(P), i, t)
+    @eval function $(fname′)(P::AbstractFunctionSpace, i::Integer, t::Real)
+        return $(fname)(derivative(P), i, t)
     end
 end
 
