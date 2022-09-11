@@ -1,8 +1,11 @@
 # Space of derivative of B-spline basis function
 @doc raw"""
+    BSplineDerivativeSpace{r}(P::AbstractBSplineSpace)
+
 Construct derivative of B-spline space from given differential order and B-spline space.
 ```math
 D^{r}(\mathcal{P}[p,k])
+=\left\{t \mapsto \left. \frac{d^r f}{dt^r}(t) \  \right| \ f \in \mathcal{P}[p,k] \right\}
 ```
 
 # Examples
