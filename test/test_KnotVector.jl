@@ -152,5 +152,10 @@
         @test countknots(k, 2.0) == 2
         @test 1 ∈ k
         @test 1.5 ∉ k
+
+        k = KnotVector([-2.0, -1.0, -0.0, -0.0, 0.0, 1.0, 3.0])
+        @test countknots(k,0) == 3
+        @test countknots(k,0.0) == 3
+        @test countknots(k,-0.0) == 3
     end
 end
