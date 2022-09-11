@@ -64,6 +64,25 @@ exactdim(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}) where {r,p} = 
 intervalindex(dP::BSplineDerivativeSpace,t::Real) = intervalindex(bsplinespace(dP),t)
 domain(dP::BSplineDerivativeSpace) = domain(bsplinespace(dP))
 _lower(dP::BSplineDerivativeSpace{r}) where r = BSplineDerivativeSpace{r-1}(_lower(bsplinespace(dP)))
+
+@doc raw"""
+    derivative(::BSplineDerivativeSpace{r}) -> BSplineDerivativeSpace{r+1}
+    derivative(::AbstractBSplineSpace) -> BSplineDerivativeSpace{1}
+
+Derivative of B-spline related space.
+
+# Examples
+```jldoctest
+julia> BSplineSpace{2}(KnotVector(0:5))
+BSplineSpace{2, Int64}(KnotVector([0, 1, 2, 3, 4, 5]))
+
+julia> BasicBSpline.derivative(ans)
+BSplineDerivativeSpace{1, BSplineSpace{2, Int64}, Int64}(BSplineSpace{2, Int64}(KnotVector([0, 1, 2, 3, 4, 5])))
+
+julia> BasicBSpline.derivative(ans)
+BSplineDerivativeSpace{2, BSplineSpace{2, Int64}, Int64}(BSplineSpace{2, Int64}(KnotVector([0, 1, 2, 3, 4, 5])))
+```
+"""
 derivative(P::BSplineSpace) = BSplineDerivativeSpace{1}(P)
 derivative(dP::BSplineDerivativeSpace{r}) where r = BSplineDerivativeSpace{r+1}(bsplinespace(dP))
 
