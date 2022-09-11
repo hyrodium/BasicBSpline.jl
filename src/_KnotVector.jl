@@ -273,5 +273,5 @@ function countknots(k::AbstractKnotVector, t::Real)
     # return count(==(t), k.vector)
 
     # for large case, this is faster
-    return length(searchsorted(k,t))
+    return length(searchsorted(_vec(k), t, lt=<))
 end
