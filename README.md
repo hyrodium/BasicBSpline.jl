@@ -172,3 +172,5 @@ save_svg("sine-curve_no-points.svg", M, unitlength=50, xlims=(-2,2), ylims=(-8,8
 This is useful when you edit graphs (or curves) with your favorite vector graphics editor.
 
 ![](docs/src/img/inkscape.png)
+
+See [Plotting smooth graphs with Julia](https://forem.julialang.org/hyrodium/plotting-smooth-graphs-with-julia-6mj) for more tutorials.
