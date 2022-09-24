@@ -37,6 +37,7 @@ makedocs(;
         ansicolor=true,
         canonical = "https://hyrodium.github.io/BasicBSpline.jl/stable/",
         assets = ["assets/favicon.ico", "assets/custom.css"],
+        edit_link="main",
     ),
     pages = [
         "Home" => "index.md",
@@ -73,5 +74,6 @@ makedocs(;
 
 deploydocs(
     repo = "github.com/hyrodium/BasicBSpline.jl",
-    push_preview = true
+    push_preview = true,
+    devbranch="main",
 )
