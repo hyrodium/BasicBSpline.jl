@@ -30,7 +30,7 @@ nothing # hide
 Insert additional knots to knot vector.
 
 ```@repl math
-k₊ = (KnotVector([3.3,4.2]),KnotVector([3.8,3.2,5.3])) # additional knotvectors
+k₊ = (KnotVector([3.3,4.2]),KnotVector([3.8,3.2,5.3])) # additional knot vectors
 M_h = refinement(M, k₊) # refinement of B-spline manifold
 save_png("2dim_h-refinement.png", M_h) # save image
 ```

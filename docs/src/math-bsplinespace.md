@@ -67,7 +67,7 @@ UniformBSplineSpace
 ## Degeneration
 
 !!! tip "Def.  Degeneration"
-    A B-spline space is said to be **non-degenerate** if its degree and knotvector satisfies following property:
+    A B-spline space is said to be **non-degenerate** if its degree and knot vector satisfies following property:
     ```math
     \begin{aligned}
     k_{i}&<k_{i+p+1} & (1 \le i \le l-p-1)
