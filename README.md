@@ -6,6 +6,7 @@ Basic (mathematical) operations for B-spline functions and related things with j
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://hyrodium.github.io/BasicBSpline.jl/dev)
 [![Build Status](https://github.com/hyrodium/BasicBSpline.jl/workflows/CI/badge.svg)](https://github.com/hyrodium/BasicBSpline.jl/actions)
 [![Coverage](https://codecov.io/gh/hyrodium/BasicBSpline.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/hyrodium/BasicBSpline.jl)
+[![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 [![DOI](https://zenodo.org/badge/258791290.svg)](https://zenodo.org/badge/latestdoi/258791290)
 
 ![](docs/src/img/BasicBSplineLogo.png)
