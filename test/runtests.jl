@@ -1,5 +1,4 @@
 using BasicBSpline
-import BasicBSpline.EmptyKnotVector
 using ChainRulesTestUtils
 using ChainRulesCore
 using IntervalSets
