@@ -1,5 +1,4 @@
 using BasicBSpline
-import BasicBSpline.EmptyKnotVector
 using ChainRulesTestUtils
 using ChainRulesCore
 using IntervalSets
@@ -12,6 +11,7 @@ using Plots
 using Aqua
 
 # Disable ambiguities tests for ChainRulesCore.frule
+Aqua.test_all(BasicBSpline; ambiguities=false)
 Aqua.test_ambiguities(BasicBSpline; exclude=[ChainRulesCore.frule])
 
 include("test_util.jl")

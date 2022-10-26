@@ -6,6 +6,7 @@ Basic (mathematical) operations for B-spline functions and related things with j
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://hyrodium.github.io/BasicBSpline.jl/dev)
 [![Build Status](https://github.com/hyrodium/BasicBSpline.jl/workflows/CI/badge.svg)](https://github.com/hyrodium/BasicBSpline.jl/actions)
 [![Coverage](https://codecov.io/gh/hyrodium/BasicBSpline.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/hyrodium/BasicBSpline.jl)
+[![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 [![DOI](https://zenodo.org/badge/258791290.svg)](https://zenodo.org/badge/latestdoi/258791290)
 
 ![](docs/src/img/BasicBSplineLogo.png)
@@ -18,10 +19,10 @@ This package provides basic mathematical operations for [B-spline](https://en.wi
 * Some operations for B-spline space (piecewise polynomial space)
 * B-spline manifold (includes curve, surface and solid)
 * Refinement algorithm for B-spline manifold
-* Fitting control points for given function
+* Fitting control points for a given function
 
 ## Comparison to other julia packages for B-spline
-Note that the following comparison might not correct.
+Note that the following comparison might not be correct.
 If you have any thoughts, please help in [issue#161](https://github.com/hyrodium/BasicBSpline.jl/issues/161).
 
 * [Interpolations.jl](https://github.com/JuliaMath/Interpolations.jl)
@@ -34,7 +35,7 @@ If you have any thoughts, please help in [issue#161](https://github.com/hyrodium
     * Only 1-d or 2-d B-spline manifold are supported.
     * 5 or less degree of polynomial are supported.
 * **[BasicBSpline.jl](https://github.com/hyrodium/BasicBSpline.jl) (this package)**
-    * Any degree of polynomial are supported.
+    * Any degrees of polynomial are supported.
     * Refinement algorithm for B-spline manifold.
     * Fitting algorithm by least squares.
     * High performance on speed.
@@ -75,7 +76,7 @@ plot(
 
 ![](docs/src/img/cover.png)
 
-Try [interactive graph with Desmos graphing calculator](https://www.desmos.com/calculator/ql6jqgdabs)!
+Try [an interactive graph with Desmos graphing calculator](https://www.desmos.com/calculator/ql6jqgdabs)!
 
 ### B-spline manifold
 ```julia
@@ -99,7 +100,7 @@ save_png("2dim.png", M) # save image
 ### Refinement
 #### h-refinemnet
 ```julia
-k₊=(KnotVector([3.3,4.2]),KnotVector([0.3,0.5])) # additional knotvectors
+k₊=(KnotVector([3.3,4.2]),KnotVector([0.3,0.5])) # additional knot vectors
 M_h = refinement(M, k₊) # refinement of B-spline manifold
 save_png("2dim_h-refinement.png", M_h) # save image
 ```
@@ -136,7 +137,7 @@ save_png("fitting.png", M, unitlength=50, xlims=(-10,10), ylims=(-10,10))
 ![](docs/src/img/fitting_desmos.png)
 ![](docs/src/img/fitting.png)
 
-If the knotvector span is too coarse, the approximation will be coarse.
+If the knot vector span is too coarse, the approximation will be coarse.
 ```julia
 p1 = 2
 p2 = 2
