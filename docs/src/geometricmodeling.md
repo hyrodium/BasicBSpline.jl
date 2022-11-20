@@ -33,15 +33,15 @@ p = 2
 k = KnotVector([0,0,0,1,1,2,2,3,3,4,4,4])
 P = BSplineSpace{p}(k)
 a = [
-    SVector(1,0),
-    SVector(1,1),
-    SVector(0,1),
-    SVector(-1,1),
-    SVector(-1,0),
+    SVector( 1, 0),
+    SVector( 1, 1),
+    SVector( 0, 1),
+    SVector(-1, 1),
+    SVector(-1, 0),
     SVector(-1,-1),
-    SVector(0,-1),
-    SVector(1,-1),
-    SVector(1,0)
+    SVector( 0,-1),
+    SVector( 1,-1),
+    SVector( 1, 0)
 ]
 w = [1,1/√2,1,1/√2,1,1/√2,1,1/√2,1]
 M = RationalBSplineManifold(a,w,P)
@@ -53,23 +53,35 @@ savefig("geometricmodeling-circle.html") # hide
 <object type="text/html" data="../geometricmodeling-circle.html" style="width:100%;height:420px;"></object>
 ```
 
-## Circle
+## Torus
 ```@example geometricmodeling
 R = 3
 r = 1
 
-a1 = (R+r)*a
-a5 = (R-r)*a
+a0 = [
+    SVector( 1, 0, 0),
+    SVector( 1, 1, 0),
+    SVector( 0, 1, 0),
+    SVector(-1, 1, 0),
+    SVector(-1, 0, 0),
+    SVector(-1,-1, 0),
+    SVector( 0,-1, 0),
+    SVector( 1,-1, 0),
+    SVector( 1, 0, 0)
+]
+
+a1 = (R+r)*a0
+a5 = (R-r)*a0
 a2 = [p+r*SVector(0,0,1) for p in a1]
-a3 = [p+r*SVector(0,0,1) for p in R*a]
+a3 = [p+r*SVector(0,0,1) for p in R*a0]
 a4 = [p+r*SVector(0,0,1) for p in a5]
 a6 = [p-r*SVector(0,0,1) for p in a5]
-a7 = [p-r*SVector(0,0,1) for p in R*a]
+a7 = [p-r*SVector(0,0,1) for p in R*a0]
 a8 = [p-r*SVector(0,0,1) for p in a1]
 a9 = a1
 
-A = hcat(a1,a2,a3,a4,a5,a6,a7,a8,a9)
-M = RationalBSplineManifold(A,w*w',P,P)
+a = hcat(a1,a2,a3,a4,a5,a6,a7,a8,a9)
+M = RationalBSplineManifold(a,w*w',P,P)
 plot(M)
 savefig("geometricmodeling-torus.html") # hide
 ```
