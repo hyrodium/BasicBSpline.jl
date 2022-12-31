@@ -18,15 +18,6 @@ BSplineDerivativeSpace{1, BSplineSpace{2, Int64}, Int64}(BSplineSpace{2, Int64}(
 
 julia> degree(P), degree(dP)
 (2, 1)
-
-julia> P = UniformBSplineSpace{2}(UniformKnotVector(1:6))
-UniformBSplineSpace{2, Int64, UnitRange{Int64}}(UniformKnotVector(1:6))
-
-julia> dP = BSplineDerivativeSpace{2}(P)
-BSplineDerivativeSpace{2, UniformBSplineSpace{2, Int64, UnitRange{Int64}}, Int64}(UniformBSplineSpace{2, Int64, UnitRange{Int64}}(UniformKnotVector(1:6)))
-
-julia> degree(P), degree(dP)
-(2, 0)
 ```
 """
 struct BSplineDerivativeSpace{r, S<:AbstractBSplineSpace, T} <: AbstractFunctionSpace{T}

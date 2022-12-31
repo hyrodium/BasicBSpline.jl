@@ -10,9 +10,9 @@
         @test eltype(k3) == Int
         for p in 0:3
             P = BSplineSpace{p}(k)
-            P1 = UniformBSplineSpace{p}(k1)
-            P2 = UniformBSplineSpace{p}(k2)
-            P3 = UniformBSplineSpace{p}(k3)
+            P1 = BSplineSpace{p}(k1)
+            P2 = BSplineSpace{p}(k2)
+            P3 = BSplineSpace{p}(k3)
             @test dim(P) == dim(P1)
             @test dim(P) == dim(P2)
             @test dim(P) == dim(P3)
@@ -49,9 +49,9 @@
         k3 = UniformKnotVector(v*2)
         for p in 0:3
             P = BSplineSpace{p}(k)
-            P1 = UniformBSplineSpace{p}(k1)
-            P2 = UniformBSplineSpace{p}(k2)
-            P3 = UniformBSplineSpace{p}(k3)
+            P1 = BSplineSpace{p}(k1)
+            P2 = BSplineSpace{p}(k2)
+            P3 = BSplineSpace{p}(k3)
             @test bsplinebasisall(P1,(l-2p)÷2,6//1) isa SVector{p+1,Rational{Int}}
             @test bsplinebasisall(P2,(l-2p)÷2,6//1) isa SVector{p+1,Float64}
             @test bsplinebasisall(P3,(l-2p)÷2,6//1) isa SVector{p+1,Rational{Int}}

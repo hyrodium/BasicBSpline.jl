@@ -59,8 +59,9 @@
         for p in 1:3, L in 1:8
             k1 = UniformKnotVector(1:L+2p+1)
             k2 = UniformKnotVector(p+1:p+L+1) + p*KnotVector([p+1]) + KnotVector(p+L+1:2p+L)
-            P1 = UniformBSplineSpace{p}(k1)
+            P1 = BSplineSpace{p}(k1)
             P2 = BSplineSpace{p}(k2)
+            @test P1 isa BSplineSpace{p,T,<:UniformKnotVector} where {p,T}
             @test domain(P1) == domain(P2)
             @test dim(P1) == dim(P2)
             @test P1 ≃ P2
@@ -76,21 +77,21 @@
 
     @testset "non-float" begin
         k = UniformKnotVector(1:15)
-        P = UniformBSplineSpace{3}(k)
+        P = BSplineSpace{3}(k)
         @test changebasis(P,P) isa Matrix{Float64}
         @test BasicBSpline._changebasis_R(P,P) isa Matrix{Float64}
         @test BasicBSpline._changebasis_I(P,P) isa Matrix{Float64}
         @test BasicBSpline._changebasis_sim(P,P) isa Matrix{Float64}
 
         k = UniformKnotVector(1:15//1)
-        P = UniformBSplineSpace{3}(k)
+        P = BSplineSpace{3}(k)
         @test changebasis(P,P) isa Matrix{Rational{Int}}
         @test BasicBSpline._changebasis_R(P,P) isa Matrix{Rational{Int}}
         @test BasicBSpline._changebasis_I(P,P) isa Matrix{Rational{Int}}
         @test BasicBSpline._changebasis_sim(P,P) isa Matrix{Rational{Int}}
 
         k = UniformKnotVector(1:BigInt(15))
-        P = UniformBSplineSpace{3}(k)
+        P = BSplineSpace{3}(k)
         @test changebasis(P,P) isa Matrix{BigFloat}
         @test BasicBSpline._changebasis_R(P,P) isa Matrix{BigFloat}
         @test BasicBSpline._changebasis_I(P,P) isa Matrix{BigFloat}
@@ -101,10 +102,10 @@
         for r in 1:5
             k = UniformKnotVector(0:r:50)
             for p in 0:4
-                P = UniformBSplineSpace{p}(k)
+                P = BSplineSpace{p}(k)
 
                 k′ = UniformKnotVector(0:50)
-                P′ = UniformBSplineSpace{p}(k′)
+                P′ = BSplineSpace{p}(k′)
                 A1 = @inferred changebasis(P, P′)
                 A2 = @inferred changebasis(BSplineSpace(P), BSplineSpace(P′))
                 @test P ⊆ P′
@@ -113,7 +114,7 @@
                 left = leftendpoint(domain(P))-p
                 right = rightendpoint(domain(P))+p
                 k′ = UniformKnotVector(left:right)
-                P′ = UniformBSplineSpace{p}(k′)
+                P′ = BSplineSpace{p}(k′)
                 A3 = @inferred changebasis(P, P′)
                 A4 = @inferred changebasis(BSplineSpace(P), BSplineSpace(P′))
                 @test P ⊑ P′

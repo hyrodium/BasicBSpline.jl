@@ -8,9 +8,6 @@ Abstract type for B-spline space (piecewise polynomial space).
 ```jldoctest
 julia> BSplineSpace <: AbstractBSplineSpace
 true
-
-julia> UniformBSplineSpace <: AbstractBSplineSpace
-true
 ```
 """
 abstract type AbstractBSplineSpace{p,T} <: AbstractFunctionSpace{T} end
@@ -40,9 +37,9 @@ julia> BSplineSpace{p}(k)
 BSplineSpace{2, Int64}(KnotVector([1, 3, 5, 6, 8, 9]))
 ```
 """
-struct BSplineSpace{p, T<:Real} <: AbstractBSplineSpace{p,T}
+struct BSplineSpace{p, T<:Real, K<:AbstractKnotVector{T}} <: AbstractBSplineSpace{p,T}
     knotvector::KnotVector{T}
-    global unsafe_bsplinespace(::Val{p}, k::AbstractKnotVector{T}) where {p,T} = new{p,T}(k)
+    global unsafe_bsplinespace(::Val{p}, k::K) where {p, T<:Real, K<:AbstractKnotVector{T}} = new{p,T,K}(k)
 end
 function BSplineSpace{p}(k::AbstractKnotVector) where p
     if p < 0
@@ -55,10 +52,10 @@ end
 Convert AbstractBSplineSpace to BSplineSpace
 """
 function BSplineSpace(P::AbstractBSplineSpace{p}) where p
-    return BSplineSpace{p}(knotvector(P))
+    return P
 end
 function BSplineSpace{p}(P::AbstractBSplineSpace{p}) where p
-    return BSplineSpace{p}(knotvector(P))
+    return P
 end
 function BSplineSpace{p,T}(P::AbstractBSplineSpace{p}) where {p,T}
     return unsafe_bsplinespace(Val{p}(),KnotVector{T}(knotvector(P)))
