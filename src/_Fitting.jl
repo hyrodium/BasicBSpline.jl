@@ -305,7 +305,7 @@ function innerproduct_R(P::BSplineSpace{p,T,<:UniformKnotVector{T, <:AbstractUni
     return Symmetric(A)
 end
 
-function innerproduct_R(P::BSplineSpace{p,T,<:UniformKnotVector}) where {p,T}
+function innerproduct_R(P::BSplineSpace{p,T,<:UniformKnotVector{T}}) where {p,T}
     U = StaticArrays.arithmetic_closure(T)
     d = step(_vec(knotvector(P)))
     n = dim(P)

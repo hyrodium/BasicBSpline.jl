@@ -22,7 +22,7 @@ struct KnotVector{T} <: AbstractKnotVector{T}
     global unsafe_knotvector(::Type{T}, v) where T = new{T}(v)
 end
 KnotVector{T}(v::AbstractVector) where T = unsafe_knotvector(T,sort(v))
-KnotVector(v::AbstractVector{T}) where {T<:Real} = unsafe_knotvector(T,sort(v))
+KnotVector(v::AbstractVector{T}) where T = unsafe_knotvector(T,sort(v))
 AbstractKnotVector{S}(k::KnotVector{T}) where {S, T} = unsafe_knotvector(promote_type(S,T), _vec(k))
 
 Base.copy(k::KnotVector{T}) where T = unsafe_knotvector(T,copy(_vec(k)))

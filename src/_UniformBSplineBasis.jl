@@ -47,7 +47,7 @@ end
     @boundscheck (1 ≤ i ≤ dim(P)) || throw(DomainError(i, "index of B-spline basis function is out of range."))
     return U(uniform_bsplinebasis_kernel(Val{p}(),t-i+1-k[1]))
 end
-@inline function bsplinebasis(P::BSplineSpace{p,T,<:UniformKnotVector},i::Integer,t::S) where {p, T, S<:Real}
+@inline function bsplinebasis(P::BSplineSpace{p,T,<:UniformKnotVector{T}},i::Integer,t::S) where {p, T, S<:Real}
     U = StaticArrays.arithmetic_closure(promote_type(T,S))
     k = knotvector(P)
     @boundscheck (1 ≤ i ≤ dim(P)) || throw(DomainError(i, "index of B-spline basis function is out of range."))
@@ -55,8 +55,8 @@ end
     b = @inbounds k.vector[i+p+1]
     return U(uniform_bsplinebasis_kernel(Val{p}(),(p+1)*(t-a)/(b-a)))
 end
-@inline bsplinebasis₋₀(P::BSplineSpace{p,T,<:UniformKnotVector},i::Integer,t::Real) where {p,T} = bsplinebasis(P,i,t)
-@inline bsplinebasis₊₀(P::BSplineSpace{p,T,<:UniformKnotVector},i::Integer,t::Real) where {p,T} = bsplinebasis(P,i,t)
+@inline bsplinebasis₋₀(P::BSplineSpace{p,T,<:UniformKnotVector{T}},i::Integer,t::Real) where {p,T} = bsplinebasis(P,i,t)
+@inline bsplinebasis₊₀(P::BSplineSpace{p,T,<:UniformKnotVector{T}},i::Integer,t::Real) where {p,T} = bsplinebasis(P,i,t)
 
 ## bsplinebasisall
 @inline function bsplinebasisall(P::BSplineSpace{p,T,<:UniformKnotVector{T,R}},i::Integer,t::S) where {p, T, R<:AbstractUnitRange, S<:Real}
@@ -65,7 +65,7 @@ end
     @boundscheck (0 ≤ i ≤ length(k)-2p) || throw(DomainError(i, "index of interval is out of range."))
     return uniform_bsplinebasisall_kernel(Val{p}(),U(t-i+1-p-k[1]))
 end
-@inline function bsplinebasisall(P::BSplineSpace{p,T,<:UniformKnotVector},i::Integer,t::S) where {p, T, S<:Real}
+@inline function bsplinebasisall(P::BSplineSpace{p,T,<:UniformKnotVector{T}},i::Integer,t::S) where {p, T, S<:Real}
     U = StaticArrays.arithmetic_closure(promote_type(T,S))
     k = knotvector(P)
     @boundscheck (0 ≤ i ≤ length(k)-2p) || throw(DomainError(i, "index of interval is out of range."))

@@ -189,7 +189,7 @@ function _changebasis_I(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′}) whe
 end
 
 ## Uniform B-spline space
-function _changebasis_R(P::BSplineSpace{p,T,<:UniformKnotVector}, P′::BSplineSpace{p,T′,<:UniformKnotVector}) where {p,T,T′}
+function _changebasis_R(P::BSplineSpace{p,T,<:UniformKnotVector{T}}, P′::BSplineSpace{p,T′,<:UniformKnotVector{T′}}) where {p,T,T′}
     P ⊆ P′ || throw(DomainError((P,P′),"P ⊆ P′ should be hold."))
     k = knotvector(P)
     k′ = knotvector(P′)
@@ -204,7 +204,7 @@ function _changebasis_R(P::BSplineSpace{p,T,<:UniformKnotVector}, P′::BSplineS
     end
     return A
 end
-function _changebasis_I(P::BSplineSpace{p,T,<:UniformKnotVector}, P′::BSplineSpace{p,T′,<:UniformKnotVector}) where {p,T,T′}
+function _changebasis_I(P::BSplineSpace{p,T,<:UniformKnotVector{T}}, P′::BSplineSpace{p,T′,<:UniformKnotVector{T′}}) where {p,T,T′}
     P ⊑ P′ || throw(DomainError((P,P′),"P ⊑ P′ should be hold."))
     k = knotvector(P)
     k′ = knotvector(P′)
