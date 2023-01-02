@@ -60,10 +60,6 @@ AbstractBSplineSpace
 BSplineSpace
 ```
 
-```@docs
-UniformBSplineSpace
-```
-
 ## Degeneration
 
 !!! tip "Def.  Degeneration"
