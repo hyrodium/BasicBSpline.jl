@@ -45,13 +45,13 @@ function BSplineSpace{p}(k::AbstractKnotVector) where p
     if p < 0
         throw(DomainError(p, "degree of polynominal must be non-negative"))
     end
-    unsafe_bsplinespace(Val{p}(), k)
+    return unsafe_bsplinespace(Val{p}(), k)
 end
 function BSplineSpace{p,T}(k::AbstractKnotVector{T}) where {p, T}
-    unsafe_bsplinespace(Val{p}(), k)
+    return BSplineSpace{p}(k)
 end
 function BSplineSpace{p,T1}(k::AbstractKnotVector{T2}) where {p, T1, T2}
-    unsafe_bsplinespace(Val{p}(), AbstractKnotVector{T1}(k))
+    return BSplineSpace{p,T1}(AbstractKnotVector{T1}(k))
 end
 
 """
