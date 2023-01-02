@@ -12,7 +12,13 @@ Assumption:
 """
 function _changebasis_R end
 
-function _changebasis_R(P::BSplineSpace{0,T}, P′::BSplineSpace{p′,T′}) where {p′,T,T′}
+function _changebasis_R(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′}) where {p,T,p′,T′}
+    _P = BSplineSpace{p,T,KnotVector{T}}(P)
+    _P′ = BSplineSpace{p′,T′,KnotVector{T′}}(P′)
+    return _changebasis_R(_P,_P′)
+end
+
+function _changebasis_R(P::BSplineSpace{0,T,KnotVector{T}}, P′::BSplineSpace{p′,T′,KnotVector{T′}}) where {p′,T,T′}
     P ⊆ P′ || throw(DomainError((P,P′),"P ⊆ P′ should be hold."))
     U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     n = dim(P)
@@ -22,7 +28,7 @@ function _changebasis_R(P::BSplineSpace{0,T}, P′::BSplineSpace{p′,T′}) whe
     return A⁰
 end
 
-function _changebasis_R(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′}) where {p,p′,T,T′}
+function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p′,T′,KnotVector{T′}}) where {p,p′,T,T′}
     P ⊆ P′ || throw(DomainError((P,P′),"P ⊆ P′ should be hold."))
     U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     k = knotvector(P)

@@ -65,7 +65,7 @@ end
     @boundscheck (0 ≤ i ≤ length(k)-2p) || throw(DomainError(i, "index of interval is out of range."))
     return uniform_bsplinebasisall_kernel(Val{p}(),U(t-i+1-p-k[1]))
 end
-@inline function bsplinebasisall(P::BSplineSpace{p,T,<:UniformKnotVector{T}},i::Integer,t::S) where {p, T, S<:Real}
+@inline function bsplinebasisall(P::BSplineSpace{p,T,<:UniformKnotVector{T}},i::Integer,t::S) where {p, T<:Real, S<:Real}
     U = StaticArrays.arithmetic_closure(promote_type(T,S))
     k = knotvector(P)
     @boundscheck (0 ≤ i ≤ length(k)-2p) || throw(DomainError(i, "index of interval is out of range."))

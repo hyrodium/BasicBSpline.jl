@@ -290,7 +290,7 @@ function innerproduct_R(func, Ps::Tuple{BSplineSpace{p₁},BSplineSpace{p₂},BS
     return b
 end
 
-function innerproduct_R(P::BSplineSpace{p,T,<:UniformKnotVector{T, <:AbstractUnitRange}}) where {p,T}
+function innerproduct_R(P::BSplineSpace{p,T,<:UniformKnotVector{T, <:AbstractUnitRange}}) where {p,T<:Real}
     U = StaticArrays.arithmetic_closure(T)
     n = dim(P)
     A = zeros(U,n,n)
@@ -305,7 +305,7 @@ function innerproduct_R(P::BSplineSpace{p,T,<:UniformKnotVector{T, <:AbstractUni
     return Symmetric(A)
 end
 
-function innerproduct_R(P::BSplineSpace{p,T,<:UniformKnotVector{T}}) where {p,T}
+function innerproduct_R(P::BSplineSpace{p,T,<:UniformKnotVector{T}}) where {p,T<:Real}
     U = StaticArrays.arithmetic_closure(T)
     d = step(_vec(knotvector(P)))
     n = dim(P)
