@@ -38,14 +38,20 @@ BSplineSpace{2, Int64}(KnotVector([1, 3, 5, 6, 8, 9]))
 ```
 """
 struct BSplineSpace{p, T<:Real, K<:AbstractKnotVector{T}} <: AbstractBSplineSpace{p,T}
-    knotvector::KnotVector{T}
-    global unsafe_bsplinespace(::Val{p}, k::K) where {p, T<:Real, K<:AbstractKnotVector{T}} = new{p,T,K}(k)
+    knotvector::K
+    global unsafe_bsplinespace(::Val{p}, k::K) where {p, K<:AbstractKnotVector{T}} where {T<:Real} = new{p,T,K}(k)
 end
 function BSplineSpace{p}(k::AbstractKnotVector) where p
     if p < 0
         throw(DomainError(p, "degree of polynominal must be non-negative"))
     end
     unsafe_bsplinespace(Val{p}(), k)
+end
+function BSplineSpace{p,T}(k::AbstractKnotVector{T}) where {p, T}
+    unsafe_bsplinespace(Val{p}(), k)
+end
+function BSplineSpace{p,T1}(k::AbstractKnotVector{T2}) where {p, T1, T2}
+    unsafe_bsplinespace(Val{p}(), AbstractKnotVector{T1}(k))
 end
 
 """
@@ -58,7 +64,10 @@ function BSplineSpace{p}(P::AbstractBSplineSpace{p}) where p
     return P
 end
 function BSplineSpace{p,T}(P::AbstractBSplineSpace{p}) where {p,T}
-    return unsafe_bsplinespace(Val{p}(),KnotVector{T}(knotvector(P)))
+    return BSplineSpace{p}(AbstractKnotVector{T}(knotvector(P)))
+end
+function BSplineSpace{p,T,K}(P::AbstractBSplineSpace{p}) where {p,T,K}
+    return BSplineSpace{p,T}(K(knotvector(P)))
 end
 
 bsplinespace(P::AbstractBSplineSpace) = P
