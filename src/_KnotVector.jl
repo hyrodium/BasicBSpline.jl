@@ -244,6 +244,10 @@ function Base.issubset(k::KnotVector, k′::KnotVector)
     return true
 end
 
+function Base.issubset(k::AbstractKnotVector, k′::AbstractKnotVector)
+    issubset(KnotVector(k),KnotVector(k′))
+end
+
 Base.:⊊(A::AbstractKnotVector, B::AbstractKnotVector) = (A ≠ B) & (A ⊆ B)
 Base.:⊋(A::AbstractKnotVector, B::AbstractKnotVector) = (A ≠ B) & (A ⊇ B)
 
