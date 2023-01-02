@@ -37,10 +37,10 @@ ERROR: DomainError with 1.2:
 The input 1.2 is out of range.
 ```
 """
-struct BSplineManifold{Dim,Deg,C,S<:NTuple{Dim, AbstractBSplineSpace}} <: AbstractBSplineManifold{Dim,Deg}
+struct BSplineManifold{Dim,Deg,C,S<:NTuple{Dim, BSplineSpace}} <: AbstractBSplineManifold{Dim,Deg}
     bsplinespaces::S
     controlpoints::Array{C,Dim}
-    function BSplineManifold(a::Array{C,Dim},Ps::S) where {S<:NTuple{Dim, AbstractBSplineSpace},C} where Dim
+    function BSplineManifold(a::Array{C,Dim},Ps::S) where {S<:NTuple{Dim, BSplineSpace},C} where Dim
         if size(a) != dim.(Ps)
             msg = "The size of control points array $(size(a)) and dimensions of B-spline spaces $(dim.(Ps)) must be equal."
             throw(DimensionMismatch(msg))
@@ -50,7 +50,7 @@ struct BSplineManifold{Dim,Deg,C,S<:NTuple{Dim, AbstractBSplineSpace}} <: Abstra
     end
 end
 
-BSplineManifold(a::Array{C,Dim},Ps::Vararg{AbstractBSplineSpace, Dim}) where {C,Dim} = BSplineManifold(a,Ps)
+BSplineManifold(a::Array{C,Dim},Ps::Vararg{BSplineSpace, Dim}) where {C,Dim} = BSplineManifold(a,Ps)
 
 Base.:(==)(M1::AbstractBSplineManifold, M2::AbstractBSplineManifold) = (bsplinespaces(M1)==bsplinespaces(M2)) & (controlpoints(M1)==controlpoints(M2))
 

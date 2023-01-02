@@ -1,23 +1,6 @@
 # B-spline space
 
 abstract type AbstractFunctionSpace{T} end
-@doc raw"""
-Abstract type for B-spline space (piecewise polynomial space).
-
-# Examples
-```jldoctest
-julia> BSplineSpace <: AbstractBSplineSpace
-true
-```
-"""
-abstract type AbstractBSplineSpace{p,T} <: AbstractFunctionSpace{T} end
-
-# Broadcast like a scalar
-Base.Broadcast.broadcastable(P::AbstractBSplineSpace) = Ref(P)
-
-# Equality
-@inline Base.:(==)(P1::AbstractBSplineSpace{p}, P2::AbstractBSplineSpace{p}) where p = knotvector(P1) == knotvector(P2)
-@inline Base.:(==)(P1::AbstractBSplineSpace{p1}, P2::AbstractBSplineSpace{p2}) where {p1, p2} = false
 
 @doc raw"""
 Construct B-spline space from given polynominal degree and knot vector.
@@ -37,7 +20,7 @@ julia> BSplineSpace{p}(k)
 BSplineSpace{2, Int64}(KnotVector([1, 3, 5, 6, 8, 9]))
 ```
 """
-struct BSplineSpace{p, T<:Real, K<:AbstractKnotVector{T}} <: AbstractBSplineSpace{p,T}
+struct BSplineSpace{p, T<:Real, K<:AbstractKnotVector{T}} <: AbstractFunctionSpace{T}
     knotvector::K
     global unsafe_bsplinespace(::Val{p}, k::K) where {p, K<:AbstractKnotVector{T}} where {T<:Real} = new{p,T,K}(k)
 end
@@ -55,24 +38,31 @@ function BSplineSpace{p,T1}(k::AbstractKnotVector{T2}) where {p, T1, T2}
 end
 
 """
-Convert AbstractBSplineSpace to BSplineSpace
+Convert BSplineSpace to BSplineSpace
 """
-function BSplineSpace(P::AbstractBSplineSpace{p}) where p
+function BSplineSpace(P::BSplineSpace{p}) where p
     return P
 end
-function BSplineSpace{p}(P::AbstractBSplineSpace{p}) where p
+function BSplineSpace{p}(P::BSplineSpace{p}) where p
     return P
 end
-function BSplineSpace{p,T}(P::AbstractBSplineSpace{p}) where {p,T}
+function BSplineSpace{p,T}(P::BSplineSpace{p}) where {p,T}
     return BSplineSpace{p}(AbstractKnotVector{T}(knotvector(P)))
 end
-function BSplineSpace{p,T,K}(P::AbstractBSplineSpace{p}) where {p,T,K}
+function BSplineSpace{p,T,K}(P::BSplineSpace{p}) where {p,T,K}
     return BSplineSpace{p,T}(K(knotvector(P)))
 end
 
-bsplinespace(P::AbstractBSplineSpace) = P
+# Broadcast like a scalar
+Base.Broadcast.broadcastable(P::BSplineSpace) = Ref(P)
 
-@inline function degree(::AbstractBSplineSpace{p}) where p
+# Equality
+@inline Base.:(==)(P1::BSplineSpace{p}, P2::BSplineSpace{p}) where p = knotvector(P1) == knotvector(P2)
+@inline Base.:(==)(P1::BSplineSpace{p1}, P2::BSplineSpace{p2}) where {p1, p2} = false
+
+bsplinespace(P::BSplineSpace) = P
+
+@inline function degree(::BSplineSpace{p}) where p
     return p
 end
 
@@ -80,7 +70,7 @@ end
     return P.knotvector
 end
 
-function domain(P::AbstractBSplineSpace)
+function domain(P::BSplineSpace)
     p = degree(P)
     k = knotvector(P)
     return k[1+p]..k[end-p]
@@ -102,7 +92,7 @@ julia> dim(BSplineSpace{1}(KnotVector([1,2,2,2,4])))
 3
 ```
 """
-function dim(bsplinespace::AbstractBSplineSpace{p}) where p
+function dim(bsplinespace::BSplineSpace{p}) where p
     k = knotvector(bsplinespace)
     return length(k) - p - 1
 end
@@ -135,7 +125,7 @@ julia> P2 ⊈ P3
 true
 ```
 """
-function Base.issubset(P::AbstractBSplineSpace{p}, P′::AbstractBSplineSpace{p′}) where {p, p′}
+function Base.issubset(P::BSplineSpace{p}, P′::BSplineSpace{p′}) where {p, p′}
     k = knotvector(P)
     k′ = knotvector(P′)
     p₊ = p′ - p
@@ -153,7 +143,7 @@ Check inclusive relationship between B-spline spaces.
 \subseteq\mathcal{P}[p',k']|_{[k'_{p'+1},k'_{l'-p'}]}
 ```
 """
-function issqsubset(P::AbstractBSplineSpace{p}, P′::AbstractBSplineSpace{p′}) where {p, p′}
+function issqsubset(P::BSplineSpace{p}, P′::BSplineSpace{p′}) where {p, p′}
     k = knotvector(P)
     k′ = knotvector(P′)
     p₊ = p′ - p
@@ -175,23 +165,23 @@ const ⊑ = issqsubset
 ⋢(l, r) = !⊑(l, r)
 ⋣(l, r) = r ⋢ l
 
-≃(P1::AbstractBSplineSpace, P2::AbstractBSplineSpace) = (P1 ⊑ P2) & (P2 ⊑ P1)
+≃(P1::BSplineSpace, P2::BSplineSpace) = (P1 ⊑ P2) & (P2 ⊑ P1)
 
 Base.:⊊(A::AbstractFunctionSpace, B::AbstractFunctionSpace) = (A ≠ B) & (A ⊆ B)
 Base.:⊋(A::AbstractFunctionSpace, B::AbstractFunctionSpace) = (A ≠ B) & (A ⊇ B)
 ⋤(A::AbstractFunctionSpace, B::AbstractFunctionSpace) = (A ≠ B) & (A ⊑ B)
 ⋥(A::AbstractFunctionSpace, B::AbstractFunctionSpace) = (A ≠ B) & (A ⊒ B)
 
-function isdegenerate_R(P::AbstractBSplineSpace{p}, i::Integer) where p
+function isdegenerate_R(P::BSplineSpace{p}, i::Integer) where p
     k = knotvector(P)
     return k[i] == k[i+p+1]
 end
 
-function isdegenerate_I(P::AbstractBSplineSpace{p}, i::Integer) where p
+function isdegenerate_I(P::BSplineSpace{p}, i::Integer) where p
     return iszero(width(bsplinesupport(P,i) ∩ domain(P)))
 end
 
-function _iszeros(P::AbstractBSplineSpace{p}) where p
+function _iszeros(P::BSplineSpace{p}) where p
     return [isdegenerate_R(P,i) for i in 1:dim(P)]
 end
 
@@ -207,7 +197,7 @@ julia> isnondegenerate(BSplineSpace{1}(KnotVector([1,3,3,3,8,9])))
 false
 ```
 """
-isnondegenerate(P::AbstractBSplineSpace)
+isnondegenerate(P::BSplineSpace)
 
 @doc raw"""
 Check if given B-spline space is degenerate.
@@ -221,22 +211,22 @@ julia> isdegenerate(BSplineSpace{1}(KnotVector([1,3,3,3,8,9])))
 true
 ```
 """
-isdegenerate(P::AbstractBSplineSpace)
+isdegenerate(P::BSplineSpace)
 
 for (f, fnon) in ((:isdegenerate_R, :isnondegenerate_R), (:isdegenerate_I, :isnondegenerate_I))
-    @eval function $f(P::AbstractBSplineSpace)
+    @eval function $f(P::BSplineSpace)
         for i in 1:dim(P)
             $f(P,i) && return true
         end
         return false
     end
-    @eval $fnon(P::AbstractBSplineSpace, i::Int) = !$f(P, i)
-    @eval $fnon(P::AbstractBSplineSpace) = !$f(P)
+    @eval $fnon(P::BSplineSpace, i::Int) = !$f(P, i)
+    @eval $fnon(P::BSplineSpace) = !$f(P)
 end
-isdegenerate(P::AbstractBSplineSpace, i::Integer) = isdegenerate_R(P,i)
-isdegenerate(P::AbstractBSplineSpace) = isdegenerate_R(P)
-isnondegenerate(P::AbstractBSplineSpace, i::Integer) = isnondegenerate_R(P, i)
-isnondegenerate(P::AbstractBSplineSpace) = isnondegenerate_R(P)
+isdegenerate(P::BSplineSpace, i::Integer) = isdegenerate_R(P,i)
+isdegenerate(P::BSplineSpace) = isdegenerate_R(P)
+isnondegenerate(P::BSplineSpace, i::Integer) = isnondegenerate_R(P, i)
+isnondegenerate(P::BSplineSpace) = isnondegenerate_R(P)
 
 """
 Exact dimension of a B-spline space.
@@ -250,7 +240,7 @@ julia> exactdim(BSplineSpace{1}(KnotVector([1,2,2,2,4])))
 2
 ```
 """
-function exactdim(P::AbstractBSplineSpace)
+function exactdim(P::BSplineSpace)
     n = dim(P)
     for i in 1:dim(P)
         n -= isdegenerate_R(P,i)
@@ -279,14 +269,14 @@ julia> bsplinesupport(P,2)
 1.5..8.0
 ```
 """
-bsplinesupport(P::AbstractBSplineSpace, i::Integer) = bsplinesupport_R(P,i)
+bsplinesupport(P::BSplineSpace, i::Integer) = bsplinesupport_R(P,i)
 
-function bsplinesupport_R(P::AbstractBSplineSpace{p}, i::Integer) where p
+function bsplinesupport_R(P::BSplineSpace{p}, i::Integer) where p
     k = knotvector(P)
     return k[i]..k[i+p+1]
 end
 
-function bsplinesupport_I(P::AbstractBSplineSpace{p}, i::Integer) where p
+function bsplinesupport_I(P::BSplineSpace{p}, i::Integer) where p
     return bsplinesupport_R(P,i) ∩ domain(P)
 end
 
@@ -328,7 +318,7 @@ julia> intervalindex(P,9.5)
 3
 ```
 """
-function intervalindex(P::AbstractBSplineSpace{p},t::Real) where p
+function intervalindex(P::BSplineSpace{p},t::Real) where p
     k = knotvector(P)
     l = length(k)
     v = view(_vec(k),2+p:l-p-1)

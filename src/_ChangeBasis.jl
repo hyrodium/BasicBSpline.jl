@@ -12,7 +12,7 @@ Assumption:
 """
 function _changebasis_R end
 
-function _changebasis_R(P::AbstractBSplineSpace{0,T}, P′::AbstractBSplineSpace{p′,T′}) where {p′,T,T′}
+function _changebasis_R(P::BSplineSpace{0,T}, P′::BSplineSpace{p′,T′}) where {p′,T,T′}
     P ⊆ P′ || throw(DomainError((P,P′),"P ⊆ P′ should be hold."))
     U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     n = dim(P)
@@ -22,7 +22,7 @@ function _changebasis_R(P::AbstractBSplineSpace{0,T}, P′::AbstractBSplineSpace
     return A⁰
 end
 
-function _changebasis_R(P::AbstractBSplineSpace{p,T}, P′::AbstractBSplineSpace{p′,T′}) where {p,p′,T,T′}
+function _changebasis_R(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′}) where {p,p′,T,T′}
     P ⊆ P′ || throw(DomainError((P,P′),"P ⊆ P′ should be hold."))
     U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     k = knotvector(P)
@@ -100,7 +100,7 @@ B_{(i,p_1,k_1)} = \sum_{j}A_{i,j}B_{(j,p_2,k_2)}
 Assumption:
 * ``P_1 ≃ P_2``
 """
-function _changebasis_sim(P1::AbstractBSplineSpace{p,T1}, P2::AbstractBSplineSpace{p,T2}) where {p,T1,T2}
+function _changebasis_sim(P1::BSplineSpace{p,T1}, P2::BSplineSpace{p,T2}) where {p,T1,T2}
     P1 ≃ P2 || throw(DomainError((P1,P2),"P1 ≃ P2 should be hold."))
     U = StaticArrays.arithmetic_closure(promote_type(T1,T2))
     k1 = knotvector(P1)
@@ -139,19 +139,19 @@ function _changebasis_sim(P1::AbstractBSplineSpace{p,T1}, P2::AbstractBSplineSpa
     return A
 end
 
-@generated function _derivatives_at_left(P::AbstractBSplineSpace{p,T}) where {p, T}
+@generated function _derivatives_at_left(P::BSplineSpace{p,T}) where {p, T}
     args = [:(pop(bsplinebasisall(BSplineDerivativeSpace{$(r)}(P),1,a))) for r in 0:p-1]
     quote
         a, _ = extrema(domain(P))
         $(Expr(:call, :hcat, args...))
     end
 end
-function _derivatives_at_left(::AbstractBSplineSpace{0,T}) where {T}
+function _derivatives_at_left(::BSplineSpace{0,T}) where {T}
     U = StaticArrays.arithmetic_closure(T)
     SMatrix{0,0,U}()
 end
 
-@generated function _derivatives_at_right(P::AbstractBSplineSpace{p,T}) where {p, T}
+@generated function _derivatives_at_right(P::BSplineSpace{p,T}) where {p, T}
     args = [:(popfirst(bsplinebasisall(BSplineDerivativeSpace{$(r)}(P),n-p,b))) for r in 0:p-1]
     quote
         n = dim(P)
@@ -159,7 +159,7 @@ end
         $(Expr(:call, :hcat, args...))
     end
 end
-function _derivatives_at_right(::AbstractBSplineSpace{0,T}) where {T}
+function _derivatives_at_right(::BSplineSpace{0,T}) where {T}
     U = StaticArrays.arithmetic_closure(T)
     SMatrix{0,0,U}()
 end
@@ -173,7 +173,7 @@ B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p',k')}
 Assumption:
 * ``P ⊑ P^{\prime}``
 """
-function _changebasis_I(P::AbstractBSplineSpace{p,T}, P′::AbstractBSplineSpace{p′,T′}) where {p,p′,T,T′}
+function _changebasis_I(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′}) where {p,p′,T,T′}
     P ⊑ P′ || throw(DomainError((P,P′),"P ⊑ P′ should be hold."))
     k = knotvector(P)
     k′ = knotvector(P′)
@@ -227,7 +227,7 @@ function _changebasis_I(P::BSplineSpace{p,T,<:UniformKnotVector}, P′::BSplineS
 end
 
 ## BSplineDerivativeSpace
-function _changebasis_R(dP::BSplineDerivativeSpace{r,<:AbstractBSplineSpace{p}}, P′::AbstractBSplineSpace) where {r,p}
+function _changebasis_R(dP::BSplineDerivativeSpace{r,<:BSplineSpace{p}}, P′::BSplineSpace) where {r,p}
     dP ⊆ P′ || throw(DomainError((P,P′),"dP ⊆ P′ should be hold."))
     k = knotvector(dP)
     n = dim(dP)
@@ -263,7 +263,7 @@ function _changebasis_R(dP::BSplineDerivativeSpace{r}, dP′::BSplineDerivativeS
         return _changebasis_R(P, P′)
     end
 end
-function _changebasis_R(P::AbstractBSplineSpace, dP′::BSplineDerivativeSpace{0})
+function _changebasis_R(P::BSplineSpace, dP′::BSplineDerivativeSpace{0})
     P′ = bsplinespace(dP′)
     return _changebasis_R(P, P′)
 end

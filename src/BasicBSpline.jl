@@ -9,7 +9,7 @@ using ChainRulesCore
 
 # Types
 export AbstractKnotVector, KnotVector, UniformKnotVector, EmptyKnotVector
-export AbstractBSplineSpace, BSplineSpace
+export BSplineSpace
 export AbstractBSplineManifold, BSplineManifold, RationalBSplineManifold
 export BSplineDerivativeSpace
 

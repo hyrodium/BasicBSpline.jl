@@ -34,11 +34,11 @@ julia> norm(M(0.3))
 1.0
 ```
 """
-struct RationalBSplineManifold{Dim,Deg,C,S<:NTuple{Dim, AbstractBSplineSpace},T} <: AbstractRationalBSplineManifold{Dim,Deg}
+struct RationalBSplineManifold{Dim,Deg,C,S<:NTuple{Dim, BSplineSpace},T} <: AbstractRationalBSplineManifold{Dim,Deg}
     bsplinespaces::S
     controlpoints::Array{C,Dim}
     weights::Array{T,Dim}
-    function RationalBSplineManifold(a::Array{C,Dim},w::Array{T,Dim},Ps::S) where {S<:NTuple{Dim, AbstractBSplineSpace},C,T<:Real} where Dim
+    function RationalBSplineManifold(a::Array{C,Dim},w::Array{T,Dim},Ps::S) where {S<:NTuple{Dim, BSplineSpace},C,T<:Real} where Dim
         if size(a) != dim.(Ps)
             msg = "The size of control points array $(size(a)) and dimensions of B-spline spaces $(dim.(Ps)) must be equal."
             throw(DimensionMismatch(msg))
@@ -48,7 +48,7 @@ struct RationalBSplineManifold{Dim,Deg,C,S<:NTuple{Dim, AbstractBSplineSpace},T}
     end
 end
 
-RationalBSplineManifold(a::Array{C,Dim},w::Array{T,Dim},Ps::Vararg{AbstractBSplineSpace, Dim}) where {C,Dim,T<:Real} = RationalBSplineManifold(a,w,Ps)
+RationalBSplineManifold(a::Array{C,Dim},w::Array{T,Dim},Ps::Vararg{BSplineSpace, Dim}) where {C,Dim,T<:Real} = RationalBSplineManifold(a,w,Ps)
 
 Base.:(==)(M1::AbstractRationalBSplineManifold, M2::AbstractRationalBSplineManifold) = (bsplinespaces(M1)==bsplinespaces(M2)) & (controlpoints(M1)==controlpoints(M2)) & (weights(M1)==weights(M2))
 
