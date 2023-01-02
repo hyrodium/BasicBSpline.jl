@@ -103,21 +103,28 @@
             k = UniformKnotVector(0:r:50)
             for p in 0:4
                 P = BSplineSpace{p}(k)
+                Q = BSplineSpace{p,Int,KnotVector{Int}}(P)
 
                 k′ = UniformKnotVector(0:50)
                 P′ = BSplineSpace{p}(k′)
+                Q′ = BSplineSpace{p,Int,KnotVector{Int}}(P′)
                 A1 = @inferred changebasis(P, P′)
-                A2 = @inferred changebasis(BSplineSpace(P), BSplineSpace(P′))
+                A2 = @inferred changebasis(Q, Q′)
                 @test P ⊆ P′
+                @test P == Q
+                @test P′ == Q′
                 @test A1 ≈ A2
 
                 left = leftendpoint(domain(P))-p
                 right = rightendpoint(domain(P))+p
                 k′ = UniformKnotVector(left:right)
                 P′ = BSplineSpace{p}(k′)
+                Q′ = BSplineSpace{p,Int,KnotVector{Int}}(P′)
                 A3 = @inferred changebasis(P, P′)
-                A4 = @inferred changebasis(BSplineSpace(P), BSplineSpace(P′))
+                A4 = @inferred changebasis(Q, Q′)
                 @test P ⊑ P′
+                @test P == Q
+                @test P′ == Q′
                 @test A3 ≈ A4
             end
         end

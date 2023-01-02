@@ -204,26 +204,29 @@
         k = UniformKnotVector(1:42)
         for p in 0:3
             P = BSplineSpace{p}(k)
-            @test BasicBSpline.innerproduct_R(P) ≈ BasicBSpline.innerproduct_R(BSplineSpace(P))
+            Q = BSplineSpace{p,Rational{Int},KnotVector{Rational{Int}}}(P)
+            @test BasicBSpline.innerproduct_R(P) ≈ BasicBSpline.innerproduct_R(Q)
             @test BasicBSpline.innerproduct_R(P) isa Symmetric{Float64,Matrix{Float64}}
-            @test BasicBSpline.innerproduct_R(BSplineSpace(P)) isa Symmetric{Float64,Matrix{Float64}}
+            @test BasicBSpline.innerproduct_R(Q) isa Symmetric{Float64,Matrix{Float64}}
         end
 
         k = UniformKnotVector(1:2:42)
         for p in 0:3
             P = BSplineSpace{p}(k)
-            @test BasicBSpline.innerproduct_R(P) ≈ BasicBSpline.innerproduct_R(BSplineSpace(P))
+            Q = BSplineSpace{p,Rational{Int},KnotVector{Rational{Int}}}(P)
+            @test BasicBSpline.innerproduct_R(P) ≈ BasicBSpline.innerproduct_R(Q)
             @test BasicBSpline.innerproduct_R(P) isa Symmetric{Float64,Matrix{Float64}}
-            @test BasicBSpline.innerproduct_R(BSplineSpace(P)) isa Symmetric{Float64,Matrix{Float64}}
+            @test BasicBSpline.innerproduct_R(Q) isa Symmetric{Float64,Matrix{Float64}}
         end
 
         k = UniformKnotVector(1:2:42//1)
         for p in 0:3
             P = BSplineSpace{p}(k)
-            @test BasicBSpline.innerproduct_R(P) ≈ BasicBSpline.innerproduct_R(BSplineSpace(P))
+            Q = BSplineSpace{p,Rational{Int},KnotVector{Rational{Int}}}(P)
+            @test BasicBSpline.innerproduct_R(P) ≈ BasicBSpline.innerproduct_R(Q)
             @test BasicBSpline.innerproduct_R(P) isa Symmetric{Rational{Int},Matrix{Rational{Int}}}
             @test BasicBSpline.innerproduct_I(P) isa Symmetric{Float64,Matrix{Float64}}  # TODO: This should be Rational
-            @test BasicBSpline.innerproduct_R(BSplineSpace(P)) isa Symmetric{Float64,Matrix{Float64}}
+            @test BasicBSpline.innerproduct_R(Q) isa Symmetric{Float64,Matrix{Float64}}
         end
     end
 
