@@ -33,6 +33,9 @@ end
 function BSplineDerivativeSpace{r,S}(P::S) where {r, S<:BSplineSpace{p,T}} where {p,T}
     BSplineDerivativeSpace{r,S,T}(P)
 end
+function BSplineDerivativeSpace{r,S}(P::BSplineSpace{p}) where {S<:BSplineSpace{p}} where {r,p}
+    BSplineDerivativeSpace{r}(S(P))
+end
 function BSplineDerivativeSpace{r,S}(dP::BSplineDerivativeSpace{r,S}) where {r,S}
     dP
 end
