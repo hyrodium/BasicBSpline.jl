@@ -53,10 +53,6 @@ Note that each element of the space ``\mathcal{P}[p,k]`` is a piecewise polynomi
 [TODO: fig]
 
 ```@docs
-AbstractBSplineSpace
-```
-
-```@docs
 BSplineSpace
 ```
 
@@ -75,7 +71,7 @@ isnondegenerate
 ```
 
 ```@docs
-isdegenerate(P::AbstractBSplineSpace)
+isdegenerate(P::BSplineSpace)
 ```
 
 ## Dimensions
@@ -91,5 +87,5 @@ dim
 ```
 
 ```@docs
-exactdim(P::AbstractBSplineSpace)
+exactdim(P::BSplineSpace)
 ```
