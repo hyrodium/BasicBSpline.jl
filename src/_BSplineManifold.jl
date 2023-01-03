@@ -5,9 +5,7 @@ abstract type AbstractManifold{Dim} end
 # Broadcast like a scalar
 Base.Broadcast.broadcastable(M::AbstractManifold) = Ref(M)
 
-abstract type AbstractBSplineManifold{Dim, Deg} <: AbstractManifold{Dim} end
-
-dim(::AbstractBSplineManifold{Dim}) where Dim = Dim
+dim(::AbstractManifold{Dim}) where Dim = Dim
 
 @doc raw"""
 Construct B-spline manifold from given control points and B-spline spaces.
@@ -37,7 +35,7 @@ ERROR: DomainError with 1.2:
 The input 1.2 is out of range.
 ```
 """
-struct BSplineManifold{Dim,Deg,C,S<:NTuple{Dim, BSplineSpace}} <: AbstractBSplineManifold{Dim,Deg}
+struct BSplineManifold{Dim,Deg,C,S<:NTuple{Dim, BSplineSpace}} <: AbstractManifold{Dim}
     bsplinespaces::S
     controlpoints::Array{C,Dim}
     function BSplineManifold(a::Array{C,Dim},Ps::S) where {S<:NTuple{Dim, BSplineSpace},C} where Dim
@@ -52,7 +50,7 @@ end
 
 BSplineManifold(a::Array{C,Dim},Ps::Vararg{BSplineSpace, Dim}) where {C,Dim} = BSplineManifold(a,Ps)
 
-Base.:(==)(M1::AbstractBSplineManifold, M2::AbstractBSplineManifold) = (bsplinespaces(M1)==bsplinespaces(M2)) & (controlpoints(M1)==controlpoints(M2))
+Base.:(==)(M1::AbstractManifold, M2::AbstractManifold) = (bsplinespaces(M1)==bsplinespaces(M2)) & (controlpoints(M1)==controlpoints(M2))
 
 bsplinespaces(M::BSplineManifold) = M.bsplinespaces
 controlpoints(M::BSplineManifold) = M.controlpoints
@@ -165,19 +163,19 @@ end
 
 ## currying
 # 1dim
-@inline function (M::AbstractBSplineManifold{1})(::Colon)
+@inline function (M::BSplineManifold{1})(::Colon)
     a = copy(controlpoints(M))
     Ps = bsplinespaces(M)
     return BSplineManifold(a,Ps)
 end
 
 # 2dim
-@inline function (M::AbstractBSplineManifold{2})(::Colon,::Colon)
+@inline function (M::BSplineManifold{2})(::Colon,::Colon)
     a = copy(controlpoints(M))
     Ps = bsplinespaces(M)
     return BSplineManifold(a,Ps)
 end
-@inline function (M::AbstractBSplineManifold{2,p})(t1::Real,::Colon) where p
+@inline function (M::BSplineManifold{2,p})(t1::Real,::Colon) where p
     p1, p2 = p
     P1, P2 = bsplinespaces(M)
     a = controlpoints(M)
@@ -186,7 +184,7 @@ end
     b = sum(a[j1+i1,:]*B1[1+i1] for i1 in 0:p1)
     return BSplineManifold(b,(P2,))
 end
-@inline function (M::AbstractBSplineManifold{2,p})(::Colon,t2::Real) where p
+@inline function (M::BSplineManifold{2,p})(::Colon,t2::Real) where p
     p1, p2 = p
     P1, P2 = bsplinespaces(M)
     a = controlpoints(M)
@@ -197,12 +195,12 @@ end
 end
 
 # 3dim
-@inline function (M::AbstractBSplineManifold{3})(::Colon,::Colon,::Colon)
+@inline function (M::BSplineManifold{3})(::Colon,::Colon,::Colon)
     a = copy(controlpoints(M))
     Ps = bsplinespaces(M)
     return BSplineManifold(a,Ps)
 end
-@inline function (M::AbstractBSplineManifold{3,p})(t1::Real,::Colon,::Colon) where p
+@inline function (M::BSplineManifold{3,p})(t1::Real,::Colon,::Colon) where p
     p1, p2, p3 = p
     P1, P2, P3 = bsplinespaces(M)
     a = controlpoints(M)
@@ -211,7 +209,7 @@ end
     b = sum(a[j1+i1,:,:]*B1[1+i1] for i1 in 0:p1)
     return BSplineManifold(b,(P2,P3))
 end
-@inline function (M::AbstractBSplineManifold{3,p})(::Colon,t2::Real,::Colon) where p
+@inline function (M::BSplineManifold{3,p})(::Colon,t2::Real,::Colon) where p
     p1, p2, p3 = p
     P1, P2, P3 = bsplinespaces(M)
     a = controlpoints(M)
@@ -220,7 +218,7 @@ end
     b = sum(a[:,j2+i2,:]*B2[1+i2] for i2 in 0:p2)
     return BSplineManifold(b,(P1,P3))
 end
-@inline function (M::AbstractBSplineManifold{3,p})(::Colon,::Colon,t3::Real) where p
+@inline function (M::BSplineManifold{3,p})(::Colon,::Colon,t3::Real) where p
     p1, p2, p3 = p
     P1, P2, P3 = bsplinespaces(M)
     a = controlpoints(M)
@@ -229,7 +227,7 @@ end
     b = sum(a[:,:,j3+i3]*B3[1+i3] for i3 in 0:p3)
     return BSplineManifold(b,(P1,P2))
 end
-@inline function (M::AbstractBSplineManifold{3,p})(t1::Real,t2::Real,::Colon) where p
+@inline function (M::BSplineManifold{3,p})(t1::Real,t2::Real,::Colon) where p
     p1, p2, p3 = p
     P1, P2, P3 = bsplinespaces(M)
     a = controlpoints(M)
@@ -240,7 +238,7 @@ end
     b = sum(a[j1+i1,j2+i2,:]*B1[1+i1]*B2[1+i2] for i1 in 0:p1, i2 in 0:p2)
     return BSplineManifold(b,(P3,))
 end
-@inline function (M::AbstractBSplineManifold{3,p})(t1::Real,::Colon,t3::Real) where p
+@inline function (M::BSplineManifold{3,p})(t1::Real,::Colon,t3::Real) where p
     p1, p2, p3 = p
     P1, P2, P3 = bsplinespaces(M)
     a = controlpoints(M)
@@ -251,7 +249,7 @@ end
     b = sum(a[j1+i1,:,j3+i3]*B1[1+i1]*B3[1+i3] for i1 in 0:p1, i3 in 0:p3)
     return BSplineManifold(b,(P2,))
 end
-@inline function (M::AbstractBSplineManifold{3,p})(::Colon,t2::Real,t3::Real) where p
+@inline function (M::BSplineManifold{3,p})(::Colon,t2::Real,t3::Real) where p
     p1, p2, p3 = p
     P1, P2, P3 = bsplinespaces(M)
     a = controlpoints(M)

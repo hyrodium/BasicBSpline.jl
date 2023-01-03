@@ -1,6 +1,4 @@
 # Rational B-spline manifold (NURBS)
-abstract type AbstractRationalBSplineManifold{Dim, Deg} <: AbstractManifold{Dim} end
-
 """
 Construct Rational B-spline manifold from given control points, weights and B-spline spaces.
 
@@ -34,7 +32,7 @@ julia> norm(M(0.3))
 1.0
 ```
 """
-struct RationalBSplineManifold{Dim,Deg,C,S<:NTuple{Dim, BSplineSpace},T} <: AbstractRationalBSplineManifold{Dim,Deg}
+struct RationalBSplineManifold{Dim,Deg,C,S<:NTuple{Dim, BSplineSpace},T} <: AbstractManifold{Dim}
     bsplinespaces::S
     controlpoints::Array{C,Dim}
     weights::Array{T,Dim}
@@ -50,7 +48,7 @@ end
 
 RationalBSplineManifold(a::Array{C,Dim},w::Array{T,Dim},Ps::Vararg{BSplineSpace, Dim}) where {C,Dim,T<:Real} = RationalBSplineManifold(a,w,Ps)
 
-Base.:(==)(M1::AbstractRationalBSplineManifold, M2::AbstractRationalBSplineManifold) = (bsplinespaces(M1)==bsplinespaces(M2)) & (controlpoints(M1)==controlpoints(M2)) & (weights(M1)==weights(M2))
+Base.:(==)(M1::RationalBSplineManifold, M2::RationalBSplineManifold) = (bsplinespaces(M1)==bsplinespaces(M2)) & (controlpoints(M1)==controlpoints(M2)) & (weights(M1)==weights(M2))
 
 controlpoints(M::RationalBSplineManifold) = M.controlpoints
 weights(M::RationalBSplineManifold) = M.weights
@@ -125,7 +123,7 @@ end
 
 ## currying
 # 1dim
-@inline function (M::AbstractRationalBSplineManifold{1})(::Colon)
+@inline function (M::RationalBSplineManifold{1})(::Colon)
     a = copy(controlpoints(M))
     w = copy(weights(M))
     Ps = bsplinespaces(M)
@@ -133,13 +131,13 @@ end
 end
 
 # 2dim
-@inline function (M::AbstractRationalBSplineManifold{2})(::Colon,::Colon)
+@inline function (M::RationalBSplineManifold{2})(::Colon,::Colon)
     a = copy(controlpoints(M))
     w = copy(weights(M))
     Ps = bsplinespaces(M)
     return RationalBSplineManifold(a,w,Ps)
 end
-@inline function (M::AbstractRationalBSplineManifold{2,p})(t1::Real,::Colon) where p
+@inline function (M::RationalBSplineManifold{2,p})(t1::Real,::Colon) where p
     p1, p2 = p
     P1, P2 = bsplinespaces(M)
     a = controlpoints(M)
@@ -150,7 +148,7 @@ end
     a′ = sum(a[j1+i1,:].*w[j1+i1,:].*B1[1+i1] for i1 in 0:p1) ./ w′
     return RationalBSplineManifold(a′,w′,(P2,))
 end
-@inline function (M::AbstractRationalBSplineManifold{2,p})(::Colon,t2::Real) where p
+@inline function (M::RationalBSplineManifold{2,p})(::Colon,t2::Real) where p
     p1, p2 = p
     P1, P2 = bsplinespaces(M)
     a = controlpoints(M)
@@ -163,13 +161,13 @@ end
 end
 
 # 3dim
-@inline function (M::AbstractRationalBSplineManifold{3})(::Colon,::Colon,::Colon)
+@inline function (M::RationalBSplineManifold{3})(::Colon,::Colon,::Colon)
     a = copy(controlpoints(M))
     w = copy(weights(M))
     Ps = bsplinespaces(M)
     return RationalBSplineManifold(a,w,Ps)
 end
-@inline function (M::AbstractRationalBSplineManifold{3,p})(t1::Real,::Colon,::Colon) where p
+@inline function (M::RationalBSplineManifold{3,p})(t1::Real,::Colon,::Colon) where p
     p1, p2, p3 = p
     P1, P2, P3 = bsplinespaces(M)
     a = controlpoints(M)
@@ -180,7 +178,7 @@ end
     a′ = sum(a[j1+i1,:,:].*w[j1+i1,:,:].*B1[1+i1] for i1 in 0:p1) ./ w′
     return RationalBSplineManifold(a′,w′,(P2,P3))
 end
-@inline function (M::AbstractRationalBSplineManifold{3,p})(::Colon,t2::Real,::Colon) where p
+@inline function (M::RationalBSplineManifold{3,p})(::Colon,t2::Real,::Colon) where p
     p1, p2, p3 = p
     P1, P2, P3 = bsplinespaces(M)
     a = controlpoints(M)
@@ -191,7 +189,7 @@ end
     a′ = sum(a[:,j2+i2,:].*w[:,j2+i2,:].*B2[1+i2] for i2 in 0:p2) ./ w′
     return RationalBSplineManifold(a′,w′,(P1,P3))
 end
-@inline function (M::AbstractRationalBSplineManifold{3,p})(::Colon,::Colon,t3::Real) where p
+@inline function (M::RationalBSplineManifold{3,p})(::Colon,::Colon,t3::Real) where p
     p1, p2, p3 = p
     P1, P2, P3 = bsplinespaces(M)
     a = controlpoints(M)
@@ -202,7 +200,7 @@ end
     a′ = sum(a[:,:,j3+i3].*w[:,:,j3+i3].*B3[1+i3] for i3 in 0:p3) ./ w′
     return RationalBSplineManifold(a′,w′,(P1,P2))
 end
-@inline function (M::AbstractRationalBSplineManifold{3,p})(t1::Real,t2::Real,::Colon) where p
+@inline function (M::RationalBSplineManifold{3,p})(t1::Real,t2::Real,::Colon) where p
     p1, p2, p3 = p
     P1, P2, P3 = bsplinespaces(M)
     a = controlpoints(M)
@@ -215,7 +213,7 @@ end
     a′ = sum(a[j1+i1,j2+i2,:].*w[j1+i1,j2+i2,:].*B1[1+i1].*B2[1+i2] for i1 in 0:p1, i2 in 0:p2) ./ w′
     return RationalBSplineManifold(a′,w′,(P3,))
 end
-@inline function (M::AbstractRationalBSplineManifold{3,p})(t1::Real,::Colon,t3::Real) where p
+@inline function (M::RationalBSplineManifold{3,p})(t1::Real,::Colon,t3::Real) where p
     p1, p2, p3 = p
     P1, P2, P3 = bsplinespaces(M)
     a = controlpoints(M)
@@ -228,7 +226,7 @@ end
     a′ = sum(a[j1+i1,:,j3+i3].*w[j1+i1,:,j3+i3].*B1[1+i1].*B3[1+i3] for i1 in 0:p1, i3 in 0:p3) ./ w′
     return RationalBSplineManifold(a′,w′,(P2,))
 end
-@inline function (M::AbstractRationalBSplineManifold{3,p})(::Colon,t2::Real,t3::Real) where p
+@inline function (M::RationalBSplineManifold{3,p})(::Colon,t2::Real,t3::Real) where p
     p1, p2, p3 = p
     P1, P2, P3 = bsplinespaces(M)
     a = controlpoints(M)
