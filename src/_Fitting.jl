@@ -334,7 +334,8 @@ end
 for (fname_fit, fname_inner) in ((:fittingcontrolpoints_I, :innerproduct_I), (:fittingcontrolpoints_R, :innerproduct_R))
     # 1-dim
     @eval function $fname_fit(func, P::NTuple{1, AbstractBSplineSpace})
-        Base.depwarn("`$(fname_fit)` is deprecated. Please use BasicBSplineFitting.jl from the next breaking release v0.9.0", fname_fit)
+        fname_symbol = Symbol($fname_fit)
+        Base.depwarn("`$(fname_symbol)` is deprecated. Please use BasicBSplineFitting.jl from the next breaking release v0.9.0", fname_symbol)
         P1, = P
         b = $fname_inner(func, P)
         A = $fname_inner(P1)
@@ -343,7 +344,8 @@ for (fname_fit, fname_inner) in ((:fittingcontrolpoints_I, :innerproduct_I), (:f
 
     # 2-dim
     @eval function $fname_fit(func, P::NTuple{2, AbstractBSplineSpace})
-        Base.depwarn("`$(fname_fit)` is deprecated. Please use BasicBSplineFitting.jl from the next breaking release v0.9.0", fname_fit)
+        fname_symbol = Symbol($fname_fit)
+        Base.depwarn("`$(fname_symbol)` is deprecated. Please use BasicBSplineFitting.jl from the next breaking release v0.9.0", fname_symbol)
         P1, P2 = P
         n1, n2 = dim.(P)
         A1, A2 = $fname_inner(P1), $fname_inner(P2)
@@ -356,7 +358,8 @@ for (fname_fit, fname_inner) in ((:fittingcontrolpoints_I, :innerproduct_I), (:f
 
     # 3-dim
     @eval function $fname_fit(func, P::NTuple{3, AbstractBSplineSpace})
-        Base.depwarn("`$(fname_fit)` is deprecated. Please use BasicBSplineFitting.jl from the next breaking release v0.9.0", fname_fit)
+        fname_symbol = Symbol($fname_fit)
+        Base.depwarn("`$(fname_symbol)` is deprecated. Please use BasicBSplineFitting.jl from the next breaking release v0.9.0", fname_symbol)
         P1, P2, P3 = P
         n1, n2, n3 = dim(P1), dim(P2), dim(P3)
         A1, A2, A3 = $fname_inner(P1), $fname_inner(P2), $fname_inner(P3)
