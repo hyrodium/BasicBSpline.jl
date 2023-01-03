@@ -222,7 +222,7 @@ end
     return SVector(B1, B2)
 end
 
-@generated function bsplinebasisall(P::BSplineSpace{p}, i::Integer, t::Real) where p
+@generated function bsplinebasisall(P::BSplineSpace{p,T}, i::Integer, t::Real) where {p,T}
     bs = [Symbol(:b,i) for i in 1:p]
     Bs = [Symbol(:B,i) for i in 1:p+1]
     K1s = [:((k[i+$(p+j)]-t)/(k[i+$(p+j)]-k[i+$(j)])) for j in 1:p]
