@@ -7,6 +7,7 @@ A_{ij}=\int_{I} B_{(i,p,k)}(t) B_{(j,p,k)}(t) dt
 ```
 """
 function innerproduct_I(P::AbstractBSplineSpace{p}) where p
+    Base.depwarn("`innterproduct_I` is deprecated. Please use BasicBSplineFitting.jl from the next breaking release v0.9.0", :innterproduct_I)
     n = dim(P)
     A = zeros(n,n)
     k = knotvector(P)
@@ -39,6 +40,7 @@ A_{ij}=\int_{\mathbb{R}} B_{(i,p,k)}(t) B_{(j,p,k)}(t) dt
 ```
 """
 function innerproduct_R(P::AbstractBSplineSpace{p}) where p
+    Base.depwarn("`innterproduct_R` is deprecated. Please use BasicBSplineFitting.jl from the next breaking release v0.9.0", :innterproduct_R)
     n = dim(P)
     A = innerproduct_I(P).data
     k = knotvector(P)
@@ -72,6 +74,7 @@ function innerproduct_R(P::AbstractBSplineSpace{p}) where p
 end
 
 function innerproduct_I(func, Ps::Tuple{AbstractBSplineSpace{p₁}}) where {p₁}
+    Base.depwarn("`innterproduct_I` is deprecated. Please use BasicBSplineFitting.jl from the next breaking release v0.9.0", :innterproduct_I)
     P₁, = Ps
     n₁ = dim(P₁)
     k₁ = knotvector(P₁)
@@ -99,6 +102,7 @@ function innerproduct_I(func, Ps::Tuple{AbstractBSplineSpace{p₁}}) where {p₁
 end
 
 function innerproduct_I(func, Ps::Tuple{AbstractBSplineSpace{p₁},AbstractBSplineSpace{p₂}}) where {p₁,p₂}
+    Base.depwarn("`innterproduct_I` is deprecated. Please use BasicBSplineFitting.jl from the next breaking release v0.9.0", :innterproduct_I)
     P₁,P₂ = Ps
     n₁,n₂ = dim.(Ps)
     k₁,k₂ = knotvector.(Ps)
@@ -138,6 +142,7 @@ function innerproduct_I(func, Ps::Tuple{AbstractBSplineSpace{p₁},AbstractBSpli
 end
 
 function innerproduct_I(func, Ps::Tuple{AbstractBSplineSpace{p₁},AbstractBSplineSpace{p₂},AbstractBSplineSpace{p₃}}) where {p₁,p₂,p₃}
+    Base.depwarn("`innterproduct_I` is deprecated. Please use BasicBSplineFitting.jl from the next breaking release v0.9.0", :innterproduct_I)
     P₁,P₂,P₃ = Ps
     n₁,n₂,n₃ = dim.(Ps)
     k₁,k₂,k₃ = knotvector.(Ps)
@@ -192,6 +197,7 @@ function innerproduct_I(func, Ps::Tuple{AbstractBSplineSpace{p₁},AbstractBSpli
 end
 
 function innerproduct_R(func, Ps::Tuple{AbstractBSplineSpace{p₁}}) where {p₁}
+    Base.depwarn("`innterproduct_R` is deprecated. Please use BasicBSplineFitting.jl from the next breaking release v0.9.0", :innterproduct_R)
     P₁, = Ps
     n₁ = dim(P₁)
     k₁ = knotvector(P₁)
@@ -215,6 +221,7 @@ function innerproduct_R(func, Ps::Tuple{AbstractBSplineSpace{p₁}}) where {p₁
 end
 
 function innerproduct_R(func, Ps::Tuple{AbstractBSplineSpace{p₁},AbstractBSplineSpace{p₂}}) where {p₁,p₂}
+    Base.depwarn("`innterproduct_R` is deprecated. Please use BasicBSplineFitting.jl from the next breaking release v0.9.0", :innterproduct_R)
     P₁,P₂ = Ps
     n₁,n₂ = dim.(Ps)
     k₁,k₂ = knotvector.(Ps)
@@ -247,6 +254,7 @@ function innerproduct_R(func, Ps::Tuple{AbstractBSplineSpace{p₁},AbstractBSpli
 end
 
 function innerproduct_R(func, Ps::Tuple{AbstractBSplineSpace{p₁},AbstractBSplineSpace{p₂},AbstractBSplineSpace{p₃}}) where {p₁,p₂,p₃}
+    Base.depwarn("`innterproduct_R` is deprecated. Please use BasicBSplineFitting.jl from the next breaking release v0.9.0", :innterproduct_R)
     P₁,P₂,P₃ = Ps
     n₁,n₂,n₃ = dim.(Ps)
     k₁,k₂,k₃ = knotvector.(Ps)
@@ -291,6 +299,7 @@ function innerproduct_R(func, Ps::Tuple{AbstractBSplineSpace{p₁},AbstractBSpli
 end
 
 function innerproduct_R(P::UniformBSplineSpace{p,T,<:AbstractUnitRange}) where {p,T}
+    Base.depwarn("`innterproduct_R` is deprecated. Please use BasicBSplineFitting.jl from the next breaking release v0.9.0", :innterproduct_R)
     U = StaticArrays.arithmetic_closure(T)
     n = dim(P)
     A = zeros(U,n,n)
@@ -306,6 +315,7 @@ function innerproduct_R(P::UniformBSplineSpace{p,T,<:AbstractUnitRange}) where {
 end
 
 function innerproduct_R(P::UniformBSplineSpace{p,T}) where {p,T}
+    Base.depwarn("`innterproduct_R` is deprecated. Please use BasicBSplineFitting.jl from the next breaking release v0.9.0", :innterproduct_R)
     U = StaticArrays.arithmetic_closure(T)
     d = step(_vec(knotvector(P)))
     n = dim(P)
@@ -324,6 +334,7 @@ end
 for (fname_fit, fname_inner) in ((:fittingcontrolpoints_I, :innerproduct_I), (:fittingcontrolpoints_R, :innerproduct_R))
     # 1-dim
     @eval function $fname_fit(func, P::NTuple{1, AbstractBSplineSpace})
+        Base.depwarn("`$(fname_fit)` is deprecated. Please use BasicBSplineFitting.jl from the next breaking release v0.9.0", fname_fit)
         P1, = P
         b = $fname_inner(func, P)
         A = $fname_inner(P1)
@@ -332,6 +343,7 @@ for (fname_fit, fname_inner) in ((:fittingcontrolpoints_I, :innerproduct_I), (:f
 
     # 2-dim
     @eval function $fname_fit(func, P::NTuple{2, AbstractBSplineSpace})
+        Base.depwarn("`$(fname_fit)` is deprecated. Please use BasicBSplineFitting.jl from the next breaking release v0.9.0", fname_fit)
         P1, P2 = P
         n1, n2 = dim.(P)
         A1, A2 = $fname_inner(P1), $fname_inner(P2)
@@ -344,6 +356,7 @@ for (fname_fit, fname_inner) in ((:fittingcontrolpoints_I, :innerproduct_I), (:f
 
     # 3-dim
     @eval function $fname_fit(func, P::NTuple{3, AbstractBSplineSpace})
+        Base.depwarn("`$(fname_fit)` is deprecated. Please use BasicBSplineFitting.jl from the next breaking release v0.9.0", fname_fit)
         P1, P2, P3 = P
         n1, n2, n3 = dim(P1), dim(P2), dim(P3)
         A1, A2, A3 = $fname_inner(P1), $fname_inner(P2), $fname_inner(P3)
@@ -385,21 +398,27 @@ true
 ```
 """
 function fittingcontrolpoints(func, P::NTuple{Dim, AbstractBSplineSpace}) where Dim
+    Base.depwarn("`fittingcontrolpoints` is deprecated. Please use BasicBSplineFitting.jl from the next breaking release v0.9.0", :fittingcontrolpoints)
     fittingcontrolpoints_I(func,P)
 end
 
 function innerproduct_R(func, P::Vararg{AbstractBSplineSpace})
+    Base.depwarn("`innterproduct_R` is deprecated. Please use BasicBSplineFitting.jl from the next breaking release v0.9.0", :innterproduct_R)
     innerproduct_R(func,P)
 end
 function innerproduct_I(func, P::Vararg{AbstractBSplineSpace})
+    Base.depwarn("`innterproduct_I` is deprecated. Please use BasicBSplineFitting.jl from the next breaking release v0.9.0", :innterproduct_I)
     innerproduct_I(func,P)
 end
 function fittingcontrolpoints(func, P::Vararg{AbstractBSplineSpace})
+    Base.depwarn("`fittingcontrolpoints` is deprecated. Please use BasicBSplineFitting.jl from the next breaking release v0.9.0", :fittingcontrolpoints)
     fittingcontrolpoints_I(func,P)
 end
 function fittingcontrolpoints_I(func, P::Vararg{AbstractBSplineSpace})
+    Base.depwarn("`fittingcontrolpoints_I` is deprecated. Please use BasicBSplineFitting.jl from the next breaking release v0.9.0", :fittingcontrolpoints_I)
     fittingcontrolpoints_I(func,P)
 end
 function fittingcontrolpoints_R(func, P::Vararg{AbstractBSplineSpace})
+    Base.depwarn("`fittingcontrolpoints_R` is deprecated. Please use BasicBSplineFitting.jl from the next breaking release v0.9.0", :fittingcontrolpoints_R)
     fittingcontrolpoints_R(func,P)
 end
