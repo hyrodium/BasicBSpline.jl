@@ -111,7 +111,7 @@ function Base.:+(k1::KnotVector{T}, k2::KnotVector{T}) where T
     end
     return BasicBSpline.unsafe_knotvector(T,v)
 end
-Base.:+(k1::AbstractKnotVector, k2::AbstractKnotVector) = +(promote(k1,k2)...)
+Base.:+(k1::AbstractKnotVector{T1}, k2::AbstractKnotVector{T2}) where {T1, T2} = +(promote(k1,k2)...)
 
 @doc raw"""
 Product of integer and knot vector

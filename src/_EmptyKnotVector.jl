@@ -31,7 +31,7 @@ Base.copy(k::EmptyKnotVector{T}) where T = k
 
 # + AbstractKnotVector
 Base.:+(k::AbstractKnotVector{T}, ::EmptyKnotVector{T}) where T = k
-function Base.:+(k::AbstractKnotVector{T1}, ::EmptyKnotVector{T2}) where {T1<:Real, T2<:Real}
+function Base.:+(k::AbstractKnotVector{T1}, ::EmptyKnotVector{T2}) where {T1, T2}
     T = promote_type(T1, T2)
     if T == T1
         return k
@@ -41,7 +41,7 @@ function Base.:+(k::AbstractKnotVector{T1}, ::EmptyKnotVector{T2}) where {T1<:Re
 end
 # + EmptyKnotVector
 Base.:+(::EmptyKnotVector{T}, ::EmptyKnotVector{T}) where T = EmptyKnotVector{T}()
-Base.:+(::EmptyKnotVector{T1}, ::EmptyKnotVector{T2}) where {T1<:Real, T2<:Real} = EmptyKnotVector{promote_type(T1, T2)}()
+Base.:+(::EmptyKnotVector{T1}, ::EmptyKnotVector{T2}) where {T1, T2} = EmptyKnotVector{promote_type(T1, T2)}()
 # + swap
 Base.:+(k1::EmptyKnotVector, k2::AbstractKnotVector) = k2 + k1
 
