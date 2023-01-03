@@ -105,6 +105,11 @@
         @test EmptyKnotVector{Float64}()*1 === EmptyKnotVector{Float64}()
         @test EmptyKnotVector{BigFloat}()*2 === EmptyKnotVector{BigFloat}()
         @test_throws DomainError EmptyKnotVector()*(-1)
+        @test (EmptyKnotVector()
+                === EmptyKnotVector() + EmptyKnotVector()
+                === EmptyKnotVector() * 2
+                === 2 * EmptyKnotVector())
+        @test EmptyKnotVector() isa EmptyKnotVector{Bool}
 
         # type promotion
         @test KnotVector{Int}([1,2]) + KnotVector([3]) == KnotVector([1,2,3])
@@ -114,9 +119,6 @@
         @test KnotVector{Int}([1,2]) * 0 == KnotVector(Float64[])
         @test KnotVector{Int}([1,2]) * 0 isa KnotVector{Int}
         @test KnotVector{Int}(Int[]) isa KnotVector{Int}
-        @test EmptyKnotVector() isa EmptyKnotVector{Bool}
-        @test 2 * EmptyKnotVector() isa EmptyKnotVector{Bool}
-        @test EmptyKnotVector() * 2 isa EmptyKnotVector{Bool}
         @test EmptyKnotVector{Irrational{:π}}() + EmptyKnotVector{Rational{Int}}() isa EmptyKnotVector{Float64}
     end
 
