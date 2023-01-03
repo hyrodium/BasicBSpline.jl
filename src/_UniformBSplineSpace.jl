@@ -26,6 +26,7 @@ function UniformBSplineSpace{p}(k::UniformKnotVector) where p
     if p < 0
         throw(DomainError(p, "degree of polynominal must be non-negative"))
     end
+    Base.depwarn("`UniformBSplineSpace` is deprecated. Please use `BSplineSpace{p,T,UniformKnotVector}` from the next breaking release v0.9.0", :UniformBSplineSpace)
     unsafe_uniformbsplinespace(Val{p}(), k)
 end
 # TODO: add constructor like this
