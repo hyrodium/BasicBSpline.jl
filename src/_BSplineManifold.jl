@@ -15,7 +15,7 @@ Construct B-spline manifold from given control points and B-spline spaces.
 julia> using StaticArrays
 
 julia> P = BSplineSpace{2}(KnotVector([0,0,0,1,1,1]))
-BSplineSpace{2, Int64}(KnotVector([0, 0, 0, 1, 1, 1]))
+BSplineSpace{2, Int64, KnotVector{Int64}}(KnotVector([0, 0, 0, 1, 1, 1]))
 
 julia> a = [SVector(1,0), SVector(1,1), SVector(0,1)]
 3-element Vector{SVector{2, Int64}}:
@@ -62,7 +62,7 @@ controlpoints(M::BSplineManifold) = M.controlpoints
 # Examples
 ```jldoctest
 julia> P = BSplineSpace{1}(KnotVector([0,0,1,1]))
-BSplineSpace{1, Int64}(KnotVector([0, 0, 1, 1]))
+BSplineSpace{1, Int64, KnotVector{Int64}}(KnotVector([0, 0, 1, 1]))
 
 julia> domain(P)
 0..1

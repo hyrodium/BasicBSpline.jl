@@ -17,7 +17,7 @@ julia> k = KnotVector([1,3,5,6,8,9])
 KnotVector([1, 3, 5, 6, 8, 9])
 
 julia> BSplineSpace{p}(k)
-BSplineSpace{2, Int64}(KnotVector([1, 3, 5, 6, 8, 9]))
+BSplineSpace{2, Int64, KnotVector{Int64}}(KnotVector([1, 3, 5, 6, 8, 9]))
 ```
 """
 struct BSplineSpace{p, T<:Real, K<:AbstractKnotVector{T}} <: AbstractFunctionSpace{T}
@@ -260,7 +260,7 @@ julia> k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 
 julia> P = BSplineSpace{2}(k)
-BSplineSpace{2, Float64}(KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]))
+BSplineSpace{2, Float64, KnotVector{Float64}}(KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]))
 
 julia> bsplinesupport(P,1)
 0.0..5.5
@@ -336,7 +336,7 @@ julia> k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]);
 julia> P = BSplineSpace{2}(k);
 
 julia> P′ = expandspace_I(P, Val(1), KnotVector([6.0]))
-BSplineSpace{3, Float64}(KnotVector([0.0, 1.5, 2.5, 2.5, 5.5, 5.5, 6.0, 8.0, 8.0, 9.0, 9.0, 9.5, 10.0]))
+BSplineSpace{3, Float64, KnotVector{Float64}}(KnotVector([0.0, 1.5, 2.5, 2.5, 5.5, 5.5, 6.0, 8.0, 8.0, 9.0, 9.0, 9.5, 10.0]))
 
 julia> P ⊆ P′
 false
@@ -380,7 +380,7 @@ julia> k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]);
 julia> P = BSplineSpace{2}(k);
 
 julia> P′ = expandspace_R(P, Val(1), KnotVector([6.0]))
-BSplineSpace{3, Float64}(KnotVector([0.0, 0.0, 1.5, 1.5, 2.5, 2.5, 5.5, 5.5, 6.0, 8.0, 8.0, 9.0, 9.0, 9.5, 9.5, 10.0, 10.0]))
+BSplineSpace{3, Float64, KnotVector{Float64}}(KnotVector([0.0, 0.0, 1.5, 1.5, 2.5, 2.5, 5.5, 5.5, 6.0, 8.0, 8.0, 9.0, 9.0, 9.5, 9.5, 10.0, 10.0]))
 
 julia> P ⊆ P′
 true

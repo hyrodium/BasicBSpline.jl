@@ -11,10 +11,10 @@ D^{r}(\mathcal{P}[p,k])
 # Examples
 ```jldoctest
 julia> P = BSplineSpace{2}(KnotVector([1,2,3,4,5,6]))
-BSplineSpace{2, Int64}(KnotVector([1, 2, 3, 4, 5, 6]))
+BSplineSpace{2, Int64, KnotVector{Int64}}(KnotVector([1, 2, 3, 4, 5, 6]))
 
 julia> dP = BSplineDerivativeSpace{1}(P)
-BSplineDerivativeSpace{1, BSplineSpace{2, Int64}, Int64}(BSplineSpace{2, Int64}(KnotVector([1, 2, 3, 4, 5, 6])))
+BSplineDerivativeSpace{1, BSplineSpace{2, Int64, KnotVector{Int64}}, Int64}(BSplineSpace{2, Int64, KnotVector{Int64}}(KnotVector([1, 2, 3, 4, 5, 6])))
 
 julia> degree(P), degree(dP)
 (2, 1)
@@ -68,13 +68,13 @@ Derivative of B-spline related space.
 # Examples
 ```jldoctest
 julia> BSplineSpace{2}(KnotVector(0:5))
-BSplineSpace{2, Int64}(KnotVector([0, 1, 2, 3, 4, 5]))
+BSplineSpace{2, Int64, KnotVector{Int64}}(KnotVector([0, 1, 2, 3, 4, 5]))
 
 julia> BasicBSpline.derivative(ans)
-BSplineDerivativeSpace{1, BSplineSpace{2, Int64}, Int64}(BSplineSpace{2, Int64}(KnotVector([0, 1, 2, 3, 4, 5])))
+BSplineDerivativeSpace{1, BSplineSpace{2, Int64, KnotVector{Int64}}, Int64}(BSplineSpace{2, Int64, KnotVector{Int64}}(KnotVector([0, 1, 2, 3, 4, 5])))
 
 julia> BasicBSpline.derivative(ans)
-BSplineDerivativeSpace{2, BSplineSpace{2, Int64}, Int64}(BSplineSpace{2, Int64}(KnotVector([0, 1, 2, 3, 4, 5])))
+BSplineDerivativeSpace{2, BSplineSpace{2, Int64, KnotVector{Int64}}, Int64}(BSplineSpace{2, Int64, KnotVector{Int64}}(KnotVector([0, 1, 2, 3, 4, 5])))
 ```
 """
 derivative(P::BSplineSpace) = BSplineDerivativeSpace{1}(P)

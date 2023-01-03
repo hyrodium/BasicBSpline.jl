@@ -21,7 +21,7 @@ Right-sided limit version.
 # Examples
 ```jldoctest
 julia> P = BSplineSpace{0}(KnotVector(1:6))
-BSplineSpace{0, Int64}(KnotVector([1, 2, 3, 4, 5, 6]))
+BSplineSpace{0, Int64, KnotVector{Int64}}(KnotVector([1, 2, 3, 4, 5, 6]))
 
 julia> bsplinebasis₊₀.(P,1:5,(1:6)')
 5×6 Matrix{Float64}:
@@ -79,7 +79,7 @@ Left-sided limit version.
 # Examples
 ```jldoctest
 julia> P = BSplineSpace{0}(KnotVector(1:6))
-BSplineSpace{0, Int64}(KnotVector([1, 2, 3, 4, 5, 6]))
+BSplineSpace{0, Int64, KnotVector{Int64}}(KnotVector([1, 2, 3, 4, 5, 6]))
 
 julia> bsplinebasis₋₀.(P,1:5,(1:6)')
 5×6 Matrix{Float64}:
@@ -138,7 +138,7 @@ Modified version.
 # Examples
 ```jldoctest
 julia> P = BSplineSpace{0}(KnotVector(1:6))
-BSplineSpace{0, Int64}(KnotVector([1, 2, 3, 4, 5, 6]))
+BSplineSpace{0, Int64, KnotVector{Int64}}(KnotVector([1, 2, 3, 4, 5, 6]))
 
 julia> bsplinebasis.(P,1:5,(1:6)')
 5×6 Matrix{Float64}:
@@ -187,7 +187,7 @@ julia> p = 2
 2
 
 julia> P = BSplineSpace{p}(k)
-BSplineSpace{2, Float64}(KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]))
+BSplineSpace{2, Float64, KnotVector{Float64}}(KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]))
 
 julia> t = 5.7
 5.7
