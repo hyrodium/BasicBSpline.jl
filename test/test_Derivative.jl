@@ -18,6 +18,8 @@
         @test dP1 == dP2 == dP3 != dP4
         @test dP1 !== dP2
         @test_throws MethodError BSplineDerivativeSpace{1,typeof(P2)}(dP1)
+        @test_throws MethodError BSplineDerivativeSpace(dP1)
+        @test_throws MethodError BSplineDerivativeSpace{}(dP1)
         @test dP3 === BSplineDerivativeSpace{1,typeof(P3)}(dP2)
         @test dP2 !== BSplineDerivativeSpace{1,typeof(P3)}(dP2)
         @test dP2 === BSplineDerivativeSpace{1,typeof(P2)}(dP2)
