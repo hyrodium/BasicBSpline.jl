@@ -39,8 +39,8 @@ end
 function BSplineDerivativeSpace{r,S}(dP::BSplineDerivativeSpace{r,S}) where {r,S}
     dP
 end
-function BSplineDerivativeSpace{r,S}(dP::BSplineDerivativeSpace{r}) where {r,S}
-    BSplineDerivativeSpace{r,S}(S(bsplinespace(dP)))
+function BSplineDerivativeSpace{r,S1}(dP::BSplineDerivativeSpace{r,S2}) where {r,S1,S2}
+    BSplineDerivativeSpace{r,S1}(S1(bsplinespace(dP)))
 end
 
 # Broadcast like a scalar
