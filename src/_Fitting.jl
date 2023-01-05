@@ -6,7 +6,7 @@ Calculate a matrix
 A_{ij}=\int_{I} B_{(i,p,k)}(t) B_{(j,p,k)}(t) dt
 ```
 """
-function innerproduct_I(P::AbstractBSplineSpace{p}) where p
+function innerproduct_I(P::BSplineSpace{p}) where p
     n = dim(P)
     A = zeros(n,n)
     k = knotvector(P)
@@ -38,7 +38,7 @@ Calculate a matrix
 A_{ij}=\int_{\mathbb{R}} B_{(i,p,k)}(t) B_{(j,p,k)}(t) dt
 ```
 """
-function innerproduct_R(P::AbstractBSplineSpace{p}) where p
+function innerproduct_R(P::BSplineSpace{p}) where p
     n = dim(P)
     A = innerproduct_I(P).data
     k = knotvector(P)
@@ -71,7 +71,7 @@ function innerproduct_R(P::AbstractBSplineSpace{p}) where p
     return Symmetric(A)
 end
 
-function innerproduct_I(func, Ps::Tuple{AbstractBSplineSpace{p₁}}) where {p₁}
+function innerproduct_I(func, Ps::Tuple{BSplineSpace{p₁}}) where {p₁}
     P₁, = Ps
     n₁ = dim(P₁)
     k₁ = knotvector(P₁)
@@ -98,7 +98,7 @@ function innerproduct_I(func, Ps::Tuple{AbstractBSplineSpace{p₁}}) where {p₁
     return b
 end
 
-function innerproduct_I(func, Ps::Tuple{AbstractBSplineSpace{p₁},AbstractBSplineSpace{p₂}}) where {p₁,p₂}
+function innerproduct_I(func, Ps::Tuple{BSplineSpace{p₁},BSplineSpace{p₂}}) where {p₁,p₂}
     P₁,P₂ = Ps
     n₁,n₂ = dim.(Ps)
     k₁,k₂ = knotvector.(Ps)
@@ -137,7 +137,7 @@ function innerproduct_I(func, Ps::Tuple{AbstractBSplineSpace{p₁},AbstractBSpli
     return b
 end
 
-function innerproduct_I(func, Ps::Tuple{AbstractBSplineSpace{p₁},AbstractBSplineSpace{p₂},AbstractBSplineSpace{p₃}}) where {p₁,p₂,p₃}
+function innerproduct_I(func, Ps::Tuple{BSplineSpace{p₁},BSplineSpace{p₂},BSplineSpace{p₃}}) where {p₁,p₂,p₃}
     P₁,P₂,P₃ = Ps
     n₁,n₂,n₃ = dim.(Ps)
     k₁,k₂,k₃ = knotvector.(Ps)
@@ -191,7 +191,7 @@ function innerproduct_I(func, Ps::Tuple{AbstractBSplineSpace{p₁},AbstractBSpli
     return b
 end
 
-function innerproduct_R(func, Ps::Tuple{AbstractBSplineSpace{p₁}}) where {p₁}
+function innerproduct_R(func, Ps::Tuple{BSplineSpace{p₁}}) where {p₁}
     P₁, = Ps
     n₁ = dim(P₁)
     k₁ = knotvector(P₁)
@@ -214,7 +214,7 @@ function innerproduct_R(func, Ps::Tuple{AbstractBSplineSpace{p₁}}) where {p₁
     return b
 end
 
-function innerproduct_R(func, Ps::Tuple{AbstractBSplineSpace{p₁},AbstractBSplineSpace{p₂}}) where {p₁,p₂}
+function innerproduct_R(func, Ps::Tuple{BSplineSpace{p₁},BSplineSpace{p₂}}) where {p₁,p₂}
     P₁,P₂ = Ps
     n₁,n₂ = dim.(Ps)
     k₁,k₂ = knotvector.(Ps)
@@ -246,7 +246,7 @@ function innerproduct_R(func, Ps::Tuple{AbstractBSplineSpace{p₁},AbstractBSpli
     return b
 end
 
-function innerproduct_R(func, Ps::Tuple{AbstractBSplineSpace{p₁},AbstractBSplineSpace{p₂},AbstractBSplineSpace{p₃}}) where {p₁,p₂,p₃}
+function innerproduct_R(func, Ps::Tuple{BSplineSpace{p₁},BSplineSpace{p₂},BSplineSpace{p₃}}) where {p₁,p₂,p₃}
     P₁,P₂,P₃ = Ps
     n₁,n₂,n₃ = dim.(Ps)
     k₁,k₂,k₃ = knotvector.(Ps)
@@ -290,7 +290,7 @@ function innerproduct_R(func, Ps::Tuple{AbstractBSplineSpace{p₁},AbstractBSpli
     return b
 end
 
-function innerproduct_R(P::UniformBSplineSpace{p,T,<:AbstractUnitRange}) where {p,T}
+function innerproduct_R(P::BSplineSpace{p,T,<:UniformKnotVector{T, <:AbstractUnitRange}}) where {p,T<:Real}
     U = StaticArrays.arithmetic_closure(T)
     n = dim(P)
     A = zeros(U,n,n)
@@ -305,7 +305,7 @@ function innerproduct_R(P::UniformBSplineSpace{p,T,<:AbstractUnitRange}) where {
     return Symmetric(A)
 end
 
-function innerproduct_R(P::UniformBSplineSpace{p,T}) where {p,T}
+function innerproduct_R(P::BSplineSpace{p,T,<:UniformKnotVector{T}}) where {p,T<:Real}
     U = StaticArrays.arithmetic_closure(T)
     d = step(_vec(knotvector(P)))
     n = dim(P)
@@ -323,7 +323,7 @@ end
 
 for (fname_fit, fname_inner) in ((:fittingcontrolpoints_I, :innerproduct_I), (:fittingcontrolpoints_R, :innerproduct_R))
     # 1-dim
-    @eval function $fname_fit(func, P::NTuple{1, AbstractBSplineSpace})
+    @eval function $fname_fit(func, P::NTuple{1, BSplineSpace})
         P1, = P
         b = $fname_inner(func, P)
         A = $fname_inner(P1)
@@ -331,7 +331,7 @@ for (fname_fit, fname_inner) in ((:fittingcontrolpoints_I, :innerproduct_I), (:f
     end
 
     # 2-dim
-    @eval function $fname_fit(func, P::NTuple{2, AbstractBSplineSpace})
+    @eval function $fname_fit(func, P::NTuple{2, BSplineSpace})
         P1, P2 = P
         n1, n2 = dim.(P)
         A1, A2 = $fname_inner(P1), $fname_inner(P2)
@@ -343,7 +343,7 @@ for (fname_fit, fname_inner) in ((:fittingcontrolpoints_I, :innerproduct_I), (:f
     end
 
     # 3-dim
-    @eval function $fname_fit(func, P::NTuple{3, AbstractBSplineSpace})
+    @eval function $fname_fit(func, P::NTuple{3, BSplineSpace})
         P1, P2, P3 = P
         n1, n2, n3 = dim(P1), dim(P2), dim(P3)
         A1, A2, A3 = $fname_inner(P1), $fname_inner(P2), $fname_inner(P3)
@@ -384,22 +384,22 @@ julia> norm(M(1) - f(1)) < 1e-5
 true
 ```
 """
-function fittingcontrolpoints(func, P::NTuple{Dim, AbstractBSplineSpace}) where Dim
+function fittingcontrolpoints(func, P::NTuple{Dim, BSplineSpace}) where Dim
     fittingcontrolpoints_I(func,P)
 end
 
-function innerproduct_R(func, P::Vararg{AbstractBSplineSpace})
+function innerproduct_R(func, P::Vararg{BSplineSpace})
     innerproduct_R(func,P)
 end
-function innerproduct_I(func, P::Vararg{AbstractBSplineSpace})
+function innerproduct_I(func, P::Vararg{BSplineSpace})
     innerproduct_I(func,P)
 end
-function fittingcontrolpoints(func, P::Vararg{AbstractBSplineSpace})
+function fittingcontrolpoints(func, P::Vararg{BSplineSpace})
     fittingcontrolpoints_I(func,P)
 end
-function fittingcontrolpoints_I(func, P::Vararg{AbstractBSplineSpace})
+function fittingcontrolpoints_I(func, P::Vararg{BSplineSpace})
     fittingcontrolpoints_I(func,P)
 end
-function fittingcontrolpoints_R(func, P::Vararg{AbstractBSplineSpace})
+function fittingcontrolpoints_R(func, P::Vararg{BSplineSpace})
     fittingcontrolpoints_R(func,P)
 end

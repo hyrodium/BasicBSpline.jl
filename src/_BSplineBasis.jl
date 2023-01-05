@@ -21,7 +21,7 @@ Right-sided limit version.
 # Examples
 ```jldoctest
 julia> P = BSplineSpace{0}(KnotVector(1:6))
-BSplineSpace{0, Int64}(KnotVector([1, 2, 3, 4, 5, 6]))
+BSplineSpace{0, Int64, KnotVector{Int64}}(KnotVector([1, 2, 3, 4, 5, 6]))
 
 julia> bsplinebasis₊₀.(P,1:5,(1:6)')
 5×6 Matrix{Float64}:
@@ -32,7 +32,7 @@ julia> bsplinebasis₊₀.(P,1:5,(1:6)')
  0.0  0.0  0.0  0.0  1.0  0.0
 ```
 """
-@generated function bsplinebasis₊₀(P::AbstractBSplineSpace{p,T}, i::Integer, t::S) where {p, T, S<:Real}
+@generated function bsplinebasis₊₀(P::BSplineSpace{p,T}, i::Integer, t::S) where {p, T, S<:Real}
     U = StaticArrays.arithmetic_closure(promote_type(T,S))
     ks = [Symbol(:k,i) for i in 1:p+2]
     Ks = [Symbol(:K,i) for i in 1:p+1]
@@ -79,7 +79,7 @@ Left-sided limit version.
 # Examples
 ```jldoctest
 julia> P = BSplineSpace{0}(KnotVector(1:6))
-BSplineSpace{0, Int64}(KnotVector([1, 2, 3, 4, 5, 6]))
+BSplineSpace{0, Int64, KnotVector{Int64}}(KnotVector([1, 2, 3, 4, 5, 6]))
 
 julia> bsplinebasis₋₀.(P,1:5,(1:6)')
 5×6 Matrix{Float64}:
@@ -90,7 +90,7 @@ julia> bsplinebasis₋₀.(P,1:5,(1:6)')
  0.0  0.0  0.0  0.0  0.0  1.0
 ```
 """
-@generated function bsplinebasis₋₀(P::AbstractBSplineSpace{p,T}, i::Integer, t::S) where {p, T, S<:Real}
+@generated function bsplinebasis₋₀(P::BSplineSpace{p,T}, i::Integer, t::S) where {p, T, S<:Real}
     U = StaticArrays.arithmetic_closure(promote_type(T,S))
     ks = [Symbol(:k,i) for i in 1:p+2]
     Ks = [Symbol(:K,i) for i in 1:p+1]
@@ -138,7 +138,7 @@ Modified version.
 # Examples
 ```jldoctest
 julia> P = BSplineSpace{0}(KnotVector(1:6))
-BSplineSpace{0, Int64}(KnotVector([1, 2, 3, 4, 5, 6]))
+BSplineSpace{0, Int64, KnotVector{Int64}}(KnotVector([1, 2, 3, 4, 5, 6]))
 
 julia> bsplinebasis.(P,1:5,(1:6)')
 5×6 Matrix{Float64}:
@@ -149,7 +149,7 @@ julia> bsplinebasis.(P,1:5,(1:6)')
  0.0  0.0  0.0  0.0  1.0  1.0
 ```
 """
-@generated function bsplinebasis(P::AbstractBSplineSpace{p,T}, i::Integer, t::S) where {p, T, S<:Real}
+@generated function bsplinebasis(P::BSplineSpace{p,T}, i::Integer, t::S) where {p, T, S<:Real}
     U = StaticArrays.arithmetic_closure(promote_type(T,S))
     ks = [Symbol(:k,i) for i in 1:p+2]
     Ks = [Symbol(:K,i) for i in 1:p+1]
@@ -187,7 +187,7 @@ julia> p = 2
 2
 
 julia> P = BSplineSpace{p}(k)
-BSplineSpace{2, Float64}(KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]))
+BSplineSpace{2, Float64, KnotVector{Float64}}(KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]))
 
 julia> t = 5.7
 5.7
@@ -210,19 +210,19 @@ julia> bsplinebasis.(P,i:i+p,t)
 """
 bsplinebasisall
 
-@inline function bsplinebasisall(P::AbstractBSplineSpace{0,T},i::Integer,t::S) where {T, S<:Real}
+@inline function bsplinebasisall(P::BSplineSpace{0,T},i::Integer,t::S) where {T, S<:Real}
     U = StaticArrays.arithmetic_closure(promote_type(T,S))
     SVector(one(U),)
 end
 
-@inline function bsplinebasisall(P::AbstractBSplineSpace{1}, i::Integer, t::Real)
+@inline function bsplinebasisall(P::BSplineSpace{1}, i::Integer, t::Real)
     k = knotvector(P)
     B1 = (k[i+2]-t)/(k[i+2]-k[i+1])
     B2 = (t-k[i+1])/(k[i+2]-k[i+1])
     return SVector(B1, B2)
 end
 
-@generated function bsplinebasisall(P::AbstractBSplineSpace{p}, i::Integer, t::Real) where p
+@generated function bsplinebasisall(P::BSplineSpace{p,T}, i::Integer, t::Real) where {p,T}
     bs = [Symbol(:b,i) for i in 1:p]
     Bs = [Symbol(:B,i) for i in 1:p+1]
     K1s = [:((k[i+$(p+j)]-t)/(k[i+$(p+j)]-k[i+$(j)])) for j in 1:p]

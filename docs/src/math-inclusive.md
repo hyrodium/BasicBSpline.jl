@@ -16,7 +16,7 @@ using Plots; plotly()
     ```
 
 ```@docs
-Base.issubset(P::AbstractBSplineSpace{p}, P′::AbstractBSplineSpace{p′}) where {p, p′}
+Base.issubset(P::BSplineSpace{p}, P′::BSplineSpace{p′}) where {p, p′}
 ```
 
 Here are plots of the B-spline basis functions of the spaces `P1`, `P2`, `P3`.

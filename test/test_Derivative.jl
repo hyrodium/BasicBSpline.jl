@@ -5,21 +5,27 @@
     dt = 1e-8
 
     @testset "constructor" begin
-        P1 = BSplineSpace{2}(UniformKnotVector(1:8))
-        P2 = UniformBSplineSpace{2}(UniformKnotVector(1:8))
-        P3 = UniformBSplineSpace{2}(UniformKnotVector(1:1:8))
+        P1 = BSplineSpace{2}(KnotVector(1:8))
+        P2 = BSplineSpace{2}(UniformKnotVector(1:8))
+        P3 = BSplineSpace{2}(UniformKnotVector(1:1:8))
         dP1 = BSplineDerivativeSpace{1}(P1)
         dP2 = BSplineDerivativeSpace{1}(P2)
         dP3 = BSplineDerivativeSpace{1}(P3)
         dP4 = BSplineDerivativeSpace{2}(P3)
+        dP5 = BSplineDerivativeSpace{2,typeof(P2)}(P2)
+        dP6 = BSplineDerivativeSpace{2,typeof(P3)}(P2)
+        dP7 = BSplineDerivativeSpace{2,typeof(P3)}(dP6)
         @test dP1 == dP2 == dP3 != dP4
         @test dP1 !== dP2
         @test_throws MethodError BSplineDerivativeSpace{1,typeof(P2)}(dP1)
+        @test_throws MethodError BSplineDerivativeSpace(dP1)
+        @test_throws MethodError BSplineDerivativeSpace{}(dP1)
         @test dP3 === BSplineDerivativeSpace{1,typeof(P3)}(dP2)
         @test dP2 !== BSplineDerivativeSpace{1,typeof(P3)}(dP2)
         @test dP2 === BSplineDerivativeSpace{1,typeof(P2)}(dP2)
-        @test dP1 isa BSplineDerivativeSpace{1,<:BSplineSpace}
-        @test dP2 isa BSplineDerivativeSpace{1,<:UniformBSplineSpace}
+        @test dP1 isa BSplineDerivativeSpace{1,<:BSplineSpace{p,T,KnotVector{T}} where {p,T}}
+        @test dP2 isa BSplineDerivativeSpace{1,<:BSplineSpace{p,T,<:UniformKnotVector{T}} where {p,T}}
+        @test dP4 == dP5 == dP6 == dP7
 
         @test dP2 == convert(BSplineDerivativeSpace,dP2)
         @test dP2 == convert(BSplineDerivativeSpace{1},dP2)
@@ -108,7 +114,7 @@
         Random.seed!(42)
         k = UniformKnotVector(1:20)
         for p in 0:5
-            P = UniformBSplineSpace{p}(k)
+            P = BSplineSpace{p}(k)
             for r in 0:5
                 dP = BSplineDerivativeSpace{r}(P)
                 for _ in 1:10

@@ -22,7 +22,7 @@ struct KnotVector{T} <: AbstractKnotVector{T}
     global unsafe_knotvector(::Type{T}, v) where T = new{T}(v)
 end
 KnotVector{T}(v::AbstractVector) where T = unsafe_knotvector(T,sort(v))
-KnotVector(v::AbstractVector{T}) where {T<:Real} = unsafe_knotvector(T,sort(v))
+KnotVector(v::AbstractVector{T}) where T = unsafe_knotvector(T,sort(v))
 AbstractKnotVector{S}(k::KnotVector{T}) where {S, T} = unsafe_knotvector(promote_type(S,T), _vec(k))
 
 Base.copy(k::KnotVector{T}) where T = unsafe_knotvector(T,copy(_vec(k)))
@@ -111,7 +111,7 @@ function Base.:+(k1::KnotVector{T}, k2::KnotVector{T}) where T
     end
     return BasicBSpline.unsafe_knotvector(T,v)
 end
-Base.:+(k1::AbstractKnotVector, k2::AbstractKnotVector) = +(promote(k1,k2)...)
+Base.:+(k1::AbstractKnotVector{T1}, k2::AbstractKnotVector{T2}) where {T1, T2} = +(promote(k1,k2)...)
 
 @doc raw"""
 Product of integer and knot vector
@@ -242,6 +242,10 @@ function Base.issubset(k::KnotVector, k′::KnotVector)
         end
     end
     return true
+end
+
+function Base.issubset(k::AbstractKnotVector, k′::AbstractKnotVector)
+    issubset(KnotVector(k),KnotVector(k′))
 end
 
 Base.:⊊(A::AbstractKnotVector, B::AbstractKnotVector) = (A ≠ B) & (A ⊆ B)

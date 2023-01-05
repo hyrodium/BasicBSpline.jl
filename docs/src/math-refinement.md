@@ -26,7 +26,7 @@ M = BSplineManifold(a,(P,P)) # Define B-spline manifold
 nothing # hide
 ```
 
-### h-refinemnet
+### h-refinement
 Insert additional knots to knot vector.
 
 ```@repl math
@@ -39,7 +39,7 @@ save_png("2dim_h-refinement.png", M_h) # save image
 Note that this shape and the last shape are equivalent.
 
 
-### p-refinemnet
+### p-refinement
 Increase the polynomial degree of B-spline manifold.
 
 ```@repl math

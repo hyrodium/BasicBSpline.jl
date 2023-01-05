@@ -9,9 +9,8 @@ using ChainRulesCore
 
 # Types
 export AbstractKnotVector, KnotVector, UniformKnotVector, EmptyKnotVector
-export AbstractBSplineSpace, BSplineSpace, UniformBSplineSpace
-export AbstractBSplineManifold, BSplineManifold, RationalBSplineManifold
-export BSplineDerivativeSpace
+export BSplineSpace, BSplineDerivativeSpace
+export BSplineManifold, RationalBSplineManifold
 
 # B-spline basis functions
 export bsplinebasis₊₀, bsplinebasis₋₀, bsplinebasis
@@ -45,7 +44,6 @@ include("_EmptyKnotVector.jl")
 include("_BSplineSpace.jl")
 include("_BSplineBasis.jl")
 include("_UniformKnotVector.jl")
-include("_UniformBSplineSpace.jl")
 include("_UniformBSplineBasis.jl")
 include("_DerivativeSpace.jl")
 include("_DerivativeBasis.jl")

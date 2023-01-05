@@ -105,15 +105,21 @@
         @test EmptyKnotVector{Float64}()*1 === EmptyKnotVector{Float64}()
         @test EmptyKnotVector{BigFloat}()*2 === EmptyKnotVector{BigFloat}()
         @test_throws DomainError EmptyKnotVector()*(-1)
+        @test (EmptyKnotVector()
+                === EmptyKnotVector() + EmptyKnotVector()
+                === EmptyKnotVector() * 2
+                === 2 * EmptyKnotVector())
+        @test EmptyKnotVector() isa EmptyKnotVector{Bool}
 
         # type promotion
         @test KnotVector{Int}([1,2]) + KnotVector([3]) == KnotVector([1,2,3])
         @test KnotVector{Int}([1,2]) + KnotVector([3]) isa KnotVector{Int}
         @test KnotVector{Int}([1,2]) + KnotVector{Rational{Int}}([3]) == KnotVector([1,2,3])
         @test KnotVector{Int}([1,2]) + KnotVector{Rational{Int}}([3]) isa KnotVector{Rational{Int}}
-        @test KnotVector{Int}([1,2])*0 == KnotVector(Float64[])
-        @test KnotVector{Int}([1,2])*0 isa KnotVector{Int}
+        @test KnotVector{Int}([1,2]) * 0 == KnotVector(Float64[])
+        @test KnotVector{Int}([1,2]) * 0 isa KnotVector{Int}
         @test KnotVector{Int}(Int[]) isa KnotVector{Int}
+        @test EmptyKnotVector{Irrational{:π}}() + EmptyKnotVector{Rational{Int}}() isa EmptyKnotVector{Float64}
     end
 
     @testset "unique" begin
@@ -123,19 +129,34 @@
     end
 
     @testset "inclusive relation" begin
-        @test KnotVector([1,2,3])     ⊆ KnotVector([1,2,3])
-        @test KnotVector([1,2,3])     ⊇ KnotVector([1,2,3])
-        @test KnotVector([1,2,2,3])   ⊆ KnotVector([1,2,2,3,5])
-        @test KnotVector([1,2,2,3])   ⊈ KnotVector([1,2,3,5])
-        @test KnotVector([1,2,2,3,5]) ⊇ KnotVector([1,2,2,3])
-        @test KnotVector([1,2,3,5])   ⊉ KnotVector([1,2,2,3])
+        k1 = KnotVector([1,2,3])
+        k2 = KnotVector([1,2,2,3])
+        k3 = KnotVector([1,2,2,3,5])
+        k4 = KnotVector([1,2,3,5])
+        k5 = KnotVector([1,2,3,4])
+        k6 = EmptyKnotVector()
+        k7 = EmptyKnotVector{Real}()
+        k8 = EmptyKnotVector{Float64}()
 
-        @test !(KnotVector([1,2,3,4]) ⊊ KnotVector([1,2,3]))
-        @test !(KnotVector([1,2,3])   ⊊ KnotVector([1,2,3]))
-        @test KnotVector([1,2,3])     ⊊ KnotVector([1,2,3,4])
-        @test !(KnotVector([1,2,3])   ⊋ KnotVector([1,2,3,4]))
-        @test !(KnotVector([1,2,3])   ⊋ KnotVector([1,2,3]))
-        @test KnotVector([1,2,3,4])   ⊋ KnotVector([1,2,3])
+        @test k1 ⊆ k1
+        @test k1 ⊇ k1
+        @test k2 ⊆ k3
+        @test k2 ⊈ k4
+        @test k3 ⊇ k2
+        @test k4 ⊉ k2
+
+        @test !(k5 ⊊ k1)
+        @test !(k1 ⊊ k1)
+        @test k1 ⊊ k5
+        @test !(k1 ⊋ k5)
+        @test !(k1 ⊋ k1)
+        @test k5 ⊋ k1
+
+        @test k6 ⊆ k7 ⊆ k8 ⊆ k1
+        @test k6 ⊆ k7 ⊆ k8 ⊆ k2
+        @test k6 ⊆ k7 ⊆ k8 ⊆ k3
+        @test k6 ⊆ k7 ⊆ k8 ⊆ k4
+        @test k6 ⊆ k7 ⊆ k8 ⊆ k5
     end
 
     @testset "string" begin

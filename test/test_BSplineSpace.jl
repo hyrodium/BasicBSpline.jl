@@ -6,10 +6,18 @@
         P2 = BSplineSpace{2}(P1)
         P3 = BSplineSpace{2,Int}(P1)
         P4 = BSplineSpace{2,Real}(P1)
-        @test P1 == P2 == P3 == P4 == bsplinespace(P1) == bsplinespace(P2) == bsplinespace(P3) == bsplinespace(P4)
+        P5 = BSplineSpace{2,Float64}(P1)
+        P6 = BSplineSpace{2,Float64}(KnotVector(1:8))
+        @test P1 == P2 == P3 == P4 == P5 == bsplinespace(P1) == bsplinespace(P2) == bsplinespace(P3) == bsplinespace(P4) == bsplinespace(P5)
+        @test P5 == P6
+        @test typeof(P5) === typeof(P6)
         @test P1 isa BSplineSpace{2,Int}
+        @test P2 isa BSplineSpace{2,Int}
         @test P3 isa BSplineSpace{2,Int}
         @test P4 isa BSplineSpace{2,Real}
+        @test P5 isa BSplineSpace{2,Float64}
+        @test P1 === BSplineSpace(P1)
+        @test_throws MethodError BSplineSpace(KnotVector(1:8))
         @test_throws MethodError BSplineSpace{3}(P1)
     end
 
