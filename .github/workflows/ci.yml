@@ -59,6 +59,7 @@ jobs:
           julia --project=docs -e '
             using Pkg
             Pkg.add(PackageSpec(url="https://github.com/hyrodium/BasicBSplineExporter.jl"))
+            Pkg.add(PackageSpec(url="https://github.com/hyrodium/BasicBSplineFitting.jl"))
             Pkg.develop(PackageSpec(path=pwd()))
             Pkg.instantiate()'
       - run: |
