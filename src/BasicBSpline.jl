@@ -35,7 +35,6 @@ export bsplinespace
 
 # Useful functions
 export refinement
-export fittingcontrolpoints, fittingcontrolpoints_R, fittingcontrolpoints_I
 
 include("_util.jl")
 include("_KnotVector.jl")
