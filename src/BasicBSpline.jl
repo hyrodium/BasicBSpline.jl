@@ -4,7 +4,6 @@ using LinearAlgebra
 using IntervalSets
 using StaticArrays
 using RecipesBase
-using FastGaussQuadrature
 using ChainRulesCore
 
 # Types
@@ -36,7 +35,6 @@ export bsplinespace
 
 # Useful functions
 export refinement
-export fittingcontrolpoints, fittingcontrolpoints_R, fittingcontrolpoints_I
 
 include("_util.jl")
 include("_KnotVector.jl")
@@ -51,7 +49,6 @@ include("_ChangeBasis.jl")
 include("_BSplineManifold.jl")
 include("_RationalBSplineManifold.jl")
 include("_Refinement.jl")
-include("_Fitting.jl")
 include("_ChainRules.jl")
 include("_PlotRecipes.jl")
 

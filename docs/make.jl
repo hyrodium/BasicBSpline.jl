@@ -1,6 +1,7 @@
 using Documenter
 using BasicBSpline
 using BasicBSplineExporter
+using BasicBSplineFitting
 using Plots
 using Random
 
@@ -9,7 +10,7 @@ plotly()
 Random.seed!(42)
 
 # Setup for doctests in docstrings
-DocMeta.setdocmeta!(BasicBSpline, :DocTestSetup, :(using LinearAlgebra, BasicBSpline, StaticArrays))
+DocMeta.setdocmeta!(BasicBSpline, :DocTestSetup, :(using LinearAlgebra, BasicBSpline, StaticArrays, BasicBSplineFitting))
 
 function generate_indexmd_from_readmemd()
     path_readme = "README.md"

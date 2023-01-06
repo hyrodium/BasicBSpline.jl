@@ -119,8 +119,10 @@ save_png("2dim_p-refinement.png", M_p) # save image
 Note that this shape and the last shape are equivalent.
 
 ### Fitting B-spline manifold
-[Try on Desmos graphing graphing calculator!](https://www.desmos.com/calculator/2hm3b1fbdf)
+[Try on Desmos graphing calculator!](https://www.desmos.com/calculator/2hm3b1fbdf)
 ```julia
+using BasicBSplineFitting
+
 p1 = 2
 p2 = 2
 k1 = KnotVector(-10:10)+p1*KnotVector([-10,10])
