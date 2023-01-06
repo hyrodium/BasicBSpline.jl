@@ -4,7 +4,6 @@ using LinearAlgebra
 using IntervalSets
 using StaticArrays
 using RecipesBase
-using FastGaussQuadrature
 using ChainRulesCore
 
 # Types
@@ -51,7 +50,6 @@ include("_ChangeBasis.jl")
 include("_BSplineManifold.jl")
 include("_RationalBSplineManifold.jl")
 include("_Refinement.jl")
-include("_Fitting.jl")
 include("_ChainRules.jl")
 include("_PlotRecipes.jl")
 
