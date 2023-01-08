@@ -11,5 +11,5 @@ StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [compat]
-Aqua = "0.5"
+Aqua = "0.6"
 Plots = "1"
