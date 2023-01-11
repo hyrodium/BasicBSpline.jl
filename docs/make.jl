@@ -33,7 +33,7 @@ end
 generate_indexmd_from_readmemd()
 
 makedocs(;
-    modules = [BasicBSpline],
+    modules = [BasicBSpline, BasicBSplineFitting],
     format = Documenter.HTML(
         ansicolor=true,
         canonical = "https://hyrodium.github.io/BasicBSpline.jl/stable/",
