@@ -1,7 +1,11 @@
 # Fitting with B-spline manifold
 
+The following functions such as `fittingcontolpoints` were provided from BasicBSpline.jl before v0.9.0.
+From BasicBSpline v0.9.0, these functions are moved to [BasicBSplineFitting](https://github.com/hyrodium/BasicBSplineFitting.jl).
+
 ```@setup math
 using BasicBSpline
+using BasicBSplineFitting
 using BasicBSplineExporter
 using StaticArrays
 using Plots; plotly()

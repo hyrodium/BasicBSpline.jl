@@ -27,9 +27,9 @@ BasicBSpline._changebasis_sim
 ```
 
 ```@docs
-BasicBSpline.innerproduct_R
+BasicBSplineFitting.innerproduct_R
 ```
 
 ```@docs
-BasicBSpline.innerproduct_I
+BasicBSplineFitting.innerproduct_I
 ```
