@@ -279,3 +279,7 @@ function countknots(k::AbstractKnotVector, t::Real)
     # for large case, this is faster
     return length(searchsorted(_vec(k), t, lt=<))
 end
+
+function Base.float(k::KnotVector{T}) where T
+    KnotVector(float(_vec(k)))
+end

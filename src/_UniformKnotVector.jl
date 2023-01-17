@@ -22,6 +22,10 @@ UniformKnotVector(k::UniformKnotVector) = k
 UniformKnotVector{T}(k::UniformKnotVector) where T = unsafe_uniformknotvector(T, k.vector)
 UniformKnotVector{T,R}(k::UniformKnotVector) where R<:AbstractRange{T} where T = unsafe_uniformknotvector(T, R(k.vector))
 
+function Base.float(k::UniformKnotVector)
+    UniformKnotVector(float(_vec(k)))
+end
+
 _vec(k::UniformKnotVector) = k.vector
 
 Base.getindex(k::UniformKnotVector, v::AbstractRange{<:Integer}) = UniformKnotVector(sort(k.vector[v]))
