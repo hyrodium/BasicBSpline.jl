@@ -123,6 +123,20 @@
         @test string(k3) == "UniformKnotVector(1:4)"
     end
 
+    @testset "float" begin
+        k = UniformKnotVector(1:3)
+        @test float(k) isa UniformKnotVector{Float64}
+        @test k == float(k)
+
+        k = UniformKnotVector(1f0:3f0)
+        @test float(k) isa UniformKnotVector{Float32}
+        @test k == float(k)
+
+        k = UniformKnotVector(1//1:3//1)
+        @test float(k) isa UniformKnotVector{Float64}
+        @test k == float(k)
+    end
+
     @testset "other operators" begin
         @test countknots(k2, 0.3) == 0
         @test countknots(k2, 1) == 1

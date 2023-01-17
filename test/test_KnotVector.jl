@@ -166,6 +166,20 @@
         @test string(KnotVector(Int[])) == "KnotVector(Int64[])"
     end
 
+    @testset "float" begin
+        k = KnotVector([1,2,3])
+        @test float(k) isa KnotVector{Float64}
+        @test k == float(k)
+
+        k = KnotVector{Float32}([1,2,3])
+        @test float(k) isa KnotVector{Float32}
+        @test k == float(k)
+
+        k = KnotVector{Rational{Int}}([1,2,3])
+        @test float(k) isa KnotVector{Float64}
+        @test k == float(k)
+    end
+
     @testset "other operators" begin
         k = KnotVector([1,2,2,3])
         @test countknots(k, 0.3) == 0
