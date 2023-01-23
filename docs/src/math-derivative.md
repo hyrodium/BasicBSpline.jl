@@ -28,6 +28,7 @@ plot(
     plot(BSplineDerivativeSpace{3}(P), label="3rd derivative", color=:blue),
 )
 savefig("bsplinebasisderivativeplot.html") # hide
+nothing # hide
 ```
 
 ```@raw html

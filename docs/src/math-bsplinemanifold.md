@@ -60,6 +60,7 @@ a = [SVector(i-5, 3*sin(i^2)) for i in 1:dim(P)] # control points
 M = BSplineManifold(a, P) # Define B-spline manifold
 plot(M)
 savefig("1dim-manifold.html") # hide
+nothing # hide
 ```
 
 ```@raw html
@@ -77,6 +78,7 @@ a = [SVector(2*i-6.5, 2*j-6.5, 0) for i in 1:dim(P), j in 1:dim(P)] + rand_a # r
 M = BSplineManifold(a,(P,P)) # Define B-spline manifold
 plot(M)
 savefig("2dim-manifold.html") # hide
+nothing # hide
 ```
 
 ```@raw html
@@ -111,6 +113,7 @@ plot!(M(4.3,:), linewidth = 5, color=:cyan)
 plot!(M(4.4,:), linewidth = 5, color=:red)
 plot!(M(:,5.2), linewidth = 5, color=:green)
 savefig("2dim-manifold-currying.html") # hide
+nothing # hide
 ```
 
 ```@raw html
