@@ -1,7 +1,7 @@
 # B-spline space
 @recipe function f(P::AbstractFunctionSpace)
     # TODO fix number of sampling points
-    N = 100
+    N = 50
     k = knotvector(P)
     ts = Float64[]
     for i in 1:length(k)-1
@@ -18,8 +18,9 @@ end
 # B-spline curve in 2d
 @recipe function f(M::Union{BSplineManifold{1,Deg,<:StaticVector{2,<:Real}}, RationalBSplineManifold{1,Deg,<:StaticVector{2,<:Real}}}) where Deg
     # TODO fix number of sampling points
+    N = 50
     t_min, t_max = extrema(domain(bsplinespaces(M)[1]))
-    ts = range(t_min, t_max, length=300)
+    ts = range(t_min, t_max, length=N)
     @series begin
         primary := false
         linecolor := :gray
@@ -35,8 +36,9 @@ end
 # B-spline curve in 3d
 @recipe function f(M::Union{BSplineManifold{1,Deg,<:StaticVector{3,<:Real}}, RationalBSplineManifold{1,Deg,<:StaticVector{3,<:Real}}}) where Deg
     # TODO fix number of sampling points
+    N = 50
     t_min, t_max = extrema(domain(bsplinespaces(M)[1]))
-    ts = range(t_min, t_max, length=300)
+    ts = range(t_min, t_max, length=N)
     @series begin
         primary := false
         linecolor := :gray
@@ -52,10 +54,11 @@ end
 # B-spline surface
 @recipe function f(M::Union{BSplineManifold{2,Deg,<:StaticVector{3,<:Real}}, RationalBSplineManifold{2,Deg,<:StaticVector{3,<:Real}}}) where Deg
     # TODO fix number of sampling points
+    N = 50
     t1_min, t1_max = extrema(domain(bsplinespaces(M)[1]))
     t2_min, t2_max = extrema(domain(bsplinespaces(M)[2]))
-    t1s = range(t1_min, t1_max, length=300)
-    t2s = range(t2_min, t2_max, length=300)
+    t1s = range(t1_min, t1_max, length=N)
+    t2s = range(t2_min, t2_max, length=N)
     @series begin
         primary := false
         linecolor := :gray
