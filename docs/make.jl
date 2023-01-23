@@ -11,6 +11,7 @@ Random.seed!(42)
 
 # Setup for doctests in docstrings
 DocMeta.setdocmeta!(BasicBSpline, :DocTestSetup, :(using LinearAlgebra, BasicBSpline, StaticArrays, BasicBSplineFitting))
+DocMeta.setdocmeta!(BasicBSplineFitting, :DocTestSetup, :(using LinearAlgebra, BasicBSpline, StaticArrays, BasicBSplineFitting))
 
 function generate_indexmd_from_readmemd()
     path_readme = "README.md"

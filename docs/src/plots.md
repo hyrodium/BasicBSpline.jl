@@ -6,6 +6,7 @@ In this section, we will provide some plottig examples.
 
 ```@setup plots
 using BasicBSpline
+using BasicBSplineFitting
 using StaticArrays
 using Plots; plotly()
 ```
