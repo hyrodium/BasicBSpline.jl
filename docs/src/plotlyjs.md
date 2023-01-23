@@ -4,6 +4,7 @@
 
 ```@example
 using BasicBSpline
+using BasicBSplineFitting
 using StaticArrays
 using PlotlyJS
 f(t) = SVector((1+cos(t))*cos(t),(1+cos(t))*sin(t))
