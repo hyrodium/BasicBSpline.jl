@@ -33,6 +33,7 @@ nothing # hide
 ## Helix
 ```@example
 using BasicBSpline
+using BasicBSplineFitting
 using StaticArrays
 using PlotlyJS
 f(t) = SVector(cos(t),sin(t),t)
