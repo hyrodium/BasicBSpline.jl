@@ -1,7 +1,7 @@
 # B-spline space
 @recipe function f(P::AbstractFunctionSpace)
     # TODO fix number of sampling points
-    N = 50
+    N = 100
     k = knotvector(P)
     ts = Float64[]
     for i in 1:length(k)-1
