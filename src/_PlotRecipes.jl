@@ -18,7 +18,7 @@ end
 # B-spline curve in 2d
 @recipe function f(M::Union{BSplineManifold{1,Deg,<:StaticVector{2,<:Real}}, RationalBSplineManifold{1,Deg,<:StaticVector{2,<:Real}}}) where Deg
     # TODO fix number of sampling points
-    N = 50
+    N = 100
     t_min, t_max = extrema(domain(bsplinespaces(M)[1]))
     ts = range(t_min, t_max, length=N)
     @series begin
@@ -36,7 +36,7 @@ end
 # B-spline curve in 3d
 @recipe function f(M::Union{BSplineManifold{1,Deg,<:StaticVector{3,<:Real}}, RationalBSplineManifold{1,Deg,<:StaticVector{3,<:Real}}}) where Deg
     # TODO fix number of sampling points
-    N = 50
+    N = 100
     t_min, t_max = extrema(domain(bsplinespaces(M)[1]))
     ts = range(t_min, t_max, length=N)
     @series begin
@@ -54,7 +54,7 @@ end
 # B-spline surface
 @recipe function f(M::Union{BSplineManifold{2,Deg,<:StaticVector{3,<:Real}}, RationalBSplineManifold{2,Deg,<:StaticVector{3,<:Real}}}) where Deg
     # TODO fix number of sampling points
-    N = 50
+    N = 100
     t1_min, t1_max = extrema(domain(bsplinespaces(M)[1]))
     t2_min, t2_max = extrema(domain(bsplinespaces(M)[2]))
     t1s = range(t1_min, t1_max, length=N)
