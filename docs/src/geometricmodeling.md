@@ -21,6 +21,7 @@ w = [1,cos(t/2),1]
 M = RationalBSplineManifold(a,w,P)
 plot(M, xlims=(0,1.1), ylims=(0,1.1), aspectratio=1)
 savefig("geometricmodeling-arc.html") # hide
+nothing # hide
 ```
 
 ```@raw html
@@ -47,6 +48,7 @@ w = [1,1/√2,1,1/√2,1,1/√2,1,1/√2,1]
 M = RationalBSplineManifold(a,w,P)
 plot(M, xlims=(-1.2,1.2), ylims=(-1.2,1.2), aspectratio=1)
 savefig("geometricmodeling-circle.html") # hide
+nothing # hide
 ```
 
 ```@raw html
@@ -84,6 +86,7 @@ a = hcat(a1,a2,a3,a4,a5,a6,a7,a8,a9)
 M = RationalBSplineManifold(a,w*w',P,P)
 plot(M)
 savefig("geometricmodeling-torus.html") # hide
+nothing # hide
 ```
 
 ```@raw html
@@ -99,6 +102,7 @@ a = [SVector(i,j,2i^2+2j^2-2) for i in -1:1, j in -1:1]
 M = BSplineManifold(a,P,P)
 plot(M)
 savefig("geometricmodeling-paraboloid.html") # hide
+nothing # hide
 ```
 
 ```@raw html
@@ -111,6 +115,7 @@ a = [SVector(i,j,2i^2-2j^2) for i in -1:1, j in -1:1]
 M = BSplineManifold(a,P,P)
 plot(M)
 savefig("geometricmodeling-hyperbolicparaboloid.html") # hide
+nothing # hide
 ```
 
 ```@raw html

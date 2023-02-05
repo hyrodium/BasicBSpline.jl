@@ -33,6 +33,7 @@ plot(
     link=:x
 )
 savefig("subbsplineplot.html") # hide
+nothing # hide
 ```
 
 ```@raw html
@@ -66,6 +67,7 @@ plot(
     link=:x
 )
 savefig("subbsplineplot2.html") # hide
+nothing # hide
 ```
 
 ```@raw html

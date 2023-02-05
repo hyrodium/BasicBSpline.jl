@@ -43,6 +43,7 @@ f = interpolate(xs,fs)
 scatter(xs, fs)
 plot!(t->f(t))
 savefig("interpolation_cubic.html") # hide
+nothing # hide
 ```
 
 ```@raw html
@@ -76,6 +77,7 @@ f = interpolate_linear(xs,fs)
 scatter(xs, fs)
 plot!(t->f(t))
 savefig("interpolation_linear.html") # hide
+nothing # hide
 ```
 
 ```@raw html
@@ -115,6 +117,7 @@ scatter(xs, fs)
 plot!(t->f(mod(t-1,6)+1),1,14)
 plot!(t->f(t))
 savefig("interpolation_periodic.html") # hide
+nothing # hide
 ```
 
 ```@raw html
@@ -140,6 +143,7 @@ plot!(t->f3(t), label="polynomial degree 3")
 plot!(t->f4(t), label="polynomial degree 4")
 plot!(t->f5(t), label="polynomial degree 5")
 savefig("interpolation_periodic_sin.html") # hide
+nothing # hide
 ```
 
 ```@raw html

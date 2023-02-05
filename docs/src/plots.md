@@ -26,6 +26,7 @@ plot(
     plot([t->bsplinebasis(P3,i,t) for i in 1:dim(P3)], 0, 10, ylims=(0,1), legend=false, title="3rd polynomial degree"),
 )
 savefig("plots-bsplinebasis-raw.html") # hide
+nothing # hide
 ```
 
 ```@raw html
@@ -46,6 +47,7 @@ plot(
     layout=(2,2),
 )
 savefig("plots-bsplinebasis.html") # hide
+nothing # hide
 ```
 
 ```@raw html
@@ -64,6 +66,7 @@ plot(
     plot(BSplineDerivativeSpace{3}(P), label="3rd derivative", color=:blue),
 )
 savefig("plots-bsplinebasisderivative.html") # hide
+nothing # hide
 ```
 
 ```@raw html
@@ -83,6 +86,7 @@ M = BSplineManifold(a, P)
 
 plot(M)
 savefig("plots-cardioid.html") # hide
+nothing # hide
 ```
 
 ```@raw html
@@ -100,6 +104,7 @@ M = BSplineManifold(a, P)
 
 plot(M)
 savefig("plots-helix.html") # hide
+nothing # hide
 ```
 
 ```@raw html
@@ -120,6 +125,7 @@ M = BSplineManifold(a,(P1,P2))
 plot(M)
 
 savefig("plots-surface.html") # hide
+nothing # hide
 ```
 
 ```@raw html
@@ -142,6 +148,7 @@ plot!(M, label="B-spline curve")
 plot!(R, label="Rational B-spline curve")
 
 savefig("plots-arc.html") # hide
+nothing # hide
 ```
 
 ```@raw html

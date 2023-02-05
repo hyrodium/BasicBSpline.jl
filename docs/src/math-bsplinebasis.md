@@ -49,6 +49,7 @@ k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 P = BSplineSpace{p}(k)
 plot([t->bsplinebasis₊₀(P,i,t) for i in 1:dim(P)], 0, 10, ylims=(0,1), label=false)
 savefig("bsplinebasisplot.html") # hide
+nothing # hide
 ```
 
 ```@raw html
@@ -74,6 +75,7 @@ k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 P = BSplineSpace{p}(k)
 plot([t->bsplinebasis₋₀(P,i,t) for i in 1:dim(P)], 0, 10, ylims=(0,1), label=false)
 savefig("bsplinebasisplot2.html") # hide
+nothing # hide
 ```
 
 ```@raw html
@@ -111,6 +113,7 @@ k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 P = BSplineSpace{p}(k)
 plot(t->sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 0, 10, ylims=(0,1.1), label=false)
 savefig("sumofbsplineplot.html") # hide
+nothing # hide
 ```
 
 ```@raw html
@@ -125,6 +128,7 @@ k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]) + p * KnotVector([0,10
 P = BSplineSpace{p}(k)
 plot(t->sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 0, 10, ylims=(0,1.1), label=false)
 savefig("sumofbsplineplot2.html") # hide
+nothing # hide
 ```
 
 ```@raw html
@@ -152,6 +156,7 @@ k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]) + p * KnotVector([0,10
 P = BSplineSpace{p}(k)
 plot(t->sum(bsplinebasis(P,i,t) for i in 1:dim(P)), 0, 10, ylims=(0,1.1), label=false)
 savefig("sumofbsplineplot3.html") # hide
+nothing # hide
 ```
 
 ```@raw html
@@ -205,6 +210,7 @@ for p in 1:3
     scatter!(k.vector,zero(k.vector), label="knot vector")
     plot!([t->bsplinebasisall(P,1,t)[i] for i in 1:p+1],0,10, color=:black, label="bsplinebasisall (i=1)", ylim=(-1,8-2p))
     savefig("bsplinebasisall-$(p).html") # hide
+    nothing # hide
 end
 ```
 
@@ -241,6 +247,7 @@ plot!(t->BasicBSpline.uniform_bsplinebasis_kernel(Val(3),t), label=false)
 # plot all
 plot(plot1,plot2,plot3,plot4)
 savefig("histogram-uniform.html") # hide
+nothing # hide
 ```
 
 ```@raw html
