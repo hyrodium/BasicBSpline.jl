@@ -32,7 +32,7 @@
 
     @testset "_vec" begin
         @test BasicBSpline._vec(KnotVector([1,2,3])) isa Vector{Int}
-        @test BasicBSpline._vec(EmptyKnotVector()) isa Vector{Bool}
+        @test BasicBSpline._vec(EmptyKnotVector()) isa SVector{0,Bool}
     end
 
     @testset "EmptyKnotVector" begin
