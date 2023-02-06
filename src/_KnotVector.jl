@@ -370,7 +370,7 @@ Convert `AbstractKnotVector` to `AbstractVector`
 """
 _vec
 
-_vec(::EmptyKnotVector{T}) where T = T[]
+_vec(::EmptyKnotVector{T}) where T = SVector{0,T}()
 _vec(k::KnotVector) = k.vector
 _vec(k::UniformKnotVector) = k.vector
 
