@@ -164,6 +164,16 @@
         @test string(k) == "KnotVector([1, 2, 2, 3])"
         @test string(KnotVector(Float64[])) == "KnotVector(Float64[])"
         @test string(KnotVector(Int[])) == "KnotVector(Int64[])"
+
+        k1 = UniformKnotVector(1:1:3)
+        k2 = UniformKnotVector(Base.OneTo(3))
+        k3 = UniformKnotVector(1:4)
+        @test string(k1) == "UniformKnotVector(1:1:3)"
+        @test string(k2) == "UniformKnotVector(Base.OneTo(3))"
+        @test string(k3) == "UniformKnotVector(1:4)"
+
+        @test string(EmptyKnotVector()) == "EmptyKnotVector{Bool}()"
+        @test string(EmptyKnotVector{Int}()) == "EmptyKnotVector{Int64}()"
     end
 
     @testset "float" begin

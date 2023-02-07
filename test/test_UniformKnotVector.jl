@@ -117,12 +117,6 @@
         @test k2 ⊈ KnotVector(k4)
     end
 
-    @testset "string" begin
-        @test string(k1) == "UniformKnotVector(1:1:3)"
-        @test string(k2) == "UniformKnotVector(Base.OneTo(3))"
-        @test string(k3) == "UniformKnotVector(1:4)"
-    end
-
     @testset "float" begin
         k = UniformKnotVector(1:3)
         @test float(k) isa UniformKnotVector{Float64}
