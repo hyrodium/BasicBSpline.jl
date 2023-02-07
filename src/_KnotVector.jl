@@ -275,13 +275,9 @@ julia> length(k)
 4
 ```
 """
-Base.length(k::KnotVector) = length(k.vector)
-Base.length(k::UniformKnotVector) = length(k.vector)
-
-Base.firstindex(k::KnotVector) = 1
-Base.firstindex(k::UniformKnotVector) = 1
-Base.lastindex(k::KnotVector) = length(k)
-Base.lastindex(k::UniformKnotVector) = length(k)
+Base.length(k::AbstractKnotVector) = length(_vec(k))
+Base.firstindex(k::AbstractKnotVector) = 1
+Base.lastindex(k::AbstractKnotVector) = length(k)
 
 Base.step(k::UniformKnotVector) = step(_vec(k))
 
