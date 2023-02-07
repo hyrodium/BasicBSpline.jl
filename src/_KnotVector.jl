@@ -307,7 +307,7 @@ KnotVector([1, 2, 3])
 """
 Base.unique(k::AbstractKnotVector)
 Base.unique(k::EmptyKnotVector) = k
-Base.unique(k::KnotVector) = KnotVector(unique(k.vector))
+Base.unique(k::KnotVector{T}) where T = unsafe_knotvector(T, unique(k.vector))
 Base.unique!(k::KnotVector) = (unique!(k.vector); k)
 Base.unique(k::UniformKnotVector) = UniformKnotVector(unique(k.vector))
 
