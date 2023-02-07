@@ -147,4 +147,15 @@ end
         @test bsplinebasis₊₀.(P1,1:n1,3) == [0,0,0,0,0,0]
         @test bsplinebasis₊₀.(P2,1:n2,3) == [0,0,0,0,0]
     end
+
+    @testset "kernel" begin
+        for p in 0:4
+            P = BSplineSpace{p}(UniformKnotVector(0:10))
+            t = rand()
+            v1 = BasicBSpline.uniform_bsplinebasisall_kernel(Val(p), t)
+            v2 = BasicBSpline.uniform_bsplinebasis_kernel.(Val(p), t .+ (p:-1:0))
+            v3 = bsplinebasisall.(P, 1, t+p)
+            @test v1 ≈ v2 ≈ v3
+        end
+    end
 end
