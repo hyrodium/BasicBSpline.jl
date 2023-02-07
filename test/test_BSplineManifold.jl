@@ -20,8 +20,6 @@
 
     @testset "1dim" begin
         @testset "BSplineManifold-1dim" begin
-            Random.seed!(42)
-
             P1 = BSplineSpace{1}(KnotVector([0, 0, 1, 1]))
             n1 = dim(P1) # 2
             a = [Point(i, rand()) for i in 1:n1]  # n1 × n2 array of d̂-dim vector.
@@ -52,8 +50,6 @@
 
     @testset "2dim" begin
         @testset "BSplineManifold-2dim" begin
-            Random.seed!(42)
-
             P1 = BSplineSpace{1}(KnotVector([0, 0, 1, 1]))
             P2 = BSplineSpace{1}(KnotVector([1, 1, 2, 3, 3]))
             n1 = dim(P1) # 2
@@ -90,8 +86,6 @@
 
     @testset "3dim" begin
         @testset "BSplineManifold-3dim" begin
-            Random.seed!(42)
-
             P1 = BSplineSpace{1}(KnotVector([0, 0, 1, 1]))
             P2 = BSplineSpace{1}(KnotVector([1, 1, 2, 3, 3]))
             P3 = BSplineSpace{2}(KnotVector(rand(16)))

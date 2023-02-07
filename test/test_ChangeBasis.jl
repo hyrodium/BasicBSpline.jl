@@ -1,7 +1,5 @@
 @testset "ChangeBasis" begin
     ε = 1e-14
-    Random.seed!(42)
-
     function test_changebasis_R(P,P′)
         @test P ⊆ P′
         A = @inferred changebasis(P,P′)

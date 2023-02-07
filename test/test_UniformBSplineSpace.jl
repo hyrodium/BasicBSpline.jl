@@ -1,6 +1,4 @@
 @testset "BSplineSpace with uniform knot vector" begin
-    Random.seed!(42)
-
     @testset "constructor, subset" begin
         k1 = UniformKnotVector(1:8)
         P1 = BSplineSpace{2}(KnotVector(k1))

@@ -15,8 +15,6 @@ end
     ∞ = Inf
 
     @testset "$(p)-th degree basis" for p in 0:4
-        Random.seed!(42)
-
         v = rand(10)
         k = KnotVector(v) + (p+1)*KnotVector([0, 1]) + KnotVector(v[2:3])
         P = BSplineSpace{p}(k)
@@ -61,8 +59,6 @@ end
     end
 
     @testset "bsplinebasisall" begin
-        Random.seed!(42)
-
         k = KnotVector(rand(10).-1) + KnotVector(rand(10)) + KnotVector(rand(10).+1)
         ts = rand(10)
 

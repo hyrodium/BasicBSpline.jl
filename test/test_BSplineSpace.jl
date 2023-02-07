@@ -1,6 +1,4 @@
 @testset "BSplineSpace" begin
-    Random.seed!(42)
-
     @testset "constructor" begin
         P1 = BSplineSpace{2}(KnotVector(1:8))
         P2 = BSplineSpace{2}(P1)

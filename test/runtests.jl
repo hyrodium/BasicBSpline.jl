@@ -14,6 +14,8 @@ using Aqua
 Aqua.test_all(BasicBSpline; ambiguities=false)
 Aqua.test_ambiguities(BasicBSpline; exclude=[ChainRulesCore.frule])
 
+Random.seed!(42)
+
 include("test_util.jl")
 include("test_KnotVector.jl")
 include("test_BSplineSpace.jl")
