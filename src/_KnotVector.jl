@@ -1,6 +1,26 @@
-# KnotVector
+######################
+#= Type definitions =#
+######################
 
 abstract type AbstractKnotVector{T<:Real} end
+
+@doc raw"""
+Knot vector with zero-element.
+```math
+k=()
+```
+This struct is intended for internal use.
+
+# Examples
+```jldoctest
+julia> EmptyKnotVector()
+EmptyKnotVector{Bool}()
+
+julia> EmptyKnotVector{Float64}()
+EmptyKnotVector{Float64}()
+```
+"""
+struct EmptyKnotVector{T} <: AbstractKnotVector{T} end
 
 @doc raw"""
 Construct knot vector from given array.
@@ -21,45 +41,116 @@ struct KnotVector{T} <: AbstractKnotVector{T}
     vector::Vector{T}
     global unsafe_knotvector(::Type{T}, v) where T = new{T}(v)
 end
+
+@doc raw"""
+Construct uniform knot vector from given range.
+```math
+k=(k_1,\dots,k_l)
+```
+
+# Examples
+```jldoctest
+julia> k = UniformKnotVector(1:8)
+UniformKnotVector(1:8)
+
+julia> UniformKnotVector(8:-1:3)
+UniformKnotVector(3:1:8)
+```
+"""
+struct UniformKnotVector{T,R<:AbstractRange} <: AbstractKnotVector{T}
+    vector::R
+    global unsafe_uniformknotvector(::Type{T}, v::R) where R<:AbstractRange{T} where T = new{T,R}(v)
+end
+
+##################
+#= Constructors =#
+##################
+
+EmptyKnotVector() = EmptyKnotVector{Bool}()
+
 KnotVector{T}(v::AbstractVector) where T = unsafe_knotvector(T,sort(v))
 KnotVector(v::AbstractVector{T}) where T = unsafe_knotvector(T,sort(v))
 AbstractKnotVector{S}(k::KnotVector{T}) where {S, T} = unsafe_knotvector(promote_type(S,T), _vec(k))
 
+UniformKnotVector(v::AbstractRange{T}) where T = unsafe_uniformknotvector(T,sort(v))
+UniformKnotVector(k::UniformKnotVector) = k
+UniformKnotVector{T}(k::UniformKnotVector) where T = unsafe_uniformknotvector(T, k.vector)
+UniformKnotVector{T,R}(k::UniformKnotVector) where R<:AbstractRange{T} where T = unsafe_uniformknotvector(T, R(k.vector))
+
+Base.copy(k::EmptyKnotVector{T}) where T = k
 Base.copy(k::KnotVector{T}) where T = unsafe_knotvector(T,copy(_vec(k)))
+Base.copy(k::UniformKnotVector{T}) where T = unsafe_uniformknotvector(T,copy(_vec(k)))
 
 KnotVector(k::KnotVector) = k
 KnotVector(k::AbstractKnotVector{T}) where T = unsafe_knotvector(T,_vec(k))
 KnotVector{T}(k::KnotVector{T}) where T = k
 KnotVector{T}(k::AbstractKnotVector) where T = unsafe_knotvector(T,_vec(k))
 
+######################################
+#= Other methods for Base functions =#
+######################################
+
 Base.convert(T::Type{<:AbstractKnotVector}, k::AbstractKnotVector) = T(k)
+function Base.convert(::Type{UniformKnotVector{T,R}},k::UniformKnotVector) where {T,R}
+    UniformKnotVector{T,R}(k)
+end
+
 function Base.promote_rule(::Type{KnotVector{T}}, ::Type{KnotVector{S}}) where {T,S}
     KnotVector{promote_type(T,S)}
 end
+function Base.promote_rule(::Type{KnotVector{T}}, ::Type{UniformKnotVector{S,R}}) where {T,S,R}
+    KnotVector{promote_type(T,S)}
+end
+
 
 function Base.show(io::IO, k::KnotVector)
     print(io, "KnotVector($(k.vector))")
 end
-
 function Base.show(io::IO, k::T) where T<:AbstractKnotVector
     print(io, "$(nameof(T))($(k.vector))")
 end
+function Base.show(io::IO, ::T) where T<:EmptyKnotVector
+    print(io, "$(T)()")
+end
 
-"""
-Convert `AbstractKnotVector` to `AbstractVector`
-"""
-_vec
-
-_vec(k::KnotVector) = k.vector
-
+Base.zero(::Type{<:EmptyKnotVector{T}}) where T = EmptyKnotVector{T}()
+Base.zero(::Type{EmptyKnotVector}) = EmptyKnotVector()
+Base.zero(::T) where {T<:EmptyKnotVector} = zero(T)
+Base.zero(::Type{<:AbstractKnotVector{T}}) where T = EmptyKnotVector{T}()
+Base.zero(::Type{AbstractKnotVector}) = EmptyKnotVector()
 Base.zero(::Type{KnotVector}) = zero(KnotVector{Float64})
 Base.zero(::Type{KnotVector{T}}) where T = unsafe_knotvector(T, T[])
 Base.zero(::KnotVector{T}) where T = unsafe_knotvector(T, T[])
+Base.zero(::UniformKnotVector{T}) where T = EmptyKnotVector{T}()
+
+# ==
 Base.:(==)(k₁::AbstractKnotVector, k₂::AbstractKnotVector) = (_vec(k₁) == _vec(k₂))
+Base.:(==)(k::AbstractKnotVector, ::EmptyKnotVector) = isempty(k)
+Base.:(==)(k1::EmptyKnotVector, k2::AbstractKnotVector) = (k2 == k1)
+Base.:(==)(k::EmptyKnotVector, ::EmptyKnotVector) = true
 
 Base.eltype(::AbstractKnotVector{T}) where T = T
 
+Base.collect(k::UniformKnotVector) = collect(k.vector)
 Base.collect(k::KnotVector) = copy(k.vector)
+
+Base.isempty(::EmptyKnotVector) = true
+
+# + AbstractKnotVector
+Base.:+(k::AbstractKnotVector{T}, ::EmptyKnotVector{T}) where T = k
+function Base.:+(k::AbstractKnotVector{T1}, ::EmptyKnotVector{T2}) where {T1, T2}
+    T = promote_type(T1, T2)
+    if T == T1
+        return k
+    else
+        return AbstractKnotVector{T}(k)
+    end
+end
+# + EmptyKnotVector
+Base.:+(::EmptyKnotVector{T}, ::EmptyKnotVector{T}) where T = EmptyKnotVector{T}()
+Base.:+(::EmptyKnotVector{T1}, ::EmptyKnotVector{T2}) where {T1, T2} = EmptyKnotVector{promote_type(T1, T2)}()
+# + swap
+Base.:+(k1::EmptyKnotVector, k2::AbstractKnotVector) = k2 + k1
 
 @doc raw"""
 Sum of knot vectors
@@ -112,6 +203,7 @@ function Base.:+(k1::KnotVector{T}, k2::KnotVector{T}) where T
     return BasicBSpline.unsafe_knotvector(T,v)
 end
 Base.:+(k1::AbstractKnotVector{T1}, k2::AbstractKnotVector{T2}) where {T1, T2} = +(promote(k1,k2)...)
+Base.:+(k1::UniformKnotVector{T1},k2::UniformKnotVector{T2}) where {T1,T2} = KnotVector{promote_type(T1,T2)}([k1.vector;k2.vector])
 
 @doc raw"""
 Product of integer and knot vector
@@ -153,9 +245,15 @@ function Base.:*(m::Integer, k::KnotVector{T}) where T
 end
 Base.:*(k::AbstractKnotVector, m::Integer) = m*k
 
+function Base.:*(m::Integer, k::EmptyKnotVector)
+    m < 0 && throw(DomainError(m, "The number to be multiplied must be non-negative."))
+    return k
+end
+
 Base.in(r::Real, k::AbstractKnotVector) = in(r, _vec(k))
 Base.getindex(k::AbstractKnotVector, i::Integer) = _vec(k)[i]
 Base.getindex(k::AbstractKnotVector, v::AbstractVector{<:Integer}) = KnotVector(_vec(k)[v])
+Base.getindex(k::UniformKnotVector, v::AbstractRange{<:Integer}) = UniformKnotVector(sort(k.vector[v]))
 
 @doc raw"""
 Length of knot vector
@@ -177,10 +275,11 @@ julia> length(k)
 4
 ```
 """
-Base.length(k::KnotVector) = length(k.vector)
+Base.length(k::AbstractKnotVector) = length(_vec(k))
+Base.firstindex(k::AbstractKnotVector) = 1
+Base.lastindex(k::AbstractKnotVector) = length(k)
 
-Base.firstindex(k::KnotVector) = 1
-Base.lastindex(k::KnotVector) = length(k)
+Base.step(k::UniformKnotVector) = step(_vec(k))
 
 @doc raw"""
 Unique elements of knot vector.
@@ -202,8 +301,12 @@ julia> unique(k)
 KnotVector([1, 2, 3])
 ```
 """
-Base.unique(k::KnotVector) = KnotVector(unique(k.vector))
-Base.unique!(k::KnotVector) = KnotVector(unique!(k.vector))
+Base.unique(k::AbstractKnotVector)
+Base.unique(k::EmptyKnotVector) = k
+Base.unique(k::KnotVector{T}) where T = unsafe_knotvector(T, unique(k.vector))
+Base.unique!(k::KnotVector) = (unique!(k.vector); k)
+Base.unique(k::UniformKnotVector) = UniformKnotVector(unique(k.vector))
+
 Base.iterate(k::AbstractKnotVector) = iterate(_vec(k))
 Base.iterate(k::AbstractKnotVector, i) = iterate(_vec(k), i)
 Base.searchsortedfirst(k::AbstractKnotVector,t) = searchsortedfirst(_vec(k),t)
@@ -251,6 +354,22 @@ end
 Base.:⊊(A::AbstractKnotVector, B::AbstractKnotVector) = (A ≠ B) & (A ⊆ B)
 Base.:⊋(A::AbstractKnotVector, B::AbstractKnotVector) = (A ≠ B) & (A ⊇ B)
 
+function Base.float(k::KnotVector{T}) where T
+    KnotVector(float(_vec(k)))
+end
+function Base.float(k::UniformKnotVector)
+    UniformKnotVector(float(_vec(k)))
+end
+
+"""
+Convert `AbstractKnotVector` to `AbstractVector`
+"""
+_vec
+
+_vec(::EmptyKnotVector{T}) where T = SVector{0,T}()
+_vec(k::KnotVector) = k.vector
+_vec(k::UniformKnotVector) = k.vector
+
 @doc raw"""
 For given knot vector ``k``, the following function ``\mathfrak{n}_k:\mathbb{R}\to\mathbb{Z}`` represents the number of knots that duplicate the knot vector ``k``.
 
@@ -278,8 +397,4 @@ function countknots(k::AbstractKnotVector, t::Real)
 
     # for large case, this is faster
     return length(searchsorted(_vec(k), t, lt=<))
-end
-
-function Base.float(k::KnotVector{T}) where T
-    KnotVector(float(_vec(k)))
 end

@@ -1,5 +1,4 @@
 @testset "Derivative" begin
-    Random.seed!(42)
     p_max = 4
     ts = rand(10)
     dt = 1e-8
@@ -89,7 +88,6 @@
     end
 
     @testset "bsplinebasisall" begin
-        Random.seed!(42)
         k = KnotVector(rand(10).-1) + KnotVector(rand(10)) + KnotVector(rand(10).+1)
         ts = rand(10)
         for p in 0:5
@@ -111,7 +109,6 @@
     end
 
     @testset "bsplinebasisall (uniform)" begin
-        Random.seed!(42)
         k = UniformKnotVector(1:20)
         for p in 0:5
             P = BSplineSpace{p}(k)
