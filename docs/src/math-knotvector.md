@@ -33,7 +33,7 @@ EmptyKnotVector
 ## Operations for knot vectors
 
 ```@docs
-length(k::KnotVector)
+length(k::AbstractKnotVector)
 ```
 
 Although a knot vector is **not** a vector in linear algebra, but we introduce **additional operator** ``+``.
@@ -57,7 +57,7 @@ Base.issubset(k::KnotVector, k′::KnotVector)
 ```
 
 ```@docs
-unique(k::KnotVector)
+unique(k::AbstractKnotVector)
 ```
 
 ```@docs
