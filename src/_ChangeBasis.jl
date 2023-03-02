@@ -87,8 +87,8 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
             A₊ = copy(Ãᵖ[ȷ])
             A₋ = copy(Ãᵖ[ȷ])
             for j in 1:Λ[ȷ]-2
-                A₊[:, j+1] = A₊[:, j] + Δ[:, j+r[1]]
-                A₋[:, Λ[ȷ]-j] = A₋[:, Λ[ȷ]-j+1] - Δ[:, Λ[ȷ]-j+r[1]]
+                A₊[:, j+1] .= A₊[:, j] .+ Δ[:, j+r[1]]
+                A₋[:, Λ[ȷ]-j] .= A₋[:, Λ[ȷ]-j+1] .- Δ[:, Λ[ȷ]-j+r[1]]
             end
             # Ãᵖ[ȷ] .= A₊
             # Ãᵖ[ȷ] .= A₋
