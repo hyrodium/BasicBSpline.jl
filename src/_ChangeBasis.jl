@@ -2,7 +2,7 @@
 # See https://hackmd.io/lpA0D0ySTQ6Hq1CdaaONxQ for more information.
 
 @doc raw"""
-Return a coefficient matrix A which satisfy
+Return a coefficient matrix ``A`` which satisfy
 ```math
 B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p',k')}
 ```
@@ -87,10 +87,13 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
             A₊ = copy(Ãᵖ[ȷ])
             A₋ = copy(Ãᵖ[ȷ])
             for j in 1:Λ[ȷ]-2
-                A₊[:, j+1] = A₊[:, j] + Δ[:, j+r[1]]
-                A₋[:, Λ[ȷ]-j] = A₋[:, Λ[ȷ]-j+1] - Δ[:, Λ[ȷ]-j+r[1]]
+                A₊[:, j+1] .= A₊[:, j] .+ Δ[:, j+r[1]]
+                A₋[:, Λ[ȷ]-j] .= A₋[:, Λ[ȷ]-j+1] .- Δ[:, Λ[ȷ]-j+r[1]]
             end
-            Ãᵖ[ȷ] = (A₊ + A₋) / 2
+            # Ãᵖ[ȷ] .= A₊
+            # Ãᵖ[ȷ] .= A₋
+            # Ãᵖ[ȷ] .= (A₊ .+ A₋) ./ 2
+            Ãᵖ[ȷ] .= sqrt.(A₊ .* A₋)
         end
     end
     _Aᵖ = reduce(hcat, Ãᵖ) # n × n′ matrix
@@ -98,7 +101,7 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
 end
 
 @doc raw"""
-Return a coefficient matrix A which satisfy
+Return a coefficient matrix ``A`` which satisfy
 ```math
 B_{(i,p_1,k_1)} = \sum_{j}A_{i,j}B_{(j,p_2,k_2)}
 ```
@@ -171,7 +174,7 @@ function _derivatives_at_right(::BSplineSpace{0,T}) where {T}
 end
 
 @doc raw"""
-Return a coefficient matrix A which satisfy
+Return a coefficient matrix ``A`` which satisfy
 ```math
 B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p',k')}
 ```
