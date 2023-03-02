@@ -90,7 +90,10 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
                 A₊[:, j+1] = A₊[:, j] + Δ[:, j+r[1]]
                 A₋[:, Λ[ȷ]-j] = A₋[:, Λ[ȷ]-j+1] - Δ[:, Λ[ȷ]-j+r[1]]
             end
-            Ãᵖ[ȷ] = (A₊ + A₋) / 2
+            # Ãᵖ[ȷ] .= A₊
+            # Ãᵖ[ȷ] .= A₋
+            # Ãᵖ[ȷ] .= (A₊ .+ A₋) ./ 2
+            Ãᵖ[ȷ] .= sqrt.(A₊ .* A₋)
         end
     end
     _Aᵖ = reduce(hcat, Ãᵖ) # n × n′ matrix
