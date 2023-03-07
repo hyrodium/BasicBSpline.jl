@@ -36,14 +36,14 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
     n = dim(P)
     n′ = dim(P′)
 
-    Aᵖ⁻¹ = _changebasis_R(_lower(P), _lower(P′))  # (n+1) × (n′+1) matrix
-    Aᵖ = zeros(U, n, n′)  # n × n′ matrix
-
     Z = _iszeros(_lower(P′))
     W = findall(Z)
     K′ = [k′[i+p′] - k′[i] for i in 1:n′+1]
     K = U[ifelse(k[i+p] ≠ k[i], U(1 / (k[i+p] - k[i])), zero(U)) for i in 1:n+1]
+
+    Aᵖ⁻¹ = _changebasis_R(_lower(P), _lower(P′))  # (n+1) × (n′+1) matrix
     Δ = (p / p′) * [K′[j] * (K[i] * Aᵖ⁻¹[i, j] - K[i+1] * Aᵖ⁻¹[i+1, j]) for i in 1:n, j in 1:n′+1]
+    Aᵖ = zeros(U, n, n′)  # n × n′ matrix
     Aᵖ[:, 1] = Δ[:, 1]
     Aᵖ[:, n′] = -Δ[:, n′+1]
 
