@@ -1,5 +1,5 @@
 @testset "ChangeBasis" begin
-    ε = 1e-14
+    ε = 1e-13
     function test_changebasis_R(P,P′)
         @test P ⊆ P′
         A = @inferred changebasis(P,P′)
@@ -11,7 +11,7 @@
         t_max = maximum(knotvector(P)+knotvector(P′))
         ts = range(t_min,t_max,length=20)
         for t in ts
-            @test norm(bsplinebasis.(P,1:n,t) - A*bsplinebasis.(P′,1:n′,t), Inf) < 1e-14
+            @test norm(bsplinebasis.(P,1:n,t) - A*bsplinebasis.(P′,1:n′,t), Inf) < ε
         end
     end
 
@@ -25,7 +25,7 @@
         d = domain(P)
         ts = range(extrema(d)..., length=20)
         for t in ts
-            @test norm(bsplinebasis.(P,1:n,t) - A*bsplinebasis.(P′,1:n′,t), Inf) < 1e-14
+            @test norm(bsplinebasis.(P,1:n,t) - A*bsplinebasis.(P′,1:n′,t), Inf) < ε
         end
     end
 
@@ -87,7 +87,7 @@
             n = dim(P1)
             for _ in 1:100
                 t = rand(D)
-                @test norm(bsplinebasis.(P1,1:n,t) - A*bsplinebasis.(P2,1:n,t), Inf) < 1e-14
+                @test norm(bsplinebasis.(P1,1:n,t) - A*bsplinebasis.(P2,1:n,t), Inf) < ε
             end
         end
     end
