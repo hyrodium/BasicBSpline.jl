@@ -37,6 +37,8 @@ function BSplineSpace{p,T1}(k::AbstractKnotVector{T2}) where {p, T1, T2}
     return BSplineSpace{p,T1}(AbstractKnotVector{T1}(k))
 end
 
+const UniformBSplineSpace{p, T, R} = BSplineSpace{p, T, UniformBSplineSpace{T, R}}
+
 """
 Convert BSplineSpace to BSplineSpace
 """
