@@ -87,11 +87,9 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
     K′ = [k′[i+p′] - k′[i] for i in 1:n′+1]
     K = U[ifelse(k[i+p] ≠ k[i], U(1 / (k[i+p] - k[i])), zero(U)) for i in 1:n+1]
     Aᵖ⁻¹ = _changebasis_R(_lower(P), _lower(P′))  # (n+1) × (n′+1) matrix
-    Δ = (p / p′) * [K′[j] * (K[i] * Aᵖ⁻¹[i, j] - K[i+1] * Aᵖ⁻¹[i+1, j]) for i in 1:n, j in 1:n′+1]
     Aᵖ = zeros(U, n, n′)  # n × n′ matrix
 
     flags = _generate_flags(P′)
-
     for i in 1:n′
         if flags[i] == 2
             t = k′[i+1]
@@ -104,16 +102,24 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
                 Aᵖ[j,i] = bsplinebasis₊₀(P,j,t)
             end
         elseif flags[i] == 4
-            Aᵖ[:, 1] = Δ[:, 1]
+            for j in 1:n
+                Aᵖ[j, 1] = (p / p′) * K′[1] * (K[j] * Aᵖ⁻¹[j, 1] - K[j+1] * Aᵖ⁻¹[j+1, 1])
+            end
         elseif flags[i] == 5
-            Aᵖ[:, n′] = -Δ[:, n′+1]
+            for j in 1:n
+                Aᵖ[j, n′] = -(p / p′) * K′[n′+1] * (K[j] * Aᵖ⁻¹[j, n′+1] - K[j+1] * Aᵖ⁻¹[j+1, n′+1])
+            end
         elseif flags[i] == 6
-            Aᵖ[:, i] = Aᵖ[:, i-1] + Δ[:, i]
+            for j in 1:n
+                Aᵖ[j, i] = Aᵖ[j, i-1] + (p / p′) * K′[i] * (K[j] * Aᵖ⁻¹[j, i] - K[j+1] * Aᵖ⁻¹[j+1, i])
+            end
         end
     end
     for i in n′:-1:1
         if flags[i] == 7
-            Aᵖ[:, i] = Aᵖ[:, i+1] - Δ[:, i+1]
+            for j in 1:n
+                Aᵖ[j, i] = Aᵖ[j, i+1] - (p / p′) * K′[i+1] * (K[j] * Aᵖ⁻¹[j, i+1] - K[j+1] * Aᵖ⁻¹[j+1, i+1])
+            end
         end
     end
 
