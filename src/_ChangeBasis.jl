@@ -10,7 +10,10 @@ B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p',k')}
 Assumption:
 * ``P ⊆ P^{\prime}``
 """
-function _changebasis_R end
+function changebasis_R(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
+    P ⊆ P′ || throw(DomainError((P,P′),"P ⊆ P′ should be hold."))
+    return _changebasis_R(P, P′)
+end
 
 function _changebasis_R(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′}) where {p,T,p′,T′}
     _P = BSplineSpace{p,T,KnotVector{T}}(P)
@@ -19,7 +22,6 @@ function _changebasis_R(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′}) whe
 end
 
 function _changebasis_R(P::BSplineSpace{0,T,KnotVector{T}}, P′::BSplineSpace{p′,T′,KnotVector{T′}}) where {p′,T,T′}
-    P ⊆ P′ || throw(DomainError((P,P′),"P ⊆ P′ should be hold."))
     U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     n = dim(P)
     n′ = dim(P′)
@@ -28,76 +30,106 @@ function _changebasis_R(P::BSplineSpace{0,T,KnotVector{T}}, P′::BSplineSpace{p
     return A⁰
 end
 
+"""
+Generate flags for `changebasis` function.
+
+0 -> default
+1 -> zero            k′[i] == k′[i+p′+1]
+2 -> left limit      k′[i] < k′[i+1] == k′[i+p′+1]
+3 -> right limit     k′[i+1] == k′[i+p′] ( i.e. k′[i] == k′[i+p′] < k′[i+p′+1] or k′[i] < k′[i+1] == k′[i+p′] < k′[i+p′+1] )
+4 -> left boundary   i == 1
+5 -> right boundary  i == n′
+6 -> left recursion
+7 -> right recursion
+"""
+function _generate_flags(P′::BSplineSpace{p′}) where p′
+    k′ = knotvector(P′)
+    n′ = dim(P′)
+    flags = zeros(Int, n′)
+    for i in 1:n′
+        if k′[i] == k′[i+p′+1]
+            flags[i] = 1
+        elseif k′[i] < k′[i+1] == k′[i+p′+1]
+            flags[i] = 2
+        elseif k′[i+1] == k′[i+p′]
+            flags[i] = 3
+        end
+    end
+    if flags[1] == 0
+        flags[1] = 4
+    end
+    if flags[end] == 0
+        flags[end] = 5
+    end
+    local j
+    for i in 2:n′-1
+        if flags[i-1] ≠ 0 && flags[i-1] ≠ 6 && flags[i] == 0
+            flags[i] = 6
+            j = i
+        end
+        if flags[i+1] ≠ 0 && flags[i] == 0
+            flags[i] = 7
+            jj = (i + j) ÷ 2
+            ii = jj + 1
+            flags[j:jj] .= 6
+            flags[ii:i] .= 7
+        end
+    end
+    return flags
+end
+
 function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p′,T′,KnotVector{T′}}) where {p,p′,T,T′}
-    P ⊆ P′ || throw(DomainError((P,P′),"P ⊆ P′ should be hold."))
     U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     k = knotvector(P)
     k′ = knotvector(P′)
     n = dim(P)
     n′ = dim(P′)
-
+    K′ = [k′[i+p′] - k′[i] for i in 1:n′+1]
+    K = U[ifelse(k[i+p] ≠ k[i], U(1 / (k[i+p] - k[i])), zero(U)) for i in 1:n+1]
     Aᵖ⁻¹ = _changebasis_R(_lower(P), _lower(P′))  # (n+1) × (n′+1) matrix
     Aᵖ = zeros(U, n, n′)  # n × n′ matrix
 
-    Z = _iszeros(_lower(P′))
-    W = findall(Z)
-    K′ = [k′[i+p′] - k′[i] for i in 1:n′+1]
-    K = U[ifelse(k[i+p] ≠ k[i], U(1 / (k[i+p] - k[i])), zero(U)) for i in 1:n+1]
-    Δ = (p / p′) * [K′[j] * (K[i] * Aᵖ⁻¹[i, j] - K[i+1] * Aᵖ⁻¹[i+1, j]) for i in 1:n, j in 1:n′+1]
-    Aᵖ[:, 1] = Δ[:, 1]
-    Aᵖ[:, n′] = -Δ[:, n′+1]
+    flags = _generate_flags(P′)
+    for i in 1:n′
+        if flags[i] == 2
+            t = k′[i+1]
+            for j in 1:n
+                k[j] ≤ k′[i] && k′[i+p′+1] ≤ k[j+p+1] || continue
+                Aᵖ[j,i] = bsplinebasis₋₀(P,j,t)
+            end
+        elseif flags[i] == 3
+            t = k′[i+1]
+            for j in 1:n
+                k[j] ≤ k′[i] && k′[i+p′+1] ≤ k[j+p+1] || continue
+                Aᵖ[j, i] = bsplinebasis₊₀(P,j,t)
+            end
+        elseif flags[i] == 4
+            for j in 1:n
+                k[j] ≤ k′[i] && k′[i+p′+1] ≤ k[j+p+1] || continue
+                Aᵖ[j, i] = (p / p′) * K′[1] * (K[j] * Aᵖ⁻¹[j, 1] - K[j+1] * Aᵖ⁻¹[j+1, 1])
+            end
+        elseif flags[i] == 5
+            for j in 1:n
+                k[j] ≤ k′[i] && k′[i+p′+1] ≤ k[j+p+1] || continue
+                Aᵖ[j, i] = -(p / p′) * K′[n′+1] * (K[j] * Aᵖ⁻¹[j, n′+1] - K[j+1] * Aᵖ⁻¹[j+1, n′+1])
+            end
+        elseif flags[i] == 6
+            for j in 1:n
+                k[j] ≤ k′[i] && k′[i+p′+1] ≤ k[j+p+1] || continue
+                Aᵖ[j, i] = Aᵖ[j, i-1] + (p / p′) * K′[i] * (K[j] * Aᵖ⁻¹[j, i] - K[j+1] * Aᵖ⁻¹[j+1, i])
+            end
+        end
+    end
+    for i in reverse(1:n′)
+        if flags[i] == 7
+            for j in 1:n
+                k[j] ≤ k′[i] && k′[i+p′+1] ≤ k[j+p+1] || continue
+                Aᵖ[j, i] = Aᵖ[j, i+1] - (p / p′) * K′[i+1] * (K[j] * Aᵖ⁻¹[j, i+1] - K[j+1] * Aᵖ⁻¹[j+1, i+1])
+            end
+        end
+    end
 
-    # split Aᵖ for sub-block
-    if length(W) == 0
-        Q = [1:n′]
-    else
-        Q = push!(pushfirst!([W[i]:W[i+1]-1 for i in 1:length(W)-1], 1:W[1]-1), W[end]:n′)
-    end
-    λ = length(Q)
-    Λ = length.(Q)
-    Ãᵖ = [Aᵖ[:, q] for q in Q]
-
-    for ȷ in 2:λ-1
-        if Λ[ȷ] == 1
-            # if B(i,p′,k′) = 0
-            Ãᵖ[ȷ] .= zero(U)  # Strictly this should be NaN, but we use zero here to support Rational.
-        end
-    end
-    for ȷ in 1:λ-1
-        if Λ[ȷ] ≥ 2
-            t = k′[W[ȷ]]
-            for i in 1:n
-                # TODO: this can be faster with bsplinebasisall
-                Ãᵖ[ȷ][i, end] = bsplinebasis₋₀(P,i,t)
-            end
-        end
-    end
-    for ȷ in 2:λ
-        if Λ[ȷ] ≥ 2
-            t = k′[W[ȷ-1]+p]
-            for i in 1:n
-                # TODO: this can be faster with bsplinebasisall
-                Ãᵖ[ȷ][i, 1] = bsplinebasis₊₀(P,i,t)
-            end
-        end
-    end
-    for ȷ in 1:λ
-        if Λ[ȷ] ≥ 3
-            r = Q[ȷ]
-            A₊ = copy(Ãᵖ[ȷ])
-            A₋ = copy(Ãᵖ[ȷ])
-            for j in 1:Λ[ȷ]-2
-                A₊[:, j+1] .= A₊[:, j] .+ Δ[:, j+r[1]]
-                A₋[:, Λ[ȷ]-j] .= A₋[:, Λ[ȷ]-j+1] .- Δ[:, Λ[ȷ]-j+r[1]]
-            end
-            # Ãᵖ[ȷ] .= A₊
-            # Ãᵖ[ȷ] .= A₋
-            # Ãᵖ[ȷ] .= (A₊ .+ A₋) ./ 2
-            Ãᵖ[ȷ] .= sqrt.(A₊ .* A₋)
-        end
-    end
-    _Aᵖ = reduce(hcat, Ãᵖ) # n × n′ matrix
-    return _Aᵖ .* U[bsplinesupport(P′,j) ⊆ bsplinesupport(P,i) for i in 1:n, j in 1:n′]
+    return Aᵖ
 end
 
 @doc raw"""
@@ -182,8 +214,12 @@ B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p',k')}
 Assumption:
 * ``P ⊑ P^{\prime}``
 """
-function _changebasis_I(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′}) where {p,p′,T,T′}
+function changebasis_I(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
     P ⊑ P′ || throw(DomainError((P,P′),"P ⊑ P′ should be hold."))
+    return _changebasis_I(P, P′)
+end
+
+function _changebasis_I(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′}) where {p,p′,T,T′}
     k = knotvector(P)
     k′ = knotvector(P′)
 
@@ -199,7 +235,6 @@ end
 
 ## Uniform B-spline space
 function _changebasis_R(P::BSplineSpace{p,T,<:UniformKnotVector{T}}, P′::BSplineSpace{p,T′,<:UniformKnotVector{T′}}) where {p,T,T′}
-    P ⊆ P′ || throw(DomainError((P,P′),"P ⊆ P′ should be hold."))
     k = knotvector(P)
     k′ = knotvector(P′)
     r = round(Int, step(k)/step(k′))
@@ -214,7 +249,6 @@ function _changebasis_R(P::BSplineSpace{p,T,<:UniformKnotVector{T}}, P′::BSpli
     return A
 end
 function _changebasis_I(P::BSplineSpace{p,T,<:UniformKnotVector{T}}, P′::BSplineSpace{p,T′,<:UniformKnotVector{T′}}) where {p,T,T′}
-    P ⊑ P′ || throw(DomainError((P,P′),"P ⊑ P′ should be hold."))
     k = knotvector(P)
     k′ = knotvector(P′)
     r = round(Int, step(k)/step(k′))
@@ -237,7 +271,6 @@ end
 
 ## BSplineDerivativeSpace
 function _changebasis_R(dP::BSplineDerivativeSpace{r,<:BSplineSpace{p}}, P′::BSplineSpace) where {r,p}
-    dP ⊆ P′ || throw(DomainError((P,P′),"dP ⊆ P′ should be hold."))
     k = knotvector(dP)
     n = dim(dP)
     A = Matrix(I(n))
@@ -255,12 +288,10 @@ function _changebasis_R(dP::BSplineDerivativeSpace{r,<:BSplineSpace{p}}, P′::B
     return A
 end
 function _changebasis_R(dP::BSplineDerivativeSpace, dP′::BSplineDerivativeSpace{0})
-    dP ⊆ dP′ || throw(DomainError((dP,dP′),"dP ⊆ dP′ should be hold."))
     P′ = bsplinespace(dP′)
     return _changebasis_R(dP, P′)
 end
 function _changebasis_R(dP::BSplineDerivativeSpace{r}, dP′::BSplineDerivativeSpace{r′}) where {r,r′}
-    dP ⊆ dP′ || throw(DomainError((dP,dP′),"dP ⊆ dP′ should be hold."))
     if r > r′
         P = bsplinespace(dP)
         P′ = bsplinespace(dP′)
@@ -280,5 +311,5 @@ end
 function changebasis(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
     P ⊆ P′ && return _changebasis_R(P, P′)
     P ⊑ P′ && return _changebasis_I(P, P′)
-    throw(DomainError((P, P′),"𝒫[p,k] ⊆ 𝒫[p′,k′] or 𝒫[p,k] ⊑ 𝒫[p′,k′] must hold."))
+    throw(DomainError((P, P′),"P ⊆ P′ or P ⊑ P′ must hold."))
 end
