@@ -94,6 +94,7 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         if flags[i] == 2
             t = k′[i+1]
             for j in 1:n
+                k[j] ≤ k′[i] && k′[i+p′+1] ≤ k[j+p+1] || continue
                 Aᵖ[j,i] = bsplinebasis₋₀(P,j,t)
             end
         elseif flags[i] == 3
