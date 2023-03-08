@@ -19,9 +19,22 @@
         P1 = BSplineSpace{1}(KnotVector([1, 3, 5, 8]))
         P2 = BSplineSpace{1}(KnotVector([1, 3, 5, 6, 8, 9]))
         P3 = BSplineSpace{2}(KnotVector([1, 1, 3, 3, 5, 5, 8, 8]))
+        P4 = BSplineSpace{2}(KnotVector([1, 3, 4, 4, 4, 4, 5, 8]))
+
         test_changebasis_R(P1, P2)
         test_changebasis_R(P1, P3)
+        test_changebasis_R(P1, P4)
+
         @test P2 ⊈ P3
+
+        @test isnondegenerate(P1)
+        @test isnondegenerate(P2)
+        @test isnondegenerate(P3)
+        @test isdegenerate(P4)
+        @test changebasis_R(P1, P1) == I
+        @test changebasis_R(P2, P2) == I
+        @test changebasis_R(P3, P3) == I
+        @test changebasis_R(P4, P4) ≠ I
     end
 
     @testset "sqsubseteq (I)" begin
