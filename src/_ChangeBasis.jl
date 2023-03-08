@@ -99,18 +99,22 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         elseif flags[i] == 3
             t = k′[i+1]
             for j in 1:n
-                Aᵖ[j,i] = bsplinebasis₊₀(P,j,t)
+                k[j] ≤ k′[i] && k′[i+p′+1] ≤ k[j+p+1] || continue
+                Aᵖ[j, i] = bsplinebasis₊₀(P,j,t)
             end
         elseif flags[i] == 4
             for j in 1:n
-                Aᵖ[j, 1] = (p / p′) * K′[1] * (K[j] * Aᵖ⁻¹[j, 1] - K[j+1] * Aᵖ⁻¹[j+1, 1])
+                k[j] ≤ k′[i] && k′[i+p′+1] ≤ k[j+p+1] || continue
+                Aᵖ[j, i] = (p / p′) * K′[1] * (K[j] * Aᵖ⁻¹[j, 1] - K[j+1] * Aᵖ⁻¹[j+1, 1])
             end
         elseif flags[i] == 5
             for j in 1:n
-                Aᵖ[j, n′] = -(p / p′) * K′[n′+1] * (K[j] * Aᵖ⁻¹[j, n′+1] - K[j+1] * Aᵖ⁻¹[j+1, n′+1])
+                k[j] ≤ k′[i] && k′[i+p′+1] ≤ k[j+p+1] || continue
+                Aᵖ[j, i] = -(p / p′) * K′[n′+1] * (K[j] * Aᵖ⁻¹[j, n′+1] - K[j+1] * Aᵖ⁻¹[j+1, n′+1])
             end
         elseif flags[i] == 6
             for j in 1:n
+                k[j] ≤ k′[i] && k′[i+p′+1] ≤ k[j+p+1] || continue
                 Aᵖ[j, i] = Aᵖ[j, i-1] + (p / p′) * K′[i] * (K[j] * Aᵖ⁻¹[j, i] - K[j+1] * Aᵖ⁻¹[j+1, i])
             end
         end
@@ -118,12 +122,13 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
     for i in n′:-1:1
         if flags[i] == 7
             for j in 1:n
+                k[j] ≤ k′[i] && k′[i+p′+1] ≤ k[j+p+1] || continue
                 Aᵖ[j, i] = Aᵖ[j, i+1] - (p / p′) * K′[i+1] * (K[j] * Aᵖ⁻¹[j, i+1] - K[j+1] * Aᵖ⁻¹[j+1, i+1])
             end
         end
     end
 
-    return Aᵖ .* U[bsplinesupport(P′,j) ⊆ bsplinesupport(P,i) for i in 1:n, j in 1:n′]
+    return Aᵖ
 end
 
 @doc raw"""
