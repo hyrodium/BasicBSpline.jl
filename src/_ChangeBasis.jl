@@ -120,7 +120,7 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
             end
         end
     end
-    for i in n′:-1:1
+    for i in reverse(1:n′)
         if flags[i] == 7
             for j in 1:n
                 k[j] ≤ k′[i] && k′[i+p′+1] ≤ k[j+p+1] || continue
