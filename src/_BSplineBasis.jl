@@ -178,13 +178,13 @@ julia> bsplinebasis.(P,1:5,(1:6)')
 end
 
 # bsplinebasis with UniformKnotVector
-@inline function bsplinebasis(P::BSplineSpace{p,T,<:UniformKnotVector{T,R}},i::Integer,t::S) where {p, T, R<:AbstractUnitRange, S<:Real}
+@inline function bsplinebasis(P::UniformBSplineSpace{p,T,R},i::Integer,t::S) where {p, T, R<:AbstractUnitRange, S<:Real}
     U = StaticArrays.arithmetic_closure(promote_type(T,S))
     k = knotvector(P)
     @boundscheck (1 ≤ i ≤ dim(P)) || throw(DomainError(i, "index of B-spline basis function is out of range."))
     return U(uniform_bsplinebasis_kernel(Val{p}(),t-i+1-k[1]))
 end
-@inline function bsplinebasis(P::BSplineSpace{p,T,<:UniformKnotVector{T}},i::Integer,t::S) where {p, T, S<:Real}
+@inline function bsplinebasis(P::UniformBSplineSpace{p,T},i::Integer,t::S) where {p, T, S<:Real}
     U = StaticArrays.arithmetic_closure(promote_type(T,S))
     k = knotvector(P)
     @boundscheck (1 ≤ i ≤ dim(P)) || throw(DomainError(i, "index of B-spline basis function is out of range."))
@@ -192,8 +192,8 @@ end
     b = @inbounds k.vector[i+p+1]
     return U(uniform_bsplinebasis_kernel(Val{p}(),(p+1)*(t-a)/(b-a)))
 end
-@inline bsplinebasis₋₀(P::BSplineSpace{p,T,<:UniformKnotVector{T}},i::Integer,t::Real) where {p,T} = bsplinebasis(P,i,t)
-@inline bsplinebasis₊₀(P::BSplineSpace{p,T,<:UniformKnotVector{T}},i::Integer,t::Real) where {p,T} = bsplinebasis(P,i,t)
+@inline bsplinebasis₋₀(P::UniformBSplineSpace,i::Integer,t::Real) = bsplinebasis(P,i,t)
+@inline bsplinebasis₊₀(P::UniformBSplineSpace,i::Integer,t::Real) = bsplinebasis(P,i,t)
 
 ################################################
 #= B-Spline Basis Functions at specific point =#
