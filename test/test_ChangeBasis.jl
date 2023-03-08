@@ -33,7 +33,7 @@
         P1 = BSplineSpace{1}(KnotVector([1, 3, 5, 8]))
         P2 = BSplineSpace{1}(KnotVector([1, 3, 5, 6, 8, 9]))
         P3 = BSplineSpace{2}(KnotVector([1, 1, 3, 3, 5, 5, 8, 8]))
-        P4 = BSplineSpace{2}(KnotVector([1, 3, 4, 4, 4, 4, 5, 8]))
+        P4 = BSplineSpace{1}(KnotVector([1, 3, 4, 4, 4, 4, 5, 8]))
 
         test_changebasis_R(P1, P2)
         test_changebasis_R(P1, P3)
