@@ -3,13 +3,27 @@
     function test_changebasis_R(P,P′)
         @test P ⊆ P′
         A = @inferred changebasis(P,P′)
-        @test A == BasicBSpline._changebasis_R(P,P′)
+        @test A == BasicBSpline._changebasis_R(P,P′) == changebasis_R(P,P′)
         n = dim(P)
         n′ = dim(P′)
         @test size(A) == (n,n′)
         t_min = minimum(knotvector(P)+knotvector(P′))
         t_max = maximum(knotvector(P)+knotvector(P′))
         ts = range(t_min,t_max,length=20)
+        for t in ts
+            @test norm(bsplinebasis.(P,1:n,t) - A*bsplinebasis.(P′,1:n′,t), Inf) < 1e-14
+        end
+    end
+
+    function test_changebasis_I(P,P′)
+        @test P ⊑ P′
+        A = @inferred changebasis(P,P′)
+        @test A == BasicBSpline._changebasis_I(P,P′) == changebasis_I(P,P′)
+        n = dim(P)
+        n′ = dim(P′)
+        @test size(A) == (n,n′)
+        d = domain(P)
+        ts = range(extrema(d)..., length=20)
         for t in ts
             @test norm(bsplinebasis.(P,1:n,t) - A*bsplinebasis.(P′,1:n′,t), Inf) < 1e-14
         end
@@ -48,22 +62,14 @@
         @test P5 ⋢ P4
         @test P4 ⋣ P5
 
-        n4, n5 = dim(P4), dim(P5)
-        A45 = @inferred changebasis(P4, P5)
-        @test size(A45) == (n4, n5)
-        Δ45 = [bsplinebasis(P4, i, t) - sum(A45[i, j] * bsplinebasis(P5, j, t) for j in 1:n5) for i in 1:n4, t in 2 * rand(10) .+ 2]
-        @test norm(Δ45) < ε
+        test_changebasis_I(P4, P5)
 
         P6 = BSplineSpace{p4-1}(knotvector(P4)[2:end-1])
         P7 = BSplineSpace{p5-1}(knotvector(P5)[2:end-1])
         @test P6 ⊑ P7
         @test P6 ⊈ P7
 
-        n6, n7 = dim(P6), dim(P7)
-        A67 = @inferred changebasis(P6, P7)
-        @test size(A67) == (n6, n7)
-        Δ67 = [bsplinebasis(P6, i, t) - sum(A67[i, j] * bsplinebasis(P7, j, t) for j in 1:n7) for i in 1:n6, t in 2 * rand(10) .+ 2]
-        @test norm(Δ67) < ε
+        test_changebasis_I(P6, P7)
     end
 
     @testset "changebasis_sim" begin
