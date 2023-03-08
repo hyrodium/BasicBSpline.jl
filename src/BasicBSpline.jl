@@ -8,7 +8,7 @@ using ChainRulesCore
 
 # Types
 export AbstractKnotVector, KnotVector, UniformKnotVector, EmptyKnotVector
-export BSplineSpace, BSplineDerivativeSpace
+export BSplineSpace, BSplineDerivativeSpace, UniformBSplineSpace
 export BSplineManifold, RationalBSplineManifold
 
 # B-spline basis functions
