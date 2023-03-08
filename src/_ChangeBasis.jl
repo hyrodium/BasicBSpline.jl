@@ -30,75 +30,94 @@ function _changebasis_R(P::BSplineSpace{0,T,KnotVector{T}}, P′::BSplineSpace{p
     return A⁰
 end
 
+"""
+Generate flags for `changebasis` function.
+
+0 -> default
+1 -> zero            k′[i] == k′[i+p′+1]
+2 -> left limit      k′[i] < k′[i+1] == k′[i+p′+1]
+3 -> right limit     k′[i+1] == k′[i+p′] ( i.e. k′[i] == k′[i+p′] < k′[i+p′+1] or k′[i] < k′[i+1] == k′[i+p′] < k′[i+p′+1] )
+4 -> left boundary   i == 1
+5 -> right boundary  i == n′
+6 -> left recursion
+7 -> right recursion
+"""
+function _generate_flags(P′::BSplineSpace{p′}) where p′
+    k′ = knotvector(P′)
+    n′ = dim(P′)
+    flags = zeros(Int, n′)
+    for i in 1:n′
+        if k′[i] == k′[i+p′+1]
+            flags[i] = 1
+        elseif k′[i] < k′[i+1] == k′[i+p′+1]
+            flags[i] = 2
+        elseif k′[i+1] == k′[i+p′]
+            flags[i] = 3
+        end
+    end
+    if flags[1] == 0
+        flags[1] = 4
+    end
+    if flags[end] == 0
+        flags[end] = 5
+    end
+    local j
+    for i in 2:n′-1
+        if flags[i-1] ≠ 0 && flags[i-1] ≠ 6 && flags[i] == 0
+            flags[i] = 6
+            j = i
+        end
+        if flags[i+1] ≠ 0 && flags[i] == 0
+            flags[i] = 7
+            jj = (i + j) ÷ 2
+            ii = jj + 1
+            flags[j:jj] .= 6
+            flags[ii:i] .= 7
+        end
+    end
+    return flags
+end
+
 function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p′,T′,KnotVector{T′}}) where {p,p′,T,T′}
     U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     k = knotvector(P)
     k′ = knotvector(P′)
     n = dim(P)
     n′ = dim(P′)
-
-    Z = _iszeros(_lower(P′))
-    W = findall(Z)
     K′ = [k′[i+p′] - k′[i] for i in 1:n′+1]
     K = U[ifelse(k[i+p] ≠ k[i], U(1 / (k[i+p] - k[i])), zero(U)) for i in 1:n+1]
-
     Aᵖ⁻¹ = _changebasis_R(_lower(P), _lower(P′))  # (n+1) × (n′+1) matrix
     Δ = (p / p′) * [K′[j] * (K[i] * Aᵖ⁻¹[i, j] - K[i+1] * Aᵖ⁻¹[i+1, j]) for i in 1:n, j in 1:n′+1]
     Aᵖ = zeros(U, n, n′)  # n × n′ matrix
-    Aᵖ[:, 1] = Δ[:, 1]
-    Aᵖ[:, n′] = -Δ[:, n′+1]
 
-    # split Aᵖ for sub-block
-    if length(W) == 0
-        Q = [1:n′]
-    else
-        Q = push!(pushfirst!([W[i]:W[i+1]-1 for i in 1:length(W)-1], 1:W[1]-1), W[end]:n′)
-    end
-    λ = length(Q)
-    Λ = length.(Q)
-    Ãᵖ = [Aᵖ[:, q] for q in Q]
+    flags = _generate_flags(P′)
 
-    for ȷ in 2:λ-1
-        if Λ[ȷ] == 1
-            # if B(i,p′,k′) = 0
-            Ãᵖ[ȷ] .= zero(U)  # Strictly this should be NaN, but we use zero here to support Rational.
-        end
-    end
-    for ȷ in 1:λ-1
-        if Λ[ȷ] ≥ 2
-            t = k′[W[ȷ]]
-            for i in 1:n
-                # TODO: this can be faster with bsplinebasisall
-                Ãᵖ[ȷ][i, end] = bsplinebasis₋₀(P,i,t)
+    for i in 1:n′
+        if flags[i] == 2
+            t = k′[i+1]
+            for j in 1:n
+                Aᵖ[j,i] = bsplinebasis₋₀(P,j,t)
             end
-        end
-    end
-    for ȷ in 2:λ
-        if Λ[ȷ] ≥ 2
-            t = k′[W[ȷ-1]+p]
-            for i in 1:n
-                # TODO: this can be faster with bsplinebasisall
-                Ãᵖ[ȷ][i, 1] = bsplinebasis₊₀(P,i,t)
+        elseif flags[i] == 3
+            t = k′[i+1]
+            for j in 1:n
+                Aᵖ[j,i] = bsplinebasis₊₀(P,j,t)
             end
+        elseif flags[i] == 4
+            Aᵖ[:, 1] = Δ[:, 1]
+        elseif flags[i] == 5
+            Aᵖ[:, n′] = -Δ[:, n′+1]
+        elseif flags[i] == 6
+            Aᵖ[:, i] = Aᵖ[:, i-1] + Δ[:, i]
         end
     end
-    for ȷ in 1:λ
-        if Λ[ȷ] ≥ 3
-            r = Q[ȷ]
-            A₊ = copy(Ãᵖ[ȷ])
-            A₋ = copy(Ãᵖ[ȷ])
-            for j in 1:Λ[ȷ]-2
-                A₊[:, j+1] .= A₊[:, j] .+ Δ[:, j+r[1]]
-                A₋[:, Λ[ȷ]-j] .= A₋[:, Λ[ȷ]-j+1] .- Δ[:, Λ[ȷ]-j+r[1]]
-            end
-            # Ãᵖ[ȷ] .= A₊
-            # Ãᵖ[ȷ] .= A₋
-            # Ãᵖ[ȷ] .= (A₊ .+ A₋) ./ 2
-            Ãᵖ[ȷ] .= sqrt.(A₊ .* A₋)
+    for i in n′:-1:1
+        if flags[i] == 7
+            Aᵖ[:, i] = Aᵖ[:, i+1] - Δ[:, i+1]
         end
     end
-    _Aᵖ = reduce(hcat, Ãᵖ) # n × n′ matrix
-    return _Aᵖ .* U[bsplinesupport(P′,j) ⊆ bsplinesupport(P,i) for i in 1:n, j in 1:n′]
+
+    return Aᵖ .* U[bsplinesupport(P′,j) ⊆ bsplinesupport(P,i) for i in 1:n, j in 1:n′]
 end
 
 @doc raw"""
