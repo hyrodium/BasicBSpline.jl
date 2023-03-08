@@ -10,7 +10,10 @@ B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p',k')}
 Assumption:
 * ``P ⊆ P^{\prime}``
 """
-function _changebasis_R end
+function changebasis_R(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
+    P ⊆ P′ || throw(DomainError((P,P′),"P ⊆ P′ should be hold."))
+    return _changebasis_R(P, P′)
+end
 
 function _changebasis_R(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′}) where {p,T,p′,T′}
     _P = BSplineSpace{p,T,KnotVector{T}}(P)
@@ -19,7 +22,6 @@ function _changebasis_R(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′}) whe
 end
 
 function _changebasis_R(P::BSplineSpace{0,T,KnotVector{T}}, P′::BSplineSpace{p′,T′,KnotVector{T′}}) where {p′,T,T′}
-    P ⊆ P′ || throw(DomainError((P,P′),"P ⊆ P′ should be hold."))
     U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     n = dim(P)
     n′ = dim(P′)
@@ -29,7 +31,6 @@ function _changebasis_R(P::BSplineSpace{0,T,KnotVector{T}}, P′::BSplineSpace{p
 end
 
 function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p′,T′,KnotVector{T′}}) where {p,p′,T,T′}
-    P ⊆ P′ || throw(DomainError((P,P′),"P ⊆ P′ should be hold."))
     U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     k = knotvector(P)
     k′ = knotvector(P′)
@@ -182,8 +183,12 @@ B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p',k')}
 Assumption:
 * ``P ⊑ P^{\prime}``
 """
-function _changebasis_I(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′}) where {p,p′,T,T′}
+function changebasis_I(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
     P ⊑ P′ || throw(DomainError((P,P′),"P ⊑ P′ should be hold."))
+    return _changebasis_I(P, P′)
+end
+
+function _changebasis_I(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′}) where {p,p′,T,T′}
     k = knotvector(P)
     k′ = knotvector(P′)
 
@@ -199,7 +204,6 @@ end
 
 ## Uniform B-spline space
 function _changebasis_R(P::BSplineSpace{p,T,<:UniformKnotVector{T}}, P′::BSplineSpace{p,T′,<:UniformKnotVector{T′}}) where {p,T,T′}
-    P ⊆ P′ || throw(DomainError((P,P′),"P ⊆ P′ should be hold."))
     k = knotvector(P)
     k′ = knotvector(P′)
     r = round(Int, step(k)/step(k′))
@@ -214,7 +218,6 @@ function _changebasis_R(P::BSplineSpace{p,T,<:UniformKnotVector{T}}, P′::BSpli
     return A
 end
 function _changebasis_I(P::BSplineSpace{p,T,<:UniformKnotVector{T}}, P′::BSplineSpace{p,T′,<:UniformKnotVector{T′}}) where {p,T,T′}
-    P ⊑ P′ || throw(DomainError((P,P′),"P ⊑ P′ should be hold."))
     k = knotvector(P)
     k′ = knotvector(P′)
     r = round(Int, step(k)/step(k′))
@@ -237,7 +240,6 @@ end
 
 ## BSplineDerivativeSpace
 function _changebasis_R(dP::BSplineDerivativeSpace{r,<:BSplineSpace{p}}, P′::BSplineSpace) where {r,p}
-    dP ⊆ P′ || throw(DomainError((P,P′),"dP ⊆ P′ should be hold."))
     k = knotvector(dP)
     n = dim(dP)
     A = Matrix(I(n))
@@ -255,12 +257,10 @@ function _changebasis_R(dP::BSplineDerivativeSpace{r,<:BSplineSpace{p}}, P′::B
     return A
 end
 function _changebasis_R(dP::BSplineDerivativeSpace, dP′::BSplineDerivativeSpace{0})
-    dP ⊆ dP′ || throw(DomainError((dP,dP′),"dP ⊆ dP′ should be hold."))
     P′ = bsplinespace(dP′)
     return _changebasis_R(dP, P′)
 end
 function _changebasis_R(dP::BSplineDerivativeSpace{r}, dP′::BSplineDerivativeSpace{r′}) where {r,r′}
-    dP ⊆ dP′ || throw(DomainError((dP,dP′),"dP ⊆ dP′ should be hold."))
     if r > r′
         P = bsplinespace(dP)
         P′ = bsplinespace(dP′)
@@ -280,5 +280,5 @@ end
 function changebasis(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
     P ⊆ P′ && return _changebasis_R(P, P′)
     P ⊑ P′ && return _changebasis_I(P, P′)
-    throw(DomainError((P, P′),"𝒫[p,k] ⊆ 𝒫[p′,k′] or 𝒫[p,k] ⊑ 𝒫[p′,k′] must hold."))
+    throw(DomainError((P, P′),"P ⊆ P′ or P ⊑ P′ must hold."))
 end
