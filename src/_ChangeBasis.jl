@@ -234,7 +234,7 @@ function _changebasis_I(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′}) whe
 end
 
 ## Uniform B-spline space
-function _changebasis_R(P::BSplineSpace{p,T,<:UniformKnotVector{T}}, P′::BSplineSpace{p,T′,<:UniformKnotVector{T′}}) where {p,T,T′}
+function _changebasis_R(P::UniformBSplineSpace{p,T}, P′::UniformBSplineSpace{p,T′}) where {p,T,T′}
     k = knotvector(P)
     k′ = knotvector(P′)
     r = round(Int, step(k)/step(k′))
@@ -248,7 +248,7 @@ function _changebasis_R(P::BSplineSpace{p,T,<:UniformKnotVector{T}}, P′::BSpli
     end
     return A
 end
-function _changebasis_I(P::BSplineSpace{p,T,<:UniformKnotVector{T}}, P′::BSplineSpace{p,T′,<:UniformKnotVector{T′}}) where {p,T,T′}
+function _changebasis_I(P::UniformBSplineSpace{p,T}, P′::UniformBSplineSpace{p,T′}) where {p,T,T′}
     k = knotvector(P)
     k′ = knotvector(P′)
     r = round(Int, step(k)/step(k′))
