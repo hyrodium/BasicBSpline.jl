@@ -78,7 +78,7 @@
             k2 = UniformKnotVector(p+1:p+L+1) + p*KnotVector([p+1]) + KnotVector(p+L+1:2p+L)
             P1 = BSplineSpace{p}(k1)
             P2 = BSplineSpace{p}(k2)
-            @test P1 isa BSplineSpace{p,T,<:UniformKnotVector} where {p,T}
+            @test P1 isa UniformBSplineSpace{p,T} where {p,T}
             @test domain(P1) == domain(P2)
             @test dim(P1) == dim(P2)
             @test P1 ≃ P2
