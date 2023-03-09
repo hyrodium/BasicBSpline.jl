@@ -23,7 +23,7 @@
         @test dP2 !== BSplineDerivativeSpace{1,typeof(P3)}(dP2)
         @test dP2 === BSplineDerivativeSpace{1,typeof(P2)}(dP2)
         @test dP1 isa BSplineDerivativeSpace{1,<:BSplineSpace{p,T,KnotVector{T}} where {p,T}}
-        @test dP2 isa BSplineDerivativeSpace{1,<:BSplineSpace{p,T,<:UniformKnotVector{T}} where {p,T}}
+        @test dP2 isa BSplineDerivativeSpace{1,<:UniformBSplineSpace{p,T} where {p,T}}
         @test dP4 == dP5 == dP6 == dP7
 
         @test dP2 == convert(BSplineDerivativeSpace,dP2)
