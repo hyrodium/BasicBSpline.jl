@@ -1,6 +1,6 @@
 # BasicBSpline.jl
 
-Basic (mathematical) operations for B-spline functions and related things with julia
+Basic (mathematical) operations for B-spline functions and related things with Julia.
 
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://hyrodium.github.io/BasicBSpline.jl/stable)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://hyrodium.github.io/BasicBSpline.jl/dev)
@@ -21,9 +21,9 @@ This package provides basic mathematical operations for [B-spline](https://en.wi
 * Refinement algorithm for B-spline manifold
 * Fitting control points for a given function
 
-## Comparison to other julia packages for B-spline
+## Comparison to other Julia packages for B-spline
 Note that the following comparison might not be correct.
-If you have any thoughts, please help in [issue#161](https://github.com/hyrodium/BasicBSpline.jl/issues/161).
+If you have any thoughts, please help with [issue#161](https://github.com/hyrodium/BasicBSpline.jl/issues/161).
 
 * [Interpolations.jl](https://github.com/JuliaMath/Interpolations.jl)
     * >Currently this package's support is best for B-splines and also supports irregular grids.
@@ -35,7 +35,7 @@ If you have any thoughts, please help in [issue#161](https://github.com/hyrodium
     * Only 1-d or 2-d B-spline manifold are supported.
     * 5 or less degree of polynomial are supported.
 * **[BasicBSpline.jl](https://github.com/hyrodium/BasicBSpline.jl) (this package)**
-    * Any degrees of polynomial are supported.
+    * Any degrees of polynomials are supported.
     * Refinement algorithm for B-spline manifold.
     * Fitting algorithm by least squares.
     * High performance on speed.
@@ -45,12 +45,12 @@ If you have any thoughts, please help in [issue#161](https://github.com/hyrodium
 Install this package
 
 ```julia
-] add BasicBSpline
+]add BasicBSpline
 ```
 
 To export graphics, use [BasicBSplineExporter.jl](https://github.com/hyrodium/BasicBSplineExporter.jl).
 ```julia
-] add https://github.com/hyrodium/BasicBSplineExporter.jl
+]add https://github.com/hyrodium/BasicBSplineExporter.jl
 ```
 
 ## Example
