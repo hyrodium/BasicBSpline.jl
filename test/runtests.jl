@@ -3,6 +3,7 @@ using ChainRulesTestUtils
 using ChainRulesCore
 using IntervalSets
 using LinearAlgebra
+using SparseArrays
 using Test
 using Random
 using StaticArrays

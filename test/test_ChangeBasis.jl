@@ -95,24 +95,24 @@
     @testset "non-float" begin
         k = UniformKnotVector(1:15)
         P = BSplineSpace{3}(k)
-        @test changebasis(P,P) isa Matrix{Float64}
-        @test BasicBSpline._changebasis_R(P,P) isa Matrix{Float64}
-        @test BasicBSpline._changebasis_I(P,P) isa Matrix{Float64}
-        @test BasicBSpline._changebasis_sim(P,P) isa Matrix{Float64}
+        @test changebasis(P,P) isa SparseMatrixCSC{Float64}
+        @test BasicBSpline._changebasis_R(P,P) isa SparseMatrixCSC{Float64}
+        @test BasicBSpline._changebasis_I(P,P) isa SparseMatrixCSC{Float64}
+        @test BasicBSpline._changebasis_sim(P,P) isa SparseMatrixCSC{Float64}
 
         k = UniformKnotVector(1:15//1)
         P = BSplineSpace{3}(k)
-        @test changebasis(P,P) isa Matrix{Rational{Int}}
-        @test BasicBSpline._changebasis_R(P,P) isa Matrix{Rational{Int}}
-        @test BasicBSpline._changebasis_I(P,P) isa Matrix{Rational{Int}}
-        @test BasicBSpline._changebasis_sim(P,P) isa Matrix{Rational{Int}}
+        @test changebasis(P,P) isa SparseMatrixCSC{Rational{Int}}
+        @test BasicBSpline._changebasis_R(P,P) isa SparseMatrixCSC{Rational{Int}}
+        @test BasicBSpline._changebasis_I(P,P) isa SparseMatrixCSC{Rational{Int}}
+        @test BasicBSpline._changebasis_sim(P,P) isa SparseMatrixCSC{Rational{Int}}
 
         k = UniformKnotVector(1:BigInt(15))
         P = BSplineSpace{3}(k)
-        @test changebasis(P,P) isa Matrix{BigFloat}
-        @test BasicBSpline._changebasis_R(P,P) isa Matrix{BigFloat}
-        @test BasicBSpline._changebasis_I(P,P) isa Matrix{BigFloat}
-        @test BasicBSpline._changebasis_sim(P,P) isa Matrix{BigFloat}
+        @test changebasis(P,P) isa SparseMatrixCSC{BigFloat}
+        @test BasicBSpline._changebasis_R(P,P) isa SparseMatrixCSC{BigFloat}
+        @test BasicBSpline._changebasis_I(P,P) isa SparseMatrixCSC{BigFloat}
+        @test BasicBSpline._changebasis_sim(P,P) isa SparseMatrixCSC{BigFloat}
     end
 
     @testset "uniform" begin

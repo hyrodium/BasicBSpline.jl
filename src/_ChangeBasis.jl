@@ -87,7 +87,7 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
     K′ = [k′[i+p′] - k′[i] for i in 1:n′+1]
     K = U[ifelse(k[i+p] ≠ k[i], U(1 / (k[i+p] - k[i])), zero(U)) for i in 1:n+1]
     Aᵖ⁻¹ = _changebasis_R(_lower(P), _lower(P′))  # (n+1) × (n′+1) matrix
-    Aᵖ = zeros(U, n, n′)  # n × n′ matrix
+    Aᵖ = spzeros(U, n, n′)  # n × n′ matrix
 
     flags = _generate_flags(P′)
     for i in 1:n′
@@ -149,7 +149,7 @@ function _changebasis_sim(P1::BSplineSpace{p,T1}, P2::BSplineSpace{p,T2}) where 
     n = dim(P1)     # == dim(P2)
     l = length(k1)  # == length(k2)
     
-    A = Matrix{U}(I, n, n)
+    A = SparseMatrixCSC{U, Int}(I(n))
 
     A1 = _derivatives_at_left(P1)
     A2 = _derivatives_at_left(P2)
@@ -242,7 +242,7 @@ function _changebasis_R(P::UniformBSplineSpace{p,T}, P′::UniformBSplineSpace{p
     n = dim(P)
     n′ = dim(P′)
     j = findfirst(==(k[1]), _vec(k′))
-    A = zeros(StaticArrays.arithmetic_closure(T), n, n′)
+    A = spzeros(StaticArrays.arithmetic_closure(T), n, n′)
     for i in 1:n
         A[i, j+r*(i-1):j+(r-1)*(p+1)+r*(i-1)] = block
     end
@@ -255,7 +255,7 @@ function _changebasis_I(P::UniformBSplineSpace{p,T}, P′::UniformBSplineSpace{p
     block = [r_nomial(p+1,i,r) for i in 0:(r-1)*(p+1)]/r^p
     n = dim(P)
     n′ = dim(P′)
-    A = zeros(StaticArrays.arithmetic_closure(T), n, n′)
+    A = spzeros(StaticArrays.arithmetic_closure(T), n, n′)
     for i in 1:n
         a = r*i-(r-1)*(p+1)
         b = r*i
@@ -276,7 +276,7 @@ function _changebasis_R(dP::BSplineDerivativeSpace{r,<:BSplineSpace{p}}, P′::B
     A = Matrix(I(n))
     for _r in 0:r-1
         _p = p - _r
-        _A = zeros(n+_r,n+1+_r)
+        _A = spzeros(n+_r,n+1+_r)
         for i in 1:n+_r
             _A[i,i] = _p/(k[i+_p]-k[i])
             _A[i,i+1] = -_p/(k[i+_p+1]-k[i+1])
