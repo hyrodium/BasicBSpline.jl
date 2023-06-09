@@ -22,11 +22,34 @@ function _changebasis_R(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′}) whe
 end
 
 function _changebasis_R(P::BSplineSpace{0,T,KnotVector{T}}, P′::BSplineSpace{p′,T′,KnotVector{T′}}) where {p′,T,T′}
-    U = StaticArrays.arithmetic_closure(promote_type(T,T′))
+    U = StaticArrays.arithmetic_closure(promote_type(T, T′))
     n = dim(P)
     n′ = dim(P′)
-    A⁰ = U[bsplinesupport(P′, j) ⊆ bsplinesupport(P, i) for i in 1:n, j in 1:n′]
-    A⁰[:, findall(_iszeros(P′))] .= zero(U)  # Strictly this should be NaN, but we use zero here to support Rational.
+    n′_exact = exactdim(P′)
+    k = knotvector(P)
+    k′ = knotvector(P′)
+    I = fill(0, n′_exact)
+    J = fill(0, n′_exact)
+    s = 1
+    j_begin = 1
+    for i in 1:n
+        isdegenerate(P, i) && continue
+        for j in j_begin:n′
+            k′[j] == k[i] && (j_begin = j; break)
+        end
+        local j_end
+        for j in j_begin:n′
+            k′[j+p′+1] == k[i+1] && (j_end = j + p′; break)
+        end
+        for j in j_begin:j_end
+            isdegenerate(P′, j) && continue
+            I[s] = i
+            J[s] = j
+            s += 1
+        end
+        j_begin = j_end + 1
+    end
+    A⁰ = sparse(view(I,1:s-1), view(J,1:s-1), fill(one(U), s-1), n, n′)
     return A⁰
 end
 
