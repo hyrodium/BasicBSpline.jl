@@ -124,29 +124,25 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         isdegenerate_R(P,i) && continue
 
         # Precalculate the range of j
-        # TODO: this range can be improved
-        local j_begin, j_end
-        for j in 1:n′
-            k[i] == k′[j] && (j_begin = j; break)
-        end
-        for j in reverse(1:n′)
-            k′[j+p′+1] == k[i+p+1] && (j_end = j; break)
-        end
+        # TODO: this implementation can be replaced with more effecient way.
+        j_begin::Int = findlast(j->BSplineSpace{p}(k[i:i+p+1]) ⊆ BSplineSpace{p′}(k′[j:n′+p′+1]), 1:n′)
+        j_end::Int = findnext(j->BSplineSpace{p}(k[i:i+p+1]) ⊆ BSplineSpace{p′}(k′[j_begin:j+p′+1]), 1:n′, j_begin)
+        J = j_begin:j_end
 
         # Elements that can be calculated with left or right limit of B-spline basis functions
-        for j in j_begin:j_end
+        for j in J
             if flags[j] == 2
                 Aᵖ[i, j] = bsplinebasis₋₀(P,i,k′[j+1])
             elseif flags[j] == 3
                 Aᵖ[i, j] = bsplinebasis₊₀(P,i,k′[j+1])
             end
         end
-        for j in j_begin:j_end
+        for j in J
             if flags[j] == 6
                 Aᵖ[i, j] = Aᵖ[i, j-1] + p * K′[j] * (K[i] * Aᵖ⁻¹[i, j] - K[i+1] * Aᵖ⁻¹[i+1, j]) / p′
             end
         end
-        for j in reverse(j_begin:j_end)
+        for j in reverse(J)
             if flags[j] == 7
                 Aᵖ[i, j] = Aᵖ[i, j+1] - p * K′[j+1] * (K[i] * Aᵖ⁻¹[i, j+1] - K[i+1] * Aᵖ⁻¹[i+1, j+1]) / p′
             end
