@@ -171,9 +171,21 @@
         @test (P5 ⊑ P4) == (_P5 ⊑ _P4)
     end
 
+    @testset "subset and sqsubset" begin
+        P6 = BSplineSpace{2}(knotvector"1111 111")
+        P7 = BSplineSpace{2}(knotvector"11121111")
+        @test P6 ⊆ P6
+        @test P6 ⊆ P7
+        @test P7 ⊆ P7
+        @test P6 ⊑ P6
+        @test P6 ⊑ P7
+        @test P7 ⊑ P7
+        @test domain(P6) == domain(P7)
+    end
+
     @testset "subset but not sqsubset" begin
-        P6 = BSplineSpace{2}(KnotVector(1:8))
-        P7 = BSplineSpace{2}(KnotVector(1:10))
+        P6 = BSplineSpace{2}(knotvector"11111111")
+        P7 = BSplineSpace{2}(knotvector"1111111111")
         @test P6 ⊆ P6
         @test P7 ⊆ P7
         @test P6 ⊆ P7
@@ -187,8 +199,8 @@
     end
 
     @testset "sqsubset but not subset" begin
-        P6 = BSplineSpace{2}(KnotVector([1,2,3,4,5,6,7]))
-        P7 = BSplineSpace{2}(KnotVector([0,1,3,4,5,8,9]))
+        P6 = BSplineSpace{2}(knotvector" 1111111")
+        P7 = BSplineSpace{2}(knotvector"11 11111")
         @test P6 ⊑ P7
         @test P7 ⊑ P6
         @test P6 ≃ P7

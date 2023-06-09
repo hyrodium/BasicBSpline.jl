@@ -135,11 +135,11 @@
     end
 
     @testset "inclusive relation" begin
-        k1 = KnotVector([1,2,3])
-        k2 = KnotVector([1,2,2,3])
-        k3 = KnotVector([1,2,2,3,5])
-        k4 = KnotVector([1,2,3,5])
-        k5 = KnotVector([1,2,3,4])
+        k1 = knotvector"111"
+        k2 = knotvector"121"
+        k3 = knotvector"121 1"
+        k4 = knotvector"111 1"
+        k5 = knotvector"1111"
         k6 = EmptyKnotVector()
         k7 = EmptyKnotVector{Real}()
         k8 = EmptyKnotVector{Float64}()
