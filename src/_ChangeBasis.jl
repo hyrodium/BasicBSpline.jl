@@ -136,7 +136,7 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         # Elements that can be calculated with left or right limit of B-spline basis functions
         for j in j_begin:j_end
             if flags[j] == 2
-                Aᵖ[i,j] = bsplinebasis₋₀(P,i,k′[j+1])
+                Aᵖ[i, j] = bsplinebasis₋₀(P,i,k′[j+1])
             elseif flags[j] == 3
                 Aᵖ[i, j] = bsplinebasis₊₀(P,i,k′[j+1])
             end
