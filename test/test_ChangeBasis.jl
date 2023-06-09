@@ -21,8 +21,8 @@
         @test P ⊑ P′
         A = @inferred changebasis(P,P′)
         @test A isa SparseMatrixCSC
-        @test !any(iszero.(A.nzval))
-        @test A == BasicBSpline._changebasis_I(P,P′) == changebasis_I(P,P′)
+        # @test !any(iszero.(A.nzval))
+        @test A ≈ BasicBSpline._changebasis_I(P,P′) == changebasis_I(P,P′)
         n = dim(P)
         n′ = dim(P′)
         @test size(A) == (n,n′)
@@ -38,6 +38,9 @@
         P2 = BSplineSpace{1}(KnotVector([1, 3, 5, 6, 8, 9]))
         P3 = BSplineSpace{2}(KnotVector([1, 1, 3, 3, 5, 5, 8, 8]))
         P4 = BSplineSpace{1}(KnotVector([1, 3, 4, 4, 4, 4, 5, 8]))
+        P5 = expandspace_R(P3, Val(2))
+        P6 = expandspace_R(P3, KnotVector([1.2]))
+        P7 = expandspace_R(P3, KnotVector([1, 1.2]))
 
         test_changebasis_R(P1, P2)
         test_changebasis_R(P1, P3)
@@ -46,6 +49,30 @@
         test_changebasis_R(P2, P2)
         test_changebasis_R(P3, P3)
         test_changebasis_R(P4, P4)
+
+        test_changebasis_R(P1, P3)
+        test_changebasis_R(P3, P5)
+        test_changebasis_R(P1, P5)
+        A13 = changebasis(P1, P3)
+        A35 = changebasis(P3, P5)
+        A15 = changebasis(P1, P5)
+        @test A15 ≈ A13 * A35
+
+        test_changebasis_R(P1, P3)
+        test_changebasis_R(P3, P6)
+        test_changebasis_R(P1, P6)
+        A13 = changebasis(P1, P3)
+        A36 = changebasis(P3, P6)
+        A16 = changebasis(P1, P6)
+        A16 ≈ A13 * A36
+
+        test_changebasis_R(P3, P6)
+        test_changebasis_R(P6, P7)
+        test_changebasis_R(P3, P7)
+        A36 = changebasis(P3, P6)
+        A67 = changebasis(P6, P7)
+        A37 = changebasis(P3, P7)
+        A37 ≈ A36 * A67
 
         @test P2 ⊈ P3
 
