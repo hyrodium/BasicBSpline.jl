@@ -113,41 +113,33 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
     Aᵖ = spzeros(U, n, n′)  # n × n′ matrix
 
     flags = _generate_flags(P′)
-    for i in 1:n′
-        if flags[i] == 2
-            t = k′[i+1]
-            for j in 1:n
-                k[j] ≤ k′[i] && k′[i+p′+1] ≤ k[j+p+1] || continue
-                Aᵖ[j,i] = bsplinebasis₋₀(P,j,t)
-            end
-        elseif flags[i] == 3
-            t = k′[i+1]
-            for j in 1:n
-                k[j] ≤ k′[i] && k′[i+p′+1] ≤ k[j+p+1] || continue
-                Aᵖ[j, i] = bsplinebasis₊₀(P,j,t)
-            end
-        elseif flags[i] == 4
-            for j in 1:n
-                k[j] ≤ k′[i] && k′[i+p′+1] ≤ k[j+p+1] || continue
-                Aᵖ[j, i] = (p / p′) * K′[1] * (K[j] * Aᵖ⁻¹[j, 1] - K[j+1] * Aᵖ⁻¹[j+1, 1])
-            end
-        elseif flags[i] == 5
-            for j in 1:n
-                k[j] ≤ k′[i] && k′[i+p′+1] ≤ k[j+p+1] || continue
-                Aᵖ[j, i] = -(p / p′) * K′[n′+1] * (K[j] * Aᵖ⁻¹[j, n′+1] - K[j+1] * Aᵖ⁻¹[j+1, n′+1])
-            end
-        elseif flags[i] == 6
-            for j in 1:n
-                k[j] ≤ k′[i] && k′[i+p′+1] ≤ k[j+p+1] || continue
-                Aᵖ[j, i] = Aᵖ[j, i-1] + (p / p′) * K′[i] * (K[j] * Aᵖ⁻¹[j, i] - K[j+1] * Aᵖ⁻¹[j+1, i])
+    for i in 1:n
+        for j in 1:n′
+            k[i] ≤ k′[j] && k′[j+p′+1] ≤ k[i+p+1] || continue
+            if flags[j] == 2
+                Aᵖ[i,j] = bsplinebasis₋₀(P,i,k′[j+1])
+            elseif flags[j] == 3
+                Aᵖ[i, j] = bsplinebasis₊₀(P,i,k′[j+1])
+            elseif flags[j] == 4
+                if i == 1
+                    Aᵖ[i, j] = p * K′[1] * (K[i] * Aᵖ⁻¹[i, 1] - K[i+1] * Aᵖ⁻¹[i+1, 1]) / p′
+                end
+            elseif flags[j] == 5
+                if i == n
+                    Aᵖ[i, j] = -p * K′[n′+1] * (K[i] * Aᵖ⁻¹[i, n′+1] - K[i+1] * Aᵖ⁻¹[i+1, n′+1]) / p′
+                end
             end
         end
-    end
-    for i in reverse(1:n′)
-        if flags[i] == 7
-            for j in 1:n
-                k[j] ≤ k′[i] && k′[i+p′+1] ≤ k[j+p+1] || continue
-                Aᵖ[j, i] = Aᵖ[j, i+1] - (p / p′) * K′[i+1] * (K[j] * Aᵖ⁻¹[j, i+1] - K[j+1] * Aᵖ⁻¹[j+1, i+1])
+        for j in 1:n′
+            if flags[j] == 6
+                k[i] ≤ k′[j] && k′[j+p′+1] ≤ k[i+p+1] || continue
+                Aᵖ[i, j] = Aᵖ[i, j-1] + p * K′[j] * (K[i] * Aᵖ⁻¹[i, j] - K[i+1] * Aᵖ⁻¹[i+1, j]) / p′
+            end
+        end
+        for j in reverse(1:n′)
+            if flags[j] == 7
+                k[i] ≤ k′[j] && k′[j+p′+1] ≤ k[i+p+1] || continue
+                Aᵖ[i, j] = Aᵖ[i, j+1] - p * K′[j+1] * (K[i] * Aᵖ⁻¹[i, j+1] - K[i+1] * Aᵖ⁻¹[i+1, j+1]) / p′
             end
         end
     end
