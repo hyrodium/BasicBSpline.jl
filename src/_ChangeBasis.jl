@@ -120,7 +120,11 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         Aᵖ[n, n′] = -p * K′[n′+1] * (K[n] * Aᵖ⁻¹[n, n′+1] - K[n+1] * Aᵖ⁻¹[n+1, n′+1]) / p′
     end
     for i in 1:n
+        # Skip for degenerated basis
         isdegenerate_R(P,i) && continue
+
+        # Precalculate the range of j
+        # TODO: this range can be improved
         local j_begin, j_end
         for j in 1:n′
             k[i] == k′[j] && (j_begin = j; break)
@@ -128,6 +132,8 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         for j in reverse(1:n′)
             k′[j+p′+1] == k[i+p+1] && (j_end = j; break)
         end
+
+        # Elements that can be calculated with left or right limit of B-spline basis functions
         for j in j_begin:j_end
             if flags[j] == 2
                 Aᵖ[i,j] = bsplinebasis₋₀(P,i,k′[j+1])
@@ -142,7 +148,6 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         end
         for j in reverse(j_begin:j_end)
             if flags[j] == 7
-                k[i] ≤ k′[j] && k′[j+p′+1] ≤ k[i+p+1] || continue
                 Aᵖ[i, j] = Aᵖ[i, j+1] - p * K′[j+1] * (K[i] * Aᵖ⁻¹[i, j+1] - K[i+1] * Aᵖ⁻¹[i+1, j+1]) / p′
             end
         end
