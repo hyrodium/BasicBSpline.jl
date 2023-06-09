@@ -3,6 +3,8 @@
     function test_changebasis_R(P,P′)
         @test P ⊆ P′
         A = @inferred changebasis(P,P′)
+        @test A isa SparseMatrixCSC
+        @test !any(iszero.(A.nzval))
         @test A == BasicBSpline._changebasis_R(P,P′) == changebasis_R(P,P′)
         n = dim(P)
         n′ = dim(P′)
@@ -18,6 +20,8 @@
     function test_changebasis_I(P,P′)
         @test P ⊑ P′
         A = @inferred changebasis(P,P′)
+        @test A isa SparseMatrixCSC
+        @test !any(iszero.(A.nzval))
         @test A == BasicBSpline._changebasis_I(P,P′) == changebasis_I(P,P′)
         n = dim(P)
         n′ = dim(P′)
@@ -38,6 +42,10 @@
         test_changebasis_R(P1, P2)
         test_changebasis_R(P1, P3)
         test_changebasis_R(P1, P4)
+        test_changebasis_R(P1, P1)
+        test_changebasis_R(P2, P2)
+        test_changebasis_R(P3, P3)
+        test_changebasis_R(P4, P4)
 
         @test P2 ⊈ P3
 
@@ -63,6 +71,8 @@
         @test P4 ⋣ P5
 
         test_changebasis_I(P4, P5)
+        test_changebasis_I(P4, P4)
+        test_changebasis_I(P5, P5)
 
         P6 = BSplineSpace{p4-1}(knotvector(P4)[2:end-1])
         P7 = BSplineSpace{p5-1}(knotvector(P5)[2:end-1])
