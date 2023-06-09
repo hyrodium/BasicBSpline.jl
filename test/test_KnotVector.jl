@@ -19,6 +19,12 @@
         @test KnotVector{Int}(k1) isa KnotVector{Int}
         @test KnotVector(k1) isa KnotVector{Int}
         @test AbstractKnotVector{Float64}(k1) isa KnotVector{Float64}
+
+        @test knotvector"11111" == KnotVector([1, 2, 3, 4, 5])
+        @test knotvector"123" == KnotVector([1, 2, 2, 3, 3, 3])
+        @test knotvector" 2 2 2" == KnotVector([2, 2, 4, 4, 6, 6])
+        @test knotvector"020202" == KnotVector([2, 2, 4, 4, 6, 6])
+        @test knotvector"     1" == KnotVector([6])
     end
 
     @testset "eltype" begin
