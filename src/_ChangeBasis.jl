@@ -171,8 +171,8 @@ function _changebasis_sim(P1::BSplineSpace{p,T1}, P2::BSplineSpace{p,T2}) where 
     k2 = knotvector(P2)
     n = dim(P1)     # == dim(P2)
     l = length(k1)  # == length(k2)
-    
-    A = SparseMatrixCSC{U, Int}(I(n))
+
+    A = sparse(U, I, n, n)
 
     A1 = _derivatives_at_left(P1)
     A2 = _derivatives_at_left(P2)
@@ -293,13 +293,14 @@ function _changebasis_I(P::UniformBSplineSpace{p,T}, P′::UniformBSplineSpace{p
 end
 
 ## BSplineDerivativeSpace
-function _changebasis_R(dP::BSplineDerivativeSpace{r,<:BSplineSpace{p}}, P′::BSplineSpace) where {r,p}
+function _changebasis_R(dP::BSplineDerivativeSpace{r,<:BSplineSpace{p, T}}, P′::BSplineSpace{p′,T′}) where {r,p,p′,T,T′}
+    U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     k = knotvector(dP)
     n = dim(dP)
-    A = Matrix(I(n))
+    A = sparse(U, I, n, n)
     for _r in 0:r-1
         _p = p - _r
-        _A = spzeros(n+_r,n+1+_r)
+        _A = spzeros(U, n+_r, n+1+_r)
         for i in 1:n+_r
             _A[i,i] = _p/(k[i+_p]-k[i])
             _A[i,i+1] = -_p/(k[i+_p+1]-k[i+1])
