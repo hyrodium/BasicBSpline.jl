@@ -37,6 +37,9 @@ export bsplinespace
 # Useful functions
 export refinement
 
+# Macros
+export @knotvector_str
+
 include("_util.jl")
 include("_KnotVector.jl")
 include("_BSplineSpace.jl")

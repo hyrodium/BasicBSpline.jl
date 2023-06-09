@@ -19,6 +19,12 @@
         @test KnotVector{Int}(k1) isa KnotVector{Int}
         @test KnotVector(k1) isa KnotVector{Int}
         @test AbstractKnotVector{Float64}(k1) isa KnotVector{Float64}
+
+        @test knotvector"11111" == KnotVector([1, 2, 3, 4, 5])
+        @test knotvector"123" == KnotVector([1, 2, 2, 3, 3, 3])
+        @test knotvector" 2 2 2" == KnotVector([2, 2, 4, 4, 6, 6])
+        @test knotvector"020202" == KnotVector([2, 2, 4, 4, 6, 6])
+        @test knotvector"     1" == KnotVector([6])
     end
 
     @testset "eltype" begin
@@ -129,11 +135,11 @@
     end
 
     @testset "inclusive relation" begin
-        k1 = KnotVector([1,2,3])
-        k2 = KnotVector([1,2,2,3])
-        k3 = KnotVector([1,2,2,3,5])
-        k4 = KnotVector([1,2,3,5])
-        k5 = KnotVector([1,2,3,4])
+        k1 = knotvector"111"
+        k2 = knotvector"121"
+        k3 = knotvector"121 1"
+        k4 = knotvector"111 1"
+        k5 = knotvector"1111"
         k6 = EmptyKnotVector()
         k7 = EmptyKnotVector{Real}()
         k8 = EmptyKnotVector{Float64}()
