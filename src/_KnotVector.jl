@@ -62,6 +62,26 @@ struct UniformKnotVector{T,R<:AbstractRange} <: AbstractKnotVector{T}
     global unsafe_uniformknotvector(::Type{T}, v::R) where R<:AbstractRange{T} where T = new{T,R}(v)
 end
 
+@doc raw"""
+A type to represetnt sub knot vector.
+```math
+k=(k_1,\dots,k_l)
+```
+
+# Examples
+```jldoctest
+julia> k = knotvector"1 11 211"
+KnotVector([1, 3, 4, 6, 6, 7, 8])
+
+julia> view(k, 2:5)
+SubKnotVector([3, 4, 6, 6])
+```
+"""
+struct SubKnotVector{T,S<:SubArray{T,1}} <: AbstractKnotVector{T}
+    vector::S
+    global unsafe_subknotvector(v::S) where {T,S<:SubArray{T,1}} = new{T,S}(v)
+end
+
 ##################
 #= Constructors =#
 ##################
@@ -76,6 +96,9 @@ UniformKnotVector(v::AbstractRange{T}) where T = unsafe_uniformknotvector(T,sort
 UniformKnotVector(k::UniformKnotVector) = k
 UniformKnotVector{T}(k::UniformKnotVector) where T = unsafe_uniformknotvector(T, k.vector)
 UniformKnotVector{T,R}(k::UniformKnotVector) where R<:AbstractRange{T} where T = unsafe_uniformknotvector(T, R(k.vector))
+
+SubKnotVector(k::SubKnotVector) = k
+SubKnotVector{T,S}(k::SubKnotVector{T,S}) where {T,S} = k
 
 Base.copy(k::EmptyKnotVector{T}) where T = k
 Base.copy(k::KnotVector{T}) where T = unsafe_knotvector(T,copy(_vec(k)))
@@ -100,6 +123,9 @@ function Base.promote_rule(::Type{KnotVector{T}}, ::Type{KnotVector{S}}) where {
 end
 function Base.promote_rule(::Type{KnotVector{T}}, ::Type{UniformKnotVector{S,R}}) where {T,S,R}
     KnotVector{promote_type(T,S)}
+end
+function Base.promote_rule(::Type{KnotVector{T1}}, ::Type{SubKnotVector{T2,S2}}) where {T1,T2,S2}
+    KnotVector{promote_type(T1,T2)}
 end
 
 
@@ -306,6 +332,7 @@ Base.unique(k::EmptyKnotVector) = k
 Base.unique(k::KnotVector{T}) where T = unsafe_knotvector(T, unique(k.vector))
 Base.unique!(k::KnotVector) = (unique!(k.vector); k)
 Base.unique(k::UniformKnotVector) = UniformKnotVector(unique(k.vector))
+Base.unique(k::SubKnotVector{T}) where T = unsafe_knotvector(T, unique(_vec(k)))
 
 Base.iterate(k::AbstractKnotVector) = iterate(_vec(k))
 Base.iterate(k::AbstractKnotVector, i) = iterate(_vec(k), i)
@@ -336,15 +363,14 @@ true
 ```
 """
 function Base.issubset(k::KnotVector, k′::KnotVector)
-    v = k′.vector
-    i = 0
-    for kᵢ in k
-        i = findnext(==(kᵢ), v, i+1)
-        if isnothing(i)
-            return false
-        end
+    i = 1
+    l = length(k)
+    for k′ⱼ in k′
+        l < i && (return true)
+        k[i] < k′ⱼ && (return false)
+        k[i] == k′ⱼ && (i += 1)
     end
-    return true
+    return l < i
 end
 
 function Base.issubset(k::AbstractKnotVector, k′::AbstractKnotVector)
@@ -361,6 +387,9 @@ function Base.float(k::UniformKnotVector)
     UniformKnotVector(float(_vec(k)))
 end
 
+Base.view(k::UniformKnotVector{T},inds) where T = unsafe_uniformknotvector(T, view(_vec(k), inds))
+Base.view(k::KnotVector,inds) = unsafe_subknotvector(view(_vec(k), inds))
+
 """
 Convert `AbstractKnotVector` to `AbstractVector`
 """
@@ -369,6 +398,7 @@ _vec
 _vec(::EmptyKnotVector{T}) where T = SVector{0,T}()
 _vec(k::KnotVector) = k.vector
 _vec(k::UniformKnotVector) = k.vector
+_vec(k::SubKnotVector) = k.vector
 
 @doc raw"""
 For given knot vector ``k``, the following function ``\mathfrak{n}_k:\mathbb{R}\to\mathbb{Z}`` represents the number of knots that duplicate the knot vector ``k``.
