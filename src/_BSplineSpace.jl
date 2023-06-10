@@ -156,8 +156,8 @@ function issqsubset(P::BSplineSpace{p}, P′::BSplineSpace{p′}) where {p, p′
         return false
     end
 
-    inner_knotvector = k[p+2:end-p-1]
-    inner_knotvector′ = k′[p′+2:end-p′-1]
+    inner_knotvector = view(k, p+2:l-p-1)
+    inner_knotvector′ = view(k′, p′+2:l′-p′-1)
 
     return inner_knotvector + p₊ * unique(inner_knotvector) ⊆ inner_knotvector′
 end
