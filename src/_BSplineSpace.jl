@@ -148,6 +148,8 @@ Check inclusive relationship between B-spline spaces.
 function issqsubset(P::BSplineSpace{p}, P′::BSplineSpace{p′}) where {p, p′}
     k = knotvector(P)
     k′ = knotvector(P′)
+    l = length(k)
+    l′ = length(k′)
     p₊ = p′ - p
 
     if p₊ < 0
