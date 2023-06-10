@@ -233,10 +233,10 @@ function Base.:*(m::Integer, k::KnotVector{T}) where T
     elseif m == 1
         return k
     elseif m > 1
-        n = length(k)
-        v = Vector{T}(undef, m*n)
+        l = length(k)
+        v = Vector{T}(undef, m*l)
         for i in 1:m
-            v[i:m:m*(n-1)+i] .= k.vector
+            v[i:m:m*(l-1)+i] .= k.vector
         end
         return BasicBSpline.unsafe_knotvector(T,v)
     else
