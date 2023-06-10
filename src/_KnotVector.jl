@@ -97,6 +97,9 @@ UniformKnotVector(k::UniformKnotVector) = k
 UniformKnotVector{T}(k::UniformKnotVector) where T = unsafe_uniformknotvector(T, k.vector)
 UniformKnotVector{T,R}(k::UniformKnotVector) where R<:AbstractRange{T} where T = unsafe_uniformknotvector(T, R(k.vector))
 
+SubKnotVector(k::SubKnotVector) = k
+SubKnotVector{T,S}(k::SubKnotVector{T,S}) where {T,S} = k
+
 Base.copy(k::EmptyKnotVector{T}) where T = k
 Base.copy(k::KnotVector{T}) where T = unsafe_knotvector(T,copy(_vec(k)))
 Base.copy(k::UniformKnotVector{T}) where T = unsafe_uniformknotvector(T,copy(_vec(k)))
@@ -120,6 +123,9 @@ function Base.promote_rule(::Type{KnotVector{T}}, ::Type{KnotVector{S}}) where {
 end
 function Base.promote_rule(::Type{KnotVector{T}}, ::Type{UniformKnotVector{S,R}}) where {T,S,R}
     KnotVector{promote_type(T,S)}
+end
+function Base.promote_rule(::Type{KnotVector{T1}}, ::Type{SubKnotVector{T2,S2}}) where {T1,T2,S2}
+    KnotVector{promote_type(T1,T2)}
 end
 
 
@@ -326,6 +332,7 @@ Base.unique(k::EmptyKnotVector) = k
 Base.unique(k::KnotVector{T}) where T = unsafe_knotvector(T, unique(k.vector))
 Base.unique!(k::KnotVector) = (unique!(k.vector); k)
 Base.unique(k::UniformKnotVector) = UniformKnotVector(unique(k.vector))
+Base.unique(k::SubKnotVector{T}) where T = unsafe_knotvector(T, unique(_vec(k)))
 
 Base.iterate(k::AbstractKnotVector) = iterate(_vec(k))
 Base.iterate(k::AbstractKnotVector, i) = iterate(_vec(k), i)
