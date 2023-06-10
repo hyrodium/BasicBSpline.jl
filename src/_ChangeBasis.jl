@@ -121,7 +121,7 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         #  |--*-----------------------------*-->|
         #     j_begin                       j_end
         #     |----*----------------*------>|
-        #          j_prev  j_mid    j
+        #          j_prev  j_mid    j_next
         #          |       |        |
         #           |--j₊->||<-j₋--|
         #          266666666777777773
@@ -131,7 +131,7 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         #  |--*-----------------------------*-->|
         #     j_begin                       j_end
         #    *|---------------*------------>|
-        #    j_prev  j_mid    j
+        #    j_prev  j_mid    j_next
         #    |       |        |
         #     |--j₊->||<-j₋--|
         #    066666666777777773
@@ -140,7 +140,7 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         #  |--*-----------------------------*-->|
         #     j_begin                       j_end
         #     |-------------*-------------->|*
-        #                   j_prev  j_mid    j
+        #                   j_prev  j_mid    j_next
         #                   |       |        |
         #                    |--j₊->||<-j₋--|
         #                   266666666777777770
@@ -150,7 +150,7 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         #  *-----------------------------*----->|
         #  j_begin                       j_end
         #  *----------------*----------->|
-        #  j_prev  j_mid    j
+        #  j_prev  j_mid    j_next
         #  |       |        |
         #   |--j₊->||<-j₋--|
         #  466666666777777773
@@ -159,7 +159,7 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         #  |------*---------------------------->*
         #         j_begin                       j_end
         #         |------------*--------------->*
-        #                      j_prev  j_mid    j
+        #                      j_prev  j_mid    j_next
         #                      |       |        |
         #                       |--j₊->||<-j₋--|
         #                      266666666777777775
@@ -174,43 +174,43 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         flag = 0
         Aᵖᵢⱼ_prev = zero(U)
 
-        for j in J
+        for j_next in J
             # Case 1: zero
-            if k′[j] == k′[j+p′+1]
+            if k′[j_next] == k′[j_next+p′+1]
                 flag = 1
             # Case 2: right limit
-            elseif k′[j] == k′[j+p′]
-                j_prev = j
-                Aᵖ[i, j] = Aᵖᵢⱼ_prev = bsplinebasis₊₀(P,i,k′[j+1])
+            elseif k′[j_next] == k′[j_next+p′]
+                j_prev = j_next
+                Aᵖ[i, j_next] = Aᵖᵢⱼ_prev = bsplinebasis₊₀(P,i,k′[j_next+1])
                 flag = 2
             # Case 3: left limit (or both limit)
-            elseif k′[j+1] == k′[j+p′]
+            elseif k′[j_next+1] == k′[j_next+p′]
                 # Case 6: right recursion
-                for j₊ in (j_prev+1):(j-1)
+                for j₊ in (j_prev+1):(j_next-1)
                     Aᵖ[i, j₊] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
                 end
-                j_prev = j
-                Aᵖ[i, j] = Aᵖᵢⱼ_prev = bsplinebasis₋₀(P,i,k′[j+1])
+                j_prev = j_next
+                Aᵖ[i, j_next] = Aᵖᵢⱼ_prev = bsplinebasis₋₀(P,i,k′[j_next+1])
                 flag = 3
             # Case 4: left boundary
-            elseif j == 1
-                j_prev = j
-                Aᵖ[i, j] = Aᵖᵢⱼ_prev = p * K′[j] * (K[i] * Aᵖ⁻¹[i, j] - K[i+1] * Aᵖ⁻¹[i+1, j]) / p′
+            elseif j_next == 1
+                j_prev = j_next
+                Aᵖ[i, j_next] = Aᵖᵢⱼ_prev = p * K′[j_next] * (K[i] * Aᵖ⁻¹[i, j_next] - K[i+1] * Aᵖ⁻¹[i+1, j_next]) / p′
                 flag = 4
             # Case 5: right boundary
-            elseif j == n′
+            elseif j_next == n′
                 # Case 6: right recursion
-                for j₊ in (j_prev+1):(j-1)
+                for j₊ in (j_prev+1):(j_next-1)
                     Aᵖ[i, j₊] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
                 end
-                j_prev = j
-                Aᵖ[i, j] = Aᵖᵢⱼ_prev = -p * K′[j+1] * (K[i] * Aᵖ⁻¹[i, j+1] - K[i+1] * Aᵖ⁻¹[i+1, j+1]) / p′
+                j_prev = j_next
+                Aᵖ[i, j_next] = Aᵖᵢⱼ_prev = -p * K′[j_next+1] * (K[i] * Aᵖ⁻¹[i, j_next+1] - K[i+1] * Aᵖ⁻¹[i+1, j_next+1]) / p′
                 flag = 5
             end
         end
-        j = j_end + 1
+        j_next = j_end + 1
         # Case 6: right recursion
-        for j₊ in (j_prev+1):(j-1)
+        for j₊ in (j_prev+1):(j_next-1)
             Aᵖ[i, j₊] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
         end
     end
