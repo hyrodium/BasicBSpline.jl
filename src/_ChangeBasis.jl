@@ -120,7 +120,6 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         #                      366666666777777775
 
         # Precalculate the range of j
-        # TODO: this implementation can be replaced with more effecient way.
         Pi = BSplineSpace{p}(view(k, i:i+p+1))
         j_end::Int = findnext(j->Pi ⊆ BSplineSpace{p′}(view(k′, j_begin:j+p′+1)), 1:n′, j_end)
         j_begin::Int = findprev(j->Pi ⊆ BSplineSpace{p′}(view(k′, j:j_end+p′+1)), 1:n′, j_end)
