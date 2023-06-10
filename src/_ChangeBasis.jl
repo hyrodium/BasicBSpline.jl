@@ -131,8 +131,8 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         #          j_tmp   j_mid    j
         #          |       |        |
         #           |--j₊->||<-j₋--|
+        #          266666666777777773
         #          366666666777777773
-        #          366666666777777772
         #
         #  1                                    n′
         #  |--*-----------------------------*-->|
@@ -142,7 +142,6 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         #    |       |        |
         #     |--j₊->||<-j₋--|
         #    066666666777777773
-        #    066666666777777772
         #
         #  1                                    n′
         #  |--*-----------------------------*-->|
@@ -151,6 +150,7 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         #                   j_tmp   j_mid    j
         #                   |       |        |
         #                    |--j₊->||<-j₋--|
+        #                   266666666777777770
         #                   366666666777777770
         #
         #  1                                    n′
@@ -161,7 +161,6 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         #  |       |        |
         #   |--j₊->||<-j₋--|
         #  466666666777777773
-        #  466666666777777772
         #
         #  1                                    n′
         #  |------*---------------------------->*
@@ -170,6 +169,7 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         #                      j_tmp   j_mid    j
         #                      |       |        |
         #                       |--j₊->||<-j₋--|
+        #                      266666666777777775
         #                      366666666777777775
 
         # Precalculate the range of j
@@ -177,24 +177,48 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         j_begin::Int = findlast(j->BSplineSpace{p}(k[i:i+p+1]) ⊆ BSplineSpace{p′}(k′[j:n′+p′+1]), 1:n′)
         j_end::Int = findnext(j->BSplineSpace{p}(k[i:i+p+1]) ⊆ BSplineSpace{p′}(k′[j_begin:j+p′+1]), 1:n′, j_begin)
         J = j_begin:j_end
+        j_tmp = j_begin-1
+        flag = 0
 
         # Elements that can be calculated with left or right limit of B-spline basis functions
         for j in J
-            if flags[j] == 2
-                Aᵖ[i, j] = bsplinebasis₋₀(P,i,k′[j+1])
-            elseif flags[j] == 3
+            # Case 1: zero
+            if k′[j] == k′[j+p′+1]
+                flag = 1
+            # Case 2: right limit
+            elseif k′[j] == k′[j+p′]
+                j_tmp = j
                 Aᵖ[i, j] = bsplinebasis₊₀(P,i,k′[j+1])
+                flag = 2
+            # Case 3: left limit (or both limit)
+            elseif k′[j+1] == k′[j+p′]
+                # Case 6: right recursion
+                for j₊ in (j_tmp+1):(j-1)
+                    Aᵖ[i, j₊] = Aᵖ[i, j₊-1] + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
+                end
+                j_tmp = j
+                Aᵖ[i, j] = bsplinebasis₋₀(P,i,k′[j+1])
+                flag = 3
+            # Case 4: left boundary
+            elseif j == 1
+                j_tmp = j
+                Aᵖ[i, j] = p * K′[j] * (K[i] * Aᵖ⁻¹[i, j] - K[i+1] * Aᵖ⁻¹[i+1, j]) / p′
+                flag = 4
+            # Case 5: right boundary
+            elseif j == n′
+                # Case 6: right recursion
+                for j₊ in (j_tmp+1):(j-1)
+                    Aᵖ[i, j₊] = Aᵖ[i, j₊-1] + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
+                end
+                j_tmp = j
+                Aᵖ[i, j] = -p * K′[j+1] * (K[i] * Aᵖ⁻¹[i, j+1] - K[i+1] * Aᵖ⁻¹[i+1, j+1]) / p′
+                flag = 5
             end
         end
-        for j in J
-            if flags[j] == 6
-                Aᵖ[i, j] = Aᵖ[i, j-1] + p * K′[j] * (K[i] * Aᵖ⁻¹[i, j] - K[i+1] * Aᵖ⁻¹[i+1, j]) / p′
-            end
-        end
-        for j in reverse(J)
-            if flags[j] == 7
-                Aᵖ[i, j] = Aᵖ[i, j+1] - p * K′[j+1] * (K[i] * Aᵖ⁻¹[i, j+1] - K[i+1] * Aᵖ⁻¹[i+1, j+1]) / p′
-            end
+        j = j_end + 1
+        # Case 6: right recursion
+        for j₊ in (j_tmp+1):(j-1)
+            Aᵖ[i, j₊] = Aᵖ[i, j₊-1] + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
         end
     end
 
