@@ -62,6 +62,26 @@ struct UniformKnotVector{T,R<:AbstractRange} <: AbstractKnotVector{T}
     global unsafe_uniformknotvector(::Type{T}, v::R) where R<:AbstractRange{T} where T = new{T,R}(v)
 end
 
+@doc raw"""
+A type to represetnt sub knot vector.
+```math
+k=(k_1,\dots,k_l)
+```
+
+# Examples
+```jldoctest
+julia> k = knotvector"1 11 211"
+KnotVector([1, 3, 4, 6, 6, 7, 8])
+
+julia> view(k, 2:5)
+SubKnotVector([3, 4, 6, 6])
+```
+"""
+struct SubKnotVector{T,S<:SubArray{T,1}} <: AbstractKnotVector{T}
+    vector::S
+    global unsafe_subknotvector(v::S) where {T,S<:SubArray{T,1}} = new{T,S}(v)
+end
+
 ##################
 #= Constructors =#
 ##################
@@ -361,6 +381,9 @@ function Base.float(k::UniformKnotVector)
     UniformKnotVector(float(_vec(k)))
 end
 
+Base.view(k::UniformKnotVector{T},inds) where T = unsafe_uniformknotvector(T, view(_vec(k), inds))
+Base.view(k::KnotVector,inds) = unsafe_subknotvector(view(_vec(k), inds))
+
 """
 Convert `AbstractKnotVector` to `AbstractVector`
 """
@@ -369,6 +392,7 @@ _vec
 _vec(::EmptyKnotVector{T}) where T = SVector{0,T}()
 _vec(k::KnotVector) = k.vector
 _vec(k::UniformKnotVector) = k.vector
+_vec(k::SubKnotVector) = k.vector
 
 @doc raw"""
 For given knot vector ``k``, the following function ``\mathfrak{n}_k:\mathbb{R}\to\mathbb{Z}`` represents the number of knots that duplicate the knot vector ``k``.
