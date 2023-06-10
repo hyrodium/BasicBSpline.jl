@@ -167,8 +167,8 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
 
         # Precalculate the range of j
         # TODO: this implementation can be replaced with more effecient way.
-        j_begin::Int = findlast(j->BSplineSpace{p}(k[i:i+p+1]) ⊆ BSplineSpace{p′}(k′[j:n′+p′+1]), 1:n′)
-        j_end::Int = findnext(j->BSplineSpace{p}(k[i:i+p+1]) ⊆ BSplineSpace{p′}(k′[j_begin:j+p′+1]), 1:n′, j_begin)
+        j_begin::Int = findlast(j->BSplineSpace{p}(view(k, i:i+p+1)) ⊆ BSplineSpace{p′}(view(k′, j:n′+p′+1)), 1:n′)
+        j_end::Int = findnext(j->BSplineSpace{p}(view(k, i:i+p+1)) ⊆ BSplineSpace{p′}(view(k′, j_begin:j+p′+1)), 1:n′, j_begin)
         J = j_begin:j_end
         j_prev = j_begin-1
         # flag = 0
