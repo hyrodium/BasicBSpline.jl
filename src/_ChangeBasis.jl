@@ -62,8 +62,11 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
     K′ = [k′[i+p′] - k′[i] for i in 1:n′+1]
     K = U[ifelse(k[i+p] ≠ k[i], U(1 / (k[i+p] - k[i])), zero(U)) for i in 1:n+1]
     Aᵖ⁻¹ = _changebasis_R(_lower(P), _lower(P′))  # (n+1) × (n′+1) matrix
-    Aᵖ = spzeros(U, n, n′)  # n × n′ matrix
-
+    n_nonzero = exactdim(P′)*(p+1)  # This is a upper bound of the number of non-zero elements of Aᵖ (rough estimation).
+    I = Vector{Int32}(undef, n_nonzero)
+    J = Vector{Int32}(undef, n_nonzero)
+    V = Vector{U}(undef, n_nonzero)
+    s = 1
     j_begin = 1
     j_end = 1
     for i in 1:n
@@ -135,7 +138,10 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
                 continue
             # Rule-2: right limit
             elseif k′[j_next] == k′[j_next+p′]
-                Aᵖ[i, j_next] = Aᵖᵢⱼ_prev = bsplinebasis₊₀(P,i,k′[j_next+1])
+                I[s] = i
+                J[s] = j_next
+                V[s] = Aᵖᵢⱼ_prev = bsplinebasis₊₀(P,i,k′[j_next+1])
+                s += 1
                 j_prev = j_next
                 # flag = 2
             # Rule-3: left limit (or both limit)
@@ -143,31 +149,52 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
                 j_mid = (j_prev + j_next) ÷ 2
                 # Rule-6: right recursion
                 for j₊ in (j_prev+1):j_mid
-                    Aᵖ[i, j₊] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
+                    I[s] = i
+                    J[s] = j₊
+                    V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
+                    s += 1
                 end
-                Aᵖ[i, j_next] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_next = bsplinebasis₋₀(P,i,k′[j_next+1])
+                I[s] = i
+                J[s] = j_next
+                V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_next = bsplinebasis₋₀(P,i,k′[j_next+1])
+                s += 1
                 # Rule-7: left recursion
                 for j₋ in reverse((j_mid+1):(j_next-1))
-                    Aᵖ[i, j₋] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋+1] * (K[i] * Aᵖ⁻¹[i, j₋+1] - K[i+1] * Aᵖ⁻¹[i+1, j₋+1]) / p′
+                    I[s] = i
+                    J[s] = j₋
+                    V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋+1] * (K[i] * Aᵖ⁻¹[i, j₋+1] - K[i+1] * Aᵖ⁻¹[i+1, j₋+1]) / p′
+                    s += 1
                 end
                 j_prev = j_next
                 # flag = 3
             # Rule-4: left boundary
             elseif j_next == 1
                 j_prev = j_next
-                Aᵖ[i, j_next] = Aᵖᵢⱼ_prev = p * K′[j_next] * (K[i] * Aᵖ⁻¹[i, j_next] - K[i+1] * Aᵖ⁻¹[i+1, j_next]) / p′
+                I[s] = i
+                J[s] = j_next
+                V[s] = Aᵖᵢⱼ_prev = p * K′[j_next] * (K[i] * Aᵖ⁻¹[i, j_next] - K[i+1] * Aᵖ⁻¹[i+1, j_next]) / p′
+                s += 1
                 # flag = 4
             # Rule-5: right boundary
             elseif j_next == n′
                 j_mid = (j_prev + j_next) ÷ 2
                 # Rule-6: right recursion
                 for j₊ in (j_prev+1):j_mid
-                    Aᵖ[i, j₊] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
+                    I[s] = i
+                    J[s] = j₊
+                    V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
+                    s += 1
                 end
-                Aᵖ[i, j_next] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_next = -p * K′[j_next+1] * (K[i] * Aᵖ⁻¹[i, j_next+1] - K[i+1] * Aᵖ⁻¹[i+1, j_next+1]) / p′
+                I[s] = i
+                J[s] = j_next
+                V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_next = -p * K′[j_next+1] * (K[i] * Aᵖ⁻¹[i, j_next+1] - K[i+1] * Aᵖ⁻¹[i+1, j_next+1]) / p′
+                s += 1
                 # Rule-7: left recursion
                 for j₋ in reverse((j_mid+1):(j_next-1))
-                    Aᵖ[i, j₋] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋+1] * (K[i] * Aᵖ⁻¹[i, j₋+1] - K[i+1] * Aᵖ⁻¹[i+1, j₋+1]) / p′
+                    I[s] = i
+                    J[s] = j₋
+                    V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋+1] * (K[i] * Aᵖ⁻¹[i, j₋+1] - K[i+1] * Aᵖ⁻¹[i+1, j₋+1]) / p′
+                    s += 1
                 end
                 j_prev = j_next
                 # flag = 5
@@ -177,15 +204,22 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         j_mid = (j_prev + j_next) ÷ 2
         # Rule-6: right recursion
         for j₊ in (j_prev+1):j_mid
-            Aᵖ[i, j₊] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
+            I[s] = i
+            J[s] = j₊
+            V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
+            s += 1
         end
         Aᵖᵢⱼ_next = zero(U)
         # Rule-7: left recursion
         for j₋ in reverse((j_mid+1):(j_next-1))
-            Aᵖ[i, j₋] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋+1] * (K[i] * Aᵖ⁻¹[i, j₋+1] - K[i+1] * Aᵖ⁻¹[i+1, j₋+1]) / p′
+            I[s] = i
+            J[s] = j₋
+            V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋+1] * (K[i] * Aᵖ⁻¹[i, j₋+1] - K[i+1] * Aᵖ⁻¹[i+1, j₋+1]) / p′
+            s += 1
         end
     end
 
+    Aᵖ = sparse(view(I,1:s-1), view(J,1:s-1), view(V,1:s-1), n, n′)
     return Aᵖ
 end
 
