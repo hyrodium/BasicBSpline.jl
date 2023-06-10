@@ -46,6 +46,13 @@
         @test k === copy(k)
     end
 
+    @testset "SubKnotVector and view" begin
+        k = KnotVector(1:8)
+        view(k, 1:3) isa SubKnotVector
+        k = UniformKnotVector(1:8)
+        view(k, 1:3) isa UniformKnotVector
+    end
+
     @testset "zeros" begin
         @test KnotVector(Float64[]) == zero(KnotVector)
         @test KnotVector(Float64[]) == 0*k1 == k1*0 == zero(k1)
