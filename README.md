@@ -8,6 +8,7 @@ Basic (mathematical) operations for B-spline functions and related things with J
 [![Coverage](https://codecov.io/gh/hyrodium/BasicBSpline.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/hyrodium/BasicBSpline.jl)
 [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 [![DOI](https://zenodo.org/badge/258791290.svg)](https://zenodo.org/badge/latestdoi/258791290)
+[![BasicBSpline Downloads](https://shields.io/endpoint?url=https://pkgs.genieframework.com/api/v1/badge/BasicBSpline)](https://pkgs.genieframework.com?packages=BasicBSpline).
 
 ![](docs/src/img/BasicBSplineLogo.png)
 
@@ -22,24 +23,18 @@ This package provides basic mathematical operations for [B-spline](https://en.wi
 * Fitting control points for a given function
 
 ## Comparison to other Julia packages for B-spline
-Note that the following comparison might not be correct.
-If you have any thoughts, please help with [issue#161](https://github.com/hyrodium/BasicBSpline.jl/issues/161).
+There are several Julia packages for B-spline, and this package distinguishes itself with the following key benefits:
 
-* [Interpolations.jl](https://github.com/JuliaMath/Interpolations.jl)
-    * >Currently this package's support is best for B-splines and also supports irregular grids.
-    * But seems like no method for B-spline manifold.
-* [ApproXD.jl](https://github.com/floswald/ApproXD.jl)
-    * Its functions are similar to Interpolations.jl.
-* [Dierckx.jl](https://github.com/kbarbary/Dierckx.jl)
-    * Wrapper for the dierckx Fortran library.
-    * Only 1-d or 2-d B-spline manifold are supported.
-    * 5 or less degree of polynomial are supported.
-* **[BasicBSpline.jl](https://github.com/hyrodium/BasicBSpline.jl) (this package)**
-    * Any degrees of polynomials are supported.
-    * Refinement algorithm for B-spline manifold.
-    * Fitting algorithm by least squares.
-    * High performance on speed.
-    * Mathematically oriented.
+* Supports all degrees of polynomials.
+* Includes a refinement algorithm for B-spline manifolds.
+* Offers a fitting algorithm using least squares. ([BasicBSplineFitting.jl](https://github.com/hyrodium/BasicBSplineFitting.jl))
+* Delivers high-speed performance.
+* Is mathematically oriented.
+
+If you have any thoughts, please comment in:
+
+* [Issue#161](https://github.com/hyrodium/BasicBSpline.jl/issues/161)
+* [Discourse post about BasicBSpline.jl](https://discourse.julialang.org/t//96323).
 
 ## Installation
 Install this package
