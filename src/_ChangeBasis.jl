@@ -185,12 +185,17 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
                 flag = 2
             # Case 3: left limit (or both limit)
             elseif k′[j_next+1] == k′[j_next+p′]
+                j_mid = (j_prev + j_next) ÷ 2
                 # Case 6: right recursion
-                for j₊ in (j_prev+1):(j_next-1)
+                for j₊ in (j_prev+1):j_mid
                     Aᵖ[i, j₊] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
                 end
                 j_prev = j_next
-                Aᵖ[i, j_next] = Aᵖᵢⱼ_prev = bsplinebasis₋₀(P,i,k′[j_next+1])
+                # Case 7: left recursion
+                Aᵖ[i, j_next] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_next = bsplinebasis₋₀(P,i,k′[j_next+1])
+                for j₋ in reverse((j_mid+1):(j_next-1))
+                    Aᵖ[i, j₋] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋+1] * (K[i] * Aᵖ⁻¹[i, j₋+1] - K[i+1] * Aᵖ⁻¹[i+1, j₋+1]) / p′
+                end
                 flag = 3
             # Case 4: left boundary
             elseif j_next == 1
@@ -199,12 +204,17 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
                 flag = 4
             # Case 5: right boundary
             elseif j_next == n′
+                j_mid = (j_prev + j_next) ÷ 2
                 # Case 6: right recursion
-                for j₊ in (j_prev+1):(j_next-1)
+                for j₊ in (j_prev+1):j_mid
                     Aᵖ[i, j₊] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
                 end
                 j_prev = j_next
-                Aᵖ[i, j_next] = Aᵖᵢⱼ_prev = -p * K′[j_next+1] * (K[i] * Aᵖ⁻¹[i, j_next+1] - K[i+1] * Aᵖ⁻¹[i+1, j_next+1]) / p′
+                # Case 7: left recursion
+                Aᵖ[i, j_next] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_next = -p * K′[j_next+1] * (K[i] * Aᵖ⁻¹[i, j_next+1] - K[i+1] * Aᵖ⁻¹[i+1, j_next+1]) / p′
+                for j₋ in reverse((j_mid+1):(j_next-1))
+                    Aᵖ[i, j₋] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋+1] * (K[i] * Aᵖ⁻¹[i, j₋+1] - K[i+1] * Aᵖ⁻¹[i+1, j₋+1]) / p′
+                end
                 flag = 5
             end
         end
