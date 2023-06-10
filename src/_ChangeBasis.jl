@@ -112,13 +112,6 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
     Aᵖ⁻¹ = _changebasis_R(_lower(P), _lower(P′))  # (n+1) × (n′+1) matrix
     Aᵖ = spzeros(U, n, n′)  # n × n′ matrix
 
-    flags = _generate_flags(P′)
-    if flags[1] == 4
-        Aᵖ[1, 1] = p * K′[1] * (K[1] * Aᵖ⁻¹[1, 1] - K[1+1] * Aᵖ⁻¹[1+1, 1]) / p′
-    end
-    if flags[n′] == 5
-        Aᵖ[n, n′] = -p * K′[n′+1] * (K[n] * Aᵖ⁻¹[n, n′+1] - K[n+1] * Aᵖ⁻¹[n+1, n′+1]) / p′
-    end
     for i in 1:n
         # Skip for degenerated basis
         isdegenerate_R(P,i) && continue
@@ -179,8 +172,8 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         J = j_begin:j_end
         j_tmp = j_begin-1
         flag = 0
+        Aᵖᵢⱼ_tmp = zero(U)
 
-        # Elements that can be calculated with left or right limit of B-spline basis functions
         for j in J
             # Case 1: zero
             if k′[j] == k′[j+p′+1]
@@ -188,37 +181,37 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
             # Case 2: right limit
             elseif k′[j] == k′[j+p′]
                 j_tmp = j
-                Aᵖ[i, j] = bsplinebasis₊₀(P,i,k′[j+1])
+                Aᵖ[i, j] = Aᵖᵢⱼ_tmp = bsplinebasis₊₀(P,i,k′[j+1])
                 flag = 2
             # Case 3: left limit (or both limit)
             elseif k′[j+1] == k′[j+p′]
                 # Case 6: right recursion
                 for j₊ in (j_tmp+1):(j-1)
-                    Aᵖ[i, j₊] = Aᵖ[i, j₊-1] + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
+                    Aᵖ[i, j₊] = Aᵖᵢⱼ_tmp = Aᵖᵢⱼ_tmp + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
                 end
                 j_tmp = j
-                Aᵖ[i, j] = bsplinebasis₋₀(P,i,k′[j+1])
+                Aᵖ[i, j] = Aᵖᵢⱼ_tmp = bsplinebasis₋₀(P,i,k′[j+1])
                 flag = 3
             # Case 4: left boundary
             elseif j == 1
                 j_tmp = j
-                Aᵖ[i, j] = p * K′[j] * (K[i] * Aᵖ⁻¹[i, j] - K[i+1] * Aᵖ⁻¹[i+1, j]) / p′
+                Aᵖ[i, j] = Aᵖᵢⱼ_tmp = p * K′[j] * (K[i] * Aᵖ⁻¹[i, j] - K[i+1] * Aᵖ⁻¹[i+1, j]) / p′
                 flag = 4
             # Case 5: right boundary
             elseif j == n′
                 # Case 6: right recursion
                 for j₊ in (j_tmp+1):(j-1)
-                    Aᵖ[i, j₊] = Aᵖ[i, j₊-1] + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
+                    Aᵖ[i, j₊] = Aᵖᵢⱼ_tmp = Aᵖᵢⱼ_tmp + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
                 end
                 j_tmp = j
-                Aᵖ[i, j] = -p * K′[j+1] * (K[i] * Aᵖ⁻¹[i, j+1] - K[i+1] * Aᵖ⁻¹[i+1, j+1]) / p′
+                Aᵖ[i, j] = Aᵖᵢⱼ_tmp = -p * K′[j+1] * (K[i] * Aᵖ⁻¹[i, j+1] - K[i+1] * Aᵖ⁻¹[i+1, j+1]) / p′
                 flag = 5
             end
         end
         j = j_end + 1
         # Case 6: right recursion
         for j₊ in (j_tmp+1):(j-1)
-            Aᵖ[i, j₊] = Aᵖ[i, j₊-1] + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
+            Aᵖ[i, j₊] = Aᵖᵢⱼ_tmp = Aᵖᵢⱼ_tmp + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
         end
     end
 
