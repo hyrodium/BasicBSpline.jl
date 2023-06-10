@@ -363,15 +363,14 @@ true
 ```
 """
 function Base.issubset(k::KnotVector, k′::KnotVector)
-    v = k′.vector
-    i = 0
-    for kᵢ in k
-        i = findnext(==(kᵢ), v, i+1)
-        if isnothing(i)
-            return false
-        end
+    i = 1
+    l = length(k)
+    for k′ⱼ in k′
+        l < i && (return true)
+        k[i] < k′ⱼ && (return false)
+        k[i] == k′ⱼ && (i += 1)
     end
-    return true
+    return i > l
 end
 
 function Base.issubset(k::AbstractKnotVector, k′::AbstractKnotVector)
