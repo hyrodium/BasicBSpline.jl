@@ -370,7 +370,7 @@ function Base.issubset(k::KnotVector, k′::KnotVector)
         k[i] < k′ⱼ && (return false)
         k[i] == k′ⱼ && (i += 1)
     end
-    return i > l
+    return l < i
 end
 
 function Base.issubset(k::AbstractKnotVector, k′::AbstractKnotVector)
