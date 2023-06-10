@@ -28,8 +28,8 @@ function _changebasis_R(P::BSplineSpace{0,T,KnotVector{T}}, P′::BSplineSpace{p
     n′_exact = exactdim(P′)
     k = knotvector(P)
     k′ = knotvector(P′)
-    I = fill(0, n′_exact)
-    J = fill(0, n′_exact)
+    I = Vector{Int32}(undef, n′_exact)
+    J = Vector{Int32}(undef, n′_exact)
     s = 1
     j_begin = 1
     for i in 1:n
