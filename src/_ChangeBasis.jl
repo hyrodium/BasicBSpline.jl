@@ -123,12 +123,12 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         Pi = BSplineSpace{p}(view(k, i:i+p+1))
         j_end::Int = findnext(j->Pi ⊆ BSplineSpace{p′}(view(k′, j_begin:j+p′+1)), 1:n′, j_end)
         j_begin::Int = findprev(j->Pi ⊆ BSplineSpace{p′}(view(k′, j:j_end+p′+1)), 1:n′, j_end)
-        J = j_begin:j_end
+        j_range = j_begin:j_end
         j_prev = j_begin-1
         # flag = 0
         Aᵖᵢⱼ_prev = zero(U)
 
-        for j_next in J
+        for j_next in j_range
             # Rule-1: zero
             if k′[j_next] == k′[j_next+p′+1]
                 # flag = 1
