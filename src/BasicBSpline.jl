@@ -1,6 +1,7 @@
 module BasicBSpline
 
 using LinearAlgebra
+using SparseArrays
 using IntervalSets
 using StaticArrays
 using RecipesBase

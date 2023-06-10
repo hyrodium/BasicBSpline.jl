@@ -3,6 +3,8 @@
     function test_changebasis_R(P,P′)
         @test P ⊆ P′
         A = @inferred changebasis(P,P′)
+        @test A isa SparseMatrixCSC
+        @test !any(iszero.(A.nzval))
         @test A == BasicBSpline._changebasis_R(P,P′) == changebasis_R(P,P′)
         n = dim(P)
         n′ = dim(P′)
@@ -18,7 +20,9 @@
     function test_changebasis_I(P,P′)
         @test P ⊑ P′
         A = @inferred changebasis(P,P′)
-        @test A == BasicBSpline._changebasis_I(P,P′) == changebasis_I(P,P′)
+        @test A isa SparseMatrixCSC
+        # @test !any(iszero.(A.nzval))
+        @test A ≈ BasicBSpline._changebasis_I(P,P′) == changebasis_I(P,P′)
         n = dim(P)
         n′ = dim(P′)
         @test size(A) == (n,n′)
@@ -34,10 +38,41 @@
         P2 = BSplineSpace{1}(KnotVector([1, 3, 5, 6, 8, 9]))
         P3 = BSplineSpace{2}(KnotVector([1, 1, 3, 3, 5, 5, 8, 8]))
         P4 = BSplineSpace{1}(KnotVector([1, 3, 4, 4, 4, 4, 5, 8]))
+        P5 = expandspace_R(P3, Val(2))
+        P6 = expandspace_R(P3, KnotVector([1.2]))
+        P7 = expandspace_R(P3, KnotVector([1, 1.2]))
 
         test_changebasis_R(P1, P2)
         test_changebasis_R(P1, P3)
         test_changebasis_R(P1, P4)
+        test_changebasis_R(P1, P1)
+        test_changebasis_R(P2, P2)
+        test_changebasis_R(P3, P3)
+        test_changebasis_R(P4, P4)
+
+        test_changebasis_R(P1, P3)
+        test_changebasis_R(P3, P5)
+        test_changebasis_R(P1, P5)
+        A13 = changebasis(P1, P3)
+        A35 = changebasis(P3, P5)
+        A15 = changebasis(P1, P5)
+        @test A15 ≈ A13 * A35
+
+        test_changebasis_R(P1, P3)
+        test_changebasis_R(P3, P6)
+        test_changebasis_R(P1, P6)
+        A13 = changebasis(P1, P3)
+        A36 = changebasis(P3, P6)
+        A16 = changebasis(P1, P6)
+        A16 ≈ A13 * A36
+
+        test_changebasis_R(P3, P6)
+        test_changebasis_R(P6, P7)
+        test_changebasis_R(P3, P7)
+        A36 = changebasis(P3, P6)
+        A67 = changebasis(P6, P7)
+        A37 = changebasis(P3, P7)
+        A37 ≈ A36 * A67
 
         @test P2 ⊈ P3
 
@@ -63,6 +98,8 @@
         @test P4 ⋣ P5
 
         test_changebasis_I(P4, P5)
+        test_changebasis_I(P4, P4)
+        test_changebasis_I(P5, P5)
 
         P6 = BSplineSpace{p4-1}(knotvector(P4)[2:end-1])
         P7 = BSplineSpace{p5-1}(knotvector(P5)[2:end-1])
@@ -95,24 +132,24 @@
     @testset "non-float" begin
         k = UniformKnotVector(1:15)
         P = BSplineSpace{3}(k)
-        @test changebasis(P,P) isa Matrix{Float64}
-        @test BasicBSpline._changebasis_R(P,P) isa Matrix{Float64}
-        @test BasicBSpline._changebasis_I(P,P) isa Matrix{Float64}
-        @test BasicBSpline._changebasis_sim(P,P) isa Matrix{Float64}
+        @test changebasis(P,P) isa SparseMatrixCSC{Float64}
+        @test BasicBSpline._changebasis_R(P,P) isa SparseMatrixCSC{Float64}
+        @test BasicBSpline._changebasis_I(P,P) isa SparseMatrixCSC{Float64}
+        @test BasicBSpline._changebasis_sim(P,P) isa SparseMatrixCSC{Float64}
 
         k = UniformKnotVector(1:15//1)
         P = BSplineSpace{3}(k)
-        @test changebasis(P,P) isa Matrix{Rational{Int}}
-        @test BasicBSpline._changebasis_R(P,P) isa Matrix{Rational{Int}}
-        @test BasicBSpline._changebasis_I(P,P) isa Matrix{Rational{Int}}
-        @test BasicBSpline._changebasis_sim(P,P) isa Matrix{Rational{Int}}
+        @test changebasis(P,P) isa SparseMatrixCSC{Rational{Int}}
+        @test BasicBSpline._changebasis_R(P,P) isa SparseMatrixCSC{Rational{Int}}
+        @test BasicBSpline._changebasis_I(P,P) isa SparseMatrixCSC{Rational{Int}}
+        @test BasicBSpline._changebasis_sim(P,P) isa SparseMatrixCSC{Rational{Int}}
 
         k = UniformKnotVector(1:BigInt(15))
         P = BSplineSpace{3}(k)
-        @test changebasis(P,P) isa Matrix{BigFloat}
-        @test BasicBSpline._changebasis_R(P,P) isa Matrix{BigFloat}
-        @test BasicBSpline._changebasis_I(P,P) isa Matrix{BigFloat}
-        @test BasicBSpline._changebasis_sim(P,P) isa Matrix{BigFloat}
+        @test changebasis(P,P) isa SparseMatrixCSC{BigFloat}
+        @test BasicBSpline._changebasis_R(P,P) isa SparseMatrixCSC{BigFloat}
+        @test BasicBSpline._changebasis_I(P,P) isa SparseMatrixCSC{BigFloat}
+        @test BasicBSpline._changebasis_sim(P,P) isa SparseMatrixCSC{BigFloat}
     end
 
     @testset "uniform" begin

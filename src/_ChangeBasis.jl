@@ -22,11 +22,34 @@ function _changebasis_R(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′}) whe
 end
 
 function _changebasis_R(P::BSplineSpace{0,T,KnotVector{T}}, P′::BSplineSpace{p′,T′,KnotVector{T′}}) where {p′,T,T′}
-    U = StaticArrays.arithmetic_closure(promote_type(T,T′))
+    U = StaticArrays.arithmetic_closure(promote_type(T, T′))
     n = dim(P)
     n′ = dim(P′)
-    A⁰ = U[bsplinesupport(P′, j) ⊆ bsplinesupport(P, i) for i in 1:n, j in 1:n′]
-    A⁰[:, findall(_iszeros(P′))] .= zero(U)  # Strictly this should be NaN, but we use zero here to support Rational.
+    n′_exact = exactdim(P′)
+    k = knotvector(P)
+    k′ = knotvector(P′)
+    I = fill(0, n′_exact)
+    J = fill(0, n′_exact)
+    s = 1
+    j_begin = 1
+    for i in 1:n
+        isdegenerate(P, i) && continue
+        for j in j_begin:n′
+            k′[j] == k[i] && (j_begin = j; break)
+        end
+        local j_end
+        for j in j_begin:n′
+            k′[j+p′+1] == k[i+1] && (j_end = j + p′; break)
+        end
+        for j in j_begin:j_end
+            isdegenerate(P′, j) && continue
+            I[s] = i
+            J[s] = j
+            s += 1
+        end
+        j_begin = j_end + 1
+    end
+    A⁰ = sparse(view(I,1:s-1), view(J,1:s-1), fill(one(U), s-1), n, n′)
     return A⁰
 end
 
@@ -87,45 +110,125 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
     K′ = [k′[i+p′] - k′[i] for i in 1:n′+1]
     K = U[ifelse(k[i+p] ≠ k[i], U(1 / (k[i+p] - k[i])), zero(U)) for i in 1:n+1]
     Aᵖ⁻¹ = _changebasis_R(_lower(P), _lower(P′))  # (n+1) × (n′+1) matrix
-    Aᵖ = zeros(U, n, n′)  # n × n′ matrix
+    Aᵖ = spzeros(U, n, n′)  # n × n′ matrix
 
-    flags = _generate_flags(P′)
-    for i in 1:n′
-        if flags[i] == 2
-            t = k′[i+1]
-            for j in 1:n
-                k[j] ≤ k′[i] && k′[i+p′+1] ≤ k[j+p+1] || continue
-                Aᵖ[j,i] = bsplinebasis₋₀(P,j,t)
-            end
-        elseif flags[i] == 3
-            t = k′[i+1]
-            for j in 1:n
-                k[j] ≤ k′[i] && k′[i+p′+1] ≤ k[j+p+1] || continue
-                Aᵖ[j, i] = bsplinebasis₊₀(P,j,t)
-            end
-        elseif flags[i] == 4
-            for j in 1:n
-                k[j] ≤ k′[i] && k′[i+p′+1] ≤ k[j+p+1] || continue
-                Aᵖ[j, i] = (p / p′) * K′[1] * (K[j] * Aᵖ⁻¹[j, 1] - K[j+1] * Aᵖ⁻¹[j+1, 1])
-            end
-        elseif flags[i] == 5
-            for j in 1:n
-                k[j] ≤ k′[i] && k′[i+p′+1] ≤ k[j+p+1] || continue
-                Aᵖ[j, i] = -(p / p′) * K′[n′+1] * (K[j] * Aᵖ⁻¹[j, n′+1] - K[j+1] * Aᵖ⁻¹[j+1, n′+1])
-            end
-        elseif flags[i] == 6
-            for j in 1:n
-                k[j] ≤ k′[i] && k′[i+p′+1] ≤ k[j+p+1] || continue
-                Aᵖ[j, i] = Aᵖ[j, i-1] + (p / p′) * K′[i] * (K[j] * Aᵖ⁻¹[j, i] - K[j+1] * Aᵖ⁻¹[j+1, i])
+    for i in 1:n
+        # Skip for degenerated basis
+        isdegenerate_R(P,i) && continue
+
+        # The following indices `j*` have the following relationships.
+        #  1                                    n′
+        #  |--*-----------------------------*-->|
+        #     j_begin                       j_end
+        #     |----*----------------*------>|
+        #          j_prev  j_mid    j_next
+        #          |       |        |
+        #           |--j₊->||<-j₋--|
+        #          266666666777777773
+        #          366666666777777773
+        #
+        #  1                                    n′
+        #  |--*-----------------------------*-->|
+        #     j_begin                       j_end
+        #    *|---------------*------------>|
+        #    j_prev  j_mid    j_next
+        #    |       |        |
+        #     |--j₊->||<-j₋--|
+        #    066666666777777773
+        #
+        #  1                                    n′
+        #  |--*-----------------------------*-->|
+        #     j_begin                       j_end
+        #     |-------------*-------------->|*
+        #                   j_prev  j_mid    j_next
+        #                   |       |        |
+        #                    |--j₊->||<-j₋--|
+        #                   266666666777777770
+        #                   366666666777777770
+        #
+        #  1                                    n′
+        #  *-----------------------------*----->|
+        #  j_begin                       j_end
+        #  *----------------*----------->|
+        #  j_prev  j_mid    j_next
+        #  |       |        |
+        #   |--j₊->||<-j₋--|
+        #  466666666777777773
+        #
+        #  1                                    n′
+        #  |------*---------------------------->*
+        #         j_begin                       j_end
+        #         |------------*--------------->*
+        #                      j_prev  j_mid    j_next
+        #                      |       |        |
+        #                       |--j₊->||<-j₋--|
+        #                      266666666777777775
+        #                      366666666777777775
+
+        # Precalculate the range of j
+        # TODO: this implementation can be replaced with more effecient way.
+        j_begin::Int = findlast(j->BSplineSpace{p}(k[i:i+p+1]) ⊆ BSplineSpace{p′}(k′[j:n′+p′+1]), 1:n′)
+        j_end::Int = findnext(j->BSplineSpace{p}(k[i:i+p+1]) ⊆ BSplineSpace{p′}(k′[j_begin:j+p′+1]), 1:n′, j_begin)
+        J = j_begin:j_end
+        j_prev = j_begin-1
+        # flag = 0
+        Aᵖᵢⱼ_prev = zero(U)
+
+        for j_next in J
+            # Rule-1: zero
+            if k′[j_next] == k′[j_next+p′+1]
+                # flag = 1
+                continue
+            # Rule-2: right limit
+            elseif k′[j_next] == k′[j_next+p′]
+                Aᵖ[i, j_next] = Aᵖᵢⱼ_prev = bsplinebasis₊₀(P,i,k′[j_next+1])
+                j_prev = j_next
+                # flag = 2
+            # Rule-3: left limit (or both limit)
+            elseif k′[j_next+1] == k′[j_next+p′]
+                j_mid = (j_prev + j_next) ÷ 2
+                # Rule-6: right recursion
+                for j₊ in (j_prev+1):j_mid
+                    Aᵖ[i, j₊] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
+                end
+                Aᵖ[i, j_next] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_next = bsplinebasis₋₀(P,i,k′[j_next+1])
+                # Rule-7: left recursion
+                for j₋ in reverse((j_mid+1):(j_next-1))
+                    Aᵖ[i, j₋] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋+1] * (K[i] * Aᵖ⁻¹[i, j₋+1] - K[i+1] * Aᵖ⁻¹[i+1, j₋+1]) / p′
+                end
+                j_prev = j_next
+                # flag = 3
+            # Rule-4: left boundary
+            elseif j_next == 1
+                j_prev = j_next
+                Aᵖ[i, j_next] = Aᵖᵢⱼ_prev = p * K′[j_next] * (K[i] * Aᵖ⁻¹[i, j_next] - K[i+1] * Aᵖ⁻¹[i+1, j_next]) / p′
+                # flag = 4
+            # Rule-5: right boundary
+            elseif j_next == n′
+                j_mid = (j_prev + j_next) ÷ 2
+                # Rule-6: right recursion
+                for j₊ in (j_prev+1):j_mid
+                    Aᵖ[i, j₊] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
+                end
+                Aᵖ[i, j_next] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_next = -p * K′[j_next+1] * (K[i] * Aᵖ⁻¹[i, j_next+1] - K[i+1] * Aᵖ⁻¹[i+1, j_next+1]) / p′
+                # Rule-7: left recursion
+                for j₋ in reverse((j_mid+1):(j_next-1))
+                    Aᵖ[i, j₋] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋+1] * (K[i] * Aᵖ⁻¹[i, j₋+1] - K[i+1] * Aᵖ⁻¹[i+1, j₋+1]) / p′
+                end
+                j_prev = j_next
+                # flag = 5
             end
         end
-    end
-    for i in reverse(1:n′)
-        if flags[i] == 7
-            for j in 1:n
-                k[j] ≤ k′[i] && k′[i+p′+1] ≤ k[j+p+1] || continue
-                Aᵖ[j, i] = Aᵖ[j, i+1] - (p / p′) * K′[i+1] * (K[j] * Aᵖ⁻¹[j, i+1] - K[j+1] * Aᵖ⁻¹[j+1, i+1])
-            end
+        j_next = j_end + 1
+        j_mid = (j_prev + j_next) ÷ 2
+        # Rule-6: right recursion
+        for j₊ in (j_prev+1):j_mid
+            Aᵖ[i, j₊] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
+        end
+        Aᵖᵢⱼ_next = zero(U)
+        # Rule-7: left recursion
+        for j₋ in reverse((j_mid+1):(j_next-1))
+            Aᵖ[i, j₋] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋+1] * (K[i] * Aᵖ⁻¹[i, j₋+1] - K[i+1] * Aᵖ⁻¹[i+1, j₋+1]) / p′
         end
     end
 
@@ -148,8 +251,8 @@ function _changebasis_sim(P1::BSplineSpace{p,T1}, P2::BSplineSpace{p,T2}) where 
     k2 = knotvector(P2)
     n = dim(P1)     # == dim(P2)
     l = length(k1)  # == length(k2)
-    
-    A = Matrix{U}(I, n, n)
+
+    A = sparse(U, I, n, n)
 
     A1 = _derivatives_at_left(P1)
     A2 = _derivatives_at_left(P2)
@@ -242,7 +345,7 @@ function _changebasis_R(P::UniformBSplineSpace{p,T}, P′::UniformBSplineSpace{p
     n = dim(P)
     n′ = dim(P′)
     j = findfirst(==(k[1]), _vec(k′))
-    A = zeros(StaticArrays.arithmetic_closure(T), n, n′)
+    A = spzeros(StaticArrays.arithmetic_closure(T), n, n′)
     for i in 1:n
         A[i, j+r*(i-1):j+(r-1)*(p+1)+r*(i-1)] = block
     end
@@ -255,7 +358,7 @@ function _changebasis_I(P::UniformBSplineSpace{p,T}, P′::UniformBSplineSpace{p
     block = [r_nomial(p+1,i,r) for i in 0:(r-1)*(p+1)]/r^p
     n = dim(P)
     n′ = dim(P′)
-    A = zeros(StaticArrays.arithmetic_closure(T), n, n′)
+    A = spzeros(StaticArrays.arithmetic_closure(T), n, n′)
     for i in 1:n
         a = r*i-(r-1)*(p+1)
         b = r*i
@@ -270,13 +373,14 @@ function _changebasis_I(P::UniformBSplineSpace{p,T}, P′::UniformBSplineSpace{p
 end
 
 ## BSplineDerivativeSpace
-function _changebasis_R(dP::BSplineDerivativeSpace{r,<:BSplineSpace{p}}, P′::BSplineSpace) where {r,p}
+function _changebasis_R(dP::BSplineDerivativeSpace{r,<:BSplineSpace{p, T}}, P′::BSplineSpace{p′,T′}) where {r,p,p′,T,T′}
+    U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     k = knotvector(dP)
     n = dim(dP)
-    A = Matrix(I(n))
+    A = sparse(U, I, n, n)
     for _r in 0:r-1
         _p = p - _r
-        _A = zeros(n+_r,n+1+_r)
+        _A = spzeros(U, n+_r, n+1+_r)
         for i in 1:n+_r
             _A[i,i] = _p/(k[i+_p]-k[i])
             _A[i,i+1] = -_p/(k[i+_p+1]-k[i+1])
