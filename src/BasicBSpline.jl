@@ -8,7 +8,7 @@ using RecipesBase
 using ChainRulesCore
 
 # Types
-export AbstractKnotVector, KnotVector, UniformKnotVector, EmptyKnotVector
+export AbstractKnotVector, KnotVector, UniformKnotVector, EmptyKnotVector, SubKnotVector
 export BSplineSpace, BSplineDerivativeSpace, UniformBSplineSpace
 export BSplineManifold, RationalBSplineManifold
 
