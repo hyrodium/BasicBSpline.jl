@@ -240,7 +240,7 @@ function _changebasis_sim(P1::BSplineSpace{p,T1}, P2::BSplineSpace{p,T2}) where 
     n = dim(P1)     # == dim(P2)
     l = length(k1)  # == length(k2)
 
-    A = sparse(U, I, n, n)
+    A = SparseMatrixCSC{U,Int32}(I,n,n)
 
     A1 = _derivatives_at_left(P1)
     A2 = _derivatives_at_left(P2)
@@ -365,7 +365,7 @@ function _changebasis_R(dP::BSplineDerivativeSpace{r,<:BSplineSpace{p, T}}, P′
     U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     k = knotvector(dP)
     n = dim(dP)
-    A = sparse(U, I, n, n)
+    A = SparseMatrixCSC{U,Int32}(I,n,n)
     for _r in 0:r-1
         _p = p - _r
         _A = spzeros(U, n+_r, n+1+_r)
