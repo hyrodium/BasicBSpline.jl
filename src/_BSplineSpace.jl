@@ -128,11 +128,33 @@ true
 ```
 """
 function Base.issubset(P::BSplineSpace{p}, P′::BSplineSpace{p′}) where {p, p′}
+    p₊ = p′ - p
+    p₊ < 0 && return false
     k = knotvector(P)
     k′ = knotvector(P′)
-    p₊ = p′ - p
-
-    return p₊ ≥ 0 && (k + p₊ * unique(k) ⊆ k′)
+    l = length(k)
+    i=1
+    c=0
+    for j in 1:length(k′)
+        if l < i
+            return true
+        end
+        if k[i] < k′[j]
+            return false
+        end
+        if k[i] == k′[j]
+            c += 1
+            if c == p₊+1
+                i += 1
+                c = 0
+            elseif (i ≠ l) && (k[i] == k[i+1])
+                i += 1
+                c = 0
+            end
+        end
+    end
+    return l < i
+    # The above implementation is the same as `k + p₊ * unique(k) ⊆ k′`, but that's much faster.
 end
 
 @doc raw"""
