@@ -53,54 +53,6 @@ function _changebasis_R(P::BSplineSpace{0,T,KnotVector{T}}, P′::BSplineSpace{p
     return A⁰
 end
 
-"""
-Generate flags for `changebasis` function.
-
-0 -> default
-1 -> zero            k′[i] == k′[i+p′+1]
-2 -> left limit      k′[i] < k′[i+1] == k′[i+p′+1]
-3 -> right limit     k′[i+1] == k′[i+p′] ( i.e. k′[i] == k′[i+p′] < k′[i+p′+1] or k′[i] < k′[i+1] == k′[i+p′] < k′[i+p′+1] )
-4 -> left boundary   i == 1
-5 -> right boundary  i == n′
-6 -> left recursion
-7 -> right recursion
-"""
-function _generate_flags(P′::BSplineSpace{p′}) where p′
-    k′ = knotvector(P′)
-    n′ = dim(P′)
-    flags = zeros(Int, n′)
-    for i in 1:n′
-        if k′[i] == k′[i+p′+1]
-            flags[i] = 1
-        elseif k′[i] < k′[i+1] == k′[i+p′+1]
-            flags[i] = 2
-        elseif k′[i+1] == k′[i+p′]
-            flags[i] = 3
-        end
-    end
-    if flags[1] == 0
-        flags[1] = 4
-    end
-    if flags[end] == 0
-        flags[end] = 5
-    end
-    local j
-    for i in 2:n′-1
-        if flags[i-1] ≠ 0 && flags[i-1] ≠ 6 && flags[i] == 0
-            flags[i] = 6
-            j = i
-        end
-        if flags[i+1] ≠ 0 && flags[i] == 0
-            flags[i] = 7
-            jj = (i + j) ÷ 2
-            ii = jj + 1
-            flags[j:jj] .= 6
-            flags[ii:i] .= 7
-        end
-    end
-    return flags
-end
-
 function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p′,T′,KnotVector{T′}}) where {p,p′,T,T′}
     U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     k = knotvector(P)
