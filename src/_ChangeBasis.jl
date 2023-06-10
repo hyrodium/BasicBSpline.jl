@@ -123,6 +123,55 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         # Skip for degenerated basis
         isdegenerate_R(P,i) && continue
 
+        # The following indices `j*` have the following relationships.
+        #  1                                    n′
+        #  |--*-----------------------------*-->|
+        #     j_begin                       j_end
+        #     |----*----------------*------>|
+        #          j_tmp   j_mid    j
+        #          |       |        |
+        #           |--j₊->||<-j₋--|
+        #          366666666777777773
+        #          366666666777777772
+        #
+        #  1                                    n′
+        #  |--*-----------------------------*-->|
+        #     j_begin                       j_end
+        #    *|---------------*------------>|
+        #    j_tmp   j_mid    j
+        #    |       |        |
+        #     |--j₊->||<-j₋--|
+        #    066666666777777773
+        #    066666666777777772
+        #
+        #  1                                    n′
+        #  |--*-----------------------------*-->|
+        #     j_begin                       j_end
+        #     |-------------*-------------->|*
+        #                   j_tmp   j_mid    j
+        #                   |       |        |
+        #                    |--j₊->||<-j₋--|
+        #                   366666666777777770
+        #
+        #  1                                    n′
+        #  *-----------------------------*----->|
+        #  j_begin                       j_end
+        # *|---------------*------------>|
+        # j_tmp   j_mid    j
+        # |       |        |
+        #  |--j₊->||<-j₋--|
+        #  46666666777777773
+        #  46666666777777772
+        #
+        #  1                                    n′
+        #  |------*---------------------------->*
+        #         j_begin                       j_end
+        #         |-------------*-------------->|*
+        #                       j_tmp   j_mid    j
+        #                       |       |        |
+        #                        |--j₊->||<-j₋--|
+        #                       36666666677777775
+
         # Precalculate the range of j
         # TODO: this implementation can be replaced with more effecient way.
         j_begin::Int = findlast(j->BSplineSpace{p}(k[i:i+p+1]) ⊆ BSplineSpace{p′}(k′[j:n′+p′+1]), 1:n′)
