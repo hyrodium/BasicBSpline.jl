@@ -310,6 +310,9 @@ function changebasis_I(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
     return _changebasis_I(P, P′)
 end
 
+function _changebasis_I(P::BSplineSpace{0,T,KnotVector{T}}, P′::BSplineSpace{p′,T′,KnotVector{T′}}) where {p′,T,T′}
+    return _changebasis_R(P, P′)
+end
 function _changebasis_I(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′}) where {p,p′,T,T′}
     k = knotvector(P)
     k′ = knotvector(P′)
