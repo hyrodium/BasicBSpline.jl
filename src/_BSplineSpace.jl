@@ -315,9 +315,9 @@ D^r\mathcal{P}[p,k] &\mapsto D^{r-1}\mathcal{P}[p-1,k]
 \end{aligned}
 ```
 """
-_lower
+_lower_R
 
-_lower(P::BSplineSpace{p,T}) where {p,T} = BSplineSpace{p-1}(knotvector(P))
+_lower_R(P::BSplineSpace{p,T}) where {p,T} = BSplineSpace{p-1}(knotvector(P))
 
 """
 Return an index of a interval in the domain of B-spline space

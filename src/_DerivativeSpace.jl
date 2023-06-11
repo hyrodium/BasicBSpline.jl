@@ -57,7 +57,7 @@ dim(dP::BSplineDerivativeSpace{r,<:BSplineSpace{p}}) where {r,p} = dim(bsplinesp
 exactdim(dP::BSplineDerivativeSpace{r,<:BSplineSpace{p}}) where {r,p} = exactdim(bsplinespace(dP)) - r
 intervalindex(dP::BSplineDerivativeSpace,t::Real) = intervalindex(bsplinespace(dP),t)
 domain(dP::BSplineDerivativeSpace) = domain(bsplinespace(dP))
-_lower(dP::BSplineDerivativeSpace{r}) where r = BSplineDerivativeSpace{r-1}(_lower(bsplinespace(dP)))
+_lower_R(dP::BSplineDerivativeSpace{r}) where r = BSplineDerivativeSpace{r-1}(_lower_R(bsplinespace(dP)))
 
 @doc raw"""
     derivative(::BSplineDerivativeSpace{r}) -> BSplineDerivativeSpace{r+1}

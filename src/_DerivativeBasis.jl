@@ -169,7 +169,7 @@ end
         Expr(:block,
             :($(Expr(:meta, :inline))),
             :(k = knotvector(dP)),
-            :($b = bsplinebasisall(_lower(dP),i+1,t)),
+            :($b = bsplinebasisall(_lower_R(dP),i+1,t)),
             :($(Bs[1]) = $(K1s[1])*$(bs[1])),
             exs...,
             :($(Bs[p+1]) = $(K2s[p])*$(bs[p])),

@@ -11,7 +11,7 @@ BasicBSpline._vec
 ```
 
 ```@docs
-BasicBSpline._lower
+BasicBSpline._lower_R
 ```
 
 ```@docs

@@ -61,7 +61,7 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
     n′ = dim(P′)
     K′ = [k′[i+p′] - k′[i] for i in 1:n′+1]
     K = U[ifelse(k[i+p] ≠ k[i], U(1 / (k[i+p] - k[i])), zero(U)) for i in 1:n+1]
-    Aᵖ⁻¹ = _changebasis_R(_lower(P), _lower(P′))  # (n+1) × (n′+1) matrix
+    Aᵖ⁻¹ = _changebasis_R(_lower_R(P), _lower_R(P′))  # (n+1) × (n′+1) matrix
     n_nonzero = exactdim(P′)*(p+1)  # This is a upper bound of the number of non-zero elements of Aᵖ (rough estimation).
     I = Vector{Int32}(undef, n_nonzero)
     J = Vector{Int32}(undef, n_nonzero)
