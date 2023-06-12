@@ -310,7 +310,34 @@ function changebasis_I(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
 end
 
 function _changebasis_I(P::BSplineSpace{0,T,KnotVector{T}}, P′::BSplineSpace{p′,T′,KnotVector{T′}}) where {p′,T,T′}
-    return _changebasis_R(P, P′)
+    U = StaticArrays.arithmetic_closure(promote_type(T, T′))
+    n = dim(P)
+    n′ = dim(P′)
+    n′_exact = exactdim(P′)
+    k = knotvector(P)
+    k′ = knotvector(P′)
+    I = Vector{Int32}(undef, n′_exact)
+    J = Vector{Int32}(undef, n′_exact)
+    s = 1
+    local j_begin
+    j_end = 0
+    for i in 1:n
+        isdegenerate(P, i) && continue
+        for j in (j_end+1):n′
+            k′[j] ≤ k[i] && (j_begin = j; break)
+        end
+        for j in j_begin:n′
+            k′[j+p′+1] ≥ k[i+1] && (j_end = j + p′; break)
+        end
+        for j in j_begin:j_end
+            isdegenerate(P′, j) && continue
+            I[s] = i
+            J[s] = j
+            s += 1
+        end
+    end
+    A⁰ = sparse(view(I,1:s-1), view(J,1:s-1), fill(one(U), s-1), n, n′)
+    return A⁰
 end
 function _changebasis_I(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′}) where {p,p′,T,T′}
     k = knotvector(P)
