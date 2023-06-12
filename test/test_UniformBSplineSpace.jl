@@ -8,7 +8,7 @@
         @test P1 === BSplineSpace{2,Int}(P1)
         @test bsplinesupport(P1, 2) == bsplinesupport(P1′, 2) == 2..5
         @test dim(P1) == dim(P1′) == 5
-        @test exactdim(P1) == exactdim(P1′) == 5
+        @test exactdim_R(P1) == exactdim_R(P1′) == 5
         @test isnondegenerate(P1) == true
         @test isdegenerate(P1) == false
         @test P1 == P1′
@@ -18,7 +18,7 @@
         P2′ = BSplineSpace{2}(k2)
         @test bsplinesupport(P2, 2) == bsplinesupport(P2′, 2) == 1..1
         @test dim(P2) == dim(P2′) == 5
-        @test exactdim(P2) == exactdim(P2′) == 0
+        @test exactdim_R(P2) == exactdim_R(P2′) == 0
         @test isnondegenerate(P2) == false
         @test isdegenerate(P2) == true
         @test P2 == P2′
@@ -42,7 +42,7 @@
         P1 = BSplineSpace{2}(UniformKnotVector(1:8))
         @test bsplinesupport(P1, 2) == 2..5
         @test dim(P1) == 5
-        @test exactdim(P1) == 5
+        @test exactdim_R(P1) == 5
         @test isnondegenerate(P1) == true
         @test isdegenerate(P1) == false
 
@@ -58,7 +58,7 @@
         @test isnondegenerate(P2,3) == false
         @test isnondegenerate(P2,4) == false
         @test dim(P2) == 5
-        @test exactdim(P2) == 0
+        @test exactdim_R(P2) == 0
     end
 
     @testset "support" begin

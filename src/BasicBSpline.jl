@@ -19,7 +19,7 @@ export bsplinebasisall, intervalindex
 
 # B-spline space
 export issqsubset, ⊑, ⊒, ⋢, ⋣, ⋤, ⋥, ≃
-export dim, exactdim
+export dim, exactdim_R
 export domain
 export changebasis, changebasis_R, changebasis_I
 export bsplinesupport, bsplinesupport_R, bsplinesupport_I

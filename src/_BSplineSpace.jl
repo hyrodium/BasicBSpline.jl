@@ -263,14 +263,14 @@ Exact dimension of a B-spline space.
 
 # Examples
 ```jldoctest
-julia> exactdim(BSplineSpace{1}(KnotVector([1,2,3,4,5])))
+julia> exactdim_R(BSplineSpace{1}(KnotVector([1,2,3,4,5])))
 3
 
-julia> exactdim(BSplineSpace{1}(KnotVector([1,2,2,2,4])))
+julia> exactdim_R(BSplineSpace{1}(KnotVector([1,2,2,2,4])))
 2
 ```
 """
-function exactdim(P::BSplineSpace)
+function exactdim_R(P::BSplineSpace)
     n = dim(P)
     for i in 1:dim(P)
         n -= isdegenerate_R(P,i)

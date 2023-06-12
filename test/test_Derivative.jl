@@ -75,7 +75,7 @@
             Pb = BSplineDerivativeSpace{r-1}(P)
             @test degree(Pa) == p-r
             @test dim(Pa) == dim(P)
-            @test exactdim(Pa) == exactdim(P)-r
+            @test exactdim_R(Pa) == exactdim_R(P)-r
             @test domain(P) == domain(Pa) == domain(Pb)
             for t in ts, i in 1:dim(P)
                 d1 = bsplinebasis(Pa,i,t)

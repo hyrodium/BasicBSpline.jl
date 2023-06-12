@@ -87,5 +87,5 @@ dim
 ```
 
 ```@docs
-exactdim(P::BSplineSpace)
+exactdim_R(P::BSplineSpace)
 ```
