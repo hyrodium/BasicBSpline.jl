@@ -207,7 +207,7 @@ function isdegenerate_I(P::BSplineSpace{p}, i::Integer) where p
     return iszero(width(bsplinesupport(P,i) ∩ domain(P)))
 end
 
-function _iszeros(P::BSplineSpace{p}) where p
+function _iszeros_R(P::BSplineSpace{p}) where p
     return [isdegenerate_R(P,i) for i in 1:dim(P)]
 end
 

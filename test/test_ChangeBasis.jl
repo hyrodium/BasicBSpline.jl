@@ -13,8 +13,8 @@
         for t in ts
             @test norm(bsplinebasis.(P,1:n,t) - A*bsplinebasis.(P′,1:n′,t), Inf) < ε
         end
-        @test iszero(view(A, findall(BasicBSpline._iszeros(P)), :))
-        @test iszero(view(A, :, findall(BasicBSpline._iszeros(P′))))
+        @test iszero(view(A, findall(BasicBSpline._iszeros_R(P)), :))
+        @test iszero(view(A, :, findall(BasicBSpline._iszeros_R(P′))))
     end
 
     function test_changebasis_I(P,P′)

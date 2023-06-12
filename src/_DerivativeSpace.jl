@@ -58,7 +58,7 @@ exactdim(dP::BSplineDerivativeSpace{r,<:BSplineSpace{p}}) where {r,p} = exactdim
 intervalindex(dP::BSplineDerivativeSpace,t::Real) = intervalindex(bsplinespace(dP),t)
 domain(dP::BSplineDerivativeSpace) = domain(bsplinespace(dP))
 _lower_R(dP::BSplineDerivativeSpace{r}) where r = BSplineDerivativeSpace{r-1}(_lower_R(bsplinespace(dP)))
-_iszeros(P::BSplineSpace) = _iszeros(bsplinespace(P))
+_iszeros_R(P::BSplineDerivativeSpace) = _iszeros_R(bsplinespace(P))
 
 @doc raw"""
     derivative(::BSplineDerivativeSpace{r}) -> BSplineDerivativeSpace{r+1}
