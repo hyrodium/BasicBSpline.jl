@@ -422,7 +422,7 @@ function _changebasis_I(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
                 for j₊ in (j_prev+1):j_mid
                     I[s] = i
                     J[s] = j₊
-                    V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊-1] * (K[i-1] * Aᵖ⁻¹[i-1, j₊-1] - K[i] * Aᵖ⁻¹[i, j₊-1]) / p′
+                    V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊-1] * (K[i-1] * Aᵖ⁻¹[i-1, j₊-1] - K[i] * Aᵖ⁻¹[i, j₊-1]) / p′  # TODO: update this implementation
                     s += 1
                 end
                 I[s] = i
@@ -433,7 +433,7 @@ function _changebasis_I(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
                 for j₋ in reverse((j_mid+1):(j_next-1))
                     I[s] = i
                     J[s] = j₋
-                    V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋] * (K[i-1] * Aᵖ⁻¹[i-1, j₋] - K[i] * Aᵖ⁻¹[i, j₋]) / p′
+                    V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋] * (K[i-1] * Aᵖ⁻¹[i-1, j₋] - K[i] * Aᵖ⁻¹[i, j₋]) / p′  # TODO: update this implementation
                     s += 1
                 end
                 j_prev = j_next
@@ -452,14 +452,14 @@ function _changebasis_I(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         for j₊ in (j_prev+1):j_mid
             I[s] = i
             J[s] = j₊
-            V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊-1] * (K[i-1] * Aᵖ⁻¹[i-1, j₊-1] - K[i] * Aᵖ⁻¹[i, j₊-1]) / p′
+            V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊-1] * (K[i-1] * Aᵖ⁻¹[i-1, j₊-1] - K[i] * Aᵖ⁻¹[i, j₊-1]) / p′  # TODO: update this implementation
             s += 1
         end
         # Rule-7: left recursion
         for j₋ in reverse((j_mid+1):(j_next-1))
             I[s] = i
             J[s] = j₋
-            V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋] * (K[i-1] * Aᵖ⁻¹[i-1, j₋] - K[i] * Aᵖ⁻¹[i, j₋]) / p′
+            V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋] * (K[i-1] * Aᵖ⁻¹[i-1, j₋] - K[i] * Aᵖ⁻¹[i, j₋]) / p′  # TODO: update this implementation
             s += 1
         end
     end
