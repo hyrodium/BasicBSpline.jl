@@ -106,30 +106,31 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         #  *-----------------------------*----->|
         #  j_begin                       j_end
         #  *----------------*----------->|
-        #  j_prev  j_mid    j_next
-        #  |       |        |
-        #   |--j₊->||<-j₋--|
-        #  466666666777777773
+        # j_prev  j_mid    j_next
+        # |       |        |
+        #  |--j₊->||<-j₋--|
+        # 066666666777777773
         #
         #  1                                    n′
         #  |------*---------------------------->*
         #         j_begin                       j_end
-        #         |------------*--------------->*
-        #                      j_prev  j_mid    j_next
-        #                      |       |        |
-        #                       |--j₊->||<-j₋--|
-        #                      266666666777777775
-        #                      366666666777777775
+        #         |-------------*--------------->*
+        #                       j_prev  j_mid    j_next
+        #                       |       |        |
+        #                        |--j₊->||<-j₋--|
+        #                       266666666777777770
+        #                       366666666777777770
 
         # Precalculate the range of j
         Pi = BSplineSpace{p}(view(k, i:i+p+1))
         j_end::Int = findnext(j->Pi ⊆ BSplineSpace{p′}(view(k′, j_begin:j+p′+1)), 1:n′, j_end)
         j_begin::Int = findprev(j->Pi ⊆ BSplineSpace{p′}(view(k′, j:j_end+p′+1)), 1:n′, j_end)
         j_range = j_begin:j_end
-        j_prev = j_begin-1
         # flag = 0
-        Aᵖᵢⱼ_prev = zero(U)
 
+        # Rule-0: outside of j_range
+        j_prev = j_begin-1
+        Aᵖᵢⱼ_prev = zero(U)
         for j_next in j_range
             # Rule-1: zero
             if k′[j_next] == k′[j_next+p′+1]
@@ -166,40 +167,11 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
                 end
                 j_prev = j_next
                 # flag = 3
-            # Rule-4: left boundary
-            elseif j_next == 1
-                j_prev = j_next
-                I[s] = i
-                J[s] = j_next
-                V[s] = Aᵖᵢⱼ_prev = p * K′[j_next] * (K[i] * Aᵖ⁻¹[i, j_next] - K[i+1] * Aᵖ⁻¹[i+1, j_next]) / p′
-                s += 1
-                # flag = 4
-            # Rule-5: right boundary
-            elseif j_next == n′
-                j_mid = (j_prev + j_next) ÷ 2
-                # Rule-6: right recursion
-                for j₊ in (j_prev+1):j_mid
-                    I[s] = i
-                    J[s] = j₊
-                    V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
-                    s += 1
-                end
-                I[s] = i
-                J[s] = j_next
-                V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_next = -p * K′[j_next+1] * (K[i] * Aᵖ⁻¹[i, j_next+1] - K[i+1] * Aᵖ⁻¹[i+1, j_next+1]) / p′
-                s += 1
-                # Rule-7: left recursion
-                for j₋ in reverse((j_mid+1):(j_next-1))
-                    I[s] = i
-                    J[s] = j₋
-                    V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋+1] * (K[i] * Aᵖ⁻¹[i, j₋+1] - K[i+1] * Aᵖ⁻¹[i+1, j₋+1]) / p′
-                    s += 1
-                end
-                j_prev = j_next
-                # flag = 5
             end
         end
+        # Rule-0: outside of j_range
         j_next = j_end + 1
+        Aᵖᵢⱼ_next = zero(U)
         j_mid = (j_prev + j_next) ÷ 2
         # Rule-6: right recursion
         for j₊ in (j_prev+1):j_mid
@@ -208,7 +180,6 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
             V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
             s += 1
         end
-        Aᵖᵢⱼ_next = zero(U)
         # Rule-7: left recursion
         for j₋ in reverse((j_mid+1):(j_next-1))
             I[s] = i
