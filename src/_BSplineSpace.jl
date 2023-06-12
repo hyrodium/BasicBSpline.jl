@@ -133,8 +133,8 @@ function Base.issubset(P::BSplineSpace{p}, P′::BSplineSpace{p′}) where {p, p
     k = knotvector(P)
     k′ = knotvector(P′)
     l = length(k)
-    i=1
-    c=0
+    i = 1
+    c = 0
     for j in 1:length(k′)
         if l < i
             return true
@@ -276,6 +276,7 @@ function exactdim_R(P::BSplineSpace)
         n -= isdegenerate_R(P,i)
     end
     return n
+    # The above implementation is the same as `dim(P)-sum(_iszeros_R(P))`, but that's much faster.
 end
 
 @doc raw"""
