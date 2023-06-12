@@ -55,6 +55,7 @@ knotvector(dP::BSplineDerivativeSpace) = knotvector(bsplinespace(dP))
 degree(dP::BSplineDerivativeSpace{r,<:BSplineSpace{p}}) where {r,p} = p - r
 dim(dP::BSplineDerivativeSpace{r,<:BSplineSpace{p}}) where {r,p} = dim(bsplinespace(dP))
 exactdim_R(dP::BSplineDerivativeSpace{r,<:BSplineSpace{p}}) where {r,p} = exactdim_R(bsplinespace(dP)) - r
+exactdim_I(dP::BSplineDerivativeSpace{r,<:BSplineSpace{p}}) where {r,p} = exactdim_I(bsplinespace(dP)) - r
 intervalindex(dP::BSplineDerivativeSpace,t::Real) = intervalindex(bsplinespace(dP),t)
 domain(dP::BSplineDerivativeSpace) = domain(bsplinespace(dP))
 _lower_R(dP::BSplineDerivativeSpace{r}) where r = BSplineDerivativeSpace{r-1}(_lower_R(bsplinespace(dP)))
