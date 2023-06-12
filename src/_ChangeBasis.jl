@@ -284,7 +284,7 @@ function changebasis_I(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
     return _changebasis_I(P, P′)
 end
 
-function _changebasis_I(P::BSplineSpace{0,T,KnotVector{T}}, P′::BSplineSpace{p′,T′,KnotVector{T′}}) where {p′,T,T′}
+function _changebasis_I(P::BSplineSpace{0,T,<:AbstractKnotVector{T}}, P′::BSplineSpace{p′,T′,<:AbstractKnotVector{T′}}) where {p′,T,T′}
     U = StaticArrays.arithmetic_closure(promote_type(T, T′))
     n = dim(P)
     n′ = dim(P′)
@@ -315,7 +315,7 @@ function _changebasis_I(P::BSplineSpace{0,T,KnotVector{T}}, P′::BSplineSpace{p
     return A⁰
 end
 
-function _changebasis_I(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p′,T′,KnotVector{T′}}) where {p,p′,T,T′}
+function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSplineSpace{p′,T′,<:AbstractKnotVector{T′}}) where {p,p′,T,T′}
     U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     k = knotvector(P)
     k′ = knotvector(P′)
@@ -422,7 +422,13 @@ function _changebasis_I(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
                 for j₊ in (j_prev+1):j_mid
                     I[s] = i
                     J[s] = j₊
-                    V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊-1] * (K[i-1] * Aᵖ⁻¹[i-1, j₊-1] - K[i] * Aᵖ⁻¹[i, j₊-1]) / p′  # TODO: update this implementation
+                    if i == 1
+                        V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev - p * K′[j₊-1] * K[i] * Aᵖ⁻¹[i, j₊-1] / p′
+                    elseif i == n
+                        V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊-1] * K[i-1] * Aᵖ⁻¹[i-1, j₊-1] / p′
+                    else
+                        V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊-1] * (K[i-1] * Aᵖ⁻¹[i-1, j₊-1] - K[i] * Aᵖ⁻¹[i, j₊-1]) / p′
+                    end
                     s += 1
                 end
                 I[s] = i
@@ -433,7 +439,13 @@ function _changebasis_I(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
                 for j₋ in reverse((j_mid+1):(j_next-1))
                     I[s] = i
                     J[s] = j₋
-                    V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋] * (K[i-1] * Aᵖ⁻¹[i-1, j₋] - K[i] * Aᵖ⁻¹[i, j₋]) / p′  # TODO: update this implementation
+                    if i == 1
+                        V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next + p * K′[j₋] * K[i] * Aᵖ⁻¹[i, j₋] / p′
+                    elseif i == n
+                        V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋] * K[i-1] * Aᵖ⁻¹[i-1, j₋] / p′
+                    else
+                        V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋] * (K[i-1] * Aᵖ⁻¹[i-1, j₋] - K[i] * Aᵖ⁻¹[i, j₋]) / p′
+                    end
                     s += 1
                 end
                 j_prev = j_next
@@ -452,14 +464,26 @@ function _changebasis_I(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         for j₊ in (j_prev+1):j_mid
             I[s] = i
             J[s] = j₊
-            V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊-1] * (K[i-1] * Aᵖ⁻¹[i-1, j₊-1] - K[i] * Aᵖ⁻¹[i, j₊-1]) / p′  # TODO: update this implementation
+            if i == 1
+                V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev - p * K′[j₊-1] * K[i] * Aᵖ⁻¹[i, j₊-1] / p′
+            elseif i == n
+                V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊-1] * K[i-1] * Aᵖ⁻¹[i-1, j₊-1] / p′
+            else
+                V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊-1] * (K[i-1] * Aᵖ⁻¹[i-1, j₊-1] - K[i] * Aᵖ⁻¹[i, j₊-1]) / p′
+            end
             s += 1
         end
         # Rule-7: left recursion
         for j₋ in reverse((j_mid+1):(j_next-1))
             I[s] = i
             J[s] = j₋
-            V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋] * (K[i-1] * Aᵖ⁻¹[i-1, j₋] - K[i] * Aᵖ⁻¹[i, j₋]) / p′  # TODO: update this implementation
+            if i == 1
+                V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next + p * K′[j₋] * K[i] * Aᵖ⁻¹[i, j₋] / p′
+            elseif i == n
+                V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋] * K[i-1] * Aᵖ⁻¹[i-1, j₋] / p′
+            else
+                V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋] * (K[i-1] * Aᵖ⁻¹[i-1, j₋] - K[i] * Aᵖ⁻¹[i, j₋]) / p′
+            end
             s += 1
         end
     end
