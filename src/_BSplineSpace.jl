@@ -211,6 +211,10 @@ function _iszeros_R(P::BSplineSpace{p}) where p
     return [isdegenerate_R(P,i) for i in 1:dim(P)]
 end
 
+function _iszeros_I(P::BSplineSpace{p}) where p
+    return [isdegenerate_I(P,i) for i in 1:dim(P)]
+end
+
 @doc raw"""
 Check if given B-spline space is non-degenerate.
 
