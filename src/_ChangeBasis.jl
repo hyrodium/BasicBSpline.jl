@@ -31,13 +31,13 @@ function _changebasis_R(P::BSplineSpace{0,T,KnotVector{T}}, P′::BSplineSpace{p
     I = Vector{Int32}(undef, n′_exact)
     J = Vector{Int32}(undef, n′_exact)
     s = 1
-    j_begin = 1
+    local j_begin
+    j_end = 0
     for i in 1:n
         isdegenerate(P, i) && continue
-        for j in j_begin:n′
+        for j in (j_end+1):n′
             k′[j] == k[i] && (j_begin = j; break)
         end
-        local j_end
         for j in j_begin:n′
             k′[j+p′+1] == k[i+1] && (j_end = j + p′; break)
         end
@@ -47,7 +47,6 @@ function _changebasis_R(P::BSplineSpace{0,T,KnotVector{T}}, P′::BSplineSpace{p
             J[s] = j
             s += 1
         end
-        j_begin = j_end + 1
     end
     A⁰ = sparse(view(I,1:s-1), view(J,1:s-1), fill(one(U), s-1), n, n′)
     return A⁰
