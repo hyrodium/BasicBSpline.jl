@@ -319,6 +319,12 @@ _lower_R
 
 _lower_R(P::BSplineSpace{p,T}) where {p,T} = BSplineSpace{p-1}(knotvector(P))
 
+function _lower_I(P::BSplineSpace{p,T}) where {p,T}
+    k = knotvector(P)
+    l = length(k)
+    return BSplineSpace{p-1}(view(k,2:l-1))
+end
+
 """
 Return an index of a interval in the domain of B-spline space
 
