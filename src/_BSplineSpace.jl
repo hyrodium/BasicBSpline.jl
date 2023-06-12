@@ -392,7 +392,8 @@ function expandspace_I end
 
 function expandspace_I(P::BSplineSpace{p,T}, ::Val{p₊}, k₊::AbstractKnotVector=EmptyKnotVector{T}()) where {p,p₊,T}
     k = knotvector(P)
-    k̂ = unique(k[1+p:end-p])
+    l = length(k)
+    k̂ = unique(view(k, 1+p:l-p))
     p′ = p + p₊
     k′ = k + p₊*k̂ + k₊
     P′ = BSplineSpace{p′}(k′)
