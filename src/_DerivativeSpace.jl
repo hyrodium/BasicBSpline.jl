@@ -54,10 +54,14 @@ bsplinespace(dP::BSplineDerivativeSpace) = dP.bsplinespace
 knotvector(dP::BSplineDerivativeSpace) = knotvector(bsplinespace(dP))
 degree(dP::BSplineDerivativeSpace{r,<:BSplineSpace{p}}) where {r,p} = p - r
 dim(dP::BSplineDerivativeSpace{r,<:BSplineSpace{p}}) where {r,p} = dim(bsplinespace(dP))
-exactdim(dP::BSplineDerivativeSpace{r,<:BSplineSpace{p}}) where {r,p} = exactdim(bsplinespace(dP)) - r
+exactdim_R(dP::BSplineDerivativeSpace{r,<:BSplineSpace{p}}) where {r,p} = exactdim_R(bsplinespace(dP)) - r
+exactdim_I(dP::BSplineDerivativeSpace{r,<:BSplineSpace{p}}) where {r,p} = exactdim_I(bsplinespace(dP)) - r
 intervalindex(dP::BSplineDerivativeSpace,t::Real) = intervalindex(bsplinespace(dP),t)
 domain(dP::BSplineDerivativeSpace) = domain(bsplinespace(dP))
-_lower(dP::BSplineDerivativeSpace{r}) where r = BSplineDerivativeSpace{r-1}(_lower(bsplinespace(dP)))
+_lower_R(dP::BSplineDerivativeSpace{r}) where r = BSplineDerivativeSpace{r-1}(_lower_R(bsplinespace(dP)))
+_lower_I(dP::BSplineDerivativeSpace{r}) where r = BSplineDerivativeSpace{r-1}(_lower_I(bsplinespace(dP)))
+_iszeros_R(P::BSplineDerivativeSpace) = _iszeros_R(bsplinespace(P))
+_iszeros_I(P::BSplineDerivativeSpace) = _iszeros_I(bsplinespace(P))
 
 @doc raw"""
     derivative(::BSplineDerivativeSpace{r}) -> BSplineDerivativeSpace{r+1}

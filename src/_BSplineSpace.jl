@@ -87,11 +87,14 @@ Return dimention of a B-spline space.
 
 # Examples
 ```jldoctest
-julia> dim(BSplineSpace{1}(KnotVector([1,2,3,4,5])))
-3
+julia> dim(BSplineSpace{1}(KnotVector([1,2,3,4,5,6,7])))
+5
 
-julia> dim(BSplineSpace{1}(KnotVector([1,2,2,2,4])))
-3
+julia> dim(BSplineSpace{1}(KnotVector([1,2,4,4,4,6,7])))
+5
+
+julia> dim(BSplineSpace{1}(KnotVector([1,2,3,5,5,5,7])))
+5
 ```
 """
 function dim(bsplinespace::BSplineSpace{p}) where p
@@ -133,8 +136,8 @@ function Base.issubset(P::BSplineSpace{p}, P′::BSplineSpace{p′}) where {p, p
     k = knotvector(P)
     k′ = knotvector(P′)
     l = length(k)
-    i=1
-    c=0
+    i = 1
+    c = 0
     for j in 1:length(k′)
         if l < i
             return true
@@ -207,8 +210,12 @@ function isdegenerate_I(P::BSplineSpace{p}, i::Integer) where p
     return iszero(width(bsplinesupport(P,i) ∩ domain(P)))
 end
 
-function _iszeros(P::BSplineSpace{p}) where p
+function _iszeros_R(P::BSplineSpace{p}) where p
     return [isdegenerate_R(P,i) for i in 1:dim(P)]
+end
+
+function _iszeros_I(P::BSplineSpace{p}) where p
+    return [isdegenerate_I(P,i) for i in 1:dim(P)]
 end
 
 @doc raw"""
@@ -259,20 +266,50 @@ Exact dimension of a B-spline space.
 
 # Examples
 ```jldoctest
-julia> exactdim(BSplineSpace{1}(KnotVector([1,2,3,4,5])))
-3
+julia> exactdim_R(BSplineSpace{1}(KnotVector([1,2,3,4,5,6,7])))
+5
 
-julia> exactdim(BSplineSpace{1}(KnotVector([1,2,2,2,4])))
-2
+julia> exactdim_R(BSplineSpace{1}(KnotVector([1,2,4,4,4,6,7])))
+4
+
+julia> exactdim_R(BSplineSpace{1}(KnotVector([1,2,3,5,5,5,7])))
+4
 ```
 """
-function exactdim(P::BSplineSpace)
+function exactdim_R(P::BSplineSpace)
     n = dim(P)
     for i in 1:dim(P)
         n -= isdegenerate_R(P,i)
     end
     return n
+    # The above implementation is the same as `dim(P)-sum(_iszeros_R(P))`, but that's much faster.
 end
+
+"""
+Exact dimension of a B-spline space.
+
+# Examples
+```jldoctest
+julia> exactdim_I(BSplineSpace{1}(KnotVector([1,2,3,4,5,6,7])))
+5
+
+julia> exactdim_I(BSplineSpace{1}(KnotVector([1,2,4,4,4,6,7])))
+4
+
+julia> exactdim_I(BSplineSpace{1}(KnotVector([1,2,3,5,5,5,7])))
+3
+```
+"""
+function exactdim_I(P::BSplineSpace)
+    n = dim(P)
+    for i in 1:dim(P)
+        n -= isdegenerate_I(P,i)
+    end
+    return n
+    # The above implementation is the same as `dim(P)-sum(_iszeros_I(P))`, but that's much faster.
+end
+
+const exactdim = exactdim_R
 
 @doc raw"""
 Return the support of ``i``-th B-spline basis function.
@@ -315,9 +352,15 @@ D^r\mathcal{P}[p,k] &\mapsto D^{r-1}\mathcal{P}[p-1,k]
 \end{aligned}
 ```
 """
-_lower
+_lower_R
 
-_lower(P::BSplineSpace{p,T}) where {p,T} = BSplineSpace{p-1}(knotvector(P))
+_lower_R(P::BSplineSpace{p,T}) where {p,T} = BSplineSpace{p-1}(knotvector(P))
+
+function _lower_I(P::BSplineSpace{p,T}) where {p,T}
+    k = knotvector(P)
+    l = length(k)
+    return BSplineSpace{p-1}(view(k,2:l-1))
+end
 
 """
 Return an index of a interval in the domain of B-spline space
@@ -381,7 +424,8 @@ function expandspace_I end
 
 function expandspace_I(P::BSplineSpace{p,T}, ::Val{p₊}, k₊::AbstractKnotVector=EmptyKnotVector{T}()) where {p,p₊,T}
     k = knotvector(P)
-    k̂ = unique(k[1+p:end-p])
+    l = length(k)
+    k̂ = unique(view(k, 1+p:l-p))
     p′ = p + p₊
     k′ = k + p₊*k̂ + k₊
     P′ = BSplineSpace{p′}(k′)

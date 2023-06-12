@@ -26,7 +26,7 @@
         @test bsplinesupport_I(P1, 2) == 5..8
         @test domain(P1) == 5..8
         @test dim(P1) == 4
-        @test exactdim(P1) == 4
+        @test exactdim_R(P1) == 4
         @test isnondegenerate(P1) == true
         @test isdegenerate(P1) == false
 
@@ -42,12 +42,12 @@
         @test isnondegenerate(P2,3) == true
         @test isnondegenerate(P2,4) == true
         @test dim(P2) == 4
-        @test exactdim(P2) == 3
+        @test exactdim_R(P2) == 3
 
         P3 = BSplineSpace{2}(KnotVector([0,0,0,1,1,1,2]))
         @test domain(P3) == 0..1
         @test dim(P3) == 4
-        @test exactdim(P3) == 4
+        @test exactdim_R(P3) == 4
         @test isnondegenerate(P3) == true
         @test isdegenerate(P3) == false
         @test isdegenerate(P3,1) == false

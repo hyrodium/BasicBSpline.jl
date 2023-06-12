@@ -9,12 +9,12 @@
         n = dim(P)
         n′ = dim(P′)
         @test size(A) == (n,n′)
-        t_min = minimum(knotvector(P)+knotvector(P′))
-        t_max = maximum(knotvector(P)+knotvector(P′))
-        ts = range(t_min,t_max,length=20)
+        ts = range(extrema(knotvector(P)+knotvector(P′))..., length=20)
         for t in ts
             @test norm(bsplinebasis.(P,1:n,t) - A*bsplinebasis.(P′,1:n′,t), Inf) < ε
         end
+        @test iszero(view(A, findall(BasicBSpline._iszeros_R(P)), :))
+        @test iszero(view(A, :, findall(BasicBSpline._iszeros_R(P′))))
     end
 
     function test_changebasis_I(P,P′)

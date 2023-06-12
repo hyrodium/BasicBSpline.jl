@@ -25,19 +25,19 @@ function _changebasis_R(P::BSplineSpace{0,T,KnotVector{T}}, P′::BSplineSpace{p
     U = StaticArrays.arithmetic_closure(promote_type(T, T′))
     n = dim(P)
     n′ = dim(P′)
-    n′_exact = exactdim(P′)
+    n′_exact = exactdim_R(P′)
     k = knotvector(P)
     k′ = knotvector(P′)
     I = Vector{Int32}(undef, n′_exact)
     J = Vector{Int32}(undef, n′_exact)
     s = 1
-    j_begin = 1
+    local j_begin
+    j_end = 0
     for i in 1:n
         isdegenerate(P, i) && continue
-        for j in j_begin:n′
+        for j in (j_end+1):n′
             k′[j] == k[i] && (j_begin = j; break)
         end
-        local j_end
         for j in j_begin:n′
             k′[j+p′+1] == k[i+1] && (j_end = j + p′; break)
         end
@@ -47,7 +47,6 @@ function _changebasis_R(P::BSplineSpace{0,T,KnotVector{T}}, P′::BSplineSpace{p
             J[s] = j
             s += 1
         end
-        j_begin = j_end + 1
     end
     A⁰ = sparse(view(I,1:s-1), view(J,1:s-1), fill(one(U), s-1), n, n′)
     return A⁰
@@ -61,8 +60,8 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
     n′ = dim(P′)
     K′ = [k′[i+p′] - k′[i] for i in 1:n′+1]
     K = U[ifelse(k[i+p] ≠ k[i], U(1 / (k[i+p] - k[i])), zero(U)) for i in 1:n+1]
-    Aᵖ⁻¹ = _changebasis_R(_lower(P), _lower(P′))  # (n+1) × (n′+1) matrix
-    n_nonzero = exactdim(P′)*(p+1)  # This is a upper bound of the number of non-zero elements of Aᵖ (rough estimation).
+    Aᵖ⁻¹ = _changebasis_R(_lower_R(P), _lower_R(P′))  # (n+1) × (n′+1) matrix
+    n_nonzero = exactdim_R(P′)*(p+1)  # This is a upper bound of the number of non-zero elements of Aᵖ (rough estimation).
     I = Vector{Int32}(undef, n_nonzero)
     J = Vector{Int32}(undef, n_nonzero)
     V = Vector{U}(undef, n_nonzero)
@@ -74,63 +73,68 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         isdegenerate_R(P,i) && continue
 
         # The following indices `j*` have the following relationships.
-        #  1                                    n′
-        #  |--*-----------------------------*-->|
-        #     j_begin                       j_end
-        #     |----*----------------*------>|
-        #          j_prev  j_mid    j_next
-        #          |       |        |
-        #           |--j₊->||<-j₋--|
-        #          266666666777777773
-        #          366666666777777773
-        #
-        #  1                                    n′
-        #  |--*-----------------------------*-->|
-        #     j_begin                       j_end
-        #    *|---------------*------------>|
-        #    j_prev  j_mid    j_next
-        #    |       |        |
-        #     |--j₊->||<-j₋--|
-        #    066666666777777773
-        #
-        #  1                                    n′
-        #  |--*-----------------------------*-->|
-        #     j_begin                       j_end
-        #     |-------------*-------------->|*
-        #                   j_prev  j_mid    j_next
-        #                   |       |        |
-        #                    |--j₊->||<-j₋--|
-        #                   266666666777777770
-        #                   366666666777777770
-        #
-        #  1                                    n′
-        #  *-----------------------------*----->|
-        #  j_begin                       j_end
-        #  *----------------*----------->|
-        #  j_prev  j_mid    j_next
-        #  |       |        |
-        #   |--j₊->||<-j₋--|
-        #  466666666777777773
-        #
-        #  1                                    n′
-        #  |------*---------------------------->*
-        #         j_begin                       j_end
-        #         |------------*--------------->*
-        #                      j_prev  j_mid    j_next
-        #                      |       |        |
-        #                       |--j₊->||<-j₋--|
-        #                      266666666777777775
-        #                      366666666777777775
+        #=
+
+         1                                    n′
+         |--*-----------------------------*-->|
+            j_begin                       j_end
+            |----*----------------*------>|
+                 j_prev  j_mid    j_next
+                 |       |        |
+                  |--j₊->||<-j₋--|
+                 266666666777777773
+                 366666666777777773
+
+         1                                    n′
+         |--*-----------------------------*-->|
+            j_begin                       j_end
+           *|---------------*------------>|
+           j_prev  j_mid    j_next
+           |       |        |
+            |--j₊->||<-j₋--|
+           066666666777777773
+
+         1                                    n′
+         |--*-----------------------------*-->|
+            j_begin                       j_end
+            |-------------*-------------->|*
+                          j_prev  j_mid    j_next
+                          |       |        |
+                           |--j₊->||<-j₋--|
+                          266666666777777770
+                          366666666777777770
+
+         1                                    n′
+         *-----------------------------*----->|
+         j_begin                       j_end
+         *----------------*----------->|
+        j_prev  j_mid    j_next
+        |       |        |
+         |--j₊->||<-j₋--|
+        066666666777777773
+
+         1                                    n′
+         |------*---------------------------->*
+                j_begin                       j_end
+                |-------------*--------------->*
+                              j_prev  j_mid    j_next
+                              |       |        |
+                               |--j₊->||<-j₋--|
+                              266666666777777770
+                              366666666777777770
+
+        =#
 
         # Precalculate the range of j
         Pi = BSplineSpace{p}(view(k, i:i+p+1))
         j_end::Int = findnext(j->Pi ⊆ BSplineSpace{p′}(view(k′, j_begin:j+p′+1)), 1:n′, j_end)
         j_begin::Int = findprev(j->Pi ⊆ BSplineSpace{p′}(view(k′, j:j_end+p′+1)), 1:n′, j_end)
         j_range = j_begin:j_end
-        j_prev = j_begin-1
         # flag = 0
-        Aᵖᵢⱼ_prev = zero(U)
 
+        # Rule-0: outside of j_range
+        j_prev = j_begin-1
+        Aᵖᵢⱼ_prev = zero(U)
         for j_next in j_range
             # Rule-1: zero
             if k′[j_next] == k′[j_next+p′+1]
@@ -167,40 +171,11 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
                 end
                 j_prev = j_next
                 # flag = 3
-            # Rule-4: left boundary
-            elseif j_next == 1
-                j_prev = j_next
-                I[s] = i
-                J[s] = j_next
-                V[s] = Aᵖᵢⱼ_prev = p * K′[j_next] * (K[i] * Aᵖ⁻¹[i, j_next] - K[i+1] * Aᵖ⁻¹[i+1, j_next]) / p′
-                s += 1
-                # flag = 4
-            # Rule-5: right boundary
-            elseif j_next == n′
-                j_mid = (j_prev + j_next) ÷ 2
-                # Rule-6: right recursion
-                for j₊ in (j_prev+1):j_mid
-                    I[s] = i
-                    J[s] = j₊
-                    V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
-                    s += 1
-                end
-                I[s] = i
-                J[s] = j_next
-                V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_next = -p * K′[j_next+1] * (K[i] * Aᵖ⁻¹[i, j_next+1] - K[i+1] * Aᵖ⁻¹[i+1, j_next+1]) / p′
-                s += 1
-                # Rule-7: left recursion
-                for j₋ in reverse((j_mid+1):(j_next-1))
-                    I[s] = i
-                    J[s] = j₋
-                    V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋+1] * (K[i] * Aᵖ⁻¹[i, j₋+1] - K[i+1] * Aᵖ⁻¹[i+1, j₋+1]) / p′
-                    s += 1
-                end
-                j_prev = j_next
-                # flag = 5
             end
         end
+        # Rule-0: outside of j_range
         j_next = j_end + 1
+        Aᵖᵢⱼ_next = zero(U)
         j_mid = (j_prev + j_next) ÷ 2
         # Rule-6: right recursion
         for j₊ in (j_prev+1):j_mid
@@ -209,7 +184,6 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
             V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
             s += 1
         end
-        Aᵖᵢⱼ_next = zero(U)
         # Rule-7: left recursion
         for j₋ in reverse((j_mid+1):(j_next-1))
             I[s] = i
@@ -310,6 +284,36 @@ function changebasis_I(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
     return _changebasis_I(P, P′)
 end
 
+function _changebasis_I(P::BSplineSpace{0,T,KnotVector{T}}, P′::BSplineSpace{p′,T′,KnotVector{T′}}) where {p′,T,T′}
+    U = StaticArrays.arithmetic_closure(promote_type(T, T′))
+    n = dim(P)
+    n′ = dim(P′)
+    n′_exact = exactdim_R(P′)
+    k = knotvector(P)
+    k′ = knotvector(P′)
+    I = Vector{Int32}(undef, n′_exact)
+    J = Vector{Int32}(undef, n′_exact)
+    s = 1
+    local j_begin
+    j_end = 0
+    for i in 1:n
+        isdegenerate(P, i) && continue
+        for j in (j_end+1):n′
+            k′[j] ≤ k[i] && (j_begin = j; break)
+        end
+        for j in j_begin:n′
+            k′[j+p′+1] ≥ k[i+1] && (j_end = j + p′; break)
+        end
+        for j in j_begin:j_end
+            isdegenerate(P′, j) && continue
+            I[s] = i
+            J[s] = j
+            s += 1
+        end
+    end
+    A⁰ = sparse(view(I,1:s-1), view(J,1:s-1), fill(one(U), s-1), n, n′)
+    return A⁰
+end
 function _changebasis_I(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′}) where {p,p′,T,T′}
     k = knotvector(P)
     k′ = knotvector(P′)
@@ -340,13 +344,14 @@ function _changebasis_R(P::UniformBSplineSpace{p,T}, P′::UniformBSplineSpace{p
     return A
 end
 function _changebasis_I(P::UniformBSplineSpace{p,T}, P′::UniformBSplineSpace{p,T′}) where {p,T,T′}
+    U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     k = knotvector(P)
     k′ = knotvector(P′)
     r = round(Int, step(k)/step(k′))
     block = [r_nomial(p+1,i,r) for i in 0:(r-1)*(p+1)]/r^p
     n = dim(P)
     n′ = dim(P′)
-    A = spzeros(StaticArrays.arithmetic_closure(T), n, n′)
+    A = spzeros(U, n, n′)
     for i in 1:n
         a = r*i-(r-1)*(p+1)
         b = r*i
