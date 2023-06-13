@@ -370,7 +370,7 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
          1                                    n′
          *-----------------------------*----->|
          j_begin                       j_end
-         *----------------*----------->|
+         *---------------*------------>|
         j_prev=j_mid     j_next
         |                |
          |<-----j₋------|
@@ -380,7 +380,7 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
          |------*---------------------------->*
                 j_begin                       j_end
                 |-------------*--------------->*
-                              j_prev     j_mid=j_next
+                              j_prev   j_mid+1=j_next
                               |                |
                                |------j₊----->|
                               266666666666666660
@@ -456,7 +456,7 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
         j_next = j_end + 1
         Aᵖᵢⱼ_next = zero(U)
         if j_next == n′
-            j_mid = j_next
+            j_mid = j_next - 1
         else
             j_mid = (j_prev + j_next) ÷ 2
         end
