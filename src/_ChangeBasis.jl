@@ -58,7 +58,7 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
     k′ = knotvector(P′)
     n = dim(P)
     n′ = dim(P′)
-    K′ = [k′[i+p′] - k′[i] for i in 1:n′+1]
+    K′ = [k′[j+p′] - k′[j] for j in 1:n′+1]
     K = U[ifelse(k[i+p] ≠ k[i], U(1 / (k[i+p] - k[i])), zero(U)) for i in 1:n+1]
     Aᵖ⁻¹ = _changebasis_R(_lower_R(P), _lower_R(P′))  # (n+1) × (n′+1) matrix
     n_nonzero = exactdim_R(P′)*(p+1)  # This is a upper bound of the number of non-zero elements of Aᵖ (rough estimation).
@@ -321,8 +321,8 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
     k′ = knotvector(P′)
     n = dim(P)
     n′ = dim(P′)
-    K′ = [k′[i+p′] - k′[i] for i in 1:n′-1]
-    K = U[ifelse(k[i+p] ≠ k[i], U(1 / (k[i+p] - k[i])), zero(U)) for i in 1:n-1]
+    K′ = [k′[j+p′] - k′[j] for j in 1:n′+1]
+    K = U[ifelse(k[i+p] ≠ k[i], U(1 / (k[i+p] - k[i])), zero(U)) for i in 1:n+1]
     Aᵖ⁻¹ = _changebasis_I(_lower_I(P), _lower_I(P′))  # (n-1) × (n′-1) matrix
     n_nonzero = exactdim_I(P′)*(p+1)  # This is a upper bound of the number of non-zero elements of Aᵖ (rough estimation).
     I = Vector{Int32}(undef, n_nonzero)
@@ -423,11 +423,11 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
                     I[s] = i
                     J[s] = j₊
                     if i == 1
-                        V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev - p * K′[j₊-1] * K[i] * Aᵖ⁻¹[i, j₊-1] / p′
+                        V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev - p * K′[j₊] * K[i+1] * Aᵖ⁻¹[i, j₊-1] / p′
                     elseif i == n
-                        V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊-1] * K[i-1] * Aᵖ⁻¹[i-1, j₊-1] / p′
+                        V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊] * K[i] * Aᵖ⁻¹[i-1, j₊-1] / p′
                     else
-                        V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊-1] * (K[i-1] * Aᵖ⁻¹[i-1, j₊-1] - K[i] * Aᵖ⁻¹[i, j₊-1]) / p′
+                        V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i-1, j₊-1] - K[i+1] * Aᵖ⁻¹[i, j₊-1]) / p′
                     end
                     s += 1
                 end
@@ -440,11 +440,11 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
                     I[s] = i
                     J[s] = j₋
                     if i == 1
-                        V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next + p * K′[j₋] * K[i] * Aᵖ⁻¹[i, j₋] / p′
+                        V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next + p * K′[j₋+1] * K[i+1] * Aᵖ⁻¹[i, j₋] / p′
                     elseif i == n
-                        V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋] * K[i-1] * Aᵖ⁻¹[i-1, j₋] / p′
+                        V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋+1] * K[i] * Aᵖ⁻¹[i-1, j₋] / p′
                     else
-                        V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋] * (K[i-1] * Aᵖ⁻¹[i-1, j₋] - K[i] * Aᵖ⁻¹[i, j₋]) / p′
+                        V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋+1] * (K[i] * Aᵖ⁻¹[i-1, j₋] - K[i+1] * Aᵖ⁻¹[i, j₋]) / p′
                     end
                     s += 1
                 end
@@ -465,11 +465,11 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
             I[s] = i
             J[s] = j₊
             if i == 1
-                V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev - p * K′[j₊-1] * K[i] * Aᵖ⁻¹[i, j₊-1] / p′
+                V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev - p * K′[j₊] * K[i+1] * Aᵖ⁻¹[i, j₊-1] / p′
             elseif i == n
-                V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊-1] * K[i-1] * Aᵖ⁻¹[i-1, j₊-1] / p′
+                V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊] * K[i] * Aᵖ⁻¹[i-1, j₊-1] / p′
             else
-                V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊-1] * (K[i-1] * Aᵖ⁻¹[i-1, j₊-1] - K[i] * Aᵖ⁻¹[i, j₊-1]) / p′
+                V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i-1, j₊-1] - K[i+1] * Aᵖ⁻¹[i, j₊-1]) / p′
             end
             s += 1
         end
@@ -478,11 +478,11 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
             I[s] = i
             J[s] = j₋
             if i == 1
-                V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next + p * K′[j₋] * K[i] * Aᵖ⁻¹[i, j₋] / p′
+                V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next + p * K′[j₋+1] * K[i+1] * Aᵖ⁻¹[i, j₋] / p′
             elseif i == n
-                V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋] * K[i-1] * Aᵖ⁻¹[i-1, j₋] / p′
+                V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋+1] * K[i] * Aᵖ⁻¹[i-1, j₋] / p′
             else
-                V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋] * (K[i-1] * Aᵖ⁻¹[i-1, j₋] - K[i] * Aᵖ⁻¹[i, j₋]) / p′
+                V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋+1] * (K[i] * Aᵖ⁻¹[i-1, j₋] - K[i+1] * Aᵖ⁻¹[i, j₋]) / p′
             end
             s += 1
         end
