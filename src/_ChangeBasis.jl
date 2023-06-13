@@ -486,6 +486,7 @@ end
 
 ## Uniform B-spline space
 function _changebasis_R(P::UniformBSplineSpace{p,T}, P′::UniformBSplineSpace{p,T′}) where {p,T,T′}
+    U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     k = knotvector(P)
     k′ = knotvector(P′)
     r = round(Int, step(k)/step(k′))
@@ -493,7 +494,7 @@ function _changebasis_R(P::UniformBSplineSpace{p,T}, P′::UniformBSplineSpace{p
     n = dim(P)
     n′ = dim(P′)
     j = findfirst(==(k[1]), _vec(k′))
-    A = spzeros(StaticArrays.arithmetic_closure(T), n, n′)
+    A = spzeros(U, n, n′)
     for i in 1:n
         A[i, j+r*(i-1):j+(r-1)*(p+1)+r*(i-1)] = block
     end
