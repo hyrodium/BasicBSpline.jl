@@ -130,7 +130,6 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         j_end::Int = findnext(j->Pi ⊆ BSplineSpace{p′}(view(k′, j_begin:j+p′+1)), 1:n′, j_end)
         j_begin::Int = findprev(j->Pi ⊆ BSplineSpace{p′}(view(k′, j:j_end+p′+1)), 1:n′, j_end)
         j_range = j_begin:j_end
-        # flag = 0
 
         # Rule-0: outside of j_range
         j_prev = j_begin-1
@@ -138,7 +137,6 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         for j_next in j_range
             # Rule-1: zero
             if k′[j_next] == k′[j_next+p′+1]
-                # flag = 1
                 continue
             # Rule-2: right limit
             elseif k′[j_next] == k′[j_next+p′]
@@ -147,7 +145,6 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
                 V[s] = Aᵖᵢⱼ_prev = bsplinebasis₊₀(P,i,k′[j_next+1])
                 s += 1
                 j_prev = j_next
-                # flag = 2
             # Rule-3: left limit (or both limit)
             elseif k′[j_next+1] == k′[j_next+p′]
                 j_mid = (j_prev + j_next) ÷ 2
@@ -170,7 +167,6 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
                     s += 1
                 end
                 j_prev = j_next
-                # flag = 3
             end
         end
         # Rule-0: outside of j_range
@@ -393,7 +389,6 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
         j_end::Int = findnext(j->Pi ⊆ BSplineSpace{p′}(view(k′, j_begin:j+p′+1)), 1:n′, j_end)  # TODO: update this implementation
         j_begin::Int = findprev(j->Pi ⊆ BSplineSpace{p′}(view(k′, j:j_end+p′+1)), 1:n′, j_end)  # TODO: update this implementation
         j_range = j_begin:j_end
-        # flag = 0
 
         # Rule-0: outside of j_range
         j_prev = j_begin-1
@@ -401,7 +396,6 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
         for j_next in j_range
             # Rule-1: zero
             if k′[j_next] == k′[j_next+p′+1]
-                # flag = 1
                 continue
             # Rule-2: right limit
             elseif k′[j_next] == k′[j_next+p′]
@@ -410,7 +404,6 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
                 V[s] = Aᵖᵢⱼ_prev = bsplinebasis₊₀(P,i,k′[j_next+1])
                 s += 1
                 j_prev = j_next
-                # flag = 2
             # Rule-3: left limit (or both limit)
             elseif k′[j_next+1] == k′[j_next+p′]
                 if j_prev == 0
@@ -449,7 +442,6 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
                     s += 1
                 end
                 j_prev = j_next
-                # flag = 3
             end
         end
         # Rule-0: outside of j_range
