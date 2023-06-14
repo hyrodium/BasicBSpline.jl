@@ -385,9 +385,11 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
         =#
 
         # Precalculate the range of j
-        Pi = BSplineSpace{p}(view(k, i:i+p+1))
-        j_end::Int = findnext(j->Pi ⊆ BSplineSpace{p′}(view(k′, j_begin:j+p′+1)), 1:n′, j_end)  # TODO: update this implementation
-        j_begin::Int = findprev(j->Pi ⊆ BSplineSpace{p′}(view(k′, j:j_end+p′+1)), 1:n′, j_end)  # TODO: update this implementation
+        k_ = view(k, i:i+p+1)
+        kᵢ_I = max(k[i], k[1+p])
+        kᵢ₊ₚ₊₁_I = min(k[i+p+1], k[end-p])
+        j_begin = findlast(==(kᵢ_I), _vec(k′)) - count(≤(kᵢ_I), _vec(k_)) - p′ + p + 1
+        j_end = findfirst(==(kᵢ₊ₚ₊₁_I), _vec(k′)) + count(≥(kᵢ₊ₚ₊₁_I), _vec(k_)) - p′ - 1
         j_range = j_begin:j_end
 
         # Rule-0: outside of j_range
