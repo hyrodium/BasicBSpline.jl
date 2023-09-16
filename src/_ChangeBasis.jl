@@ -522,7 +522,7 @@ function _changebasis_I_new(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::
             j_mid = j_next - 1
             if j_prev == 0
                 # Rule-8: right recursion with postprocess
-                # We can't find Aᵖᵢ₁ or Aᵖᵢₙ′ directly (yet), so we need Δ-shift.
+                # We can't find Aᵖᵢ₁ or Aᵖᵢₙ′ directly (yet!), so we need Δ-shift.
                 I[s], J[s] = i, 1
                 V[s] = Aᵖᵢⱼ_prev = zero(U)
                 s += 1
