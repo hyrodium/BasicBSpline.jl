@@ -164,10 +164,9 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         Aᵖᵢⱼ_prev = zero(U)
         for j_next in j_range
             # Rule-1: zero
-            if isdegenerate_R(P′,j_next)
-                continue
+            isdegenerate_R(P′,j_next) && continue
             # Rule-2: right limit
-            elseif k′[j_next] == k′[j_next+p′]
+            if k′[j_next] == k′[j_next+p′]
                 I[s], J[s] = i, j_next
                 V[s] = Aᵖᵢⱼ_prev = bsplinebasis₊₀(P,i,k′[j_next+1])
                 s += 1
@@ -467,10 +466,9 @@ function _changebasis_I_(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSp
         Aᵖᵢⱼ_prev = zero(U)
         for j_next in j_range
             # Rule-1: zero
-            if isdegenerate_I(P′,j_next)
-                continue
+            isdegenerate_I(P′,j_next) && continue
             # Rule-2: right limit
-            elseif k′[j_next] == k′[j_next+p′]
+            if k′[j_next] == k′[j_next+p′]
                 I[s], J[s] = i, j_next
                 V[s] = Aᵖᵢⱼ_prev = bsplinebasis₊₀(P,i,k′[j_next+1])
                 s += 1
