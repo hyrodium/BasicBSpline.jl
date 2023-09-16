@@ -462,7 +462,7 @@ function _changebasis_I_new(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::
          *----------------------------------->*
          j_begin                              j_end
          *------------------------------------>*
-        j_prev=j_mid                           j_next
+        j_prev                                 j_next
         |                                      |
          |-----------------j₊---------------->|
         0888888888888888888888888888888888888880
