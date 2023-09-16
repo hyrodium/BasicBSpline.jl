@@ -347,6 +347,16 @@ function _changebasis_I(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′}) whe
     return A
 end
 
+function _ΔAᵖ_I(Aᵖ⁻¹, K, K′, i, j)
+    if i == 1
+        return - K′[j] * K[i+1] * Aᵖ⁻¹[i, j-1]
+    elseif i == n
+        return K′[j] * K[i] * Aᵖ⁻¹[i-1, j-1]
+    else
+        return K′[j] * (K[i] * Aᵖ⁻¹[i-1, j-1] - K[i+1] * Aᵖ⁻¹[i, j-1])
+    end
+end
+
 function _changebasis_I_(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSplineSpace{p′,T′,<:AbstractKnotVector{T′}}) where {p,p′,T,T′}
     #=
     Example matrix: n=4, n′=5
@@ -461,8 +471,7 @@ function _changebasis_I_(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSp
                 continue
             # Rule-2: right limit
             elseif k′[j_next] == k′[j_next+p′]
-                I[s] = i
-                J[s] = j_next
+                I[s], J[s] = i, j_next
                 V[s] = Aᵖᵢⱼ_prev = bsplinebasis₊₀(P,i,k′[j_next+1])
                 s += 1
                 j_prev = j_next
@@ -475,32 +484,17 @@ function _changebasis_I_(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSp
                 end
                 # Rule-6: right recursion
                 for j₊ in (j_prev+1):j_mid
-                    I[s] = i
-                    J[s] = j₊
-                    if i == 1
-                        V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev - p * K′[j₊] * K[i+1] * Aᵖ⁻¹[i, j₊-1] / p′
-                    elseif i == n
-                        V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊] * K[i] * Aᵖ⁻¹[i-1, j₊-1] / p′
-                    else
-                        V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i-1, j₊-1] - K[i+1] * Aᵖ⁻¹[i, j₊-1]) / p′
-                    end
+                    I[s], J[s] = i, j₊
+                    V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * _ΔAᵖ_I(Aᵖ⁻¹,K,K′,i,j₊) / p′
                     s += 1
                 end
-                I[s] = i
-                J[s] = j_next
+                I[s], J[s] = i, j_next
                 V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_next = bsplinebasis₋₀(P,i,k′[j_next+1])
                 s += 1
                 # Rule-7: left recursion
                 for j₋ in reverse((j_mid+1):(j_next-1))
-                    I[s] = i
-                    J[s] = j₋
-                    if i == 1
-                        V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next + p * K′[j₋+1] * K[i+1] * Aᵖ⁻¹[i, j₋] / p′
-                    elseif i == n
-                        V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋+1] * K[i] * Aᵖ⁻¹[i-1, j₋] / p′
-                    else
-                        V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋+1] * (K[i] * Aᵖ⁻¹[i-1, j₋] - K[i+1] * Aᵖ⁻¹[i, j₋]) / p′
-                    end
+                    I[s], J[s] = i, j₋
+                    V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * _ΔAᵖ_I(Aᵖ⁻¹,K,K′,i,j₋+1) / p′
                     s += 1
                 end
                 j_prev = j_next
@@ -516,28 +510,14 @@ function _changebasis_I_(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSp
         end
         # Rule-6: right recursion
         for j₊ in (j_prev+1):j_mid
-            I[s] = i
-            J[s] = j₊
-            if i == 1
-                V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev - p * K′[j₊] * K[i+1] * Aᵖ⁻¹[i, j₊-1] / p′
-            elseif i == n
-                V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊] * K[i] * Aᵖ⁻¹[i-1, j₊-1] / p′
-            else
-                V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i-1, j₊-1] - K[i+1] * Aᵖ⁻¹[i, j₊-1]) / p′
-            end
+            I[s], J[s] = i, j₊
+            V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * _ΔAᵖ_I(Aᵖ⁻¹,K,K′,i,j₊) / p′
             s += 1
         end
         # Rule-7: left recursion
         for j₋ in reverse((j_mid+1):(j_next-1))
-            I[s] = i
-            J[s] = j₋
-            if i == 1
-                V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next + p * K′[j₋+1] * K[i+1] * Aᵖ⁻¹[i, j₋] / p′
-            elseif i == n
-                V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋+1] * K[i] * Aᵖ⁻¹[i-1, j₋] / p′
-            else
-                V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋+1] * (K[i] * Aᵖ⁻¹[i-1, j₋] - K[i+1] * Aᵖ⁻¹[i, j₋]) / p′
-            end
+            I[s], J[s] = i, j₋
+            V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * _ΔAᵖ_I(Aᵖ⁻¹,K,K′,i,j₋+1) / p′
             s += 1
         end
     end
