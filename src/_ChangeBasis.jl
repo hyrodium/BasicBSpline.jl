@@ -348,6 +348,7 @@ function _changebasis_I(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′}) whe
 end
 
 function _ΔAᵖ_I(Aᵖ⁻¹, K, K′, i, j)
+    n = length(K)-1
     if i == 1
         return - K′[j] * K[i+1] * Aᵖ⁻¹[i, j-1]
     elseif i == n
