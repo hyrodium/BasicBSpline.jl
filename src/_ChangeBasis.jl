@@ -311,7 +311,21 @@ function _changebasis_I(P::BSplineSpace{0,T,<:AbstractKnotVector{T}}, P′::BSpl
     return A⁰
 end
 
-function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSplineSpace{p′,T′,<:AbstractKnotVector{T′}}) where {p,p′,T,T′}
+function _changebasis_I(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′}) where {p,p′,T,T′}
+    k = knotvector(P)
+    k′ = knotvector(P′)
+
+    _P = BSplineSpace{p}(k[1+p:end-p] + p * KnotVector{T}([k[1+p], k[end-p]]))
+    _P′ = BSplineSpace{p′}(k′[1+p′:end-p′] + p′ * KnotVector{T′}([k′[1+p′], k′[end-p′]]))
+    _A = _changebasis_R(_P, _P′)
+    Asim = _changebasis_sim(P, _P)
+    Asim′ = _changebasis_sim(_P′, P′)
+    A = Asim * _A * Asim′
+
+    return A
+end
+
+function _changebasis_I_(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSplineSpace{p′,T′,<:AbstractKnotVector{T′}}) where {p,p′,T,T′}
     U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     k = knotvector(P)
     k′ = knotvector(P′)
@@ -499,6 +513,23 @@ function _changebasis_R(P::UniformBSplineSpace{p,T}, P′::UniformBSplineSpace{p
     A = spzeros(U, n, n′)
     for i in 1:n
         A[i, j+r*(i-1):j+(r-1)*(p+1)+r*(i-1)] = block
+    end
+    return A
+end
+function _changebasis_I(P::UniformBSplineSpace{0,T}, P′::UniformBSplineSpace{0,T′}) where {T,T′}
+    U = StaticArrays.arithmetic_closure(promote_type(T,T′))
+    n = dim(P)
+    n′ = dim(P′)
+    A = spzeros(U, n, n′)
+    for i in 1:n
+        a = r*i-r+1
+        b = r*i
+        rr = a:b
+        if rr ⊆ 1:n′
+            A[i,rr] .= one(U)
+        else
+            A[i,max(a,1):min(b,n′)] .= one(U)
+        end
     end
     return A
 end
