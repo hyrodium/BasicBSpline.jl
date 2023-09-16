@@ -570,8 +570,8 @@ function _changebasis_I(P::UniformBSplineSpace{0,T}, P′::UniformBSplineSpace{0
     n′ = dim(P′)
     A = spzeros(U, n, n′)
     for i in 1:n
-        a = r*i-r+1
         b = r*i
+        a = b-r+1
         rr = a:b
         if rr ⊆ 1:n′
             A[i,rr] .= one(U)
