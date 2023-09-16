@@ -301,7 +301,7 @@ function changebasis_I(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
     return _changebasis_I(P, P′)
 end
 
-function _changebasis_I(P::BSplineSpace{0,T,<:AbstractKnotVector{T}}, P′::BSplineSpace{p′,T′,<:AbstractKnotVector{T′}}) where {p′,T,T′}
+function _changebasis_I_new(P::BSplineSpace{0,T,<:AbstractKnotVector{T}}, P′::BSplineSpace{p′,T′,<:AbstractKnotVector{T′}}) where {p′,T,T′}
     U = StaticArrays.arithmetic_closure(promote_type(T, T′))
     n = dim(P)
     n′ = dim(P′)
@@ -333,6 +333,10 @@ function _changebasis_I(P::BSplineSpace{0,T,<:AbstractKnotVector{T}}, P′::BSpl
 end
 
 function _changebasis_I(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′}) where {p,p′,T,T′}
+    return _changebasis_I_old(P, P′)
+end
+
+function _changebasis_I_old(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′}) where {p,p′,T,T′}
     k = knotvector(P)
     k′ = knotvector(P′)
 
@@ -357,7 +361,7 @@ function _ΔAᵖ_I(Aᵖ⁻¹, K, K′, i, j)
     end
 end
 
-function _changebasis_I_(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSplineSpace{p′,T′,<:AbstractKnotVector{T′}}) where {p,p′,T,T′}
+function _changebasis_I_new(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSplineSpace{p′,T′,<:AbstractKnotVector{T′}}) where {p,p′,T,T′}
     #=
     Example matrix: n=4, n′=5
 
@@ -389,7 +393,7 @@ function _changebasis_I_(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSp
     n′ = dim(P′)
     K′ = [k′[j+p′] - k′[j] for j in 1:n′+1]
     K = U[ifelse(k[i+p] ≠ k[i], U(1 / (k[i+p] - k[i])), zero(U)) for i in 1:n+1]
-    Aᵖ⁻¹ = _changebasis_I(_lower_I(P), _lower_I(P′))  # (n-1) × (n′-1) matrix
+    Aᵖ⁻¹ = _changebasis_I_new(_lower_I(P), _lower_I(P′))  # (n-1) × (n′-1) matrix
     n_nonzero = exactdim_I(P′)*(p+1)  # This is a upper bound of the number of non-zero elements of Aᵖ (rough estimation).
     I = Vector{Int32}(undef, n_nonzero)
     J = Vector{Int32}(undef, n_nonzero)
