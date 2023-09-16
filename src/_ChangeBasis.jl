@@ -52,6 +52,10 @@ function _changebasis_R(P::BSplineSpace{0,T,KnotVector{T}}, P′::BSplineSpace{p
     return A⁰
 end
 
+function _ΔAᵖ_R(Aᵖ⁻¹, K, K′, i, j)
+    return K′[j] * (K[i] * Aᵖ⁻¹[i, j] - K[i+1] * Aᵖ⁻¹[i+1, j])
+end
+
 function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p′,T′,KnotVector{T′}}) where {p,p′,T,T′}
     #=
     Example matrix: n=3, n′=4
@@ -176,7 +180,7 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
                 for j₊ in (j_prev+1):j_mid
                     I[s] = i
                     J[s] = j₊
-                    V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
+                    V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * _ΔAᵖ_R(Aᵖ⁻¹,K,K′,i,j₊) / p′
                     s += 1
                 end
                 I[s] = i
@@ -187,7 +191,7 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
                 for j₋ in reverse((j_mid+1):(j_next-1))
                     I[s] = i
                     J[s] = j₋
-                    V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋+1] * (K[i] * Aᵖ⁻¹[i, j₋+1] - K[i+1] * Aᵖ⁻¹[i+1, j₋+1]) / p′
+                    V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * _ΔAᵖ_R(Aᵖ⁻¹,K,K′,i,j₋+1) / p′
                     s += 1
                 end
                 j_prev = j_next
@@ -201,14 +205,14 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         for j₊ in (j_prev+1):j_mid
             I[s] = i
             J[s] = j₊
-            V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * K′[j₊] * (K[i] * Aᵖ⁻¹[i, j₊] - K[i+1] * Aᵖ⁻¹[i+1, j₊]) / p′
+            V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * _ΔAᵖ_R(Aᵖ⁻¹,K,K′,i,j₊) / p′
             s += 1
         end
         # Rule-7: left recursion
         for j₋ in reverse((j_mid+1):(j_next-1))
             I[s] = i
             J[s] = j₋
-            V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * K′[j₋+1] * (K[i] * Aᵖ⁻¹[i, j₋+1] - K[i+1] * Aᵖ⁻¹[i+1, j₋+1]) / p′
+            V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * _ΔAᵖ_R(Aᵖ⁻¹,K,K′,i,j₋+1) / p′
             s += 1
         end
     end
