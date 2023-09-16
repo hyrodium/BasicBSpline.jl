@@ -74,7 +74,7 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
     === j-rules for fixed i ===
     - Rule-0: B₍ᵢ,ₚ,ₖ₎ ∈ span₍ᵤ₌ₛ…ₜ₎(B₍ᵤ,ₚ′,ₖ′₎), s≤j≤t ⇒ Aᵖᵢⱼ ≠ 0
               supp(B₍ⱼ,ₚ′,ₖ′₎) ⊈ supp(B₍ᵢ,ₚ,ₖ₎) ⇒ Aᵖᵢⱼ = 0 is almost equivalent (if there are not duplicated knots).
-    - Rule-1: isdegenerate_R(P, j) ⇒ Aᵖᵢⱼ = 0
+    - Rule-1: isdegenerate_R(P′, j) ⇒ Aᵖᵢⱼ = 0
               Ideally this should be NaN, but we need to support `Rational` which does not include `NaN`.
     - Rule-2: k′ⱼ   = k′ⱼ₊ₚ′ ⇒ B₍ᵢ,ₚ,ₖ₎(t) = ∑ⱼAᵖᵢⱼB₍ⱼ,ₚ′,ₖ′₎(t)  (t → k′ⱼ   + 0)
     - Rule-3: k′ⱼ₊₁ = k′ⱼ₊ₚ′ ⇒ B₍ᵢ,ₚ,ₖ₎(t) = ∑ⱼAᵖᵢⱼB₍ⱼ,ₚ′,ₖ′₎(t)  (t → k′ⱼ₊₁ - 0)
@@ -371,7 +371,7 @@ function _changebasis_I_(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSp
     === j-rules for fixed i ===
     - Rule-0: B₍ᵢ,ₚ,ₖ₎ ∈ span₍ᵤ₌ₛ…ₜ₎(B₍ᵤ,ₚ′,ₖ′₎), s≤j≤t ⇒ Aᵖᵢⱼ ≠ 0 (on B-spline space domain)
               supp(B₍ⱼ,ₚ′,ₖ′₎) ⊈ supp(B₍ᵢ,ₚ,ₖ₎) ⇒ Aᵖᵢⱼ = 0 is almost equivalent (if there are not duplicated knots).
-    - Rule-1: isdegenerate_I(P, j) ⇒ Aᵖᵢⱼ = 0
+    - Rule-1: isdegenerate_I(P′, j) ⇒ Aᵖᵢⱼ = 0
               Ideally this should be NaN, but we need to support `Rational` which does not include `NaN`.
     - Rule-2: k′ⱼ   = k′ⱼ₊ₚ′ ⇒ B₍ᵢ,ₚ,ₖ₎(t) = ∑ⱼAᵖᵢⱼB₍ⱼ,ₚ′,ₖ′₎(t)  (t → k′ⱼ   + 0)
     - Rule-3: k′ⱼ₊₁ = k′ⱼ₊ₚ′ ⇒ B₍ᵢ,ₚ,ₖ₎(t) = ∑ⱼAᵖᵢⱼB₍ⱼ,ₚ′,ₖ′₎(t)  (t → k′ⱼ₊₁ - 0)
