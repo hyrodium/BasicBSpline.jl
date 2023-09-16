@@ -456,11 +456,10 @@ function _changebasis_I_(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSp
         =#
 
         # Precalculate the range of j
-        k_ = view(k, i:i+p+1)
-        kᵢ_I = max(k[i], k[1+p])
-        kᵢ₊ₚ₊₁_I = min(k[i+p+1], k[end-p])
-        j_begin = findlast(==(kᵢ_I), _vec(k′)) - count(≤(kᵢ_I), _vec(k_)) - p′ + p + 1
-        j_end = findfirst(==(kᵢ₊ₚ₊₁_I), _vec(k′)) + count(≥(kᵢ₊ₚ₊₁_I), _vec(k_)) - p′ - 1
+        # TODO: replace the definitoin of j_range
+        Pi = BSplineSpace{p}(view(k, i:i+p+1))
+        j_end::Int = findnext(j->Pi ⊆ BSplineSpace{p′}(view(k′, j_begin:j+p′+1)), 1:n′, j_end)
+        j_begin::Int = findprev(j->Pi ⊆ BSplineSpace{p′}(view(k′, j:j_end+p′+1)), 1:n′, j_end)
         j_range = j_begin:j_end
 
         # Rule-0: outside of j_range
@@ -468,7 +467,7 @@ function _changebasis_I_(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSp
         Aᵖᵢⱼ_prev = zero(U)
         for j_next in j_range
             # Rule-1: zero
-            if k′[j_next] == k′[j_next+p′+1]
+            if isdegenerate_I(P′,j_next)
                 continue
             # Rule-2: right limit
             elseif k′[j_next] == k′[j_next+p′]
@@ -478,11 +477,13 @@ function _changebasis_I_(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSp
                 j_prev = j_next
             # Rule-3: left limit (or both limit)
             elseif k′[j_next+1] == k′[j_next+p′]
-                if j_prev == 0
-                    j_mid = j_prev
-                else
-                    j_mid = (j_prev + j_next) ÷ 2
-                end
+                j_mid = (j_prev + j_next) ÷ 2
+                # TODO: replace the definitoin of j_mid
+                # if j_prev == 0
+                #     j_mid = j_prev
+                # else
+                #     j_mid = (j_prev + j_next) ÷ 2
+                # end
                 # Rule-6: right recursion
                 for j₊ in (j_prev+1):j_mid
                     I[s], J[s] = i, j₊
@@ -503,12 +504,14 @@ function _changebasis_I_(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSp
         end
         # Rule-0: outside of j_range
         j_next = j_end + 1
+        j_mid = (j_prev + j_next) ÷ 2
+        # TODO: replace the definitoin of j_mid
+        # if j_next == n′
+        #     j_mid = j_next - 1
+        # else
+        #     j_mid = (j_prev + j_next) ÷ 2
+        # end
         Aᵖᵢⱼ_next = zero(U)
-        if j_next == n′
-            j_mid = j_next - 1
-        else
-            j_mid = (j_prev + j_next) ÷ 2
-        end
         # Rule-6: right recursion
         for j₊ in (j_prev+1):j_mid
             I[s], J[s] = i, j₊
