@@ -506,8 +506,9 @@ function _changebasis_I_(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSp
         j_next = j_end + 1
         j_mid = (j_prev + j_next) ÷ 2
         # TODO: replace the definitoin of j_mid
-        # if j_next == n′
+        # if j_next == n′ (or n′+1?)
         #     j_mid = j_next - 1
+        #     # TODO: if j_prev == 0
         # else
         #     j_mid = (j_prev + j_next) ÷ 2
         # end
