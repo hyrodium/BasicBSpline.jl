@@ -350,6 +350,30 @@ function _changebasis_I(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′}) whe
 end
 
 function _changebasis_I_(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSplineSpace{p′,T′,<:AbstractKnotVector{T′}}) where {p,p′,T,T′}
+    #=
+    Example matrix: n=4, n′=5
+
+    Aᵖ₁₁   ┬    Aᵖ₁₂   ┬    Aᵖ₁₃   ┬    Aᵖ₁₄   ┬    Aᵖ₁₅
+         Aᵖ⁻¹₁₁      Aᵖ⁻¹₁₂      Aᵖ⁻¹₁₃      Aᵖ⁻¹₁₄
+    Aᵖ₂₁   ┼    Aᵖ₂₂   ┼    Aᵖ₂₃   ┼    Aᵖ₂₄   ┼    Aᵖ₂₅
+         Aᵖ⁻¹₂₁      Aᵖ⁻¹₂₂      Aᵖ⁻¹₂₃      Aᵖ⁻¹₂₄
+    Aᵖ₃₁   ┼    Aᵖ₃₂   ┼    Aᵖ₃₃   ┼    Aᵖ₃₄   ┼    Aᵖ₃₅
+         Aᵖ⁻¹₃₁      Aᵖ⁻¹₃₂      Aᵖ⁻¹₃₃      Aᵖ⁻¹₃₄
+    Aᵖ₄₁   ┴    Aᵖ₄₂   ┴    Aᵖ₄₃   ┴    Aᵖ₄₄   ┴    Aᵖ₄₅
+
+    === i-rule ===
+    - isdegenerate_I(P, i) ⇒ Aᵖᵢⱼ = 0
+
+    === j-rules for fixed i ===
+    - Rule-0: B₍ᵢ,ₚ,ₖ₎ ∈ span₍ᵤ₌ₛ…ₜ₎(B₍ᵤ,ₚ′,ₖ′₎), s≤j≤t ⇒ Aᵖᵢⱼ ≠ 0 (on B-spline space domain)
+              supp(B₍ⱼ,ₚ′,ₖ′₎) ⊈ supp(B₍ᵢ,ₚ,ₖ₎) ⇒ Aᵖᵢⱼ = 0 is almost equivalent (if there are not duplicated knots).
+    - Rule-1: isdegenerate_I(P, j) ⇒ Aᵖᵢⱼ = 0
+              Ideally this should be NaN, but we need to support `Rational` which does not include `NaN`.
+    - Rule-2: k′ⱼ   = k′ⱼ₊ₚ′ ⇒ B₍ᵢ,ₚ,ₖ₎(t) = ∑ⱼAᵖᵢⱼB₍ⱼ,ₚ′,ₖ′₎(t)  (t → k′ⱼ   + 0)
+    - Rule-3: k′ⱼ₊₁ = k′ⱼ₊ₚ′ ⇒ B₍ᵢ,ₚ,ₖ₎(t) = ∑ⱼAᵖᵢⱼB₍ⱼ,ₚ′,ₖ′₎(t)  (t → k′ⱼ₊₁ - 0)
+    - Rule-6: Aᵖᵢⱼ = Aᵖᵢⱼ₋₁ + (recursive formula based on Aᵖ⁻¹)
+    - Rule-7: Aᵖᵢⱼ = Aᵖᵢⱼ₊₁ - (recursive formula based on Aᵖ⁻¹)
+    =#
     U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     k = knotvector(P)
     k′ = knotvector(P′)
