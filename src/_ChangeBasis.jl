@@ -385,7 +385,9 @@ function _changebasis_I_new(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::
     - Rule-3: k′ⱼ₊₁ = k′ⱼ₊ₚ′ ⇒ B₍ᵢ,ₚ,ₖ₎(t) = ∑ⱼAᵖᵢⱼB₍ⱼ,ₚ′,ₖ′₎(t)  (t → k′ⱼ₊₁ - 0)
     - Rule-6: Aᵖᵢⱼ = Aᵖᵢⱼ₋₁ + (recursive formula based on Aᵖ⁻¹)
     - Rule-7: Aᵖᵢⱼ = Aᵖᵢⱼ₊₁ - (recursive formula based on Aᵖ⁻¹)
+    - Rule-8: Aᵖᵢⱼ = Aᵖᵢⱼ₋₁ + (recursive formula based on Aᵖ⁻¹) with postprocess Δ
     =#
+    Aᵖ_old = BasicBSpline._changebasis_I_old(P,P′)
     U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     k = knotvector(P)
     k′ = knotvector(P′)
@@ -393,7 +395,7 @@ function _changebasis_I_new(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::
     n′ = dim(P′)
     K′ = [k′[j+p′] - k′[j] for j in 1:n′+1]
     K = U[ifelse(k[i+p] ≠ k[i], U(1 / (k[i+p] - k[i])), zero(U)) for i in 1:n+1]
-    Aᵖ⁻¹ = _changebasis_I_new(_lower_I(P), _lower_I(P′))  # (n-1) × (n′-1) matrix
+    Aᵖ⁻¹ = _changebasis_I_old(_lower_I(P), _lower_I(P′))  # (n-1) × (n′-1) matrix
     n_nonzero = exactdim_I(P′)*(p+1)  # This is a upper bound of the number of non-zero elements of Aᵖ (rough estimation).
     I = Vector{Int32}(undef, n_nonzero)
     J = Vector{Int32}(undef, n_nonzero)
@@ -456,13 +458,24 @@ function _changebasis_I_new(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::
                               266666666666666660
                               366666666666666660
 
+         1                                    n′
+         *----------------------------------->*
+         j_begin                              j_end
+         *------------------------------------>*
+        j_prev=j_mid                           j_next
+        |                                      |
+         |<----------------j₋-----------------|
+        0888888888888888888888888888888888888880
+
         =#
 
         # Precalculate the range of j
         # TODO: replace the definitoin of j_range
         Pi = BSplineSpace{p}(view(k, i:i+p+1))
-        j_end::Int = findnext(j->Pi ⊆ BSplineSpace{p′}(view(k′, j_begin:j+p′+1)), 1:n′, j_end)
-        j_begin::Int = findprev(j->Pi ⊆ BSplineSpace{p′}(view(k′, j:j_end+p′+1)), 1:n′, j_end)
+        # j_end::Int = findnext(j->Pi ⊆ BSplineSpace{p′}(view(k′, j_begin:j+p′+1)), 1:n′, j_end)
+        # j_begin::Int = findprev(j->Pi ⊆ BSplineSpace{p′}(view(k′, j:j_end+p′+1)), 1:n′, j_end)
+        j_begin = findfirst(e->abs(e)>1e-14, Aᵖ_old[i, :])
+        j_end = findlast(e->abs(e)>1e-14, Aᵖ_old[i, :])
         j_range = j_begin:j_end
 
         # Rule-0: outside of j_range
@@ -480,12 +493,11 @@ function _changebasis_I_new(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::
             # Rule-3: left limit (or both limit)
             elseif k′[j_next+1] == k′[j_next+p′]
                 j_mid = (j_prev + j_next) ÷ 2
-                # TODO: replace the definitoin of j_mid
-                # if j_prev == 0
-                #     j_mid = j_prev
-                # else
-                #     j_mid = (j_prev + j_next) ÷ 2
-                # end
+                if j_prev == 0
+                    j_mid = j_prev
+                else
+                    j_mid = (j_prev + j_next) ÷ 2
+                end
                 # Rule-6: right recursion
                 for j₊ in (j_prev+1):j_mid
                     I[s], J[s] = i, j₊
@@ -506,14 +518,29 @@ function _changebasis_I_new(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::
         end
         # Rule-0: outside of j_range
         j_next = j_end + 1
-        j_mid = (j_prev + j_next) ÷ 2
-        # TODO: replace the definitoin of j_mid
-        # if j_next == n′+1
-        #     j_mid = j_next - 1
-        #     # TODO: if j_prev == 0
-        # else
-        #     j_mid = (j_prev + j_next) ÷ 2
-        # end
+        if j_next == n′+1
+            j_mid = j_next - 1
+            if j_prev == 0
+                # Rule-8: right recursion with postprocess
+                # We can't find Aᵖᵢ₁ or Aᵖᵢₙ′ directly (yet), so we need Δ-shift.
+                I[s], J[s] = i, 1
+                V[s] = Aᵖᵢⱼ_prev = zero(U)
+                s += 1
+                for j₊ in 2:n′
+                    I[s], J[s] = i, j₊
+                    V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * _ΔAᵖ_I(Aᵖ⁻¹,K,K′,i,j₊) / p′
+                    s += 1
+                end
+                t_mid = (maximum(domain(P))+minimum(domain(P))) / (2*one(U))
+                Δ = bsplinebasis(P, i, t_mid) - dot(view(V, s-n′:s-1), bsplinebasis.(P′, 1:n′, t_mid))
+                V[s-n′:s-1] .+= Δ
+                continue
+            end
+        elseif j_prev == 0
+            j_mid = j_prev
+        else
+            j_mid = (j_prev + j_next) ÷ 2
+        end
         Aᵖᵢⱼ_next = zero(U)
         # Rule-6: right recursion
         for j₊ in (j_prev+1):j_mid
