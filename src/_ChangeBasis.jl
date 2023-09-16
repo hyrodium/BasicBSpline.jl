@@ -164,12 +164,11 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         Aᵖᵢⱼ_prev = zero(U)
         for j_next in j_range
             # Rule-1: zero
-            if k′[j_next] == k′[j_next+p′+1]
+            if k′[j_next] == k′[j_next+p′+1]  # same as `isdegenerate_R(P′,j_next)`
                 continue
             # Rule-2: right limit
             elseif k′[j_next] == k′[j_next+p′]
-                I[s] = i
-                J[s] = j_next
+                I[s], J[s] = i, j_next
                 V[s] = Aᵖᵢⱼ_prev = bsplinebasis₊₀(P,i,k′[j_next+1])
                 s += 1
                 j_prev = j_next
@@ -178,19 +177,16 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
                 j_mid = (j_prev + j_next) ÷ 2
                 # Rule-6: right recursion
                 for j₊ in (j_prev+1):j_mid
-                    I[s] = i
-                    J[s] = j₊
+                    I[s], J[s] = i, j₊
                     V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * _ΔAᵖ_R(Aᵖ⁻¹,K,K′,i,j₊) / p′
                     s += 1
                 end
-                I[s] = i
-                J[s] = j_next
+                I[s], J[s] = i, j_next
                 V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_next = bsplinebasis₋₀(P,i,k′[j_next+1])
                 s += 1
                 # Rule-7: left recursion
                 for j₋ in reverse((j_mid+1):(j_next-1))
-                    I[s] = i
-                    J[s] = j₋
+                    I[s], J[s] = i, j₋
                     V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * _ΔAᵖ_R(Aᵖ⁻¹,K,K′,i,j₋+1) / p′
                     s += 1
                 end
@@ -199,19 +195,17 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         end
         # Rule-0: outside of j_range
         j_next = j_end + 1
-        Aᵖᵢⱼ_next = zero(U)
         j_mid = (j_prev + j_next) ÷ 2
+        Aᵖᵢⱼ_next = zero(U)
         # Rule-6: right recursion
         for j₊ in (j_prev+1):j_mid
-            I[s] = i
-            J[s] = j₊
+            I[s], J[s] = i, j₊
             V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * _ΔAᵖ_R(Aᵖ⁻¹,K,K′,i,j₊) / p′
             s += 1
         end
         # Rule-7: left recursion
         for j₋ in reverse((j_mid+1):(j_next-1))
-            I[s] = i
-            J[s] = j₋
+            I[s], J[s] = i, j₋
             V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * _ΔAᵖ_R(Aᵖ⁻¹,K,K′,i,j₋+1) / p′
             s += 1
         end
