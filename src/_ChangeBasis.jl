@@ -354,6 +354,14 @@ function _changebasis_I_old(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′})
     return A
 end
 
+function _find_j_begin_end_I(P::BSplineSpace{p}, P′::BSplineSpace{p′}, i, j_begin, j_end):: Tuple{Int, Int} where {p, p′}
+    # TODO: avoid `_changebasis_I_old`
+    Aᵖ_old = _changebasis_I_old(P,P′)
+    j_begin = findfirst(e->abs(e)>1e-14, Aᵖ_old[i, :])
+    j_end = findlast(e->abs(e)>1e-14, Aᵖ_old[i, :])
+    return j_begin, j_end
+end
+
 function _ΔAᵖ_I(Aᵖ⁻¹::AbstractMatrix, K::AbstractVector, K′::AbstractVector, i::Integer, j::Integer)
     n = length(K)-1
     if i == 1
@@ -391,7 +399,6 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
     - Rule-7: Aᵖᵢⱼ = Aᵖᵢⱼ₊₁ - (recursive formula based on Aᵖ⁻¹)
     - Rule-8: Aᵖᵢⱼ = Aᵖᵢⱼ₋₁ + (recursive formula based on Aᵖ⁻¹) with postprocess Δ
     =#
-    Aᵖ_old = BasicBSpline._changebasis_I_old(P,P′)
     U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     k = knotvector(P)
     k′ = knotvector(P′)
@@ -474,12 +481,7 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
         =#
 
         # Precalculate the range of j
-        # TODO: replace the definitoin of j_range
-        Pi = BSplineSpace{p}(view(k, i:i+p+1))
-        # j_end::Int = findnext(j->Pi ⊆ BSplineSpace{p′}(view(k′, j_begin:j+p′+1)), 1:n′, j_end)
-        # j_begin::Int = findprev(j->Pi ⊆ BSplineSpace{p′}(view(k′, j:j_end+p′+1)), 1:n′, j_end)
-        j_begin = findfirst(e->abs(e)>1e-14, Aᵖ_old[i, :])
-        j_end = findlast(e->abs(e)>1e-14, Aᵖ_old[i, :])
+        j_begin, j_end = _find_j_begin_end_I(P, P′, i, j_begin, j_end)
         j_range = j_begin:j_end
 
         # Rule-0: outside of j_range
