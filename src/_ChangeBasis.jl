@@ -62,14 +62,14 @@ function _find_j_begin_end_R(P::BSplineSpace{p}, P′::BSplineSpace{p′}, i, j_
     # j_end::Int = findnext(j->Pi ⊆ BSplineSpace{p′}(view(k′, j_begin:j+p′+1)), 1:n′, j_end)
     m = p′-p
     t_end = k[i+p+1]
-    for ii in 0:p+1
+    for ii in 0:(p+1)
         if k[i+p+1-ii] == t_end
             m += 1
         else
             break
         end
     end
-    for j in j_end-p′-1:n′
+    for j in (j_end-p′-1):n′
         if k′[j+p′+1] == t_end
             m -= 1
         end
@@ -83,14 +83,14 @@ function _find_j_begin_end_R(P::BSplineSpace{p}, P′::BSplineSpace{p′}, i, j_
     # j_begin::Int = findprev(j->Pi ⊆ BSplineSpace{p′}(view(k′, j:j_end+p′+1)), 1:n′, j_end)
     m = p′-p
     t_begin = k[i]
-    for ii in 0:p+1
+    for ii in 0:(p+1)
         if k[i+ii] == t_begin
             m += 1
         else
             break
         end
     end
-    for j in j_end+p′+1:-1:1
+    for j in reverse(1:(j_end+p′+1))
         if k′[j] == t_begin
             m -= 1
         end
