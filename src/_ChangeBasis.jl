@@ -57,7 +57,28 @@ function _find_j_begin_end_R(P::BSplineSpace{p}, P′::BSplineSpace{p′}, i, j_
     k′ = knotvector(P′)
     n′ = dim(P′)
     Pi = BSplineSpace{p}(view(k, i:i+p+1))
-    j_end::Int = findnext(j->Pi ⊆ BSplineSpace{p′}(view(k′, j_begin:j+p′+1)), 1:n′, j_end)
+
+    # Find `j_end`. This is the same as:
+    # j_end::Int = findnext(j->Pi ⊆ BSplineSpace{p′}(view(k′, j_begin:j+p′+1)), 1:n′, j_end)
+    m = p′-p
+    t_end = k[i+p+1]
+    for ii in 0:p+1
+        if k[i+p+1-ii] == t_end
+            m += 1
+        else
+            break
+        end
+    end
+    for j in j_end-p′-1:n′
+        if k′[j+p′+1] == t_end
+            m -= 1
+        end
+        if m == 0
+            j_end = j
+            break
+        end
+    end
+
     j_begin::Int = findprev(j->Pi ⊆ BSplineSpace{p′}(view(k′, j:j_end+p′+1)), 1:n′, j_end)
     return j_begin, j_end
 end
