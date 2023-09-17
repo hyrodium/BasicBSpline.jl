@@ -52,6 +52,16 @@ function _changebasis_R(P::BSplineSpace{0,T,KnotVector{T}}, P′::BSplineSpace{p
     return A⁰
 end
 
+function _find_j_begin_end_R(P::BSplineSpace{p}, P′::BSplineSpace{p′}, i, j_begin, j_end):: Tuple{Int, Int} where {p, p′}
+    k = knotvector(P)
+    k′ = knotvector(P′)
+    n′ = dim(P′)
+    Pi = BSplineSpace{p}(view(k, i:i+p+1))
+    j_end::Int = findnext(j->Pi ⊆ BSplineSpace{p′}(view(k′, j_begin:j+p′+1)), 1:n′, j_end)
+    j_begin::Int = findprev(j->Pi ⊆ BSplineSpace{p′}(view(k′, j:j_end+p′+1)), 1:n′, j_end)
+    return j_begin, j_end
+end
+
 function _ΔAᵖ_R(Aᵖ⁻¹::AbstractMatrix, K::AbstractVector, K′::AbstractVector, i::Integer, j::Integer)
     return K′[j] * (K[i] * Aᵖ⁻¹[i, j] - K[i+1] * Aᵖ⁻¹[i+1, j])
 end
@@ -154,9 +164,7 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         =#
 
         # Precalculate the range of j
-        Pi = BSplineSpace{p}(view(k, i:i+p+1))
-        j_end::Int = findnext(j->Pi ⊆ BSplineSpace{p′}(view(k′, j_begin:j+p′+1)), 1:n′, j_end)
-        j_begin::Int = findprev(j->Pi ⊆ BSplineSpace{p′}(view(k′, j:j_end+p′+1)), 1:n′, j_end)
+        j_begin, j_end = _find_j_begin_end_R(P, P′, i, j_begin, j_end)
         j_range = j_begin:j_end
 
         # Rule-0: outside of j_range
