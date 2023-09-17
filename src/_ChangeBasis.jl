@@ -70,7 +70,7 @@ function _find_j_begin_end_R(P::BSplineSpace{p}, P′::BSplineSpace{p′}, i, j_
         end
     end
     for j in (j_end-p′-1):n′
-        if k′[j+p′+1] == t_end
+        if t_end == k′[j+p′+1]  # can be ≤
             m -= 1
         end
         if m == 0
@@ -91,7 +91,7 @@ function _find_j_begin_end_R(P::BSplineSpace{p}, P′::BSplineSpace{p′}, i, j_
         end
     end
     for j in reverse(1:(j_end+p′+1))
-        if k′[j] == t_begin
+        if k′[j] == t_begin  # can be ≤
             m -= 1
         end
         if m == 0
