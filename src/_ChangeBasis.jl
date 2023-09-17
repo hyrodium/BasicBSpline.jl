@@ -488,12 +488,7 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
                 j_prev = j_next
             # Rule-3: left limit (or both limit)
             elseif k′[j_next+1] == k′[j_next+p′]
-                j_mid = (j_prev + j_next) ÷ 2
-                if j_prev == 0
-                    j_mid = j_prev
-                else
-                    j_mid = (j_prev + j_next) ÷ 2
-                end
+                j_mid = (j_prev == 0 ? j_prev : (j_prev + j_next) ÷ 2)
                 # Rule-6: right recursion
                 for j₊ in (j_prev+1):j_mid
                     I[s], J[s] = i, j₊
