@@ -52,7 +52,7 @@ function _changebasis_R(P::BSplineSpace{0,T,KnotVector{T}}, P′::BSplineSpace{p
     return A⁰
 end
 
-function _ΔAᵖ_R(Aᵖ⁻¹, K, K′, i, j)
+function _ΔAᵖ_R(Aᵖ⁻¹::AbstractMatrix, K::AbstractVector, K′::AbstractVector, i::Integer, j::Integer)
     return K′[j] * (K[i] * Aᵖ⁻¹[i, j] - K[i+1] * Aᵖ⁻¹[i+1, j])
 end
 
@@ -346,7 +346,7 @@ function _changebasis_I_old(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′})
     return A
 end
 
-function _ΔAᵖ_I(Aᵖ⁻¹, K, K′, i, j)
+function _ΔAᵖ_I(Aᵖ⁻¹::AbstractMatrix, K::AbstractVector, K′::AbstractVector, i::Integer, j::Integer)
     n = length(K)-1
     if i == 1
         return - K′[j] * K[i+1] * Aᵖ⁻¹[i, j-1]
