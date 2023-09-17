@@ -177,6 +177,65 @@ julia> bsplinebasis.(P,1:5,(1:6)')
     )
 end
 
+@doc raw"""
+``i``-th B-spline basis function.
+Modified version (2).
+```math
+\begin{aligned}
+{B}_{(i,p,k)}(t)
+&=
+\frac{t-k_{i}}{k_{i+p}-k_{i}}{B}_{(i,p-1,k)}(t)
++\frac{k_{i+p+1}-t}{k_{i+p+1}-k_{i+1}}{B}_{(i+1,p-1,k)}(t) \\
+{B}_{(i,0,k)}(t)
+&=
+\begin{cases}
+    &1\quad (k_{i} \le t<k_{i+1})\\
+    &1\quad (k_{i} < t = k_{i+1}=k_{l})\\
+    &0\quad (\text{otherwise})
+\end{cases}
+\end{aligned}
+```
+
+# Examples
+```jldoctest
+julia> P = BSplineSpace{0}(KnotVector(1:6))
+BSplineSpace{0, Int64, KnotVector{Int64}}(KnotVector([1, 2, 3, 4, 5, 6]))
+
+julia> bsplinebasis₋₀I.(P,1:5,(1:6)')
+5×6 Matrix{Float64}:
+ 1.0  1.0  0.0  0.0  0.0  0.0
+ 0.0  0.0  1.0  0.0  0.0  0.0
+ 0.0  0.0  0.0  1.0  0.0  0.0
+ 0.0  0.0  0.0  0.0  1.0  0.0
+ 0.0  0.0  0.0  0.0  0.0  1.0
+```
+"""
+@generated function bsplinebasis₋₀I(P::BSplineSpace{p,T}, i::Integer, t::S) where {p, T, S<:Real}
+    U = StaticArrays.arithmetic_closure(promote_type(T,S))
+    ks = [Symbol(:k,i) for i in 1:p+2]
+    Ks = [Symbol(:K,i) for i in 1:p+1]
+    Bs = [Symbol(:B,i) for i in 1:p+1]
+    k_l = Expr(:tuple, ks...)
+    k_r = Expr(:tuple, :(v[i]), (:(v[i+$j]) for j in 1:p+1)...)
+    K_l(n) = Expr(:tuple, Ks[1:n]...)
+    B_l(n) = Expr(:tuple, Bs[1:n]...)
+    A_r(n) = Expr(:tuple, [:($U(($(ks[i])<t≤$(ks[i+1])) || (v[1]==$(ks[i])==t<$(ks[i+1])))) for i in 1:n]...)
+    K_r(m,n) = Expr(:tuple, [:(_d(t-$(ks[i]),$(ks[i+m])-$(ks[i]))) for i in 1:n]...)
+    B_r(n) = Expr(:tuple, [:($(Ks[i])*$(Bs[i])+(1-$(Ks[i+1]))*$(Bs[i+1])) for i in 1:n]...)
+    exs = Expr[]
+    for i in 1:p
+        push!(exs, :($(K_l(p+2-i)) = $(K_r(i,p+2-i))))
+        push!(exs, :($(B_l(p+1-i)) = $(B_r(p+1-i))))
+    end
+    Expr(:block,
+        :(v = knotvector(P).vector),
+        :($k_l = $k_r),
+        :($(B_l(p+1)) = $(A_r(p+1))),
+        exs...,
+        :(return B1)
+    )
+end
+
 # bsplinebasis with UniformKnotVector
 @inline function bsplinebasis(P::UniformBSplineSpace{p,T,R},i::Integer,t::S) where {p, T, R<:AbstractUnitRange, S<:Real}
     U = StaticArrays.arithmetic_closure(promote_type(T,S))
@@ -194,6 +253,7 @@ end
 end
 @inline bsplinebasis₋₀(P::UniformBSplineSpace,i::Integer,t::Real) = bsplinebasis(P,i,t)
 @inline bsplinebasis₊₀(P::UniformBSplineSpace,i::Integer,t::Real) = bsplinebasis(P,i,t)
+@inline bsplinebasis₋₀I(P::UniformBSplineSpace,i::Integer,t::Real) = bsplinebasis(P,i,t)
 
 ################################################
 #= B-Spline Basis Functions at specific point =#
