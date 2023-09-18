@@ -113,9 +113,12 @@ Check inclusive relationship between B-spline spaces.
 ```jldoctest
 julia> P1 = BSplineSpace{1}(KnotVector([1,3,5,8]));
 
+
 julia> P2 = BSplineSpace{1}(KnotVector([1,3,5,6,8,9]));
 
+
 julia> P3 = BSplineSpace{2}(KnotVector([1,1,3,3,5,5,8,8]));
+
 
 julia> P1 ⊆ P2
 true
@@ -327,10 +330,10 @@ julia> P = BSplineSpace{2}(k)
 BSplineSpace{2, Float64, KnotVector{Float64}}(KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]))
 
 julia> bsplinesupport(P,1)
-0.0..5.5
+0.0 .. 5.5
 
 julia> bsplinesupport(P,2)
-1.5..8.0
+1.5 .. 8.0
 ```
 """
 bsplinesupport(P::BSplineSpace, i::Integer) = bsplinesupport_R(P,i)
@@ -370,10 +373,12 @@ Return an index of a interval in the domain of B-spline space
 ```jldoctest
 julia> k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]);
 
+
 julia> P = BSplineSpace{2}(k);
 
+
 julia> domain(P)
-2.5..9.0
+2.5 .. 9.0
 
 julia> intervalindex(P,2.6)
 1
@@ -403,7 +408,9 @@ This function is compatible with `issqsubset` (`⊑`)
 ```jldoctest
 julia> k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]);
 
+
 julia> P = BSplineSpace{2}(k);
+
 
 julia> P′ = expandspace_I(P, Val(1), KnotVector([6.0]))
 BSplineSpace{3, Float64, KnotVector{Float64}}(KnotVector([0.0, 1.5, 2.5, 2.5, 5.5, 5.5, 6.0, 8.0, 8.0, 9.0, 9.0, 9.5, 10.0]))
@@ -415,10 +422,10 @@ julia> P ⊑ P′
 true
 
 julia> domain(P)
-2.5..9.0
+2.5 .. 9.0
 
 julia> domain(P′)
-2.5..9.0
+2.5 .. 9.0
 ```
 """
 function expandspace_I end
@@ -448,7 +455,9 @@ This function is compatible with `issubset` (`⊆`).
 ```jldoctest
 julia> k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]);
 
+
 julia> P = BSplineSpace{2}(k);
+
 
 julia> P′ = expandspace_R(P, Val(1), KnotVector([6.0]))
 BSplineSpace{3, Float64, KnotVector{Float64}}(KnotVector([0.0, 0.0, 1.5, 1.5, 2.5, 2.5, 5.5, 5.5, 6.0, 8.0, 8.0, 9.0, 9.0, 9.5, 9.5, 10.0, 10.0]))
@@ -460,10 +469,10 @@ julia> P ⊑ P′
 false
 
 julia> domain(P)
-2.5..9.0
+2.5 .. 9.0
 
 julia> domain(P′)
-1.5..9.5
+1.5 .. 9.5
 ```
 """
 function expandspace_R end
