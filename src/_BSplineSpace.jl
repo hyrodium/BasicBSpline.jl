@@ -171,6 +171,7 @@ Check inclusive relationship between B-spline spaces.
 ```
 """
 function issqsubset(P::BSplineSpace{p}, P′::BSplineSpace{p′}) where {p, p′}
+    # TODO: fix https://github.com/hyrodium/BasicBSpline.jl/issues/329
     k = knotvector(P)
     k′ = knotvector(P′)
     l = length(k)

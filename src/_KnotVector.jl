@@ -389,6 +389,7 @@ end
 
 Base.view(k::UniformKnotVector{T},inds) where T = unsafe_uniformknotvector(T, view(_vec(k), inds))
 Base.view(k::KnotVector,inds) = unsafe_subknotvector(view(_vec(k), inds))
+Base.view(k::SubKnotVector,inds) = unsafe_subknotvector(view(_vec(k), inds))
 
 """
 Convert `AbstractKnotVector` to `AbstractVector`

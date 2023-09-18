@@ -21,7 +21,7 @@
         @test P ⊑ P′
         A = @inferred changebasis(P,P′)
         @test A isa SparseMatrixCSC
-        # @test !any(iszero.(A.nzval))
+        @test !any(iszero.(A.nzval))
         @test A ≈ BasicBSpline._changebasis_I(P,P′) == changebasis_I(P,P′)
         n = dim(P)
         n′ = dim(P′)
