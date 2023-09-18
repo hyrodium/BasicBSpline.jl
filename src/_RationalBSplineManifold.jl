@@ -23,6 +23,7 @@ julia> a = [SVector(1,0), SVector(1,1), SVector(0,1)]
 
 julia> M = RationalBSplineManifold(a,w,P);  # 1/4 arc
 
+
 julia> M(0.3)
 2-element SVector{2, Float64} with indices SOneTo(2):
  0.8973756499953727

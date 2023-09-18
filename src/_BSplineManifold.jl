@@ -25,6 +25,7 @@ julia> a = [SVector(1,0), SVector(1,1), SVector(0,1)]
 
 julia> M = BSplineManifold(a, P);
 
+
 julia> M(0.4)
 2-element SVector{2, Float64} with indices SOneTo(2):
  0.84
@@ -33,6 +34,7 @@ julia> M(0.4)
 julia> M(1.2)
 ERROR: DomainError with 1.2:
 The input 1.2 is out of range.
+[...]
 ```
 """
 struct BSplineManifold{Dim,Deg,C,S<:NTuple{Dim, BSplineSpace}} <: AbstractManifold{Dim}
@@ -65,9 +67,10 @@ julia> P = BSplineSpace{1}(KnotVector([0,0,1,1]))
 BSplineSpace{1, Int64, KnotVector{Int64}}(KnotVector([0, 0, 1, 1]))
 
 julia> domain(P)
-0..1
+0 .. 1
 
 julia> M = BSplineManifold([0,1], P);
+
 
 julia> unbounded_mapping(M, 0.1)
 0.1
@@ -81,6 +84,7 @@ julia> unbounded_mapping(M, 1.2)
 julia> M(1.2)
 ERROR: DomainError with 1.2:
 The input 1.2 is out of range.
+[...]
 ```
 """
 function unbounded_mapping end

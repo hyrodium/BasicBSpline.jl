@@ -201,7 +201,7 @@ Modified version (2).
 julia> P = BSplineSpace{0}(KnotVector(1:6))
 BSplineSpace{0, Int64, KnotVector{Int64}}(KnotVector([1, 2, 3, 4, 5, 6]))
 
-julia> bsplinebasis₋₀I.(P,1:5,(1:6)')
+julia> BasicBSpline.bsplinebasis₋₀I.(P,1:5,(1:6)')
 5×6 Matrix{Float64}:
  1.0  1.0  0.0  0.0  0.0  0.0
  0.0  0.0  1.0  0.0  0.0  0.0

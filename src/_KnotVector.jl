@@ -195,7 +195,9 @@ For example, ``(1,2,3,5)+(4,5,8)=(1,2,3,4,5,5,8)``.
 ```jldoctest
 julia> k1 = KnotVector([1,2,3,5]);
 
+
 julia> k2 = KnotVector([4,5,8]);
+
 
 julia> k1 + k2
 KnotVector([1, 2, 3, 4, 5, 5, 8])
@@ -245,6 +247,7 @@ For example, ``2\cdot (1,2,2,5)=(1,1,2,2,2,2,5,5)``.
 # Examples
 ```jldoctest
 julia> k = KnotVector([1,2,2,5]);
+
 
 julia> 2 * k
 KnotVector([1, 1, 2, 2, 2, 2, 5, 5])
@@ -297,6 +300,7 @@ For example, ``\#{(1,2,2,3)}=4``.
 ```jldoctest
 julia> k = KnotVector([1,2,2,3]);
 
+
 julia> length(k)
 4
 ```
@@ -322,6 +326,7 @@ For example, ``\widehat{(1,2,2,3)}=(1,2,3)``.
 # Examples
 ```jldoctest
 julia> k = KnotVector([1,2,2,3]);
+
 
 julia> unique(k)
 KnotVector([1, 2, 3])
@@ -411,6 +416,7 @@ For example, if ``k=(1,2,2,3)``, then ``\mathfrak{n}_k(0.3)=0``, ``\mathfrak{n}_
 
 ```jldoctest
 julia> k = KnotVector([1,2,2,3]);
+
 
 julia> countknots(k,0.3)
 0
