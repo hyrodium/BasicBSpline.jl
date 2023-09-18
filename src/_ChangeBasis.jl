@@ -397,6 +397,8 @@ end
 
 function _find_j_begin_end_I(P::BSplineSpace{p}, P′::BSplineSpace{p′}, i, j_begin, j_end):: Tuple{Int, Int} where {p, p′}
     # TODO: avoid `_changebasis_I_old`
+    # TODO: fix performance https://github.com/hyrodium/BasicBSpline.jl/pull/323#issuecomment-1723216566
+    # TODO: remove threshold such as 1e-14
     Aᵖ_old = _changebasis_I_old(P,P′)
     j_begin = findfirst(e->abs(e)>1e-14, Aᵖ_old[i, :])
     j_end = findlast(e->abs(e)>1e-14, Aᵖ_old[i, :])
@@ -565,6 +567,7 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
             if j_prev == 0
                 # Rule-8: right recursion with postprocess
                 # We can't find Aᵖᵢ₁ or Aᵖᵢₙ′ directly (yet!), so we need Δ-shift.
+                # TODO: Find a way to avoid the Δ-shift.
                 I[s], J[s] = i, 1
                 V[s] = Aᵖᵢⱼ_prev = zero(U)
                 s += 1
