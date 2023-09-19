@@ -27,6 +27,10 @@ UniformKnotVector
 ```
 
 ```@docs
+SubKnotVector
+```
+
+```@docs
 EmptyKnotVector
 ```
 
@@ -62,4 +66,9 @@ unique(k::AbstractKnotVector)
 
 ```@docs
 countknots(k::AbstractKnotVector, t::Real)
+```
+
+## `KnotVector` with string macro
+```@docs
+@knotvector_str
 ```

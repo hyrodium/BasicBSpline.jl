@@ -175,6 +175,10 @@ bsplinebasis₋₀
 bsplinebasis
 ```
 
+```@docs
+BasicBSpline.bsplinebasis₋₀I
+```
+
 ## B-spline basis functions at specific point
 Sometimes, you may need the non-zero values of B-spline basis functions at specific point.
 The `bsplinebasisall` function is much more efficient than evaluating B-spline functions one by one with `bsplinebasis` function.

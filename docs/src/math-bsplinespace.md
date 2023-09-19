@@ -89,3 +89,7 @@ dim
 ```@docs
 exactdim_R(P::BSplineSpace)
 ```
+
+```@docs
+exactdim_I(P::BSplineSpace)
+```
