@@ -75,6 +75,14 @@ nothing # hide
 ```
 
 ```@docs
+changebasis_R
+```
+
+```@docs
+changebasis_I
+```
+
+```@docs
 issqsubset
 ```
 
