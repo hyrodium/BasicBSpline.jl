@@ -102,6 +102,17 @@
         @test P3 ⊋ P1
     end
 
+    @testset "sqsubset" begin
+        P1 = BSplineSpace{3}(KnotVector([2, 2, 2, 3, 3, 4, 4, 4]))
+        P2 = BSplineSpace{3}(KnotVector([1, 3, 3, 3, 4]))
+        P3 = BSplineSpace{2}(knotvector"3 3")
+        P4 = BSplineSpace{3}(knotvector"4 4")
+        P5 = BSplineSpace{3}(knotvector"414")
+
+        @test P1 ⋢ P2
+        @test P3 ⊑ P4 ⊑ P5
+    end
+
     @testset "equality" begin
         P1 = BSplineSpace{2}(KnotVector([1, 2, 3, 5, 8, 8, 9]))
         P2 = BSplineSpace{2}(KnotVector([1, 2, 3, 5, 8, 8, 9]))
