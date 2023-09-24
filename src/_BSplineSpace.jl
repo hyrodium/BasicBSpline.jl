@@ -184,6 +184,11 @@ function issqsubset(P::BSplineSpace{p}, P′::BSplineSpace{p′}) where {p, p′
     if p₊ < 0
         return false
     elseif domain(P) ≠ domain(P′)
+        # The domains must be equal for P ⊑ P′.
+        return false
+    elseif !(k′[1+p′] < k′[end-p′])
+        # The width(domain(P′)) must be non-zero for P ⊑ P′.
+        # There may be some edge-case like P′ ⊑ P′, but we don't need `true` for that situation.
         return false
     end
 
