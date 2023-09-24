@@ -187,6 +187,10 @@ function issqsubset(P::BSplineSpace{p}, P′::BSplineSpace{p′}) where {p, p′
         return false
     end
 
+    if !(k′[1+p′] < k′[end-p′])
+        return false
+    end
+
     inner_knotvector = view(k, p+2:l-p-1)
     inner_knotvector′ = view(k′, p′+2:l′-p′-1)
 
