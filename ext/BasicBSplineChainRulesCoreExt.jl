@@ -2,6 +2,7 @@ module BasicBSplineChainRulesCoreExt
 
 using BasicBSpline
 using ChainRulesCore
+import BasicBSpline.AbstractFunctionSpace
 
 const BSPLINESPACE_INFO = """
 derivatives of B-spline basis functions with respect to BSplineSpace not implemented currently.
