@@ -1,3 +1,8 @@
+module BasicBSplineRecipesBaseExt
+
+using BasicBSpline
+using RecipesBase
+
 # B-spline space
 @recipe function f(P::AbstractFunctionSpace)
     # TODO fix number of sampling points
@@ -98,3 +103,5 @@ end
 TODO
 * BSplineSolid
 =#
+
+end # module

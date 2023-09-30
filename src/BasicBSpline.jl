@@ -51,7 +51,10 @@ include("_ChangeBasis.jl")
 include("_BSplineManifold.jl")
 include("_RationalBSplineManifold.jl")
 include("_Refinement.jl")
-include("_ChainRules.jl")
-include("_PlotRecipes.jl")
+
+if !isdefined(Base, :get_extension)
+    include("../ext/BasicBSplineChainRulesCoreExt.jl")
+    include("../ext/BasicBSplineRecipesBaseExt.jl")
+end
 
 end # module

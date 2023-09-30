@@ -1,3 +1,8 @@
+module BasicBSplineChainRulesCoreExt
+
+using BasicBSpline
+using ChainRulesCore
+
 const BSPLINESPACE_INFO = """
 derivatives of B-spline basis functions with respect to BSplineSpace not implemented currently.
 """
@@ -81,3 +86,5 @@ function ChainRulesCore.rrule(::typeof(bsplinebasisall), P::AbstractFunctionSpac
     end
     return (B, bsplinebasis_pullback)
 end
+
+end # module
