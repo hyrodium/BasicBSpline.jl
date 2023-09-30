@@ -3,6 +3,7 @@ module BasicBSplineRecipesBaseExt
 using BasicBSpline
 using RecipesBase
 import BasicBSpline.AbstractFunctionSpace
+using StaticArrays
 
 # B-spline space
 @recipe function f(P::AbstractFunctionSpace)
