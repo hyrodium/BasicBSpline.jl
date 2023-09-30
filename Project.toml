@@ -20,6 +20,7 @@ BasicBSplineChainRulesCoreExt = "ChainRulesCore"
 BasicBSplineRecipesBaseExt = "RecipesBase"
 
 [compat]
+Aqua = "0.7"
 ChainRulesCore = "1.15"
 IntervalSets = "0.5, 0.6, 0.7"
 RecipesBase = "1"
@@ -27,7 +28,17 @@ StaticArrays = "1"
 julia = "^1.6"
 
 [extras]
+Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
+ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
+ChainRulesTestUtils = "cdddcdb0-9152-4a09-a978-84456f9df70a"
+GeometryBasics = "5c1252a2-5f33-56bf-86c9-59e7332b4326"
+IntervalSets = "8197267c-284f-5f27-9208-e0e47529a953"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
+StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test"]
+test = ["Aqua", "ChainRulesCore", "ChainRulesTestUtils", "GeometryBasics", "IntervalSets", "LinearAlgebra", "Plots", "Random", "SparseArrays", "StaticArrays", "Test"]
