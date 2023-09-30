@@ -4,8 +4,6 @@ using LinearAlgebra
 using SparseArrays
 using IntervalSets
 using StaticArrays
-using RecipesBase
-using ChainRulesCore
 
 # Types
 export AbstractKnotVector, KnotVector, UniformKnotVector, EmptyKnotVector, SubKnotVector
