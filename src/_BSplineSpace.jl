@@ -54,6 +54,9 @@ end
 function BSplineSpace{p,T,K}(P::BSplineSpace{p}) where {p,T,K}
     return BSplineSpace{p,T}(K(knotvector(P)))
 end
+function BSplineSpace{p,T,K}(k::AbstractKnotVector) where {p,T,K}
+    return BSplineSpace{p,T}(K(k))
+end
 
 # Broadcast like a scalar
 Base.Broadcast.broadcastable(P::BSplineSpace) = Ref(P)
