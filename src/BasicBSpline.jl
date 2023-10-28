@@ -4,6 +4,7 @@ using LinearAlgebra
 using SparseArrays
 using IntervalSets
 using StaticArrays
+using PrecompileTools
 
 # Types
 export AbstractKnotVector, KnotVector, UniformKnotVector, EmptyKnotVector, SubKnotVector
@@ -49,6 +50,7 @@ include("_ChangeBasis.jl")
 include("_BSplineManifold.jl")
 include("_RationalBSplineManifold.jl")
 include("_Refinement.jl")
+include("_precompile.jl")
 
 if !isdefined(Base, :get_extension)
     include("../ext/BasicBSplineChainRulesCoreExt.jl")
