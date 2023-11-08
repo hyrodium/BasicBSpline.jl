@@ -52,7 +52,7 @@ function _changebasis_R(P::BSplineSpace{0,T,KnotVector{T}}, P′::BSplineSpace{p
     return A⁰
 end
 
-function _find_j_begin_end_R(P::BSplineSpace{p}, P′::BSplineSpace{p′}, i, j_begin, j_end):: Tuple{Int, Int} where {p, p′}
+function _find_j_range_R(P::BSplineSpace{p}, P′::BSplineSpace{p′}, i, j_begin, j_end) where {p, p′}
     k = knotvector(P)
     k′ = knotvector(P′)
     n′ = dim(P′)
@@ -100,7 +100,7 @@ function _find_j_begin_end_R(P::BSplineSpace{p}, P′::BSplineSpace{p′}, i, j_
         end
     end
 
-    return j_begin, j_end
+    return j_begin:j_end
 end
 
 function _ΔAᵖ_R(Aᵖ⁻¹::AbstractMatrix, K::AbstractVector, K′::AbstractVector, i::Integer, j::Integer)
@@ -205,8 +205,8 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         =#
 
         # Precalculate the range of j
-        j_begin, j_end = _find_j_begin_end_R(P, P′, i, j_begin, j_end)
-        j_range = j_begin:j_end
+        j_range = _find_j_range_R(P, P′, i, j_begin, j_end)
+        j_begin, j_end = extrema(j_range)
 
         # Rule-0: outside of j_range
         j_prev = j_begin-1
@@ -395,14 +395,14 @@ function _changebasis_I_old(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′})
     return A
 end
 
-function _find_j_begin_end_I(P::BSplineSpace{p}, P′::BSplineSpace{p′}, i, j_begin, j_end):: Tuple{Int, Int} where {p, p′}
+function _find_j_range_I(P::BSplineSpace{p}, P′::BSplineSpace{p′}, i, j_begin, j_end) where {p, p′}
     # TODO: avoid `_changebasis_I_old`
     # TODO: fix performance https://github.com/hyrodium/BasicBSpline.jl/pull/323#issuecomment-1723216566
     # TODO: remove threshold such as 1e-14
     Aᵖ_old = _changebasis_I_old(P,P′)
     j_begin = findfirst(e->abs(e)>1e-14, Aᵖ_old[i, :])
     j_end = findlast(e->abs(e)>1e-14, Aᵖ_old[i, :])
-    return j_begin, j_end
+    return j_begin:j_end
 end
 
 function _ΔAᵖ_I(Aᵖ⁻¹::AbstractMatrix, K::AbstractVector, K′::AbstractVector, i::Integer, j::Integer)
@@ -524,8 +524,8 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
         =#
 
         # Precalculate the range of j
-        j_begin, j_end = _find_j_begin_end_I(P, P′, i, j_begin, j_end)
-        j_range = j_begin:j_end
+        j_range = _find_j_range_I(P, P′, i, j_begin, j_end)
+        j_begin, j_end = extrema(j_range)
 
         # Rule-0: outside of j_range
         j_prev = j_begin-1
