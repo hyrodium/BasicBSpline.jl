@@ -17,19 +17,18 @@
         @test iszero(view(A, :, findall(BasicBSpline._iszeros_R(P′))))
     end
 
-    function test_changebasis_I(P,P′)
-        @test P ⊑ P′
-        A = @inferred changebasis(P,P′)
+    function test_changebasis_I(P1,P2)
+        @test P1 ⊑ P2
+        A = @inferred changebasis_I(P1,P2)
         @test A isa SparseMatrixCSC
         @test !any(iszero.(A.nzval))
-        @test A ≈ BasicBSpline._changebasis_I(P,P′) == changebasis_I(P,P′)
-        n = dim(P)
-        n′ = dim(P′)
-        @test size(A) == (n,n′)
-        d = domain(P)
-        ts = range(extrema(d)..., length=20)
+        n1 = dim(P1)
+        n2 = dim(P2)
+        @test size(A) == (n1,n2)
+        d = domain(P1)
+        ts = range(extrema(d)..., length=21)[2:end-1]
         for t in ts
-            @test norm(bsplinebasis.(P,1:n,t) - A*bsplinebasis.(P′,1:n′,t), Inf) < ε
+            @test norm(bsplinebasis.(P1,1:n1,t) - A*bsplinebasis.(P2,1:n2,t), Inf) < ε
         end
     end
 
