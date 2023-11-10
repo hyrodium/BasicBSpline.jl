@@ -57,6 +57,10 @@ Base.:(==)(M1::AbstractManifold, M2::AbstractManifold) = (bsplinespaces(M1)==bsp
 bsplinespaces(M::BSplineManifold) = M.bsplinespaces
 controlpoints(M::BSplineManifold) = M.controlpoints
 
+function Base.hash(M::BSplineManifold, h::UInt)
+    hash(xor(hash.(bsplinespaces(M))...), hash(controlpoints(M)) ⊻ h)
+end
+
 @doc raw"""
 
     unbounded_mapping(M::BSplineManifold{Dim}, t::Vararg{Real,Dim})
