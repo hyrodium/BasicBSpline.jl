@@ -459,3 +459,7 @@ KnotVector([6])
 macro knotvector_str(s)
     return sum(KnotVector(findall(==('0'+i), s))*i for i in 1:9)
 end
+
+function Base.hash(k::AbstractKnotVector, h::UInt)
+    hash(AbstractKnotVector, hash(_vec(k), h))
+end
