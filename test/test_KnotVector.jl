@@ -13,6 +13,14 @@
         @test k1 != k2
         @test k1.vector !== copy(k1).vector
 
+        @test hash(k1) == hash(KnotVector(1:3)::KnotVector{Int})
+        @test hash(k1) == hash(KnotVector([1,3,2])::KnotVector{Int64})
+        @test hash(k1) == hash(KnotVector([1,2,3])::KnotVector{Int64})
+        @test hash(k1) == hash(KnotVector([1,3,2])::KnotVector{Int64})
+        @test hash(k1) == hash(KnotVector([1.,3,2])::KnotVector{Float64})
+        @test hash(k1) == hash(KnotVector{Int}([1,3,2])::KnotVector{Int})
+        @test hash(k1) != hash(k2)
+
         @test KnotVector{Int}([1,2]) isa KnotVector{Int}
         @test KnotVector{Int}([1,2]) isa KnotVector{Int}
         @test KnotVector{Int}([1,2.]) isa KnotVector{Int}
@@ -59,7 +67,12 @@
         @test KnotVector(Float64[]) == EmptyKnotVector()
         @test KnotVector(Float64[]) |> isempty
         @test KnotVector(Float64[]) |> iszero
-        # @test KnotVector() this shold be return error
+
+        @test hash(KnotVector(Float64[])) == hash(zero(KnotVector))
+        @test hash(KnotVector(Float64[])) == hash(0*k1) == hash(k1*0) == hash(zero(k1))
+        @test hash(KnotVector(Float64[])) == hash(EmptyKnotVector())
+
+        @test_throws MethodError KnotVector()
         @test EmptyKnotVector() |> isempty
         @test EmptyKnotVector() |> iszero
         @test EmptyKnotVector() == KnotVector(Float64[])

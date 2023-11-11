@@ -18,6 +18,37 @@
         return a′
     end
 
+    @testset "constructor" begin
+        k1 = KnotVector([0,0,1,1])
+        k2 = UniformKnotVector(1:8)
+        k3 = KnotVector(rand(8))
+        _k1 = KnotVector([0,0,1,1])
+        _k2 = KnotVector(1:8)
+        _k3 = copy(k3)
+        P1 = BSplineSpace{1}(k1)
+        P2 = BSplineSpace{3}(k2)
+        P3 = BSplineSpace{2}(k3)
+        _P1 = BSplineSpace{1}(_k1)
+        _P2 = BSplineSpace{3}(_k2)
+        _P3 = BSplineSpace{2}(_k3)
+
+        # 0-dim
+        a = fill(1.2)
+        @test BSplineManifold(a) == BSplineManifold(a)
+        @test BSplineManifold(a) == BSplineManifold(copy(a))
+        @test hash(BSplineManifold(a)) == hash(BSplineManifold(a))
+        @test hash(BSplineManifold(a)) == hash(BSplineManifold(copy(a)))
+
+        # 4-dim
+        a = rand(dim(P1), dim(P2), dim(P3), dim(P3))
+        @test BSplineManifold(a, P1, P2, P3, P3) == BSplineManifold(a, P1, P2, P3, P3)
+        @test hash(BSplineManifold(a, P1, P2, P3, P3)) == hash(BSplineManifold(a, P1, P2, P3, P3))
+        @test BSplineManifold(a, P1, P2, P3, P3) == BSplineManifold(a, _P1, _P2, _P3, _P3)
+        @test hash(BSplineManifold(a, P1, P2, P3, P3)) == hash(BSplineManifold(a, _P1, _P2, _P3, _P3))
+        @test BSplineManifold(a, P1, P2, P3, P3) == BSplineManifold(copy(a), _P1, _P2, _P3, _P3)
+        @test hash(BSplineManifold(a, P1, P2, P3, P3)) == hash(BSplineManifold(copy(a), _P1, _P2, _P3, _P3))
+    end
+
     @testset "1dim" begin
         @testset "BSplineManifold-1dim" begin
             P1 = BSplineSpace{1}(KnotVector([0, 0, 1, 1]))

@@ -16,6 +16,14 @@
         @test k2 != 1:3
         @test k1.vector === copy(k1).vector
         @test k1 === copy(k1)
+
+        @test hash(k1) == hash(k1)
+        @test hash(k1) == hash(k2)
+        @test hash(k2) != hash(k3)
+        @test hash(k4) != hash(k3)
+        @test hash(k4) != hash(k2)
+        @test hash(k2) == hash(KnotVector(1:3))
+        @test hash(k2) != hash(1:3)
     end
 
     @testset "constructor, conversion" begin
