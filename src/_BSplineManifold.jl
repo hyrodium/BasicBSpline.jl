@@ -57,8 +57,12 @@ Base.:(==)(M1::AbstractManifold, M2::AbstractManifold) = (bsplinespaces(M1)==bsp
 bsplinespaces(M::BSplineManifold) = M.bsplinespaces
 controlpoints(M::BSplineManifold) = M.controlpoints
 
+function Base.hash(M::BSplineManifold{0}, h::UInt)
+    hash(BSplineManifold{0}, hash(controlpoints(M), h))
+end
+
 function Base.hash(M::BSplineManifold, h::UInt)
-    hash(xor(hash.(bsplinespaces(M))...), hash(controlpoints(M)) ⊻ h)
+    hash(xor(hash.(bsplinespaces(M), h)...), hash(controlpoints(M), h))
 end
 
 @doc raw"""
