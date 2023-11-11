@@ -55,10 +55,12 @@
     end
 
     @testset "SubKnotVector and view" begin
-        k = KnotVector(1:8)
-        view(k, 1:3) isa SubKnotVector
-        k = UniformKnotVector(1:8)
-        view(k, 1:3) isa UniformKnotVector
+        k1 = KnotVector(1:8)
+        k2 = UniformKnotVector(1:8)
+        @test view(k1, 1:3) isa SubKnotVector
+        @test view(k2, 1:3) isa UniformKnotVector
+        @test copy(view(k1, 1:3)) isa KnotVector
+        @test copy(view(k1, 1:3)) == view(k1, 1:3) == KnotVector(1:3) == k1[1:3]
     end
 
     @testset "zeros" begin
