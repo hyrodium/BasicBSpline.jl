@@ -106,6 +106,11 @@
         @test P3 ⊈ P4
 
         test_changebasis_I(P3, P4)
+
+        # https://github.com/hyrodium/BasicBSpline.jl/issues/325
+        P5 = BSplineSpace{2}(knotvector" 21 3")
+        P6 = BSplineSpace{3}(knotvector"212 4")
+        test_changebasis_I(P5, P6)
     end
 
     @testset "changebasis_sim" begin
