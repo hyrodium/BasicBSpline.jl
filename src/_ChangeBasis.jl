@@ -491,6 +491,7 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
            |       |        |
             |--j₊->||<-j₋--|
            066666666777777773
+           177777777777777773
 
          1                                    n′
          |--*-----------------------------*-->|
@@ -501,6 +502,17 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
                            |--j₊->||<-j₋--|
                           266666666777777770
                           366666666777777770
+                          266666666666666661
+                          366666666666666661
+
+         1                                    n′
+         |--*-----------------------------*-->|
+            j_begin                       j_end
+           *|---------------------------->|*
+           j_prev                          j_next
+           |                               |
+            |-------------j₊------------->|
+           188888888888888888888888888888881
 
          1                                    n′
          *-----------------------------*----->|
@@ -550,7 +562,7 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
                 j_prev = j_next
             # Rule-3: left limit (or both limit)
             elseif k′[j_next+1] == k′[j_next+p′]
-                j_mid = (j_prev == 0 ? j_prev : (j_prev + j_next) ÷ 2)
+                j_mid = (j_prev == 0 || isdegenerate_I(P′, j_prev) ? j_prev : (j_prev + j_next) ÷ 2)
                 # Rule-6: right recursion
                 for j₊ in (j_prev+1):j_mid
                     I[s], J[s] = i, j₊
@@ -571,9 +583,9 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
         end
         # Rule-0: outside of j_range
         j_next = j_end + 1
-        if j_next == n′+1
+        if j_next == n′+1 || isdegenerate_I(P′, j_next)
             j_mid = j_next - 1
-            if j_prev == 0
+            if j_prev == 0 || isdegenerate_I(P′, j_prev)
                 # Rule-8: right recursion with postprocess
                 # We can't find Aᵖᵢ₁ or Aᵖᵢₙ′ directly (yet!), so we need Δ-shift.
                 # TODO: Find a way to avoid the Δ-shift.
@@ -590,7 +602,7 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
                 V[s-n′:s-1] .+= Δ
                 continue
             end
-        elseif j_prev == 0
+        elseif j_prev == 0 || isdegenerate_I(P′, j_prev)
             j_mid = j_prev
         else
             j_mid = (j_prev + j_next) ÷ 2
