@@ -273,6 +273,32 @@ isdegenerate(P::BSplineSpace) = isdegenerate_R(P)
 isnondegenerate(P::BSplineSpace, i::Integer) = isnondegenerate_R(P, i)
 isnondegenerate(P::BSplineSpace) = isnondegenerate_R(P)
 
+function _degeneratize_R(P::BSplineSpace{p}) where p
+    k = copy(KnotVector(knotvector(P)))
+    I = Int[]
+    for i in 1:dim(P)
+        isdegenerate_R(P,i) && push!(I, i)
+    end
+    deleteat!(BasicBSpline._vec(k), I)
+    return BSplineSpace{p}(k)
+end
+function _degeneratize_I(P::BSplineSpace{p}) where p
+    k = copy(KnotVector(knotvector(P)))
+    l = length(k)
+    I = Int[]
+    for i in 1:dim(P)
+        if isdegenerate_I(P,i)
+            if k[l-p] < k[i+p+1]
+                push!(I, i+p+1)
+            else
+                push!(I, i)
+            end
+        end
+    end
+    deleteat!(BasicBSpline._vec(k), I)
+    return BSplineSpace{p}(k)
+end
+
 """
 Exact dimension of a B-spline space.
 
