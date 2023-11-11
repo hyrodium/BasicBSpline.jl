@@ -86,26 +86,26 @@
     end
 
     @testset "sqsubseteq (I)" begin
-        p4 = 1
-        p5 = 2
-        P4 = BSplineSpace{p4}(KnotVector([1, 2, 3, 4, 5]))
-        P5 = BSplineSpace{p5}(KnotVector([-1, 0.3, 2, 3, 3, 4, 5.2, 6]))
-        @test P4 ⊑ P4
-        @test P4 ⊑ P5
-        @test P5 ⊒ P4
-        @test P5 ⋢ P4
-        @test P4 ⋣ P5
+        p1 = 1
+        p2 = 2
+        P1 = BSplineSpace{p1}(KnotVector([1, 2, 3, 4, 5]))
+        P2 = BSplineSpace{p2}(KnotVector([-1, 0.3, 2, 3, 3, 4, 5.2, 6]))
+        @test P1 ⊑ P1
+        @test P1 ⊑ P2
+        @test P2 ⊒ P1
+        @test P2 ⋢ P1
+        @test P1 ⋣ P2
 
-        test_changebasis_I(P4, P5)
-        test_changebasis_I(P4, P4)
-        test_changebasis_I(P5, P5)
+        test_changebasis_I(P1, P2)
+        test_changebasis_I(P1, P1)
+        test_changebasis_I(P2, P2)
 
-        P6 = BSplineSpace{p4-1}(knotvector(P4)[2:end-1])
-        P7 = BSplineSpace{p5-1}(knotvector(P5)[2:end-1])
-        @test P6 ⊑ P7
-        @test P6 ⊈ P7
+        P3 = BSplineSpace{p1-1}(knotvector(P1)[2:end-1])
+        P4 = BSplineSpace{p2-1}(knotvector(P2)[2:end-1])
+        @test P3 ⊑ P4
+        @test P3 ⊈ P4
 
-        test_changebasis_I(P6, P7)
+        test_changebasis_I(P3, P4)
     end
 
     @testset "changebasis_sim" begin
