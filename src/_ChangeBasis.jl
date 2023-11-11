@@ -395,11 +395,20 @@ function _changebasis_I_old(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′})
     return A
 end
 
+function __changebasis_I_old(P1, P2)
+    _P1 = _degeneratize_I(P1)
+    _P2 = _degeneratize_I(P2)
+    A = _changebasis_I_old(P1,P2)
+    _A = zero(A)
+    _A[isnondegenerate_I.(P1,1:dim(P1)), isnondegenerate_I.(P2,1:dim(P2))] = _changebasis_I_old(_P1,_P2)
+    return _A
+end
+
 function _find_j_range_I(P::BSplineSpace{p}, P′::BSplineSpace{p′}, i, j_begin, j_end) where {p, p′}
     # TODO: avoid `_changebasis_I_old`
     # TODO: fix performance https://github.com/hyrodium/BasicBSpline.jl/pull/323#issuecomment-1723216566
     # TODO: remove threshold such as 1e-14
-    Aᵖ_old = _changebasis_I_old(P,P′)
+    Aᵖ_old = __changebasis_I_old(P,P′)
     j_begin = findfirst(e->abs(e)>1e-14, Aᵖ_old[i, :])
     j_end = findlast(e->abs(e)>1e-14, Aᵖ_old[i, :])
     return j_begin:j_end
