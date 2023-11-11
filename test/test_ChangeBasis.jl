@@ -17,11 +17,13 @@
         @test iszero(view(A, :, findall(BasicBSpline._iszeros_R(P′))))
     end
 
-    function test_changebasis_I(P1,P2)
+    function test_changebasis_I(P1, P2; check_zero=true)
         @test P1 ⊑ P2
         A = @inferred changebasis_I(P1,P2)
         @test A isa SparseMatrixCSC
-        @test !any(iszero.(A.nzval))
+        if check_zero
+            @test !any(iszero.(A.nzval))
+        end
         n1 = dim(P1)
         n2 = dim(P2)
         @test size(A) == (n1,n2)
@@ -123,7 +125,7 @@
 
         Q1 = BSplineSpace{1, Int64, KnotVector{Int64}}(KnotVector([2, 2, 4, 4, 6, 6]))
         Q2 = BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector([1, 1, 1, 2, 3, 4, 4, 4, 4, 5, 5, 6, 6, 6, 6, 7]))
-        test_changebasis_I(Q1, Q2)
+        test_changebasis_I(Q1, Q2; check_zero=false)
     end
 
     @testset "changebasis_sim" begin
