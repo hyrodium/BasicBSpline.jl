@@ -395,11 +395,20 @@ function _changebasis_I_old(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′})
     return A
 end
 
+function __changebasis_I_old(P1, P2)
+    _P1 = _degeneratize_I(P1)
+    _P2 = _degeneratize_I(P2)
+    A = _changebasis_I_old(P1,P2)
+    _A = zero(A)
+    _A[isnondegenerate_I.(P1,1:dim(P1)), isnondegenerate_I.(P2,1:dim(P2))] = _changebasis_I_old(_P1,_P2)
+    return _A
+end
+
 function _find_j_range_I(P::BSplineSpace{p}, P′::BSplineSpace{p′}, i, j_begin, j_end) where {p, p′}
     # TODO: avoid `_changebasis_I_old`
     # TODO: fix performance https://github.com/hyrodium/BasicBSpline.jl/pull/323#issuecomment-1723216566
     # TODO: remove threshold such as 1e-14
-    Aᵖ_old = _changebasis_I_old(P,P′)
+    Aᵖ_old = __changebasis_I_old(P,P′)
     j_begin = findfirst(e->abs(e)>1e-14, Aᵖ_old[i, :])
     j_end = findlast(e->abs(e)>1e-14, Aᵖ_old[i, :])
     return j_begin:j_end
@@ -450,10 +459,11 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
     K′ = [k′[j+p′] - k′[j] for j in 1:n′+1]
     K = U[ifelse(k[i+p] ≠ k[i], U(1 / (k[i+p] - k[i])), zero(U)) for i in 1:n+1]
     Aᵖ⁻¹ = _changebasis_I(_lower_I(P), _lower_I(P′))  # (n-1) × (n′-1) matrix
-    n_nonzero = exactdim_I(P′)*(p+1)  # This is a upper bound of the number of non-zero elements of Aᵖ (rough estimation).
+    n_nonzero = exactdim_I(P′)*(p+2)  # This would be a upper bound of the number of non-zero elements of Aᵖ.
     I = Vector{Int32}(undef, n_nonzero)
     J = Vector{Int32}(undef, n_nonzero)
     V = Vector{U}(undef, n_nonzero)
+    # R = fill(-1, n_nonzero)
     s = 1
     j_begin = 1
     j_end = 1
@@ -482,6 +492,7 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
            |       |        |
             |--j₊->||<-j₋--|
            066666666777777773
+           177777777777777773
 
          1                                    n′
          |--*-----------------------------*-->|
@@ -492,6 +503,17 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
                            |--j₊->||<-j₋--|
                           266666666777777770
                           366666666777777770
+                          266666666666666661
+                          366666666666666661
+
+         1                                    n′
+         |--*-----------------------------*-->|
+            j_begin                       j_end
+           *|---------------------------->|*
+           j_prev                          j_next
+           |                               |
+            |-------------j₊------------->|
+           188888888888888888888888888888881
 
          1                                    n′
          *-----------------------------*----->|
@@ -537,24 +559,28 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
             if k′[j_next] == k′[j_next+p′]
                 I[s], J[s] = i, j_next
                 V[s] = Aᵖᵢⱼ_prev = bsplinebasis₊₀(P,i,k′[j_next+1])
+                # R[s] = 2
                 s += 1
                 j_prev = j_next
             # Rule-3: left limit (or both limit)
             elseif k′[j_next+1] == k′[j_next+p′]
-                j_mid = (j_prev == 0 ? j_prev : (j_prev + j_next) ÷ 2)
+                j_mid = (j_prev == 0 || isdegenerate_I(P′, j_prev) ? j_prev : (j_prev + j_next) ÷ 2)
                 # Rule-6: right recursion
                 for j₊ in (j_prev+1):j_mid
                     I[s], J[s] = i, j₊
                     V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * _ΔAᵖ_I(Aᵖ⁻¹,K,K′,i,j₊) / p′
+                    # R[s] = 6
                     s += 1
                 end
                 I[s], J[s] = i, j_next
                 V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_next = bsplinebasis₋₀I(P,i,k′[j_next+1])
+                # R[s] = 3
                 s += 1
                 # Rule-7: left recursion
                 for j₋ in reverse((j_mid+1):(j_next-1))
                     I[s], J[s] = i, j₋
                     V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * _ΔAᵖ_I(Aᵖ⁻¹,K,K′,i,j₋+1) / p′
+                    # R[s] = 7
                     s += 1
                 end
                 j_prev = j_next
@@ -562,26 +588,28 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
         end
         # Rule-0: outside of j_range
         j_next = j_end + 1
-        if j_next == n′+1
+        if j_next == n′+1 || isdegenerate_I(P′, j_next)
             j_mid = j_next - 1
-            if j_prev == 0
+            if j_prev == 0 || isdegenerate_I(P′, j_prev)
                 # Rule-8: right recursion with postprocess
                 # We can't find Aᵖᵢ₁ or Aᵖᵢₙ′ directly (yet!), so we need Δ-shift.
                 # TODO: Find a way to avoid the Δ-shift.
                 I[s], J[s] = i, 1
                 V[s] = Aᵖᵢⱼ_prev = zero(U)
+                # R[s] = 8
                 s += 1
                 for j₊ in 2:n′
                     I[s], J[s] = i, j₊
                     V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * _ΔAᵖ_I(Aᵖ⁻¹,K,K′,i,j₊) / p′
+                    # R[s] = 8
                     s += 1
                 end
-                t_mid = (maximum(domain(P))+minimum(domain(P))) / (2*one(U))
+                t_mid = (maximum(domain(P))+minimum(domain(P))) / 2one(U)
                 Δ = bsplinebasis(P, i, t_mid) - dot(view(V, s-n′:s-1), bsplinebasis.(P′, 1:n′, t_mid))
                 V[s-n′:s-1] .+= Δ
                 continue
             end
-        elseif j_prev == 0
+        elseif j_prev == 0 || isdegenerate_I(P′, j_prev)
             j_mid = j_prev
         else
             j_mid = (j_prev + j_next) ÷ 2
@@ -591,17 +619,21 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
         for j₊ in (j_prev+1):j_mid
             I[s], J[s] = i, j₊
             V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * _ΔAᵖ_I(Aᵖ⁻¹,K,K′,i,j₊) / p′
+            # R[s] = 6
             s += 1
         end
         # Rule-7: left recursion
         for j₋ in reverse((j_mid+1):(j_next-1))
             I[s], J[s] = i, j₋
             V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * _ΔAᵖ_I(Aᵖ⁻¹,K,K′,i,j₋+1) / p′
+            # R[s] = 7
             s += 1
         end
     end
 
     Aᵖ = sparse(view(I,1:s-1), view(J,1:s-1), view(V,1:s-1), n, n′)
+    # Rᵖ = sparse(view(I,1:s-1), view(J,1:s-1), view(R,1:s-1), n, n′)
+    # display(Rᵖ)
     return Aᵖ
 end
 

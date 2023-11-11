@@ -17,11 +17,13 @@
         @test iszero(view(A, :, findall(BasicBSpline._iszeros_R(P′))))
     end
 
-    function test_changebasis_I(P1,P2)
+    function test_changebasis_I(P1, P2; check_zero=true)
         @test P1 ⊑ P2
         A = @inferred changebasis_I(P1,P2)
         @test A isa SparseMatrixCSC
-        @test !any(iszero.(A.nzval))
+        if check_zero
+            @test !any(iszero.(A.nzval))
+        end
         n1 = dim(P1)
         n2 = dim(P2)
         @test size(A) == (n1,n2)
@@ -86,26 +88,48 @@
     end
 
     @testset "sqsubseteq (I)" begin
-        p4 = 1
-        p5 = 2
-        P4 = BSplineSpace{p4}(KnotVector([1, 2, 3, 4, 5]))
-        P5 = BSplineSpace{p5}(KnotVector([-1, 0.3, 2, 3, 3, 4, 5.2, 6]))
-        @test P4 ⊑ P4
-        @test P4 ⊑ P5
-        @test P5 ⊒ P4
-        @test P5 ⋢ P4
-        @test P4 ⋣ P5
+        p1 = 1
+        p2 = 2
+        P1 = BSplineSpace{p1}(KnotVector([1, 2, 3, 4, 5]))
+        P2 = BSplineSpace{p2}(KnotVector([-1, 0.3, 2, 3, 3, 4, 5.2, 6]))
+        @test P1 ⊑ P1
+        @test P1 ⊑ P2
+        @test P2 ⊒ P1
+        @test P2 ⋢ P1
+        @test P1 ⋣ P2
+        @test P1 ⊈ P2
 
-        test_changebasis_I(P4, P5)
-        test_changebasis_I(P4, P4)
-        test_changebasis_I(P5, P5)
+        test_changebasis_I(P1, P2)
+        test_changebasis_I(P1, P1)
+        test_changebasis_I(P2, P2)
 
-        P6 = BSplineSpace{p4-1}(knotvector(P4)[2:end-1])
-        P7 = BSplineSpace{p5-1}(knotvector(P5)[2:end-1])
-        @test P6 ⊑ P7
-        @test P6 ⊈ P7
+        P3 = BSplineSpace{p1-1}(knotvector(P1)[2:end-1])
+        P4 = BSplineSpace{p2-1}(knotvector(P2)[2:end-1])
+        @test P3 ⊑ P4
+        @test P3 ⊈ P4
 
-        test_changebasis_I(P6, P7)
+        test_changebasis_I(P3, P4)
+
+        # https://github.com/hyrodium/BasicBSpline.jl/issues/325
+        P5 = BSplineSpace{2}(knotvector" 21 3")
+        P6 = BSplineSpace{3}(knotvector"212 4")
+        test_changebasis_I(P5, P6)
+
+        P7 = BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector([1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 6]))
+        P8 = BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector([1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 7, 7]))
+        test_changebasis_I(P7, P8)
+
+        _P7 = BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector(-[1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 6]))
+        _P8 = BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector(-[1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 7, 7]))
+        test_changebasis_I(_P7, _P8)
+
+        Q1 = BSplineSpace{1, Int64, KnotVector{Int64}}(KnotVector([2, 2, 4, 4, 6, 6]))
+        Q2 = BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector([1, 1, 1, 2, 3, 4, 4, 4, 4, 5, 5, 6, 6, 6, 6, 7]))
+        test_changebasis_I(Q1, Q2; check_zero=false)
+
+        Q3 = BSplineSpace{4, Int64, KnotVector{Int64}}(KnotVector([1, 1, 2, 2, 2, 3, 3, 4, 4, 5, 7]))
+        Q4 = BSplineSpace{5, Int64, KnotVector{Int64}}(KnotVector([1, 1, 1, 1, 1, 2, 3, 3, 3, 3, 4, 4, 4, 5, 6]))
+        test_changebasis_I(Q3, Q4; check_zero=false)
     end
 
     @testset "changebasis_sim" begin
