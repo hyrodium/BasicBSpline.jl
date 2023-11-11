@@ -130,8 +130,8 @@ Modified version.
 {B}_{(i,0,k)}(t)
 &=
 \begin{cases}
-    &1\quad (k_{i} \le t<k_{i+1})\\
-    &1\quad (k_{i} < t = k_{i+1}=k_{l})\\
+    &1\quad (k_{i} \le t < k_{i+1}) \\
+    &1\quad (k_{i} < t = k_{i+1}=k_{l}) \\
     &0\quad (\text{otherwise})
 \end{cases}
 \end{aligned}
@@ -189,8 +189,9 @@ Modified version (2).
 {B}_{(i,0,k)}(t)
 &=
 \begin{cases}
-    &1\quad (k_{i} \le t<k_{i+1})\\
-    &1\quad (k_{i} < t = k_{i+1}=k_{l})\\
+    &1\quad (k_{1+p} \le k_{i} < t \le k_{i+1}) \\
+    &1\quad (t = k_{1+p} = k_{i} < k_{i+1}) \\
+    &1\quad (k_{i} \le t < k_{i+1} \le k_{1+p}) \\
     &0\quad (\text{otherwise})
 \end{cases}
 \end{aligned}
@@ -219,7 +220,7 @@ julia> BasicBSpline.bsplinebasis₋₀I.(P,1:5,(1:6)')
     k_r = Expr(:tuple, :(v[i]), (:(v[i+$j]) for j in 1:p+1)...)
     K_l(n) = Expr(:tuple, Ks[1:n]...)
     B_l(n) = Expr(:tuple, Bs[1:n]...)
-    A_r(n) = Expr(:tuple, [:($U(($(ks[i])<t≤$(ks[i+1])) || (v[1]==$(ks[i])==t<$(ks[i+1])))) for i in 1:n]...)
+    A_r(n) = Expr(:tuple, [:($U((v[1+p]≤$(ks[i])<t≤$(ks[i+1])) || (t==v[1+p]==$(ks[i])<$(ks[i+1])) || ($(ks[i])≤t<$(ks[i+1])≤v[1+p]))) for i in 1:n]...)
     K_r(m,n) = Expr(:tuple, [:(_d(t-$(ks[i]),$(ks[i+m])-$(ks[i]))) for i in 1:n]...)
     B_r(n) = Expr(:tuple, [:($(Ks[i])*$(Bs[i])+(1-$(Ks[i+1]))*$(Bs[i+1])) for i in 1:n]...)
     exs = Expr[]
