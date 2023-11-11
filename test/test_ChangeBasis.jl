@@ -95,6 +95,7 @@
         @test P2 ⊒ P1
         @test P2 ⋢ P1
         @test P1 ⋣ P2
+        @test P1 ⊈ P2
 
         test_changebasis_I(P1, P2)
         test_changebasis_I(P1, P1)
@@ -116,9 +117,13 @@
         P8 = BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector([1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 7, 7]))
         test_changebasis_I(P7, P8)
 
-        Q7 = BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector(-[1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 6]))
-        Q8 = BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector(-[1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 7, 7]))
-        test_changebasis_I(Q7, Q8)
+        _P7 = BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector(-[1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 6]))
+        _P8 = BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector(-[1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 7, 7]))
+        test_changebasis_I(_P7, _P8)
+
+        Q1 = BSplineSpace{1, Int64, KnotVector{Int64}}(KnotVector([2, 2, 4, 4, 6, 6]))
+        Q2 = BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector([1, 1, 1, 2, 3, 4, 4, 4, 4, 5, 5, 6, 6, 6, 6, 7]))
+        test_changebasis_I(Q1, Q2)
     end
 
     @testset "changebasis_sim" begin
