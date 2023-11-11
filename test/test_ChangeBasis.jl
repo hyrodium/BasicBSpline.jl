@@ -111,6 +111,14 @@
         P5 = BSplineSpace{2}(knotvector" 21 3")
         P6 = BSplineSpace{3}(knotvector"212 4")
         test_changebasis_I(P5, P6)
+
+        P7 = BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector([1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 6]))
+        P8 = BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector([1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 7, 7]))
+        test_changebasis_I(P7, P8)
+
+        Q7 = BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector(-[1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 6]))
+        Q8 = BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector(-[1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 7, 7]))
+        test_changebasis_I(Q7, Q8)
     end
 
     @testset "changebasis_sim" begin
