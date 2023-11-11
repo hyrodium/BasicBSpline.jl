@@ -103,6 +103,7 @@ SubKnotVector{T,S}(k::SubKnotVector{T,S}) where {T,S} = k
 Base.copy(k::EmptyKnotVector{T}) where T = k
 Base.copy(k::KnotVector{T}) where T = unsafe_knotvector(T,copy(_vec(k)))
 Base.copy(k::UniformKnotVector{T}) where T = unsafe_uniformknotvector(T,copy(_vec(k)))
+Base.copy(k::SubKnotVector{T}) where T = unsafe_knotvector(T,copy(_vec(k)))
 
 KnotVector(k::KnotVector) = k
 KnotVector(k::AbstractKnotVector{T}) where T = unsafe_knotvector(T,_vec(k))
