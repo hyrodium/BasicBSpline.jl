@@ -1,8 +1,7 @@
 @testset "KnotVector" begin
-    k1 = KnotVector([1,2,3])
-    k2 = KnotVector([1,2,2,3])
-    k3 = KnotVector([2,4,5])
     @testset "constructor" begin
+        k1 = KnotVector([1,2,3])
+        k2 = KnotVector([1,2,2,3])
         @test k1 isa KnotVector{Int64}
         @test k1 == KnotVector(1:3)::KnotVector{Int}
         @test k1 == KnotVector([1,3,2])::KnotVector{Int64}
@@ -55,13 +54,17 @@
     end
 
     @testset "SubKnotVector and view" begin
-        k = KnotVector(1:8)
-        view(k, 1:3) isa SubKnotVector
-        k = UniformKnotVector(1:8)
-        view(k, 1:3) isa UniformKnotVector
+        k1 = KnotVector(1:8)
+        k2 = UniformKnotVector(1:8)
+        @test view(k1, 1:3) isa SubKnotVector
+        @test view(k2, 1:3) isa UniformKnotVector
+        @test copy(view(k1, 1:3)) isa KnotVector
+        @test copy(view(k1, 1:3)) == view(k1, 1:3) == KnotVector(1:3) == k1[1:3]
     end
 
     @testset "zeros" begin
+        k1 = KnotVector([1,2,3])
+
         @test KnotVector(Float64[]) == zero(KnotVector)
         @test KnotVector(Float64[]) == 0*k1 == k1*0 == zero(k1)
         @test KnotVector(Float64[]) == EmptyKnotVector()
@@ -96,6 +99,9 @@
     end
 
     @testset "iterator" begin
+        k1 = KnotVector([1,2,3])
+        k2 = KnotVector([1,2,2,3])
+        k3 = KnotVector([2,4,5])
         for t in k1
             @test t in k2
         end
@@ -108,6 +114,10 @@
     end
 
     @testset "addition, multiply" begin
+        k1 = KnotVector([1,2,3])
+        k2 = KnotVector([1,2,2,3])
+        k3 = KnotVector([2,4,5])
+
         @test KnotVector([-1,2,3]) + 2 * KnotVector([2,5]) == KnotVector([-1,2,2,2,3,5,5])
         @test KnotVector([-1,2,3]) + KnotVector([2,5]) * 2 == KnotVector([-1,2,2,2,3,5,5])
         @test k1 + k3 == KnotVector([1,2,2,3,4,5])
@@ -149,6 +159,9 @@
     end
 
     @testset "unique" begin
+        k1 = KnotVector([1,2,3])
+        k2 = KnotVector([1,2,2,3])
+
         @test unique(k1) == k1
         @test unique(k2) == k1
         @test unique(EmptyKnotVector()) === EmptyKnotVector()
