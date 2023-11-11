@@ -123,12 +123,15 @@
         @test P1 ⊆ P2
         @test P2 ⊆ P1
         @test P1 == P2
+        @test hash(P1) == hash(P2)
 
         @test P3 ⊆ P4
         @test P4 ⊆ P3
         @test P3 == P4
+        @test hash(P3) == hash(P4)
 
         @test P1 != P3
+        @test hash(P1) != hash(P3)
     end
 
     @testset "expandspace" begin

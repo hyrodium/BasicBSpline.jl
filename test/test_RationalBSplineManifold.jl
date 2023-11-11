@@ -1,4 +1,37 @@
 @testset "RationalBSplineManifold" begin
+    @testset "constructor" begin
+        k1 = KnotVector([0,0,1,1])
+        k2 = UniformKnotVector(1:8)
+        k3 = KnotVector(rand(8))
+        _k1 = KnotVector([0,0,1,1])
+        _k2 = KnotVector(1:8)
+        _k3 = copy(k3)
+        P1 = BSplineSpace{1}(k1)
+        P2 = BSplineSpace{3}(k2)
+        P3 = BSplineSpace{2}(k3)
+        _P1 = BSplineSpace{1}(_k1)
+        _P2 = BSplineSpace{3}(_k2)
+        _P3 = BSplineSpace{2}(_k3)
+
+        # 0-dim
+        a = fill(1.2)
+        w = fill(4.2)
+        @test RationalBSplineManifold(a, w) == RationalBSplineManifold(a, w)
+        @test RationalBSplineManifold(a, w) == RationalBSplineManifold(copy(a), copy(w))
+        @test hash(RationalBSplineManifold(a, w)) == hash(RationalBSplineManifold(a, w))
+        @test hash(RationalBSplineManifold(a, w)) == hash(RationalBSplineManifold(copy(a), copy(w)))
+
+        # 4-dim
+        a = rand(dim(P1), dim(P2), dim(P3), dim(P3))
+        w = rand(dim(P1), dim(P2), dim(P3), dim(P3))
+        @test RationalBSplineManifold(a, w, P1, P2, P3, P3) == RationalBSplineManifold(a, w, P1, P2, P3, P3)
+        @test hash(RationalBSplineManifold(a, w, P1, P2, P3, P3)) == hash(RationalBSplineManifold(a, w, P1, P2, P3, P3))
+        @test RationalBSplineManifold(a, w, P1, P2, P3, P3) == RationalBSplineManifold(a, w, _P1, _P2, _P3, _P3)
+        @test hash(RationalBSplineManifold(a, w, P1, P2, P3, P3)) == hash(RationalBSplineManifold(a, w, _P1, _P2, _P3, _P3))
+        @test RationalBSplineManifold(a, w, P1, P2, P3, P3) == RationalBSplineManifold(copy(a), copy(w), _P1, _P2, _P3, _P3)
+        @test hash(RationalBSplineManifold(a, w, P1, P2, P3, P3)) == hash(RationalBSplineManifold(copy(a), copy(w), _P1, _P2, _P3, _P3))
+    end
+
     @testset "1dim-arc" begin
         a = [SVector(1,0), SVector(1,1), SVector(0,1), SVector(-1,1), SVector(-1,0)]
         w = [1, 1/√2, 1, 1/√2, 1]

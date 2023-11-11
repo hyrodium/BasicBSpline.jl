@@ -16,6 +16,7 @@
         dP7 = BSplineDerivativeSpace{2,typeof(P3)}(dP6)
         @test dP1 == dP2 == dP3 != dP4
         @test dP1 !== dP2
+        @test hash(dP1) == hash(dP2) == hash(dP3) != hash(dP4)
         @test_throws MethodError BSplineDerivativeSpace{1,typeof(P2)}(dP1)
         @test_throws MethodError BSplineDerivativeSpace(dP1)
         @test_throws MethodError BSplineDerivativeSpace{}(dP1)
@@ -25,6 +26,7 @@
         @test dP1 isa BSplineDerivativeSpace{1,<:BSplineSpace{p,T,KnotVector{T}} where {p,T}}
         @test dP2 isa BSplineDerivativeSpace{1,<:UniformBSplineSpace{p,T} where {p,T}}
         @test dP4 == dP5 == dP6 == dP7
+        @test hash(dP4) == hash(dP5) == hash(dP6) == hash(dP7)
 
         @test dP2 == convert(BSplineDerivativeSpace,dP2)
         @test dP2 == convert(BSplineDerivativeSpace{1},dP2)

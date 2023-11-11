@@ -21,7 +21,7 @@
         @test exactdim_R(P2) == exactdim_R(P2′) == 0
         @test isnondegenerate(P2) == false
         @test isdegenerate(P2) == true
-        @test P2 == P2′
+        @test P2 === P2′
 
         k3 = UniformKnotVector(1.0:0.5:12.0)
         P3 = BSplineSpace{2}(k3)
@@ -79,6 +79,9 @@
         @test P1 == P2 == P3 == P4
         @test P1 != P5
         @test P1 != P6
+        @test hash(P1) == hash(P2) == hash(P3) == hash(P4)
+        @test hash(P1) != hash(P5)
+        @test hash(P1) != hash(P6)
     end
 
     @testset "subset but not sqsubset" begin

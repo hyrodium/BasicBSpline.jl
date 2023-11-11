@@ -116,3 +116,9 @@ function Base.issubset(P::BSplineSpace, dP′::BSplineDerivativeSpace)
 end
 
 # TODO: Add issqsubset
+
+function Base.hash(dP::BSplineDerivativeSpace{r,<:BSplineSpace{p}}, h::UInt) where {r,p}
+    P = bsplinespace(dP)
+    k = knotvector(P)
+    hash(BSplineDerivativeSpace{r,<:BSplineSpace{p}}, hash(_vec(k), h))
+end

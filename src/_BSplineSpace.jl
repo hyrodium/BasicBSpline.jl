@@ -511,3 +511,8 @@ end
 function expandspace(P::BSplineSpace{p,T}, k₊::AbstractKnotVector=EmptyKnotVector{T}()) where {p,T}
     expandspace_I(P,k₊)
 end
+
+function Base.hash(P::BSplineSpace{p}, h::UInt) where p
+    k = knotvector(P)
+    hash(BSplineSpace{p}, hash(_vec(k), h))
+end
