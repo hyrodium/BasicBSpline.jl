@@ -52,11 +52,12 @@ function _changebasis_R(P::BSplineSpace{0,T,KnotVector{T}}, P′::BSplineSpace{p
     return A⁰
 end
 
-function _find_j_range_R(P::BSplineSpace{p}, P′::BSplineSpace{p′}, i, j_begin, j_end) where {p, p′}
+function _find_j_range_R(P::BSplineSpace{p}, P′::BSplineSpace{p′}, i, j_range) where {p, p′}
     k = knotvector(P)
     k′ = knotvector(P′)
     n′ = dim(P′)
     Pi = BSplineSpace{p}(view(k, i:i+p+1))
+    j_begin, j_end = extrema(j_range)
 
     # Find `j_end`. This is the same as:
     # j_end::Int = findnext(j->Pi ⊆ BSplineSpace{p′}(view(k′, j_begin:j+p′+1)), 1:n′, j_end)
@@ -145,8 +146,7 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
     J = Vector{Int32}(undef, n_nonzero)
     V = Vector{U}(undef, n_nonzero)
     s = 1
-    j_begin = 1
-    j_end = 1
+    j_range = 1:1  # j_begin:j_end
     for i in 1:n
         # Skip for degenerated basis
         isdegenerate_R(P,i) && continue
@@ -205,7 +205,7 @@ function _changebasis_R(P::BSplineSpace{p,T,KnotVector{T}}, P′::BSplineSpace{p
         =#
 
         # Precalculate the range of j
-        j_range = _find_j_range_R(P, P′, i, j_begin, j_end)
+        j_range = _find_j_range_R(P, P′, i, j_range)
         j_begin, j_end = extrema(j_range)
 
         # Rule-0: outside of j_range
@@ -395,20 +395,19 @@ function _changebasis_I_old(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′})
     return A
 end
 
-function __changebasis_I_old(P1, P2)
+function __changebasis_I_old(P1::BSplineSpace{p,T}, P2::BSplineSpace{p′,T′}) where {p,p′,T,T′}
+    U = StaticArrays.arithmetic_closure(promote_type(T, T′))
     _P1 = _nondegeneratize_I(P1)
     _P2 = _nondegeneratize_I(P2)
-    A = _changebasis_I_old(P1,P2)
-    _A = zero(A)
+    _A = sparse(Int32[], Int32[], U[], dim(P1), dim(P2))
     _A[isnondegenerate_I.(P1,1:dim(P1)), isnondegenerate_I.(P2,1:dim(P2))] = _changebasis_I_old(_P1,_P2)
     return _A
 end
 
-function _find_j_range_I(P::BSplineSpace{p}, P′::BSplineSpace{p′}, i, j_begin, j_end) where {p, p′}
-    # TODO: avoid `_changebasis_I_old`
+function _find_j_range_I(P::BSplineSpace{p}, P′::BSplineSpace{p′}, i, j_range, Aᵖ_old) where {p, p′}
+    # TODO: remove `Aᵖ_old` argument
     # TODO: fix performance https://github.com/hyrodium/BasicBSpline.jl/pull/323#issuecomment-1723216566
     # TODO: remove threshold such as 1e-14
-    Aᵖ_old = __changebasis_I_old(P,P′)
     j_begin = findfirst(e->abs(e)>1e-14, Aᵖ_old[i, :])
     j_end = findlast(e->abs(e)>1e-14, Aᵖ_old[i, :])
     return j_begin:j_end
@@ -465,8 +464,8 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
     V = Vector{U}(undef, n_nonzero)
     # R = fill(-1, n_nonzero)
     s = 1
-    j_begin = 1
-    j_end = 1
+    j_range = 1:1  # j_begin:j_end
+    Aᵖ_old = __changebasis_I_old(P, P′)
     for i in 1:n
         # Skip for degenerated basis
         isdegenerate_I(P,i) && continue
@@ -546,7 +545,7 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
         =#
 
         # Precalculate the range of j
-        j_range = _find_j_range_I(P, P′, i, j_begin, j_end)
+        j_range = _find_j_range_I(P, P′, i, j_range, Aᵖ_old)
         j_begin, j_end = extrema(j_range)
 
         # Rule-0: outside of j_range

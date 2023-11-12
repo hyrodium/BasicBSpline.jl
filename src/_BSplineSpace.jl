@@ -177,28 +177,21 @@ Check inclusive relationship between B-spline spaces.
 ```
 """
 function issqsubset(P::BSplineSpace{p}, P′::BSplineSpace{p′}) where {p, p′}
-    # TODO: fix https://github.com/hyrodium/BasicBSpline.jl/issues/329
+    p₊ = p′ - p
+    p₊ < 0 && return false
+
     k = knotvector(P)
     k′ = knotvector(P′)
+    !(k[1+p] == k′[1+p′] < k′[end-p′] == k[end-p]) && return false
+
     l = length(k)
     l′ = length(k′)
-    p₊ = p′ - p
-
-    if p₊ < 0
-        return false
-    elseif domain(P) ≠ domain(P′)
-        # The domains must be equal for P ⊑ P′.
-        return false
-    elseif !(k′[1+p′] < k′[end-p′])
-        # The width(domain(P′)) must be non-zero for P ⊑ P′.
-        # There may be some edge-case like P′ ⊑ P′, but we don't need `true` for that situation.
-        return false
-    end
-
     inner_knotvector = view(k, p+2:l-p-1)
     inner_knotvector′ = view(k′, p′+2:l′-p′-1)
 
-    return inner_knotvector + p₊ * unique(inner_knotvector) ⊆ inner_knotvector′
+    _P = BSplineSpace{p}(inner_knotvector)
+    _P′ = BSplineSpace{p′}(inner_knotvector′)
+    return _P ⊆ _P′
 end
 
 const ⊑ = issqsubset
