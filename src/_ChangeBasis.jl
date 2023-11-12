@@ -395,11 +395,11 @@ function _changebasis_I_old(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′})
     return A
 end
 
-function __changebasis_I_old(P1, P2)
+function __changebasis_I_old(P1::BSplineSpace{p,T}, P2::BSplineSpace{p′,T′}) where {p,p′,T,T′}
+    U = StaticArrays.arithmetic_closure(promote_type(T, T′))
     _P1 = _nondegeneratize_I(P1)
     _P2 = _nondegeneratize_I(P2)
-    A = _changebasis_I_old(P1,P2)
-    _A = zero(A)
+    _A = sparse(Int32[], Int32[], U[], dim(P1), dim(P2))
     _A[isnondegenerate_I.(P1,1:dim(P1)), isnondegenerate_I.(P2,1:dim(P2))] = _changebasis_I_old(_P1,_P2)
     return _A
 end
