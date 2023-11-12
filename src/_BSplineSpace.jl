@@ -273,7 +273,7 @@ isdegenerate(P::BSplineSpace) = isdegenerate_R(P)
 isnondegenerate(P::BSplineSpace, i::Integer) = isnondegenerate_R(P, i)
 isnondegenerate(P::BSplineSpace) = isnondegenerate_R(P)
 
-function _degeneratize_R(P::BSplineSpace{p}) where p
+function _nondegeneratize_R(P::BSplineSpace{p}) where p
     k = copy(KnotVector(knotvector(P)))
     I = Int[]
     for i in 1:dim(P)
@@ -282,7 +282,7 @@ function _degeneratize_R(P::BSplineSpace{p}) where p
     deleteat!(BasicBSpline._vec(k), I)
     return BSplineSpace{p}(k)
 end
-function _degeneratize_I(P::BSplineSpace{p}) where p
+function _nondegeneratize_I(P::BSplineSpace{p}) where p
     k = copy(KnotVector(knotvector(P)))
     l = length(k)
     I = Int[]

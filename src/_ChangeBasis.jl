@@ -396,8 +396,8 @@ function _changebasis_I_old(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′})
 end
 
 function __changebasis_I_old(P1, P2)
-    _P1 = _degeneratize_I(P1)
-    _P2 = _degeneratize_I(P2)
+    _P1 = _nondegeneratize_I(P1)
+    _P2 = _nondegeneratize_I(P2)
     A = _changebasis_I_old(P1,P2)
     _A = zero(A)
     _A[isnondegenerate_I.(P1,1:dim(P1)), isnondegenerate_I.(P2,1:dim(P2))] = _changebasis_I_old(_P1,_P2)
