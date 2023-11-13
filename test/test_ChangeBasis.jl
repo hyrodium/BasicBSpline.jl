@@ -79,7 +79,7 @@
         A13 = changebasis(P1, P3)
         A36 = changebasis(P3, P6)
         A16 = changebasis(P1, P6)
-        A16 ≈ A13 * A36
+        @test A16 ≈ A13 * A36
 
         test_changebasis_R(P3, P6)
         test_changebasis_R(P6, P7)
@@ -87,7 +87,7 @@
         A36 = changebasis(P3, P6)
         A67 = changebasis(P6, P7)
         A37 = changebasis(P3, P7)
-        A37 ≈ A36 * A67
+        @test A37 ≈ A36 * A67
 
         @test P2 ⊈ P3
 
