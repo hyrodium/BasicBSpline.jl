@@ -15,12 +15,12 @@
         @test size(A) == (n,n′)
         # Elements must not be stored for degenerate row/col
         for j in 1:n′
-            if isnondegenerate_R(P′, j)
+            if isdegenerate_R(P′, j)
                 @test !any(Base.isstored.(Ref(A), 1:n, j))
             end
         end
         for i in 1:n
-            if isnondegenerate_R(P, i)
+            if isdegenerate_R(P, i)
                 @test !any(Base.isstored.(Ref(A), i, 1:n′))
             end
         end
