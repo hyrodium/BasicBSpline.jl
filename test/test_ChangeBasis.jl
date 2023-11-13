@@ -147,6 +147,23 @@
         test_changebasis_I(Q3, Q4)
     end
 
+    @testset "different changebasis_R and changebasis_I" begin
+        P1 = BSplineSpace{3}(knotvector"1111 132")
+        P2 = BSplineSpace{3}(knotvector"11121132")
+        @test isdegenerate_I(P1)
+        @test isdegenerate_I(P2)
+        @test isnondegenerate_R(P1)
+        @test isnondegenerate_R(P2)
+        @test P1 ⊆ P2
+        @test P1 ⊑ P2
+
+        test_changebasis_I(P1, P2)
+        test_changebasis_R(P1, P2)
+        A_R = changebasis_R(P1, P2)
+        A_I = changebasis_I(P1, P2)
+        @test A_R ≠ A_I
+    end
+
     @testset "changebasis_sim" begin
         for p in 1:3, L in 1:8
             k1 = UniformKnotVector(1:L+2p+1)
