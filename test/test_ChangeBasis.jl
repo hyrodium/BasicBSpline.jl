@@ -1,7 +1,7 @@
 @testset "ChangeBasis" begin
     ε = 1e-13
     function test_changebasis_R(P,P′)
-        # The test case must hold `P ⊆ P′`
+        # The test case must hold P ⊆ P′
         @test P ⊆ P′
         # Test type stability
         A = @inferred changebasis_R(P,P′)
@@ -9,7 +9,7 @@
         @test A isa SparseMatrixCSC
         # Zeros must not be stored
         @test !any(iszero.(A.nzval))
-        # Test the size of `A`
+        # Test the size of A
         n = dim(P)
         n′ = dim(P′)
         @test size(A) == (n,n′)
