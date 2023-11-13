@@ -258,13 +258,11 @@ for (f, fnon) in ((:isdegenerate_R, :isnondegenerate_R), (:isdegenerate_I, :isno
         end
         return false
     end
-    @eval $fnon(P::BSplineSpace, i::Int) = !$f(P, i)
-    @eval $fnon(P::BSplineSpace) = !$f(P)
+    @eval $fnon(P, i::Integer) = !$f(P, i)
+    @eval $fnon(P) = !$f(P)
 end
-isdegenerate(P::BSplineSpace, i::Integer) = isdegenerate_R(P,i)
-isdegenerate(P::BSplineSpace) = isdegenerate_R(P)
-isnondegenerate(P::BSplineSpace, i::Integer) = isnondegenerate_R(P, i)
-isnondegenerate(P::BSplineSpace) = isnondegenerate_R(P)
+const isdegenerate = isdegenerate_R
+const isnondegenerate = isnondegenerate_R
 
 function _nondegeneratize_R(P::BSplineSpace{p}) where p
     k = copy(KnotVector(knotvector(P)))
