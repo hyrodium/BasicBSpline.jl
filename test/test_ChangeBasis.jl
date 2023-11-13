@@ -1,20 +1,30 @@
 @testset "ChangeBasis" begin
     ε = 1e-13
     function test_changebasis_R(P,P′)
+        # The test case must hold `P ⊆ P′`
         @test P ⊆ P′
-        A = @inferred changebasis(P,P′)
+        # Test type stability
+        A = @inferred changebasis_R(P,P′)
+        # Test output type
         @test A isa SparseMatrixCSC
+        # Zeros must not be stored
         @test !any(iszero.(A.nzval))
-        @test A == BasicBSpline._changebasis_R(P,P′) == changebasis_R(P,P′)
+        # Test the size of `A`
         n = dim(P)
         n′ = dim(P′)
         @test size(A) == (n,n′)
+        # Elements must not be stored for degenerate row/col
+        for j in 1:n′
+            @test any(Base.isstored.(Ref(A), 1:n, j)) == isnondegenerate_R(P2, j)
+        end
+        for i in 1:n
+            @test any(Base.isstored.(Ref(A), i, 1:n′)) == isnondegenerate_R(P1, i)
+        end
+        # B_{(i,p,k)} = ∑ⱼ A_{i,j} B_{(j,p′,k′)}
         ts = range(extrema(knotvector(P)+knotvector(P′))..., length=20)
         for t in ts
             @test norm(bsplinebasis.(P,1:n,t) - A*bsplinebasis.(P′,1:n′,t), Inf) < ε
         end
-        @test iszero(view(A, findall(BasicBSpline._iszeros_R(P)), :))
-        @test iszero(view(A, :, findall(BasicBSpline._iszeros_R(P′))))
     end
 
     function test_changebasis_I(P1, P2; check_zero=true)
