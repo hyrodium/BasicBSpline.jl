@@ -15,10 +15,10 @@
         @test size(A) == (n,n′)
         # Elements must not be stored for degenerate row/col
         for j in 1:n′
-            @test any(Base.isstored.(Ref(A), 1:n, j)) == isnondegenerate_R(P2, j)
+            @test any(Base.isstored.(Ref(A), 1:n, j)) == isnondegenerate_R(P′, j)
         end
         for i in 1:n
-            @test any(Base.isstored.(Ref(A), i, 1:n′)) == isnondegenerate_R(P1, i)
+            @test any(Base.isstored.(Ref(A), i, 1:n′)) == isnondegenerate_R(P, i)
         end
         # B_{(i,p,k)} = ∑ⱼ A_{i,j} B_{(j,p′,k′)}
         ts = range(extrema(knotvector(P)+knotvector(P′))..., length=20)
