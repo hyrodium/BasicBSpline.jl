@@ -33,6 +33,25 @@
         @test_throws MethodError convert(BSplineDerivativeSpace{2},dP2)
     end
 
+    @testset "degenerate" begin
+        P1 = BSplineSpace{2}(KnotVector(1:8))
+        P2 = BSplineSpace{2}(knotvector"111111151111")
+        dP1 = BSplineDerivativeSpace{1}(P1)
+        dP2 = BSplineDerivativeSpace{1}(P2)
+        @test isdegenerate_R(P1) == isdegenerate_R(dP1)
+        @test isdegenerate_R(P2) == isdegenerate_R(dP2)
+        @test isdegenerate_I(P1) == isdegenerate_I(dP1)
+        @test isdegenerate_I(P2) == isdegenerate_I(dP2)
+        for i in 1:dim(P1)
+            @test isdegenerate_R(P1, i) == isdegenerate_R(dP1, i)
+            @test isdegenerate_I(P1, i) == isdegenerate_I(dP1, i)
+        end
+        for i in 1:dim(P2)
+            @test isdegenerate_R(P2, i) == isdegenerate_R(dP2, i)
+            @test isdegenerate_I(P2, i) == isdegenerate_I(dP2, i)
+        end
+    end
+
     # Not sure why this @testset doesn't work fine.
     # @testset "$(p)-th degree basis" for p in 0:p_max
     for p in 0:p_max
