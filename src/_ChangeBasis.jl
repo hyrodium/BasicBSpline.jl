@@ -345,9 +345,49 @@ B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p',k')}
 Assumption:
 * ``P ⊑ P^{\prime}``
 """
+changebasis_I
+
 function changebasis_I(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
     P ⊑ P′ || throw(DomainError((P,P′),"P ⊑ P′ should be hold."))
     return _changebasis_I(P, P′)
+end
+
+function changebasis_I(P::BSplineSpace, P′::BSplineSpace{p′}) where p′
+    P ⊑ P′ || throw(DomainError((P,P′),"P ⊑ P′ should be hold."))
+
+    k′ = knotvector(P′)
+    l′ = length(k′)
+    i = 1 + p′
+    v = k′[i]
+    i = i + 1
+    while true
+        k′[i] ≠ v && break
+        i = i + 1
+    end
+    degenerated_rank_on_left = i - p′ - 2
+    i = length(k′) - p′
+    v = k′[i]
+    i = i - 1
+    while true
+        k′[i] ≠ v && break
+        i = i - 1
+    end
+    degenerated_rank_on_right = l′ - p′ - i - 1
+    if degenerated_rank_on_left == degenerated_rank_on_right == 0
+        return _changebasis_I(P, P′)
+    else
+        _k′ = view(k′, 1+degenerated_rank_on_left:l′-degenerated_rank_on_right)
+        _P′ = BSplineSpace{p′}(_k′)
+        _A = _changebasis_I(P, _P′)
+        m = _A.m
+        n = _A.n + degenerated_rank_on_left + degenerated_rank_on_right
+        colptr = _A.colptr
+        prepend!(colptr, fill(colptr[begin], degenerated_rank_on_left))
+        append!(colptr, fill(colptr[end], degenerated_rank_on_right))
+        rowval = _A.rowval
+        nzval = _A.nzval
+        return SparseMatrixCSC(m,n,colptr,rowval,nzval)
+    end
 end
 
 function _changebasis_I(P::BSplineSpace{0,T,<:AbstractKnotVector{T}}, P′::BSplineSpace{p′,T′,<:AbstractKnotVector{T′}}) where {p′,T,T′}
@@ -458,7 +498,7 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
     K′ = [k′[j+p′] - k′[j] for j in 1:n′+1]
     K = U[ifelse(k[i+p] ≠ k[i], U(1 / (k[i+p] - k[i])), zero(U)) for i in 1:n+1]
     Aᵖ⁻¹ = _changebasis_I(_lower_I(P), _lower_I(P′))  # (n-1) × (n′-1) matrix
-    n_nonzero = exactdim_I(P′)*(p+2)  # This would be a upper bound of the number of non-zero elements of Aᵖ.
+    n_nonzero = exactdim_I(P′)*(p+1)  # This would be a upper bound of the number of non-zero elements of Aᵖ.
     I = Vector{Int32}(undef, n_nonzero)
     J = Vector{Int32}(undef, n_nonzero)
     V = Vector{U}(undef, n_nonzero)
@@ -504,15 +544,6 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
                           366666666777777770
                           266666666666666661
                           366666666666666661
-
-         1                                    n′
-         |--*-----------------------------*-->|
-            j_begin                       j_end
-           *|---------------------------->|*
-           j_prev                          j_next
-           |                               |
-            |-------------j₊------------->|
-           188888888888888888888888888888881
 
          1                                    n′
          *-----------------------------*----->|
@@ -587,9 +618,9 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
         end
         # Rule-0: outside of j_range
         j_next = j_end + 1
-        if j_next == n′+1 || isdegenerate_I(P′, j_next)
+        if j_next == n′+1
             j_mid = j_next - 1
-            if j_prev == 0 || isdegenerate_I(P′, j_prev)
+            if j_prev == 0
                 # Rule-8: right recursion with postprocess
                 # We can't find Aᵖᵢ₁ or Aᵖᵢₙ′ directly (yet!), so we need Δ-shift.
                 # TODO: Find a way to avoid the Δ-shift.
@@ -608,7 +639,7 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
                 V[s-n′:s-1] .+= Δ
                 continue
             end
-        elseif j_prev == 0 || isdegenerate_I(P′, j_prev)
+        elseif j_prev == 0
             j_mid = j_prev
         else
             j_mid = (j_prev + j_next) ÷ 2
