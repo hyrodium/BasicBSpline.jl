@@ -252,7 +252,7 @@ true
 isdegenerate(P::BSplineSpace)
 
 for (f, fnon) in ((:isdegenerate_R, :isnondegenerate_R), (:isdegenerate_I, :isnondegenerate_I))
-    @eval function $f(P::BSplineSpace)
+    @eval function $f(P::AbstractFunctionSpace)
         for i in 1:dim(P)
             $f(P,i) && return true
         end
