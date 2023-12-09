@@ -63,6 +63,14 @@ _lower_I(dP::BSplineDerivativeSpace{r}) where r = BSplineDerivativeSpace{r-1}(_l
 _iszeros_R(P::BSplineDerivativeSpace) = _iszeros_R(bsplinespace(P))
 _iszeros_I(P::BSplineDerivativeSpace) = _iszeros_I(bsplinespace(P))
 
+function isdegenerate_R(dP::BSplineDerivativeSpace, i::Integer)
+    return isdegenerate_R(bsplinespace(dP), i)
+end
+
+function isdegenerate_I(dP::BSplineDerivativeSpace, i::Integer)
+    return isdegenerate_I(bsplinespace(dP), i)
+end
+
 @doc raw"""
     derivative(::BSplineDerivativeSpace{r}) -> BSplineDerivativeSpace{r+1}
     derivative(::BSplineSpace) -> BSplineDerivativeSpace{1}

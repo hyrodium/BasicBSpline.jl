@@ -1,36 +1,65 @@
 @testset "ChangeBasis" begin
     ε = 1e-13
     function test_changebasis_R(P,P′)
+        # The test case must hold P ⊆ P′
         @test P ⊆ P′
-        A = @inferred changebasis(P,P′)
+        # Test type stability
+        A = @inferred changebasis_R(P,P′)
+        # Test output type
         @test A isa SparseMatrixCSC
+        # Zeros must not be stored
         @test !any(iszero.(A.nzval))
-        @test A == BasicBSpline._changebasis_R(P,P′) == changebasis_R(P,P′)
+        # Test the size of A
         n = dim(P)
         n′ = dim(P′)
         @test size(A) == (n,n′)
+        # Elements must not be stored for degenerate row/col
+        for j in 1:n′
+            if isdegenerate_R(P′, j)
+                @test !any(Base.isstored.(Ref(A), 1:n, j))
+            end
+        end
+        for i in 1:n
+            if isdegenerate_R(P, i)
+                @test !any(Base.isstored.(Ref(A), i, 1:n′))
+            end
+        end
+        # B_{(i,p,k)} = ∑ⱼ A_{i,j} B_{(j,p′,k′)}
         ts = range(extrema(knotvector(P)+knotvector(P′))..., length=20)
         for t in ts
             @test norm(bsplinebasis.(P,1:n,t) - A*bsplinebasis.(P′,1:n′,t), Inf) < ε
         end
-        @test iszero(view(A, findall(BasicBSpline._iszeros_R(P)), :))
-        @test iszero(view(A, :, findall(BasicBSpline._iszeros_R(P′))))
     end
 
-    function test_changebasis_I(P1, P2; check_zero=true)
-        @test P1 ⊑ P2
-        A = @inferred changebasis_I(P1,P2)
+    function test_changebasis_I(P, P′; check_zero=true)
+        # The test case must hold P ⊑ P′
+        @test P ⊑ P′
+        # Test type stability
+        A = @inferred changebasis_I(P,P′)
+        # Test output type
         @test A isa SparseMatrixCSC
-        if check_zero
-            @test !any(iszero.(A.nzval))
+        # Zeros must not be stored
+        check_zero && @test !any(iszero.(A.nzval))
+        # Test the size of A
+        n = dim(P)
+        n′ = dim(P′)
+        @test size(A) == (n,n′)
+        # Elements must not be stored for degenerate row/col
+        for j in 1:n′
+            if isdegenerate_I(P′, j)
+                @test !any(Base.isstored.(Ref(A), 1:n, j))
+            end
         end
-        n1 = dim(P1)
-        n2 = dim(P2)
-        @test size(A) == (n1,n2)
-        d = domain(P1)
+        for i in 1:n
+            if isdegenerate_I(P, i)
+                @test !any(Base.isstored.(Ref(A), i, 1:n′))
+            end
+        end
+        # B_{(i,p,k)} = ∑ⱼ A_{i,j} B_{(j,p′,k′)}
+        d = domain(P)
         ts = range(extrema(d)..., length=21)[2:end-1]
         for t in ts
-            @test norm(bsplinebasis.(P1,1:n1,t) - A*bsplinebasis.(P2,1:n2,t), Inf) < ε
+            @test norm(bsplinebasis.(P,1:n,t) - A*bsplinebasis.(P′,1:n′,t), Inf) < ε
         end
     end
 
@@ -65,7 +94,7 @@
         A13 = changebasis(P1, P3)
         A36 = changebasis(P3, P6)
         A16 = changebasis(P1, P6)
-        A16 ≈ A13 * A36
+        @test A16 ≈ A13 * A36
 
         test_changebasis_R(P3, P6)
         test_changebasis_R(P6, P7)
@@ -73,7 +102,7 @@
         A36 = changebasis(P3, P6)
         A67 = changebasis(P6, P7)
         A37 = changebasis(P3, P7)
-        A37 ≈ A36 * A67
+        @test A37 ≈ A36 * A67
 
         @test P2 ⊈ P3
 
@@ -123,13 +152,31 @@
         _P8 = BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector(-[1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 7, 7]))
         test_changebasis_I(_P7, _P8)
 
+        # (2,2)-element is stored, but it is zero.
         Q1 = BSplineSpace{1, Int64, KnotVector{Int64}}(KnotVector([2, 2, 4, 4, 6, 6]))
         Q2 = BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector([1, 1, 1, 2, 3, 4, 4, 4, 4, 5, 5, 6, 6, 6, 6, 7]))
         test_changebasis_I(Q1, Q2; check_zero=false)
 
         Q3 = BSplineSpace{4, Int64, KnotVector{Int64}}(KnotVector([1, 1, 2, 2, 2, 3, 3, 4, 4, 5, 7]))
         Q4 = BSplineSpace{5, Int64, KnotVector{Int64}}(KnotVector([1, 1, 1, 1, 1, 2, 3, 3, 3, 3, 4, 4, 4, 5, 6]))
-        test_changebasis_I(Q3, Q4; check_zero=false)
+        test_changebasis_I(Q3, Q4)
+    end
+
+    @testset "different changebasis_R and changebasis_I" begin
+        P1 = BSplineSpace{3}(knotvector"1111 132")
+        P2 = BSplineSpace{3}(knotvector"11121132")
+        @test isdegenerate_I(P1)
+        @test isdegenerate_I(P2)
+        @test isnondegenerate_R(P1)
+        @test isnondegenerate_R(P2)
+        @test P1 ⊆ P2
+        @test P1 ⊑ P2
+
+        test_changebasis_I(P1, P2)
+        test_changebasis_R(P1, P2)
+        A_R = changebasis_R(P1, P2)
+        A_I = changebasis_I(P1, P2)
+        @test A_R ≠ A_I
     end
 
     @testset "changebasis_sim" begin
