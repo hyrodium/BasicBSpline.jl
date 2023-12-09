@@ -56,7 +56,7 @@ function _find_j_range_R(P::BSplineSpace{p}, P′::BSplineSpace{p′}, i, j_rang
     k = knotvector(P)
     k′ = knotvector(P′)
     n′ = dim(P′)
-    Pi = BSplineSpace{p}(view(k, i:i+p+1))
+    # Pi = BSplineSpace{p}(view(k, i:i+p+1))
     j_begin, j_end = extrema(j_range)
 
     # Find `j_end`. This is the same as:
