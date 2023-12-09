@@ -448,6 +448,10 @@ function _find_j_range_I(P::BSplineSpace{p}, P′::BSplineSpace{p′}, i, j_rang
     # TODO: remove `Aᵖ_old` argument
     # TODO: fix performance https://github.com/hyrodium/BasicBSpline.jl/pull/323#issuecomment-1723216566
     # TODO: remove threshold such as 1e-14
+    Pi = BSplineSpace{p}(view(knotvector(P), i:i+p+1))
+    if Pi ⊆ P′
+        return _find_j_range_R(P, P′, i, j_range)
+    end
     j_begin = findfirst(e->abs(e)>1e-14, Aᵖ_old[i, :])
     j_end = findlast(e->abs(e)>1e-14, Aᵖ_old[i, :])
     return j_begin:j_end
