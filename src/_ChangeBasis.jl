@@ -518,8 +518,8 @@ function _find_j_range_I(P::BSplineSpace{p}, P′::BSplineSpace{p′}, i, j_rang
     if Pi ⊆ P′
         return _find_j_range_R(P, P′, i, j_range)
     end
-    j_begin = findfirst(e->abs(e)>1e-14, Aᵖ_old[i, :])
-    j_end = findlast(e->abs(e)>1e-14, Aᵖ_old[i, :])
+    j_begin = findfirst(e->abs(e)>1e-14, view(Aᵖ_old, i, :))
+    j_end = findlast(e->abs(e)>1e-14, view(Aᵖ_old, i, :))
     return j_begin:j_end
 end
 
