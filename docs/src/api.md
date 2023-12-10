@@ -15,6 +15,18 @@ BasicBSpline._lower_R
 ```
 
 ```@docs
+BasicBSpline._changebasis_R
+```
+
+```@docs
+BasicBSpline._changebasis_I
+```
+
+```@docs
+BasicBSpline.__changebasis_I
+```
+
+```@docs
 BasicBSpline._changebasis_sim
 ```
 
