@@ -34,6 +34,16 @@ function changebasis_R(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
     return _changebasis_R(P, P′)
 end
 
+"""
+    _changebasis_R(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
+
+Internal function for [`changebasis_R`](@ref).
+
+Implicit assumption:
+- `P ⊆ P′`
+"""
+_changebasis_R
+
 function _changebasis_R(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′}) where {p,T,p′,T′}
     _P = BSplineSpace{p,T,KnotVector{T}}(P)
     _P′ = BSplineSpace{p′,T′,KnotVector{T′}}(P′)
@@ -383,16 +393,22 @@ julia> changebasis_I(P, P′)
   ⋅    ⋅         ⋅         ⋅         ⋅         ⋅         ⋅        0.333333  1.0
 ```
 """
-changebasis_I
-
 function changebasis_I(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
     P ⊑ P′ || throw(DomainError((P,P′),"P ⊑ P′ should be hold."))
     return _changebasis_I(P, P′)
 end
 
-function changebasis_I(P::BSplineSpace, P′::BSplineSpace{p′}) where p′
-    P ⊑ P′ || throw(DomainError((P,P′),"P ⊑ P′ should be hold."))
+"""
+    _changebasis_I(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
 
+Internal function for [`changebasis_I`](@ref).
+
+Implicit assumption:
+- `P ⊑ P′`
+"""
+_changebasis_I
+
+function _changebasis_I(P::BSplineSpace, P′::BSplineSpace{p′}) where p′
     k′ = knotvector(P′)
     l′ = length(k′)
     i = 1 + p′
@@ -412,7 +428,7 @@ function changebasis_I(P::BSplineSpace, P′::BSplineSpace{p′}) where p′
     end
     degenerated_rank_on_right = l′ - p′ - i - 1
     if degenerated_rank_on_left == degenerated_rank_on_right == 0
-        return _changebasis_I(P, P′)
+        return __changebasis_I(P, P′)
     else
         _k′ = view(k′, 1+degenerated_rank_on_left:l′-degenerated_rank_on_right)
         _P′ = BSplineSpace{p′}(_k′)
@@ -428,7 +444,19 @@ function changebasis_I(P::BSplineSpace, P′::BSplineSpace{p′}) where p′
     end
 end
 
-function _changebasis_I(P::BSplineSpace{0,T,<:AbstractKnotVector{T}}, P′::BSplineSpace{p′,T′,<:AbstractKnotVector{T′}}) where {p′,T,T′}
+"""
+    __changebasis_I(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
+
+Internal function for [`changebasis_I`](@ref).
+
+Implicit assumption:
+- `P ⊑ P′`
+- `isnondegenerate_I(P′, 1)`
+- `isnondegenerate_I(P′, dim(P′))`
+"""
+__changebasis_I
+
+function __changebasis_I(P::BSplineSpace{0,T,<:AbstractKnotVector{T}}, P′::BSplineSpace{p′,T′,<:AbstractKnotVector{T′}}) where {p′,T,T′}
     U = StaticArrays.arithmetic_closure(promote_type(T, T′))
     n = dim(P)
     n′ = dim(P′)
@@ -506,7 +534,7 @@ function _ΔAᵖ_I(Aᵖ⁻¹::AbstractMatrix, K::AbstractVector, K′::AbstractV
     end
 end
 
-function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSplineSpace{p′,T′,<:AbstractKnotVector{T′}}) where {p,p′,T,T′}
+function __changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSplineSpace{p′,T′,<:AbstractKnotVector{T′}}) where {p,p′,T,T′}
     #=
     Example matrix: n=4, n′=5
 
