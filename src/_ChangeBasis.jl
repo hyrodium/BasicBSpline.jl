@@ -2,18 +2,46 @@
 # See https://hackmd.io/lpA0D0ySTQ6Hq1CdaaONxQ for more information.
 
 @doc raw"""
+    changebasis_R(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
+
 Return a coefficient matrix ``A`` which satisfy
 ```math
 B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p',k')}
 ```
 
-Assumption:
-* ``P ⊆ P^{\prime}``
+# Examples
+```jldoctest
+julia> P = BSplineSpace{2}(knotvector"3 13")
+BSplineSpace{2, Int64, KnotVector{Int64}}(KnotVector([1, 1, 1, 3, 4, 4, 4]))
+
+julia> P′ = BSplineSpace{3}(knotvector"4124")
+BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector([1, 1, 1, 1, 2, 3, 3, 4, 4, 4, 4]))
+
+julia> P ⊆ P′
+true
+
+julia> changebasis_R(P, P′)
+4×7 SparseArrays.SparseMatrixCSC{Float64, Int32} with 13 stored entries:
+ 1.0  0.666667  0.166667   ⋅         ⋅         ⋅         ⋅
+  ⋅   0.333333  0.722222  0.555556  0.111111   ⋅         ⋅
+  ⋅    ⋅        0.111111  0.444444  0.888889  0.666667   ⋅
+  ⋅    ⋅         ⋅         ⋅         ⋅        0.333333  1.0
+```
 """
 function changebasis_R(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
     P ⊆ P′ || throw(DomainError((P,P′),"P ⊆ P′ should be hold."))
     return _changebasis_R(P, P′)
 end
+
+"""
+    _changebasis_R(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
+
+Internal function for [`changebasis_R`](@ref).
+
+Implicit assumption:
+- `P ⊆ P′`
+"""
+_changebasis_R
 
 function _changebasis_R(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′}) where {p,T,p′,T′}
     _P = BSplineSpace{p,T,KnotVector{T}}(P)
@@ -56,7 +84,7 @@ function _find_j_range_R(P::BSplineSpace{p}, P′::BSplineSpace{p′}, i, j_rang
     k = knotvector(P)
     k′ = knotvector(P′)
     n′ = dim(P′)
-    Pi = BSplineSpace{p}(view(k, i:i+p+1))
+    # Pi = BSplineSpace{p}(view(k, i:i+p+1))
     j_begin, j_end = extrema(j_range)
 
     # Find `j_end`. This is the same as:
@@ -337,24 +365,48 @@ function _derivatives_at_right(::BSplineSpace{0,T}) where {T}
 end
 
 @doc raw"""
+    changebasis_I(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
+
 Return a coefficient matrix ``A`` which satisfy
 ```math
 B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p',k')}
 ```
 
-Assumption:
-* ``P ⊑ P^{\prime}``
-"""
-changebasis_I
+# Examples
+```jldoctest
+julia> P = BSplineSpace{2}(knotvector"3 13")
+BSplineSpace{2, Int64, KnotVector{Int64}}(KnotVector([1, 1, 1, 3, 4, 4, 4]))
 
+julia> P′ = BSplineSpace{3}(knotvector"4124")
+BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector([1, 1, 1, 1, 2, 3, 3, 4, 4, 4, 4]))
+
+julia> P ⊑ P′
+true
+
+julia> changebasis_I(P, P′)
+4×7 SparseArrays.SparseMatrixCSC{Float64, Int32} with 13 stored entries:
+ 1.0  0.666667  0.166667   ⋅         ⋅         ⋅         ⋅
+  ⋅   0.333333  0.722222  0.555556  0.111111   ⋅         ⋅
+  ⋅    ⋅        0.111111  0.444444  0.888889  0.666667   ⋅
+  ⋅    ⋅         ⋅         ⋅         ⋅        0.333333  1.0
+```
+"""
 function changebasis_I(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
     P ⊑ P′ || throw(DomainError((P,P′),"P ⊑ P′ should be hold."))
     return _changebasis_I(P, P′)
 end
 
-function changebasis_I(P::BSplineSpace, P′::BSplineSpace{p′}) where p′
-    P ⊑ P′ || throw(DomainError((P,P′),"P ⊑ P′ should be hold."))
+"""
+    _changebasis_I(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
 
+Internal function for [`changebasis_I`](@ref).
+
+Implicit assumption:
+- `P ⊑ P′`
+"""
+_changebasis_I
+
+function _changebasis_I(P::BSplineSpace, P′::BSplineSpace{p′}) where p′
     k′ = knotvector(P′)
     l′ = length(k′)
     i = 1 + p′
@@ -374,7 +426,11 @@ function changebasis_I(P::BSplineSpace, P′::BSplineSpace{p′}) where p′
     end
     degenerated_rank_on_right = l′ - p′ - i - 1
     if degenerated_rank_on_left == degenerated_rank_on_right == 0
-        return _changebasis_I(P, P′)
+        if P ⊆ P′
+            return _changebasis_R(P, P′)
+        else
+            return __changebasis_I(P, P′)
+        end
     else
         _k′ = view(k′, 1+degenerated_rank_on_left:l′-degenerated_rank_on_right)
         _P′ = BSplineSpace{p′}(_k′)
@@ -390,7 +446,19 @@ function changebasis_I(P::BSplineSpace, P′::BSplineSpace{p′}) where p′
     end
 end
 
-function _changebasis_I(P::BSplineSpace{0,T,<:AbstractKnotVector{T}}, P′::BSplineSpace{p′,T′,<:AbstractKnotVector{T′}}) where {p′,T,T′}
+"""
+    __changebasis_I(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
+
+Internal function for [`changebasis_I`](@ref).
+
+Implicit assumption:
+- `P ⊑ P′`
+- `isnondegenerate_I(P′, 1)`
+- `isnondegenerate_I(P′, dim(P′))`
+"""
+__changebasis_I
+
+function __changebasis_I(P::BSplineSpace{0,T,<:AbstractKnotVector{T}}, P′::BSplineSpace{p′,T′,<:AbstractKnotVector{T′}}) where {p′,T,T′}
     U = StaticArrays.arithmetic_closure(promote_type(T, T′))
     n = dim(P)
     n′ = dim(P′)
@@ -448,8 +516,12 @@ function _find_j_range_I(P::BSplineSpace{p}, P′::BSplineSpace{p′}, i, j_rang
     # TODO: remove `Aᵖ_old` argument
     # TODO: fix performance https://github.com/hyrodium/BasicBSpline.jl/pull/323#issuecomment-1723216566
     # TODO: remove threshold such as 1e-14
-    j_begin = findfirst(e->abs(e)>1e-14, Aᵖ_old[i, :])
-    j_end = findlast(e->abs(e)>1e-14, Aᵖ_old[i, :])
+    Pi = BSplineSpace{p}(view(knotvector(P), i:i+p+1))
+    if Pi ⊆ P′
+        return _find_j_range_R(P, P′, i, j_range)
+    end
+    j_begin = findfirst(e->abs(e)>1e-14, view(Aᵖ_old, i, :))
+    j_end = findlast(e->abs(e)>1e-14, view(Aᵖ_old, i, :))
     return j_begin:j_end
 end
 
@@ -464,7 +536,7 @@ function _ΔAᵖ_I(Aᵖ⁻¹::AbstractMatrix, K::AbstractVector, K′::AbstractV
     end
 end
 
-function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSplineSpace{p′,T′,<:AbstractKnotVector{T′}}) where {p,p′,T,T′}
+function __changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSplineSpace{p′,T′,<:AbstractKnotVector{T′}}) where {p,p′,T,T′}
     #=
     Example matrix: n=4, n′=5
 
@@ -502,7 +574,6 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
     I = Vector{Int32}(undef, n_nonzero)
     J = Vector{Int32}(undef, n_nonzero)
     V = Vector{U}(undef, n_nonzero)
-    # R = fill(-1, n_nonzero)
     s = 1
     j_range = 1:1  # j_begin:j_end
     Aᵖ_old = __changebasis_I_old(P, P′)
@@ -589,7 +660,6 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
             if k′[j_next] == k′[j_next+p′]
                 I[s], J[s] = i, j_next
                 V[s] = Aᵖᵢⱼ_prev = bsplinebasis₊₀(P,i,k′[j_next+1])
-                # R[s] = 2
                 s += 1
                 j_prev = j_next
             # Rule-3: left limit (or both limit)
@@ -599,18 +669,15 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
                 for j₊ in (j_prev+1):j_mid
                     I[s], J[s] = i, j₊
                     V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * _ΔAᵖ_I(Aᵖ⁻¹,K,K′,i,j₊) / p′
-                    # R[s] = 6
                     s += 1
                 end
                 I[s], J[s] = i, j_next
                 V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_next = bsplinebasis₋₀I(P,i,k′[j_next+1])
-                # R[s] = 3
                 s += 1
                 # Rule-7: left recursion
                 for j₋ in reverse((j_mid+1):(j_next-1))
                     I[s], J[s] = i, j₋
                     V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * _ΔAᵖ_I(Aᵖ⁻¹,K,K′,i,j₋+1) / p′
-                    # R[s] = 7
                     s += 1
                 end
                 j_prev = j_next
@@ -626,12 +693,10 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
                 # TODO: Find a way to avoid the Δ-shift.
                 I[s], J[s] = i, 1
                 V[s] = Aᵖᵢⱼ_prev = zero(U)
-                # R[s] = 8
                 s += 1
                 for j₊ in 2:n′
                     I[s], J[s] = i, j₊
                     V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * _ΔAᵖ_I(Aᵖ⁻¹,K,K′,i,j₊) / p′
-                    # R[s] = 8
                     s += 1
                 end
                 t_mid = (maximum(domain(P))+minimum(domain(P))) / 2one(U)
@@ -649,21 +714,17 @@ function _changebasis_I(P::BSplineSpace{p,T,<:AbstractKnotVector{T}}, P′::BSpl
         for j₊ in (j_prev+1):j_mid
             I[s], J[s] = i, j₊
             V[s] = Aᵖᵢⱼ_prev = Aᵖᵢⱼ_prev + p * _ΔAᵖ_I(Aᵖ⁻¹,K,K′,i,j₊) / p′
-            # R[s] = 6
             s += 1
         end
         # Rule-7: left recursion
         for j₋ in reverse((j_mid+1):(j_next-1))
             I[s], J[s] = i, j₋
             V[s] = Aᵖᵢⱼ_next = Aᵖᵢⱼ_next - p * _ΔAᵖ_I(Aᵖ⁻¹,K,K′,i,j₋+1) / p′
-            # R[s] = 7
             s += 1
         end
     end
 
     Aᵖ = sparse(view(I,1:s-1), view(J,1:s-1), view(V,1:s-1), n, n′)
-    # Rᵖ = sparse(view(I,1:s-1), view(J,1:s-1), view(R,1:s-1), n, n′)
-    # display(Rᵖ)
     return Aᵖ
 end
 

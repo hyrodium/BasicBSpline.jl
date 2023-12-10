@@ -68,7 +68,7 @@ makedocs(;
         ],
         "Geometric modeling" => "geometricmodeling.md",
         "Interpolations" => "interpolations.md",
-        "Private API" => "internal.md",
+        "API" => "api.md",
         "Contributing" => "contributing.md",
     ],
     repo = "https://github.com/hyrodium/BasicBSpline.jl/blob/{commit}{path}#L{line}",
