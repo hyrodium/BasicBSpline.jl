@@ -428,7 +428,11 @@ function _changebasis_I(P::BSplineSpace, P′::BSplineSpace{p′}) where p′
     end
     degenerated_rank_on_right = l′ - p′ - i - 1
     if degenerated_rank_on_left == degenerated_rank_on_right == 0
-        return __changebasis_I(P, P′)
+        if P ⊆ P′
+            return _changebasis_R(P, P′)
+        else
+            return __changebasis_I(P, P′)
+        end
     else
         _k′ = view(k′, 1+degenerated_rank_on_left:l′-degenerated_rank_on_right)
         _P′ = BSplineSpace{p′}(_k′)
