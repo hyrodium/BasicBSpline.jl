@@ -2,13 +2,32 @@
 # See https://hackmd.io/lpA0D0ySTQ6Hq1CdaaONxQ for more information.
 
 @doc raw"""
+    changebasis_R(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
+
 Return a coefficient matrix ``A`` which satisfy
 ```math
 B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p',k')}
 ```
 
-Assumption:
-* ``P ⊆ P^{\prime}``
+# Examples
+```jldoctest
+julia> P = BSplineSpace{2}(knotvector"3 113")
+BSplineSpace{2, Int64, KnotVector{Int64}}(KnotVector([1, 1, 1, 3, 4, 5, 5, 5]))
+
+julia> P′ = BSplineSpace{3}(knotvector"4 324")
+BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector([1, 1, 1, 1, 3, 3, 3, 4, 4, 5, 5, 5, 5]))
+
+julia> P ⊆ P′
+true
+
+julia> changebasis_R(P, P′)
+5×9 SparseArrays.SparseMatrixCSC{Float64, Int32} with 16 stored entries:
+ 1.0  0.333333   ⋅         ⋅         ⋅         ⋅         ⋅         ⋅         ⋅ 
+  ⋅   0.666667  0.777778  0.333333  0.111111   ⋅         ⋅         ⋅         ⋅ 
+  ⋅    ⋅        0.222222  0.666667  0.888889  0.833333  0.166667   ⋅         ⋅ 
+  ⋅    ⋅         ⋅         ⋅         ⋅        0.166667  0.833333  0.666667   ⋅ 
+  ⋅    ⋅         ⋅         ⋅         ⋅         ⋅         ⋅        0.333333  1.0
+```
 """
 function changebasis_R(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
     P ⊆ P′ || throw(DomainError((P,P′),"P ⊆ P′ should be hold."))
