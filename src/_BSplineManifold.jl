@@ -98,6 +98,8 @@ The input 1.2 is out of range.
 function unbounded_mapping end
 
 @generated function unbounded_mapping(M::BSplineManifold{Dim,Deg}, t::Vararg{Real,Dim}) where {Dim,Deg}
+    # Use `UnitRange` to support Julia v1.6 (LTS)
+    # This can be replaced with `range` if we drop support for v1.6
     iter = CartesianIndices(UnitRange.(1, Deg .+ 1))
     exs = Expr[]
     for i in iter
