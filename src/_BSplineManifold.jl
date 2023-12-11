@@ -97,59 +97,25 @@ The input 1.2 is out of range.
 """
 function unbounded_mapping end
 
-@generated function unbounded_mapping(M::BSplineManifold{1,Deg},t::Vararg{Real,1}) where {Deg}
-    p1, = Deg
+@generated function unbounded_mapping(M::BSplineManifold{Dim,Deg}, t::Vararg{Real,Dim}) where {Dim,Deg}
+    iter = CartesianIndices(range.(1, Deg .+ 1))
     exs = Expr[]
-    for j1 in 1:p1
-        push!(exs, :(v += b1[$(1+j1)]*getindex(a,i1+$(j1))))
+    for i in iter
+        a = [:getindex, :a, [:($(Symbol(:i,d))+$(i[d]-1)) for d in 1:Dim]...]
+        b = Expr(:call, a...)
+        c = [:*, [:($(Symbol(:b,d))[$(i[d])]) for d in 1:Dim]..., b]
+        d = Expr(:call, c...)
+        e = Expr(:+=, :v, d)
+        push!(exs, e)
     end
-    Expr(:block,
-        :((P1,) = bsplinespaces(M)),
-        :((t1,) = t),
-        :(a = controlpoints(M)),
-        :(i1 = intervalindex(P1,t1)),
-        :(b1 = bsplinebasisall(P1,i1,t1)),
-        :(v = b1[1]*getindex(a,i1)),
-        exs...,
-        :(return v)
-    )
-end
-
-@generated function unbounded_mapping(M::BSplineManifold{2,Deg},t::Vararg{Real,2}) where {Deg}
-    p1, p2 = Deg
-    exs = Expr[]
-    for j2 in 1:p2+1, j1 in 1:p1+1
-        push!(exs, :(v += b1[$(j1)]*b2[$(j2)]*getindex(a,i1+$(j1-1),i2+$(j2-1))))
-    end
-    deleteat!(exs,1)
+    exs[1].head = :(=)
     Expr(
         :block,
-        :((P1, P2) = bsplinespaces(M)),
-        :((t1, t2) = t),
+        Expr(:(=), Expr(:tuple, [Symbol(:P, i) for i in 1:Dim]...), :(bsplinespaces(M))),
+        Expr(:(=), Expr(:tuple, [Symbol(:t, i) for i in 1:Dim]...), :t),
         :(a = controlpoints(M)),
-        :((i1, i2) = (intervalindex(P1,t1), intervalindex(P2,t2))),
-        :((b1, b2) = (bsplinebasisall(P1,i1,t1), bsplinebasisall(P2,i2,t2))),
-        :(v = b1[1]*b2[1]*getindex(a,i1,i2)),
-        exs...,
-        :(return v)
-    )
-end
-
-@generated function unbounded_mapping(M::BSplineManifold{3,Deg},t::Vararg{Real,3}) where {Deg}
-    p1, p2, p3 = Deg
-    exs = Expr[]
-    for j3 in 1:p3+1, j2 in 1:p2+1, j1 in 1:p1+1
-        push!(exs, :(v += b1[$(j1)]*b2[$(j2)]*b3[$(j3)]*getindex(a,i1+$(j1-1),i2+$(j2-1),i3+$(j3-1))))
-    end
-    deleteat!(exs,1)
-    Expr(
-        :block,
-        :((P1, P2, P3) = bsplinespaces(M)),
-        :((t1, t2, t3) = t),
-        :(a = controlpoints(M)),
-        :((i1, i2, i3) = (intervalindex(P1,t1), intervalindex(P2,t2), intervalindex(P3,t3))),
-        :((b1, b2, b3) = (bsplinebasisall(P1,i1,t1), bsplinebasisall(P2,i2,t2), bsplinebasisall(P3,i3,t3))),
-        :(v = b1[1]*b2[1]*b3[1]*getindex(a,i1,i2,i3)),
+        Expr(:(=), Expr(:tuple, [Symbol(:i, i) for i in 1:Dim]...), Expr(:tuple, [:(intervalindex($(Symbol(:P, i)), $(Symbol(:t, i)))) for i in 1:Dim]...)),
+        Expr(:(=), Expr(:tuple, [Symbol(:b, i) for i in 1:Dim]...), Expr(:tuple, [:(bsplinebasisall($(Symbol(:P, i)), $(Symbol(:i, i)), $(Symbol(:t, i)))) for i in 1:Dim]...)),
         exs...,
         :(return v)
     )
