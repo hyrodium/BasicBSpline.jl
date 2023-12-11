@@ -63,72 +63,36 @@ controlpoints(M::RationalBSplineManifold) = M.controlpoints
 weights(M::RationalBSplineManifold) = M.weights
 bsplinespaces(M::RationalBSplineManifold) = M.bsplinespaces
 
-@generated function unbounded_mapping(M::RationalBSplineManifold{1,Deg},t1::Real) where {Deg}
-    p1, = Deg
+@generated function unbounded_mapping(M::RationalBSplineManifold{Dim,Deg}, t::Vararg{Real,Dim}) where {Dim,Deg}
+    # Use `UnitRange` to support Julia v1.6 (LTS)
+    # This can be replaced with `range` if we drop support for v1.6
+    iter = CartesianIndices(UnitRange.(1, Deg .+ 1))
     exs = Expr[]
-    for j1 in 1:p1
-        push!(exs, :(u += b1[$(1+j1)]*getindex(w,i1+$(j1))))
-        push!(exs, :(v += b1[$(1+j1)]*getindex(w,i1+$(j1))*getindex(a,i1+$(j1))))
+    for ci in iter
+        ex_w = Expr(:call, [:getindex, :w, [:($(Symbol(:i,d))+$(ci[d]-1)) for d in 1:Dim]...]...)
+        ex_a = Expr(:call, [:getindex, :a, [:($(Symbol(:i,d))+$(ci[d]-1)) for d in 1:Dim]...]...)
+        ex = Expr(:call, [:*, [:($(Symbol(:b,d))[$(ci[d])]) for d in 1:Dim]..., ex_w]...)
+        ex = Expr(:+=, :u, ex)
+        push!(exs, ex)
+        ex = Expr(:call, [:getindex, :a, [:($(Symbol(:i,d))+$(ci[d]-1)) for d in 1:Dim]...]...)
+        ex = Expr(:call, [:*, [:($(Symbol(:b,d))[$(ci[d])]) for d in 1:Dim]..., ex_w, ex_a]...)
+        ex = Expr(:+=, :v, ex)
+        push!(exs, ex)
     end
-    Expr(:block,
-        :((P1,) = bsplinespaces(M)),
-        :(a = controlpoints(M)),
-        :(w = weights(M)),
-        :(i1 = intervalindex(P1,t1)),
-        :(b1 = bsplinebasisall(P1,i1,t1)),
-        :(u = b1[1]*getindex(w,i1)),
-        :(v = b1[1]*getindex(w,i1)*getindex(a,i1)),
-        exs...,
-        :(return v/u)
-    )
-end
-
-@generated function unbounded_mapping(M::RationalBSplineManifold{2,Deg},t1::Real,t2::Real) where {Deg}
-    p1, p2 = Deg
-    exs = Expr[]
-    for j2 in 1:p2+1, j1 in 1:p1+1
-        push!(exs, :(u += b1[$(j1)]*b2[$(j2)]*getindex(w,i1+$(j1-1),i2+$(j2-1))))
-        push!(exs, :(v += b1[$(j1)]*b2[$(j2)]*getindex(w,i1+$(j1-1),i2+$(j2-1))*getindex(a,i1+$(j1-1),i2+$(j2-1))))
-    end
-    deleteat!(exs,1)
-    deleteat!(exs,1)
+    exs[1].head = :(=)
+    exs[2].head = :(=)
     Expr(
         :block,
-        :((P1, P2) = bsplinespaces(M)),
+        Expr(:(=), Expr(:tuple, [Symbol(:P, i) for i in 1:Dim]...), :(bsplinespaces(M))),
+        Expr(:(=), Expr(:tuple, [Symbol(:t, i) for i in 1:Dim]...), :t),
         :(a = controlpoints(M)),
         :(w = weights(M)),
-        :((i1, i2) = (intervalindex(P1,t1), intervalindex(P2,t2))),
-        :((b1, b2) = (bsplinebasisall(P1,i1,t1), bsplinebasisall(P2,i2,t2))),
-        :(u = b1[1]*b2[1]*getindex(w,i1,i2)),
-        :(v = b1[1]*b2[1]*getindex(w,i1,i2)*getindex(a,i1,i2)),
+        Expr(:(=), Expr(:tuple, [Symbol(:i, i) for i in 1:Dim]...), Expr(:tuple, [:(intervalindex($(Symbol(:P, i)), $(Symbol(:t, i)))) for i in 1:Dim]...)),
+        Expr(:(=), Expr(:tuple, [Symbol(:b, i) for i in 1:Dim]...), Expr(:tuple, [:(bsplinebasisall($(Symbol(:P, i)), $(Symbol(:i, i)), $(Symbol(:t, i)))) for i in 1:Dim]...)),
         exs...,
         :(return v/u)
     )
 end
-
-@generated function unbounded_mapping(M::RationalBSplineManifold{3,Deg},t1::Real,t2::Real,t3::Real) where {Deg}
-    p1, p2, p3 = Deg
-    exs = Expr[]
-    for j3 in 1:p3+1, j2 in 1:p2+1, j1 in 1:p1+1
-        push!(exs, :(u += b1[$(j1)]*b2[$(j2)]*b3[$(j3)]*getindex(w,i1+$(j1-1),i2+$(j2-1),i3+$(j3-1))))
-        push!(exs, :(v += b1[$(j1)]*b2[$(j2)]*b3[$(j3)]*getindex(w,i1+$(j1-1),i2+$(j2-1),i3+$(j3-1))*getindex(a,i1+$(j1-1),i2+$(j2-1),i3+$(j3-1))))
-    end
-    deleteat!(exs,1)
-    deleteat!(exs,1)
-    Expr(
-        :block,
-        :((P1, P2, P3) = bsplinespaces(M)),
-        :(a = controlpoints(M)),
-        :(w = weights(M)),
-        :((i1, i2, i3) = (intervalindex(P1,t1), intervalindex(P2,t2), intervalindex(P3,t3))),
-        :((b1, b2, b3) = (bsplinebasisall(P1,i1,t1), bsplinebasisall(P2,i2,t2), bsplinebasisall(P3,i3,t3))),
-        :(u = b1[1]*b2[1]*b3[1]*getindex(w,i1,i2,i3)),
-        :(v = b1[1]*b2[1]*b3[1]*getindex(w,i1,i2,i3)*getindex(a,i1,i2,i3)),
-        exs...,
-        :(return v/u)
-    )
-end
-
 
 ## currying
 # 1dim
