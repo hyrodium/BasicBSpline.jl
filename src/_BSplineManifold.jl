@@ -103,12 +103,12 @@ function unbounded_mapping end
     iter = CartesianIndices(UnitRange.(1, Deg .+ 1))
     exs = Expr[]
     for ci in iter
-        a = [:getindex, :a, [:($(Symbol(:i,d))+$(ci[d]-1)) for d in 1:Dim]...]
-        b = Expr(:call, a...)
-        c = [:*, [:($(Symbol(:b,d))[$(ci[d])]) for d in 1:Dim]..., b]
-        d = Expr(:call, c...)
-        e = Expr(:+=, :v, d)
-        push!(exs, e)
+        ex = [:getindex, :a, [:($(Symbol(:i,d))+$(ci[d]-1)) for d in 1:Dim]...]
+        ex = Expr(:call, ex...)
+        ex = [:*, [:($(Symbol(:b,d))[$(ci[d])]) for d in 1:Dim]..., ex]
+        ex = Expr(:call, ex...)
+        ex = Expr(:+=, :v, ex)
+        push!(exs, ex)
     end
     exs[1].head = :(=)
     Expr(
