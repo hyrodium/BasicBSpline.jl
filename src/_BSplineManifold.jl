@@ -98,7 +98,7 @@ The input 1.2 is out of range.
 function unbounded_mapping end
 
 @generated function unbounded_mapping(M::BSplineManifold{Dim,Deg}, t::Vararg{Real,Dim}) where {Dim,Deg}
-    iter = CartesianIndices(range.(1, Deg .+ 1))
+    iter = CartesianIndices(UnitRange.(1, Deg .+ 1))
     exs = Expr[]
     for i in iter
         a = [:getindex, :a, [:($(Symbol(:i,d))+$(i[d]-1)) for d in 1:Dim]...]
