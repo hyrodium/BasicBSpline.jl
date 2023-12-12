@@ -95,47 +95,12 @@ function refinement_I(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace}) 
     return BSplineManifold(a′, P′)
 end
 
-function refinement(M::BSplineManifold{1}, Ps′::NTuple{1, BSplineSpace})
-    P1, = bsplinespaces(M)
-    P1′, = Ps′
-    n1 = dim(P1)
-    n1′ = dim(P1′)
-    A1 = changebasis(P1, P1′)
+function refinement(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace}) where Dim
+    A = changebasis.(bsplinespaces(M), P′)
+    R = _i_ranges.(A, P′)
     a = controlpoints(M)
-
-    a′ = [sum(A1[I₁,J₁] * a[I₁] for I₁ in 1:n1) for J₁ in 1:n1′]
-    return BSplineManifold(a′, Ps′)
-end
-function refinement(M::BSplineManifold{2}, Ps′::NTuple{2, BSplineSpace})
-    P1, P2 = bsplinespaces(M)
-    P1′, P2′ = Ps′
-    n1 = dim(P1)
-    n2 = dim(P2)
-    n1′ = dim(P1′)
-    n2′ = dim(P2′)
-    A1 = changebasis(P1, P1′)
-    A2 = changebasis(P2, P2′)
-    a = controlpoints(M)
-
-    a′ = [sum(A1[I₁,J₁] * A2[I₂,J₂] * a[I₁,I₂] for I₁ in 1:n1, I₂ in 1:n2) for J₁ in 1:n1′, J₂ in 1:n2′]
-    return BSplineManifold(a′, Ps′)
-end
-function refinement(M::BSplineManifold{3}, Ps′::NTuple{3, BSplineSpace})
-    P1, P2, P3 = bsplinespaces(M)
-    P1′, P2′, P3′ = Ps′
-    n1 = dim(P1)
-    n2 = dim(P2)
-    n3 = dim(P3)
-    n1′ = dim(P1′)
-    n2′ = dim(P2′)
-    n3′ = dim(P3′)
-    A1 = changebasis(P1, P1′)
-    A2 = changebasis(P2, P2′)
-    A3 = changebasis(P3, P3′)
-    a = controlpoints(M)
-
-    a′ = [sum(A1[I₁,J₁] * A2[I₂,J₂] * A3[I₃,J₃] * a[I₁,I₂,I₃] for I₁ in 1:n1, I₂ in 1:n2, I₃ in 1:n3) for J₁ in 1:n1′, J₂ in 1:n2′, J₃ in 1:n3′]
-    return BSplineManifold(a′, Ps′)
+    a′ = [_ref_ctrl_elm(a,A,R,J) for J in CartesianIndices(UnitRange.(1, dim.(P′)))]
+    return BSplineManifold(a′, P′)
 end
 
 function refinement(M::RationalBSplineManifold{1}, Ps′::NTuple{1, BSplineSpace})
@@ -235,4 +200,5 @@ end
 end
 
 # resolve ambiguities
-refinement(M::BasicBSpline.AbstractManifold{0}, ::Tuple{}) = M
+refinement(M::AbstractManifold{0}, ::Tuple{}) = M
+refinement(M::BSplineManifold{0, Deg, C, S} where {Deg, C, S<:Tuple{}}, ::Tuple{}) = M
