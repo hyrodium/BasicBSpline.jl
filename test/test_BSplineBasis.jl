@@ -12,7 +12,6 @@ end
 
     Δt = 1.0e-8
     ε = 1.0e-8
-    ∞ = Inf
 
     @testset "$(p)-th degree basis" for p in 0:4
         v = rand(10)
