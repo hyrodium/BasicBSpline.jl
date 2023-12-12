@@ -8,6 +8,93 @@ Refinement of B-spline manifold with given B-spline spaces.
 """
 refinement
 
+function _i_ranges_R(A, P′)
+    n, n′ = size(A)
+    i_ranges = fill(1:0, n′)
+    i = 1
+    for j in 1:n′
+        isdegenerate_R(P′, j) && continue
+        iszero(view(A,:,j)) && continue
+        while true
+            if Base.isstored(A,i,j)
+                i_ranges[j] = i:n
+                break
+            end
+            i = i + 1
+        end
+    end
+    i = n
+    for j in reverse(1:n′)
+        isdegenerate_R(P′, j) && continue
+        iszero(view(A,:,j)) && continue
+        while true
+            if Base.isstored(A,i,j)
+                i_ranges[j] = first(i_ranges[j]):i
+                break
+            end
+            i = i - 1
+        end
+    end
+    return i_ranges
+end
+
+function _i_ranges_I(A, P′)
+    n, n′ = size(A)
+    i_ranges = fill(1:0, n′)
+    i = 1
+    for j in 1:n′
+        isdegenerate_I(P′, j) && continue
+        while true
+            if Base.isstored(A,i,j)
+                i_ranges[j] = i:n
+                break
+            end
+            i = i + 1
+        end
+    end
+    i = n
+    for j in reverse(1:n′)
+        isdegenerate_I(P′, j) && continue
+        while true
+            if Base.isstored(A,i,j)
+                i_ranges[j] = first(i_ranges[j]):i
+                break
+            end
+            i = i - 1
+        end
+    end
+    return i_ranges
+end
+
+const _i_ranges = _i_ranges_R
+
+function _ref_ctrl_elm(a::Array{T, Dim}, A::NTuple{Dim, SparseMatrixCSC}, R::NTuple{Dim, Vector{<:UnitRange}}, J::CartesianIndex{Dim}) where {T, Dim}
+    ci = CartesianIndices(getindex.(R, J.I))
+    if isempty(ci)
+        # Should be type-stable
+        S = Base.promote_op(*, eltype.(A)..., T)
+        return zero(S)
+    else
+        return sum(prod(getindex.(A, I.I, J.I)) * a[I] for I in ci)
+    end
+end
+
+function refinement_R(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace}) where Dim
+    A = changebasis_R.(bsplinespaces(M), P′)
+    R = _i_ranges_R.(A, P′)
+    a = controlpoints(M)
+    a′ = [_ref_ctrl_elm(a,A,R,J) for J in CartesianIndices(UnitRange.(1, dim.(P′)))]
+    return BSplineManifold(a′, P′)
+end
+
+function refinement_I(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace}) where Dim
+    A = changebasis_I.(bsplinespaces(M), P′)
+    R = _i_ranges_I.(A, P′)
+    a = controlpoints(M)
+    a′ = [_ref_ctrl_elm(a,A,R,J) for J in CartesianIndices(UnitRange.(1, dim.(P′)))]
+    return BSplineManifold(a′, P′)
+end
+
 function refinement(M::BSplineManifold{1}, Ps′::NTuple{1, BSplineSpace})
     P1, = bsplinespaces(M)
     P1′, = Ps′
