@@ -115,7 +115,7 @@ function _ref_ctrl_elm(a::Array{C, Dim}, A::NTuple{Dim, SparseMatrixCSC{S, Int32
     end
 end
 
-function refinement_R(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace}) where Dim
+function refinement_R(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace{p,T} where p}) where {Dim, T}
     A = changebasis_R.(bsplinespaces(M), P′)
     R = _i_ranges_R.(A, P′)
     a = controlpoints(M)
@@ -123,7 +123,7 @@ function refinement_R(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace}) 
     return BSplineManifold(a′, P′)
 end
 
-function refinement_I(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace}) where Dim
+function refinement_I(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace{p,T} where p}) where {Dim, T}
     A = changebasis_I.(bsplinespaces(M), P′)
     R = _i_ranges_I.(A, P′)
     a = controlpoints(M)
@@ -131,7 +131,7 @@ function refinement_I(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace}) 
     return BSplineManifold(a′, P′)
 end
 
-function refinement(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace}) where Dim
+function refinement(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace{p,T} where p}) where {Dim, T}
     A = changebasis.(bsplinespaces(M), P′)
     R = _i_ranges.(A, P′)
     a = controlpoints(M)
