@@ -35,7 +35,7 @@ export knotvector
 export bsplinespace
 
 # Useful functions
-export refinement
+export refinement, refinement_R, refinement_I
 
 # Macros
 export @knotvector_str
