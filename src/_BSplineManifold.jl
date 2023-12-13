@@ -38,15 +38,15 @@ The input 1.2 is out of range.
 ```
 """
 struct BSplineManifold{Dim,Deg,C,T,S<:NTuple{Dim, BSplineSpace{p,T} where p}} <: AbstractManifold{Dim}
-    bsplinespaces::S
     controlpoints::Array{C,Dim}
+    bsplinespaces::S
     function BSplineManifold(a::Array{C,Dim},Ps::S) where {S<:NTuple{Dim, BSplineSpace{p,T} where p},C} where {Dim, T}
         if size(a) != dim.(Ps)
             msg = "The size of control points array $(size(a)) and dimensions of B-spline spaces $(dim.(Ps)) must be equal."
             throw(DimensionMismatch(msg))
         end
         Deg = degree.(Ps)
-        new{Dim,Deg,C,T,S}(Ps,a)
+        new{Dim,Deg,C,T,S}(a,Ps)
     end
 end
 
