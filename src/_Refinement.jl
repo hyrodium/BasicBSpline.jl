@@ -171,6 +171,7 @@ function refinement_R(M::RationalBSplineManifold{Dim, Deg, C, T}, P′::NTuple{D
             @inbounds a′[J] = sum(*(getindex.(A, I.I, J.I)...) * w[I] * a[I] for I in D)
         end
     end
+    a′ ./= w′
     return RationalBSplineManifold(a′, w′, P′)
 end
 function refinement_I(M::RationalBSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where p′}) where {Dim, Deg, C, T, T′}
@@ -194,6 +195,7 @@ function refinement_I(M::RationalBSplineManifold{Dim, Deg, C, T}, P′::NTuple{D
             @inbounds a′[J] = sum(*(getindex.(A, I.I, J.I)...) * w[I] * a[I] for I in D)
         end
     end
+    a′ ./= w′
     return RationalBSplineManifold(a′, w′, P′)
 end
 function refinement(M::RationalBSplineManifold{Dim, Deg, C, W, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where p′}) where {Dim, Deg, C, W, T, T′}
@@ -219,6 +221,7 @@ function refinement(M::RationalBSplineManifold{Dim, Deg, C, W, T}, P′::NTuple{
             @inbounds a′[J] = sum(*(getindex.(A, I.I, J.I)...) * w[I] * a[I] for I in D)
         end
     end
+    a′ ./= w′
     return RationalBSplineManifold(a′, w′, P′)
 end
 
