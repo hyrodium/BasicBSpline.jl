@@ -88,59 +88,60 @@ function _isempty(R::NTuple{3, Vector{UnitRange{Int}}}, J::CartesianIndex{3})
     return isempty(R[1][J[1]]) || isempty(R[2][J[2]]) || isempty(R[3][J[3]])
 end
 
-function refinement_R(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace}) where Dim
-    A = changebasis_R.(bsplinespaces(M), P′)
-    R = BasicBSpline._i_ranges_R.(A, P′)
+function refinement_R(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where p′}) where {Dim, Deg, C, T, T′}
+    A::NTuple{Dim, SparseMatrixCSC{U, Int32}} = changebasis_R.(bsplinespaces(M), P′)
+    R::NTuple{Dim, Vector{UnitRange{Int64}}} = BasicBSpline._i_ranges_R.(A, P′)
     a = controlpoints(M)
     J = CartesianIndex(findfirst.(!isempty, R))
-    C = CartesianIndices(getindex.(R, J.I))
-    value = sum(*(getindex.(A, I.I, J.I)...) * a[I] for I in C)
+    D = CartesianIndices(getindex.(R, J.I))
+    value = sum(*(getindex.(A, I.I, J.I)...) * a[I] for I in D)
     j = prod(J.I)
     a′ = _a(value, j, dim.(P′))
     for J in view(CartesianIndices(UnitRange.(1, dim.(P′))), (j+1):prod(dim.(P′)))
         if _isempty(R, J)
             @inbounds a′[J] = zero(value)
         else
-            C = CartesianIndices(getindex.(R, J.I))
-            @inbounds a′[J] = sum(*(getindex.(A, I.I, J.I)...) * a[I] for I in C)
+            D = CartesianIndices(getindex.(R, J.I))
+            @inbounds a′[J] = sum(*(getindex.(A, I.I, J.I)...) * a[I] for I in D)
         end
     end
     return BSplineManifold(a′, P′)
 end
-function refinement_I(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace}) where Dim
-    A = changebasis_I.(bsplinespaces(M), P′)
-    R = BasicBSpline._i_ranges_I.(A, P′)
+function refinement_I(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where p′}) where {Dim, Deg, C, T, T′}
+    A::NTuple{Dim, SparseMatrixCSC{U, Int32}} = changebasis_I.(bsplinespaces(M), P′)
+    R::NTuple{Dim, Vector{UnitRange{Int64}}} = BasicBSpline._i_ranges_I.(A, P′)
     a = controlpoints(M)
     J = CartesianIndex(findfirst.(!isempty, R))
-    C = CartesianIndices(getindex.(R, J.I))
-    value = sum(*(getindex.(A, I.I, J.I)...) * a[I] for I in C)
+    D = CartesianIndices(getindex.(R, J.I))
+    value = sum(*(getindex.(A, I.I, J.I)...) * a[I] for I in D)
     j = prod(J.I)
     a′ = _a(value, j, dim.(P′))
     for J in view(CartesianIndices(UnitRange.(1, dim.(P′))), (j+1):prod(dim.(P′)))
         if _isempty(R, J)
             @inbounds a′[J] = zero(value)
         else
-            C = CartesianIndices(getindex.(R, J.I))
-            @inbounds a′[J] = sum(*(getindex.(A, I.I, J.I)...) * a[I] for I in C)
+            D = CartesianIndices(getindex.(R, J.I))
+            @inbounds a′[J] = sum(*(getindex.(A, I.I, J.I)...) * a[I] for I in D)
         end
     end
     return BSplineManifold(a′, P′)
 end
-function refinement(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace}) where Dim
-    A = changebasis.(bsplinespaces(M), P′)
-    R = BasicBSpline._i_ranges.(A, P′)
+function refinement(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where p′}) where {Dim, Deg, C, T, T′}
+    U = StaticArrays.arithmetic_closure(promote_type(T,T′))
+    A::NTuple{Dim, SparseMatrixCSC{U, Int32}} = changebasis.(bsplinespaces(M), P′)
+    R::NTuple{Dim, Vector{UnitRange{Int64}}} = BasicBSpline._i_ranges.(A, P′)
     a = controlpoints(M)
     J = CartesianIndex(findfirst.(!isempty, R))
-    C = CartesianIndices(getindex.(R, J.I))
-    value = sum(*(getindex.(A, I.I, J.I)...) * a[I] for I in C)
+    D = CartesianIndices(getindex.(R, J.I))
+    value = sum(*(getindex.(A, I.I, J.I)...) * a[I] for I in D)
     j = prod(J.I)
     a′ = _a(value, j, dim.(P′))
     for J in view(CartesianIndices(UnitRange.(1, dim.(P′))), (j+1):prod(dim.(P′)))
         if _isempty(R, J)
             @inbounds a′[J] = zero(value)
         else
-            C = CartesianIndices(getindex.(R, J.I))
-            @inbounds a′[J] = sum(*(getindex.(A, I.I, J.I)...) * a[I] for I in C)
+            D = CartesianIndices(getindex.(R, J.I))
+            @inbounds a′[J] = sum(*(getindex.(A, I.I, J.I)...) * a[I] for I in D)
         end
     end
     return BSplineManifold(a′, P′)
