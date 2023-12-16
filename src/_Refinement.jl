@@ -90,7 +90,7 @@ end
 
 function refinement_R(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where p′}) where {Dim, Deg, C, T, T′}
     A::NTuple{Dim, SparseMatrixCSC{U, Int32}} = changebasis_R.(bsplinespaces(M), P′)
-    R::NTuple{Dim, Vector{UnitRange{Int64}}} = BasicBSpline._i_ranges_R.(A, P′)
+    R::NTuple{Dim, Vector{UnitRange{Int64}}} = _i_ranges_R.(A, P′)
     a = controlpoints(M)
     J = CartesianIndex(findfirst.(!isempty, R))
     D = CartesianIndices(getindex.(R, J.I))
@@ -109,7 +109,7 @@ function refinement_R(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSpl
 end
 function refinement_I(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where p′}) where {Dim, Deg, C, T, T′}
     A::NTuple{Dim, SparseMatrixCSC{U, Int32}} = changebasis_I.(bsplinespaces(M), P′)
-    R::NTuple{Dim, Vector{UnitRange{Int64}}} = BasicBSpline._i_ranges_I.(A, P′)
+    R::NTuple{Dim, Vector{UnitRange{Int64}}} = _i_ranges_I.(A, P′)
     a = controlpoints(M)
     J = CartesianIndex(findfirst.(!isempty, R))
     D = CartesianIndices(getindex.(R, J.I))
@@ -129,7 +129,7 @@ end
 function refinement(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where p′}) where {Dim, Deg, C, T, T′}
     U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     A::NTuple{Dim, SparseMatrixCSC{U, Int32}} = changebasis.(bsplinespaces(M), P′)
-    R::NTuple{Dim, Vector{UnitRange{Int64}}} = BasicBSpline._i_ranges.(A, P′)
+    R::NTuple{Dim, Vector{UnitRange{Int64}}} = _i_ranges.(A, P′)
     a = controlpoints(M)
     J = CartesianIndex(findfirst.(!isempty, R))
     D = CartesianIndices(getindex.(R, J.I))
