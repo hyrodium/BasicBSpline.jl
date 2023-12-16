@@ -68,7 +68,7 @@ end
 
 const _i_ranges = _i_ranges_R
 
-function _a(value::T, index::Integer, dims::NTuple{Dim, Integer}) where {T, Dim}
+function __control_points(value::T, index::Integer, dims::NTuple{Dim, Integer}) where {T, Dim}
     a = Array{T,Dim}(undef, dims)
     i = prod(index)
     for i in 1:(i-1)
@@ -96,7 +96,7 @@ function refinement_R(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSpl
     D = CartesianIndices(getindex.(R, J.I))
     value = sum(*(getindex.(A, I.I, J.I)...) * a[I] for I in D)
     j = prod(J.I)
-    a′ = _a(value, j, dim.(P′))
+    a′ = __control_points(value, j, dim.(P′))
     for J in view(CartesianIndices(UnitRange.(1, dim.(P′))), (j+1):prod(dim.(P′)))
         if _isempty(R, J)
             @inbounds a′[J] = zero(value)
@@ -115,7 +115,7 @@ function refinement_I(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSpl
     D = CartesianIndices(getindex.(R, J.I))
     value = sum(*(getindex.(A, I.I, J.I)...) * a[I] for I in D)
     j = prod(J.I)
-    a′ = _a(value, j, dim.(P′))
+    a′ = __control_points(value, j, dim.(P′))
     for J in view(CartesianIndices(UnitRange.(1, dim.(P′))), (j+1):prod(dim.(P′)))
         if _isempty(R, J)
             @inbounds a′[J] = zero(value)
@@ -135,7 +135,7 @@ function refinement(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSplin
     D = CartesianIndices(getindex.(R, J.I))
     value = sum(*(getindex.(A, I.I, J.I)...) * a[I] for I in D)
     j = prod(J.I)
-    a′ = _a(value, j, dim.(P′))
+    a′ = __control_points(value, j, dim.(P′))
     for J in view(CartesianIndices(UnitRange.(1, dim.(P′))), (j+1):prod(dim.(P′)))
         if _isempty(R, J)
             @inbounds a′[J] = zero(value)
