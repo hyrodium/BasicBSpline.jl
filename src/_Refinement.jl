@@ -163,8 +163,8 @@ function refinement_R(M::RationalBSplineManifold{Dim, Deg, C, T}, P′::NTuple{D
     a′ = __control_points(value_a, j, dim.(P′))
     for J in view(CartesianIndices(UnitRange.(1, dim.(P′))), (j+1):prod(dim.(P′)))
         if _isempty(R, J)
-            @inbounds w′[J] = zero(value)
-            @inbounds a′[J] = zero(value)
+            @inbounds w′[J] = zero(value_w)
+            @inbounds a′[J] = zero(value_a)
         else
             D = CartesianIndices(getindex.(R, J.I))
             @inbounds w′[J] = sum(*(getindex.(A, I.I, J.I)...) * w[I] for I in D)
@@ -186,8 +186,8 @@ function refinement_I(M::RationalBSplineManifold{Dim, Deg, C, T}, P′::NTuple{D
     a′ = __control_points(value_a, j, dim.(P′))
     for J in view(CartesianIndices(UnitRange.(1, dim.(P′))), (j+1):prod(dim.(P′)))
         if _isempty(R, J)
-            @inbounds w′[J] = zero(value)
-            @inbounds a′[J] = zero(value)
+            @inbounds w′[J] = zero(value_w)
+            @inbounds a′[J] = zero(value_a)
         else
             D = CartesianIndices(getindex.(R, J.I))
             @inbounds w′[J] = sum(*(getindex.(A, I.I, J.I)...) * w[I] for I in D)
@@ -211,8 +211,8 @@ function refinement(M::RationalBSplineManifold{Dim, Deg, C, W, T}, P′::NTuple{
     a′ = __control_points(value_a, j, dim.(P′))
     for J in view(CartesianIndices(UnitRange.(1, dim.(P′))), (j+1):prod(dim.(P′)))
         if _isempty(R, J)
-            @inbounds w′[J] = zero(value)
-            @inbounds a′[J] = zero(value)
+            @inbounds w′[J] = zero(value_w)
+            @inbounds a′[J] = zero(value_a)
         else
             D = CartesianIndices(getindex.(R, J.I))
             @inbounds w′[J] = sum(*(getindex.(A, I.I, J.I)...) * w[I] for I in D)
