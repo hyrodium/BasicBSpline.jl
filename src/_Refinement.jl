@@ -225,6 +225,34 @@ function refinement(M::RationalBSplineManifold{Dim, Deg, C, W, T}, P′::NTuple{
     return RationalBSplineManifold(a′, w′, P′)
 end
 
+function refinement_R(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where {p′, T′}}) where {Dim, Deg, C, T}
+    _P′ = _promote_knottype(P′)
+    return refinement_R(M, _P′)
+end
+function refinement_R(M::BSplineManifold{Dim}, P′::Vararg{BSplineSpace, Dim}) where Dim
+    return refinement_R(M, P′)
+end
+function refinement_R(M::RationalBSplineManifold{Dim, Deg, C, W, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where {p′, T′}}) where {Dim, Deg, C, W, T}
+    _P′ = _promote_knottype(P′)
+    return refinement_R(M, _P′)
+end
+function refinement_R(M::RationalBSplineManifold{Dim}, P′::Vararg{BSplineSpace, Dim}) where Dim
+    return refinement_R(M, P′)
+end
+function refinement_I(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where {p′, T′}}) where {Dim, Deg, C, T}
+    _P′ = _promote_knottype(P′)
+    return refinement_I(M, _P′)
+end
+function refinement_I(M::BSplineManifold{Dim}, P′::Vararg{BSplineSpace, Dim}) where Dim
+    return refinement_I(M, P′)
+end
+function refinement_I(M::RationalBSplineManifold{Dim, Deg, C, W, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where {p′, T′}}) where {Dim, Deg, C, W, T}
+    _P′ = _promote_knottype(P′)
+    return refinement_I(M, _P′)
+end
+function refinement_I(M::RationalBSplineManifold{Dim}, P′::Vararg{BSplineSpace, Dim}) where Dim
+    return refinement_I(M, P′)
+end
 function refinement(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where {p′, T′}}) where {Dim, Deg, C, T}
     _P′ = _promote_knottype(P′)
     return refinement(M, _P′)
@@ -238,6 +266,92 @@ function refinement(M::RationalBSplineManifold{Dim, Deg, C, W, T}, P′::NTuple{
 end
 function refinement(M::RationalBSplineManifold{Dim}, P′::Vararg{BSplineSpace, Dim}) where Dim
     return refinement(M, P′)
+end
+
+@doc raw"""
+Refinement of B-spline manifold with additional degree and knotvector.
+"""
+@generated function refinement_R(M::AbstractManifold{Dim},
+                               p₊::NTuple{Dim, Val},
+                               k₊::NTuple{Dim, AbstractKnotVector}=ntuple(i->EmptyKnotVector(), Val(Dim))) where Dim
+    Ps = [Symbol(:P,i) for i in 1:Dim]
+    Ps′ = [Symbol(:P,i,"′") for i in 1:Dim]
+    ks = [Symbol(:k,i,:₊) for i in 1:Dim]
+    ps = [Symbol(:p,i,:₊) for i in 1:Dim]
+    exP = Expr(:tuple, Ps...)
+    exP′ = Expr(:tuple, Ps′...)
+    exk = Expr(:tuple, ks...)
+    exp = Expr(:tuple, ps...)
+    exs = [:($(Symbol(:P,i,"′")) = expandspace($(Symbol(:P,i)), $(Symbol(:p,i,:₊)), $(Symbol(:k,i,:₊)))) for i in 1:Dim]
+    Expr(
+        :block,
+        :($exP = bsplinespaces(M)),
+        :($exp = p₊),
+        :($exk = k₊),
+        exs...,
+        :(return refinement_R(M, $(exP′)))
+    )
+end
+
+@generated function refinement_R(M::AbstractManifold{Dim},
+                               k₊::NTuple{Dim, AbstractKnotVector}=ntuple(i->EmptyKnotVector(), Val(Dim))) where Dim
+    Ps = [Symbol(:P,i) for i in 1:Dim]
+    Ps′ = [Symbol(:P,i,"′") for i in 1:Dim]
+    ks = [Symbol(:k,i,:₊) for i in 1:Dim]
+    exP = Expr(:tuple, Ps...)
+    exP′ = Expr(:tuple, Ps′...)
+    exk = Expr(:tuple, ks...)
+    exs = [:($(Symbol(:P,i,"′")) = expandspace($(Symbol(:P,i)), $(Symbol(:k,i,:₊)))) for i in 1:Dim]
+    Expr(
+        :block,
+        :($exP = bsplinespaces(M)),
+        :($exk = k₊),
+        exs...,
+        :(return refinement_R(M, $(exP′)))
+    )
+end
+
+@doc raw"""
+Refinement of B-spline manifold with additional degree and knotvector.
+"""
+@generated function refinement_I(M::AbstractManifold{Dim},
+                               p₊::NTuple{Dim, Val},
+                               k₊::NTuple{Dim, AbstractKnotVector}=ntuple(i->EmptyKnotVector(), Val(Dim))) where Dim
+    Ps = [Symbol(:P,i) for i in 1:Dim]
+    Ps′ = [Symbol(:P,i,"′") for i in 1:Dim]
+    ks = [Symbol(:k,i,:₊) for i in 1:Dim]
+    ps = [Symbol(:p,i,:₊) for i in 1:Dim]
+    exP = Expr(:tuple, Ps...)
+    exP′ = Expr(:tuple, Ps′...)
+    exk = Expr(:tuple, ks...)
+    exp = Expr(:tuple, ps...)
+    exs = [:($(Symbol(:P,i,"′")) = expandspace($(Symbol(:P,i)), $(Symbol(:p,i,:₊)), $(Symbol(:k,i,:₊)))) for i in 1:Dim]
+    Expr(
+        :block,
+        :($exP = bsplinespaces(M)),
+        :($exp = p₊),
+        :($exk = k₊),
+        exs...,
+        :(return refinement_I(M, $(exP′)))
+    )
+end
+
+@generated function refinement_I(M::AbstractManifold{Dim},
+                               k₊::NTuple{Dim, AbstractKnotVector}=ntuple(i->EmptyKnotVector(), Val(Dim))) where Dim
+    Ps = [Symbol(:P,i) for i in 1:Dim]
+    Ps′ = [Symbol(:P,i,"′") for i in 1:Dim]
+    ks = [Symbol(:k,i,:₊) for i in 1:Dim]
+    exP = Expr(:tuple, Ps...)
+    exP′ = Expr(:tuple, Ps′...)
+    exk = Expr(:tuple, ks...)
+    exs = [:($(Symbol(:P,i,"′")) = expandspace($(Symbol(:P,i)), $(Symbol(:k,i,:₊)))) for i in 1:Dim]
+    Expr(
+        :block,
+        :($exP = bsplinespaces(M)),
+        :($exk = k₊),
+        exs...,
+        :(return refinement_I(M, $(exP′)))
+    )
 end
 
 @doc raw"""
@@ -284,6 +398,12 @@ end
 end
 
 # resolve ambiguities
+refinement_R(M::AbstractManifold{0}, ::Tuple{}) = M
+refinement_R(M::BSplineManifold{0, Deg, C, T, S} where {Deg, C, T, S<:Tuple{}}, ::Tuple{}) = M
+refinement_R(M::RationalBSplineManifold{0, Deg, C, W, T, S} where {Deg, C, W, T, S<:Tuple{}}, ::Tuple{}) = M
+refinement_I(M::AbstractManifold{0}, ::Tuple{}) = M
+refinement_I(M::BSplineManifold{0, Deg, C, T, S} where {Deg, C, T, S<:Tuple{}}, ::Tuple{}) = M
+refinement_I(M::RationalBSplineManifold{0, Deg, C, W, T, S} where {Deg, C, W, T, S<:Tuple{}}, ::Tuple{}) = M
 refinement(M::AbstractManifold{0}, ::Tuple{}) = M
 refinement(M::BSplineManifold{0, Deg, C, T, S} where {Deg, C, T, S<:Tuple{}}, ::Tuple{}) = M
 refinement(M::RationalBSplineManifold{0, Deg, C, W, T, S} where {Deg, C, W, T, S<:Tuple{}}, ::Tuple{}) = M
