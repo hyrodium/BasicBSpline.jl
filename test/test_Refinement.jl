@@ -24,6 +24,37 @@
     @test P2 ⊑ P2′
     @test P3 ⊑ P3′
 
+    @testset "_I and _R" begin
+        @testset "1dim" begin
+            a1 = rand(SVector{3, Float64}, n1)
+            a2 = rand(SVector{3, Float64}, n2)
+            a3 = rand(SVector{3, Float64}, n3)
+            C1 = BSplineManifold(a1, P1)
+            C2 = BSplineManifold(a2, P2)
+            C3 = BSplineManifold(a3, P3)
+            @test refinement_R(C1, P1′) == refinement(C1, P1′)
+            @test refinement_R(C2, P2′) == refinement(C2, P2′)
+            @test_throws DomainError refinement_R(C3, P3′)
+            @test_throws DomainError refinement_I(C1, P1′)
+            @test refinement_I(C2, P2′) == refinement(C2, P2′)
+            @test refinement_I(C3, P3′) == refinement(C3, P3′)
+            @test refinement_R(C1) == refinement_I(C1) == refinement(C1)
+            @test refinement_R(C2) == refinement_I(C2) == refinement(C2)
+            @test refinement_R(C3) == refinement_I(C3) == refinement(C3)
+        end
+
+        @testset "2dim" begin
+            a12 = rand(SVector{3, Float64}, n1, n2)
+            a23 = rand(SVector{3, Float64}, n2, n3)
+            S12 = BSplineManifold(a12, P1, P2)
+            S23 = BSplineManifold(a23, P2, P3)
+            @test refinement_R(S12, P1′, P2′) == refinement(S12, P1′, P2′)
+            @test_throws DomainError refinement_R(S23, P2′, P3′) == refinement(S23, P2′, P3′)
+            @test_throws DomainError refinement_I(S12, P1′, P2′) == refinement(S12, P1′, P2′)
+            @test refinement_I(S23, P2′, P3′) == refinement(S23, P2′, P3′)
+        end
+    end
+
     @testset "1dim" begin
         a = [Point(i, rand()) for i in 1:n1]
         p₊ = (Val(1),)
