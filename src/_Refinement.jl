@@ -91,6 +91,7 @@ function _isempty(R::NTuple{Dim, Vector{UnitRange{Int}}}, J::CartesianIndex{Dim}
 end
 
 function refinement_R(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where p′}) where {Dim, Deg, C, T, T′}
+    U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     A::NTuple{Dim, SparseMatrixCSC{U, Int32}} = changebasis_R.(bsplinespaces(M), P′)
     R::NTuple{Dim, Vector{UnitRange{Int64}}} = _i_ranges_R.(A, P′)
     a::Array{C, Dim} = controlpoints(M)
@@ -110,6 +111,7 @@ function refinement_R(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSpl
     return BSplineManifold(a′, P′)
 end
 function refinement_I(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where p′}) where {Dim, Deg, C, T, T′}
+    U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     A::NTuple{Dim, SparseMatrixCSC{U, Int32}} = changebasis_I.(bsplinespaces(M), P′)
     R::NTuple{Dim, Vector{UnitRange{Int64}}} = _i_ranges_I.(A, P′)
     a::Array{C, Dim} = controlpoints(M)
