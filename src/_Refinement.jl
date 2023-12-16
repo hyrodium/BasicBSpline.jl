@@ -87,6 +87,9 @@ end
 function _isempty(R::NTuple{3, Vector{UnitRange{Int}}}, J::CartesianIndex{3})
     return isempty(R[1][J[1]]) || isempty(R[2][J[2]]) || isempty(R[3][J[3]])
 end
+function _isempty(R::NTuple{Dim, Vector{UnitRange{Int}}}, J::CartesianIndex{Dim}) where Dim
+    return isempty(R[1][J[1]]) || _isempty(R[2:end], CartesianIndex(J.I[2:end]))
+end
 
 function refinement_R(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where p′}) where {Dim, Deg, C, T, T′}
     A::NTuple{Dim, SparseMatrixCSC{U, Int32}} = changebasis_R.(bsplinespaces(M), P′)
