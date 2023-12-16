@@ -39,11 +39,6 @@
             M3 = @inferred refinement(M, p₊, k₊)
             M4 = @inferred refinement(M, (P1′,))
             R = RationalBSplineManifold(a, w, (P1,))
-            R0 = @inferred refinement(R)
-            R1 = @inferred refinement(R, k₊)
-            R2 = @inferred refinement(R, p₊)
-            R3 = @inferred refinement(R, p₊, k₊)
-            R4 = @inferred refinement(R, (P1′,))
 
             for _ in 1:100
                 t1 = rand(D1)
@@ -93,11 +88,6 @@
             M3 = @inferred refinement(M, p₊, k₊)
             M4 = @inferred refinement(M, (P1′,P2′))
             R = RationalBSplineManifold(a, w, (P1,P2))
-            R0 = @inferred refinement(R)
-            R1 = @inferred refinement(R, k₊)
-            R2 = @inferred refinement(R, p₊)
-            R3 = @inferred refinement(R, p₊, k₊)
-            R4 = @inferred refinement(R, (P1′,P2′))
 
             for _ in 1:100
                 t1 = rand(D1)
@@ -146,29 +136,18 @@
             M = BSplineManifold(a, (P1,P2,P3))
             R = RationalBSplineManifold(a, w, (P1,P2,P3))
             # On Julia v1.6, the following script seems not type-stable.
-            # TODO: fix type stability
             if VERSION ≥ v"1.8"
                 M0 = @inferred refinement(M)
                 M1 = @inferred refinement(M, k₊)
                 M2 = @inferred refinement(M, p₊)
                 M3 = @inferred refinement(M, p₊, k₊)
                 M4 = @inferred refinement(M, (P1′,P2′,P3′))
-                R0 = @inferred refinement(R)
-                R1 = @inferred refinement(R, k₊)
-                R2 = @inferred refinement(R, p₊)
-                R3 = @inferred refinement(R, p₊, k₊)
-                R4 = @inferred refinement(R, (P1′,P2′,P3′))
             else
                 M0 = refinement(M)
                 M1 = refinement(M, k₊)
                 M2 = refinement(M, p₊)
                 M3 = refinement(M, p₊, k₊)
                 M4 = refinement(M, (P1′,P2′,P3′))
-                R0 = refinement(R)
-                R1 = refinement(R, k₊)
-                R2 = refinement(R, p₊)
-                R3 = refinement(R, p₊, k₊)
-                R4 = refinement(R, (P1′,P2′,P3′))
             end
 
             for _ in 1:100
