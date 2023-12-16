@@ -222,9 +222,19 @@ function refinement(M::RationalBSplineManifold{Dim, Deg, C, W, T}, P′::NTuple{
     return RationalBSplineManifold(a′, w′, P′)
 end
 
-function refinement(M::AbstractManifold{Dim}, P′::Vararg{BSplineSpace, Dim}) where Dim
+function refinement(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace}) where Dim
     _P′ = _promote_knottype(P′)
     return refinement(M, _P′)
+end
+function refinement(M::BSplineManifold{Dim}, P′::Vararg{BSplineSpace, Dim}) where Dim
+    return refinement(M, P′)
+end
+function refinement(M::RationalBSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace}) where Dim
+    _P′ = _promote_knottype(P′)
+    return refinement(M, _P′)
+end
+function refinement(M::RationalBSplineManifold{Dim}, P′::Vararg{BSplineSpace, Dim}) where Dim
+    return refinement(M, P′)
 end
 
 @doc raw"""
@@ -271,6 +281,8 @@ end
 end
 
 # resolve ambiguities
-refinement(M::BasicBSpline.AbstractManifold{0}, ::Tuple{}) = M
+refinement(M::AbstractManifold{0}, ::Tuple{}) = M
+refinement(M::BSplineManifold{0}, ::Tuple{}) = M
+refinement(M::RationalBSplineManifold{0}, ::Tuple{}) = M
 refinement(M::BSplineManifold{0, Deg, C, T, S} where {Deg, C, T, S<:Tuple{}}, ::Tuple{}) = M
 refinement(M::RationalBSplineManifold{0, Deg, C, W, T, S} where {Deg, C, W, T, S<:Tuple{}}, ::Tuple{}) = M
