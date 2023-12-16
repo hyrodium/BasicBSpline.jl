@@ -148,16 +148,16 @@
             # On Julia v1.6, the following script seems not type-stable.
             # TODO: fix type stability
             if VERSION ≥ v"1.8"
-                M0 = #=@inferred=# refinement(M)
-                M1 = #=@inferred=# refinement(M, k₊)
-                M2 = #=@inferred=# refinement(M, p₊)
-                M3 = #=@inferred=# refinement(M, p₊, k₊)
-                M4 = #=@inferred=# refinement(M, (P1′,P2′,P3′))
-                R0 = #=@inferred=# refinement(R)
-                R1 = #=@inferred=# refinement(R, k₊)
-                R2 = #=@inferred=# refinement(R, p₊)
-                R3 = #=@inferred=# refinement(R, p₊, k₊)
-                R4 = #=@inferred=# refinement(R, (P1′,P2′,P3′))
+                M0 = @inferred refinement(M)
+                M1 = @inferred refinement(M, k₊)
+                M2 = @inferred refinement(M, p₊)
+                M3 = @inferred refinement(M, p₊, k₊)
+                M4 = @inferred refinement(M, (P1′,P2′,P3′))
+                R0 = @inferred refinement(R)
+                R1 = @inferred refinement(R, k₊)
+                R2 = @inferred refinement(R, p₊)
+                R3 = @inferred refinement(R, p₊, k₊)
+                R4 = @inferred refinement(R, (P1′,P2′,P3′))
             else
                 M0 = refinement(M)
                 M1 = refinement(M, k₊)
