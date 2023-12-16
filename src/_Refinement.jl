@@ -139,6 +139,11 @@ function refinement(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace{p,T}
     return BSplineManifold(a′, P′)
 end
 
+function refinement(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace{p,T} where {p, T}}) where Dim
+    _P′ = _promote_knottype(P′)
+    return refinement(M, _P′)
+end
+
 function refinement(M::RationalBSplineManifold{1}, Ps′::NTuple{1, BSplineSpace})
     P1, = bsplinespaces(M)
     P1′, = Ps′
