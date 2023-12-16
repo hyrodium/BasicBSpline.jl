@@ -11,7 +11,7 @@
 
     P1′ = BSplineSpace{3}(k1+KnotVector([1.2,5.5,7.2,8.5]))
     P2′ = expandspace(P2, Val(1), KnotVector([1.8]))
-    P3′ = BSplineSpace{4}(UniformKnotVector(-3:6))
+    P3′ = BSplineSpace{4}(UniformKnotVector(-3.0:6.0))
 
     n1,n2,n3 = dim(P1),dim(P2),dim(P3)
     D1,D2,D3 = domain(P1),domain(P2),domain(P3)

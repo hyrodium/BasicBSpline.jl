@@ -70,52 +70,52 @@ const _i_ranges = _i_ranges_R
 
 # These `_ref_ctrl_elm` methods with specific `Dim` are just for type inference.
 # Should be replaced with generated function?
-function _ref_ctrl_elm(a::Array{T, 1}, A::NTuple{1, SparseMatrixCSC}, R::NTuple{1, Vector{UnitRange{Int}}}, J::CartesianIndex{1}) where {T}
+function _ref_ctrl_elm(a::Array{C, 1}, A::NTuple{1, SparseMatrixCSC{S, Int32}}, R::NTuple{1, Vector{UnitRange{Int}}}, J::CartesianIndex{1}) where {S, C}
     A1, = A
-    S = Base.promote_op(*, eltype(A1), T)
+    T = Base.promote_op(*, S, C)
     ci = CartesianIndices(getindex.(R, J.I))
     if isempty(ci)
         # Should be type-stable
-        return zero(S)
+        return zero(T)
     else
         return sum(A1[I[1], J[1]] * a[I] for I in ci)
     end
 end
-function _ref_ctrl_elm(a::Array{T, 2}, A::NTuple{2, SparseMatrixCSC}, R::NTuple{2, Vector{UnitRange{Int}}}, J::CartesianIndex{2}) where {T}
+function _ref_ctrl_elm(a::Array{C, 2}, A::NTuple{2, SparseMatrixCSC{S, Int32}}, R::NTuple{2, Vector{UnitRange{Int}}}, J::CartesianIndex{2}) where {S, C}
     A1, A2 = A
-    S = Base.promote_op(*, eltype(A1), eltype(A2), T)
+    T = Base.promote_op(*, S, C)
     ci = CartesianIndices(getindex.(R, J.I))
     if isempty(ci)
         # Should be type-stable
-        return zero(S)
+        return zero(T)
     else
         return sum(A1[I[1], J[1]] * A2[I[2], J[2]] * a[I] for I in ci)
     end
 end
-function _ref_ctrl_elm(a::Array{T, 3}, A::NTuple{3, SparseMatrixCSC}, R::NTuple{3, Vector{UnitRange{Int}}}, J::CartesianIndex{3}) where {T}
+function _ref_ctrl_elm(a::Array{C, 3}, A::NTuple{3, SparseMatrixCSC{S, Int32}}, R::NTuple{3, Vector{UnitRange{Int}}}, J::CartesianIndex{3}) where {S, C}
     A1, A2, A3 = A
-    S = Base.promote_op(*, eltype(A1), eltype(A2), eltype(A3), T)
+    T = Base.promote_op(*, S, C)
     ci = CartesianIndices(getindex.(R, J.I))
     if isempty(ci)
         # Should be type-stable
-        return zero(S)
+        return zero(T)
     else
         return sum(A1[I[1], J[1]] * A2[I[2], J[2]] * A3[I[3], J[3]] * a[I] for I in ci)
     end
 end
 
-function _ref_ctrl_elm(a::Array{T, Dim}, A::NTuple{Dim, SparseMatrixCSC}, R::NTuple{Dim, Vector{UnitRange{Int}}}, J::CartesianIndex{Dim}) where {T, Dim}
-    S = Base.promote_op(*, eltype.(A)..., T)
+function _ref_ctrl_elm(a::Array{C, Dim}, A::NTuple{Dim, SparseMatrixCSC{S, Int32}}, R::NTuple{Dim, Vector{UnitRange{Int}}}, J::CartesianIndex{Dim}) where {C, S, Dim}
+    T = Base.promote_op(*, S, C)
     ci = CartesianIndices(getindex.(R, J.I))
     if isempty(ci)
         # Should be type-stable
-        return zero(S)
+        return zero(T)
     else
         return sum(*(getindex.(A, I.I, J.I)...) * a[I] for I in ci)
     end
 end
 
-function refinement_R(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace}) where Dim
+function refinement_R(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace{p,T} where p}) where {Dim, T}
     A = changebasis_R.(bsplinespaces(M), P′)
     R = _i_ranges_R.(A, P′)
     a = controlpoints(M)
@@ -123,7 +123,7 @@ function refinement_R(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace}) 
     return BSplineManifold(a′, P′)
 end
 
-function refinement_I(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace}) where Dim
+function refinement_I(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace{p,T} where p}) where {Dim, T}
     A = changebasis_I.(bsplinespaces(M), P′)
     R = _i_ranges_I.(A, P′)
     a = controlpoints(M)
@@ -131,12 +131,17 @@ function refinement_I(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace}) 
     return BSplineManifold(a′, P′)
 end
 
-function refinement(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace}) where Dim
+function refinement(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace{p,T} where p}) where {Dim, T}
     A = changebasis.(bsplinespaces(M), P′)
     R = _i_ranges.(A, P′)
     a = controlpoints(M)
     a′ = [_ref_ctrl_elm(a,A,R,J) for J in CartesianIndices(UnitRange.(1, dim.(P′)))]
     return BSplineManifold(a′, P′)
+end
+
+function refinement(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace{p,T} where {p, T}}) where Dim
+    _P′ = _promote_knottype(P′)
+    return refinement(M, _P′)
 end
 
 function refinement(M::RationalBSplineManifold{1}, Ps′::NTuple{1, BSplineSpace})
@@ -237,4 +242,4 @@ end
 
 # resolve ambiguities
 refinement(M::AbstractManifold{0}, ::Tuple{}) = M
-refinement(M::BSplineManifold{0, Deg, C, S} where {Deg, C, S<:Tuple{}}, ::Tuple{}) = M
+refinement(M::BSplineManifold{0, Deg, C, T, S} where {Deg, C, T, S<:Tuple{}}, ::Tuple{}) = M

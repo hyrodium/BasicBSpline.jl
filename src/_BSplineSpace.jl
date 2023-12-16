@@ -75,6 +75,18 @@ end
     return P.knotvector
 end
 
+@generated function _promote_knottype(P::NTuple{Dim,BSplineSpace}) where Dim
+    Expr(
+        :block,
+        Expr(:(=), Expr(:tuple, [Symbol(:P, i) for i in 1:Dim]...), :P),
+        Expr(:(=), Expr(:tuple, [Symbol(:k, i) for i in 1:Dim]...), Expr(:tuple, [:(knotvector($(Symbol(:P, i)))) for i in 1:Dim]...)),
+        Expr(:(=), :T, Expr(:call, :promote_type, [:(eltype($(Symbol(:k, i)))) for i in 1:Dim]...)),
+        Expr(:(=), Expr(:tuple, [Symbol(:k, i, :(var"′")) for i in 1:Dim]...), Expr(:tuple, [:(AbstractKnotVector{T}($(Symbol(:k, i)))) for i in 1:Dim]...)),
+        Expr(:(=), :P′, Expr(:tuple, [:(BSplineSpace{degree($(Symbol(:P, i)))}($(Symbol(:k, i, :(var"′"))))) for i in 1:Dim]...)),
+        :(return P′)
+    )
+end
+
 function domain(P::BSplineSpace)
     p = degree(P)
     k = knotvector(P)

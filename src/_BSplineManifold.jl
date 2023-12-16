@@ -37,17 +37,26 @@ The input 1.2 is out of range.
 [...]
 ```
 """
-struct BSplineManifold{Dim,Deg,C,S<:NTuple{Dim, BSplineSpace}} <: AbstractManifold{Dim}
-    bsplinespaces::S
+struct BSplineManifold{Dim,Deg,C,T,S<:NTuple{Dim, BSplineSpace{p,T} where p}} <: AbstractManifold{Dim}
     controlpoints::Array{C,Dim}
-    function BSplineManifold(a::Array{C,Dim},Ps::S) where {S<:NTuple{Dim, BSplineSpace},C} where Dim
-        if size(a) != dim.(Ps)
-            msg = "The size of control points array $(size(a)) and dimensions of B-spline spaces $(dim.(Ps)) must be equal."
-            throw(DimensionMismatch(msg))
-        end
-        Deg = degree.(Ps)
-        new{Dim,Deg,C,S}(Ps,a)
+    bsplinespaces::S
+    function BSplineManifold{Dim,Deg,C,T,S}(a::Array{C,Dim},P::S) where {S<:NTuple{Dim, BSplineSpace{p,T} where p},C} where {Dim, Deg, T}
+        new{Dim,Deg,C,T,S}(a,P)
     end
+end
+
+function BSplineManifold(a::Array{C,Dim},P::S) where {S<:Tuple{BSplineSpace{p,T} where p, Vararg{BSplineSpace{p,T} where p}}} where {Dim, T, C}
+    if size(a) != dim.(P)
+        msg = "The size of control points array $(size(a)) and dimensions of B-spline spaces $(dim.(P)) must be equal."
+        throw(DimensionMismatch(msg))
+    end
+    Deg = degree.(P)
+    return BSplineManifold{Dim,Deg,C,T,S}(a, P)
+end
+
+function BSplineManifold(a::Array{C,Dim},P::S) where {S<:NTuple{Dim, BSplineSpace{p,T} where {p,T}},C} where {Dim}
+    P′ = _promote_knottype(P)
+    return BSplineManifold(a, P′)
 end
 
 BSplineManifold(a::Array{C,Dim},Ps::Vararg{BSplineSpace, Dim}) where {C,Dim} = BSplineManifold(a,Ps)

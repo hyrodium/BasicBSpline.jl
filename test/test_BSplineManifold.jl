@@ -19,12 +19,12 @@
     end
 
     @testset "constructor" begin
-        k1 = KnotVector([0,0,1,1])
-        k2 = UniformKnotVector(1:8)
+        k1 = KnotVector(Float64[0,0,1,1])
+        k2 = UniformKnotVector(1.0:8.0)
         k3 = KnotVector(rand(8))
-        _k1 = KnotVector([0,0,1,1])
-        _k2 = KnotVector(1:8)
-        _k3 = copy(k3)
+        _k1 = KnotVector([0.0, 0.0, 1.0, 1.0])
+        _k2 = KnotVector(1.0:8.0)
+        _k3 = view(k3,:)
         P1 = BSplineSpace{1}(k1)
         P2 = BSplineSpace{3}(k2)
         P3 = BSplineSpace{2}(k3)
@@ -34,10 +34,10 @@
 
         # 0-dim
         a = fill(1.2)
-        @test BSplineManifold(a) == BSplineManifold(a)
-        @test BSplineManifold(a) == BSplineManifold(copy(a))
-        @test hash(BSplineManifold(a)) == hash(BSplineManifold(a))
-        @test hash(BSplineManifold(a)) == hash(BSplineManifold(copy(a)))
+        @test BSplineManifold{0,(),Float64,Int,Tuple{}}(a,()) == BSplineManifold{0,(),Float64,Int,Tuple{}}(a,())
+        @test BSplineManifold{0,(),Float64,Int,Tuple{}}(a,()) == BSplineManifold{0,(),Float64,Int,Tuple{}}(copy(a),())
+        @test hash(BSplineManifold{0,(),Float64,Int,Tuple{}}(a,())) == hash(BSplineManifold{0,(),Float64,Int,Tuple{}}(a,()))
+        @test hash(BSplineManifold{0,(),Float64,Int,Tuple{}}(a,())) == hash(BSplineManifold{0,(),Float64,Int,Tuple{}}(copy(a),()))
 
         # 4-dim
         a = rand(dim(P1), dim(P2), dim(P3), dim(P3))
