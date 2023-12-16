@@ -1,6 +1,5 @@
 # Refinement
 
-# TODO: general dimension
 # TODO: Update docstrings
 
 @doc raw"""
