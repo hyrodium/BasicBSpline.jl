@@ -31,26 +31,19 @@
         # k₊ = (KnotVector([4.5,4.95]),)
 
         @testset "BSplineManifold" begin
-            w = ones(n1)
             M = BSplineManifold(a, (P1,))
             M0 = @inferred refinement(M)
             M1 = @inferred refinement(M, k₊)
             M2 = @inferred refinement(M, p₊)
             M3 = @inferred refinement(M, p₊, k₊)
             M4 = @inferred refinement(M, (P1′,))
-            R = RationalBSplineManifold(a, w, (P1,))
 
             for _ in 1:100
                 t1 = rand(D1)
-                @test M(t1) ≈ R(t1)
                 @test M(t1) ≈ M1(t1)
                 @test M(t1) ≈ M2(t1)
                 @test M(t1) ≈ M3(t1)
                 @test M(t1) ≈ M4(t1)
-                @test R(t1) ≈ R1(t1)
-                @test R(t1) ≈ R2(t1)
-                @test R(t1) ≈ R3(t1)
-                @test R(t1) ≈ R4(t1)
             end
         end
 
@@ -79,28 +72,20 @@
         k₊ = (KnotVector([4.5,4.7]),KnotVector(Float64[]))
 
         @testset "BSplineManifold" begin
-            w = ones(n1,n2)
-
             M = BSplineManifold(a, (P1,P2))
             M0 = @inferred refinement(M)
             M1 = @inferred refinement(M, k₊)
             M2 = @inferred refinement(M, p₊)
             M3 = @inferred refinement(M, p₊, k₊)
             M4 = @inferred refinement(M, (P1′,P2′))
-            R = RationalBSplineManifold(a, w, (P1,P2))
 
             for _ in 1:100
                 t1 = rand(D1)
                 t2 = rand(D2)
-                @test M(t1,t2) ≈ R(t1,t2)
                 @test M(t1,t2) ≈ M1(t1,t2)
                 @test M(t1,t2) ≈ M2(t1,t2)
                 @test M(t1,t2) ≈ M3(t1,t2)
                 @test M(t1,t2) ≈ M4(t1,t2)
-                @test R(t1,t2) ≈ R1(t1,t2)
-                @test R(t1,t2) ≈ R2(t1,t2)
-                @test R(t1,t2) ≈ R3(t1,t2)
-                @test R(t1,t2) ≈ R4(t1,t2)
             end
         end
 
@@ -131,10 +116,7 @@
         k₊ = (KnotVector([4.4,4.7]),KnotVector(Float64[]),KnotVector([42]))
 
         @testset "BSplineManifold" begin
-            w = ones(n1,n2,n3)
-
             M = BSplineManifold(a, (P1,P2,P3))
-            R = RationalBSplineManifold(a, w, (P1,P2,P3))
             # On Julia v1.6, the following script seems not type-stable.
             if VERSION ≥ v"1.8"
                 M0 = @inferred refinement(M)
@@ -154,15 +136,10 @@
                 t1 = rand(D1)
                 t2 = rand(D2)
                 t3 = rand(D3)
-                @test M(t1,t2,t3) ≈ R(t1,t2,t3)
                 @test M(t1,t2,t3) ≈ M1(t1,t2,t3)
                 @test M(t1,t2,t3) ≈ M2(t1,t2,t3)
                 @test M(t1,t2,t3) ≈ M3(t1,t2,t3)
                 @test M(t1,t2,t3) ≈ M4(t1,t2,t3)
-                @test R(t1,t2,t3) ≈ R1(t1,t2,t3)
-                @test R(t1,t2,t3) ≈ R2(t1,t2,t3)
-                @test R(t1,t2,t3) ≈ R3(t1,t2,t3)
-                @test R(t1,t2,t3) ≈ R4(t1,t2,t3)
             end
         end
 
