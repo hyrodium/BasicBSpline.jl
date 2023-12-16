@@ -1,11 +1,11 @@
 @testset "RationalBSplineManifold" begin
     @testset "constructor" begin
-        k1 = KnotVector([0,0,1,1])
-        k2 = UniformKnotVector(1:8)
+        k1 = KnotVector(Float64[0,0,1,1])
+        k2 = UniformKnotVector(1.0:8.0)
         k3 = KnotVector(rand(8))
-        _k1 = KnotVector([0,0,1,1])
-        _k2 = KnotVector(1:8)
-        _k3 = copy(k3)
+        _k1 = KnotVector([0.0, 0.0, 1.0, 1.0])
+        _k2 = KnotVector(1.0:8.0)
+        _k3 = view(k3,:)
         P1 = BSplineSpace{1}(k1)
         P2 = BSplineSpace{3}(k2)
         P3 = BSplineSpace{2}(k3)
