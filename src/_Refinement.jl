@@ -285,7 +285,5 @@ end
 
 # resolve ambiguities
 refinement(M::AbstractManifold{0}, ::Tuple{}) = M
-refinement(M::BSplineManifold{0}, ::Tuple{}) = M
-refinement(M::RationalBSplineManifold{0}, ::Tuple{}) = M
 refinement(M::BSplineManifold{0, Deg, C, T, S} where {Deg, C, T, S<:Tuple{}}, ::Tuple{}) = M
 refinement(M::RationalBSplineManifold{0, Deg, C, W, T, S} where {Deg, C, W, T, S<:Tuple{}}, ::Tuple{}) = M
