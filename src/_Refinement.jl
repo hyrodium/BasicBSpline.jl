@@ -222,14 +222,14 @@ function refinement(M::RationalBSplineManifold{Dim, Deg, C, W, T}, P′::NTuple{
     return RationalBSplineManifold(a′, w′, P′)
 end
 
-function refinement(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace}) where Dim
+function refinement(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where {p′, T′}}) where {Dim, Deg, C, T}
     _P′ = _promote_knottype(P′)
     return refinement(M, _P′)
 end
 function refinement(M::BSplineManifold{Dim}, P′::Vararg{BSplineSpace, Dim}) where Dim
     return refinement(M, P′)
 end
-function refinement(M::RationalBSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace}) where Dim
+function refinement(M::RationalBSplineManifold{Dim, Deg, C, W, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where {p′, T′}}) where {Dim, Deg, C, W, T}
     _P′ = _promote_knottype(P′)
     return refinement(M, _P′)
 end
