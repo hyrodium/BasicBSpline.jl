@@ -469,7 +469,10 @@ function expandspace_I end
 
 function expandspace_I(P::BSplineSpace{p,T}, ::Val{p₊}, k₊::AbstractKnotVector=EmptyKnotVector{T}()) where {p,p₊,T}
     k = knotvector(P)
+    I = domain(P)
     l = length(k)
+    k[1] ∉ I && throw(DomainError(k, "input knot vector is out of domain."))
+    k[l] ∉ I && throw(DomainError(k, "input knot vector is out of domain."))
     k̂ = unique(view(k, 1+p:l-p))
     p′ = p + p₊
     k′ = k + p₊*k̂ + k₊
@@ -479,6 +482,10 @@ end
 
 function expandspace_I(P::BSplineSpace{p,T}, k₊::AbstractKnotVector=EmptyKnotVector{T}()) where {p,T}
     k = knotvector(P)
+    I = domain(P)
+    l = length(k)
+    k[1] ∉ I && throw(DomainError(k, "input knot vector is out of domain."))
+    k[l] ∉ I && throw(DomainError(k, "input knot vector is out of domain."))
     k′ = k + k₊
     P′ = BSplineSpace{p}(k′)
     return P′
