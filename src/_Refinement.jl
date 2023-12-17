@@ -293,7 +293,7 @@ Refinement of B-spline manifold with additional degree and knotvector.
     exP′ = Expr(:tuple, Ps′...)
     exk = Expr(:tuple, ks...)
     exp = Expr(:tuple, ps...)
-    exs = [:($(Symbol(:P,i,"′")) = expandspace($(Symbol(:P,i)), $(Symbol(:p,i,:₊)), $(Symbol(:k,i,:₊)))) for i in 1:Dim]
+    exs = [:($(Symbol(:P,i,"′")) = expandspace_R($(Symbol(:P,i)), $(Symbol(:p,i,:₊)), $(Symbol(:k,i,:₊)))) for i in 1:Dim]
     Expr(
         :block,
         :($exP = bsplinespaces(M)),
@@ -312,7 +312,7 @@ end
     exP = Expr(:tuple, Ps...)
     exP′ = Expr(:tuple, Ps′...)
     exk = Expr(:tuple, ks...)
-    exs = [:($(Symbol(:P,i,"′")) = expandspace($(Symbol(:P,i)), $(Symbol(:k,i,:₊)))) for i in 1:Dim]
+    exs = [:($(Symbol(:P,i,"′")) = expandspace_R($(Symbol(:P,i)), $(Symbol(:k,i,:₊)))) for i in 1:Dim]
     Expr(
         :block,
         :($exP = bsplinespaces(M)),
@@ -336,7 +336,7 @@ Refinement of B-spline manifold with additional degree and knotvector.
     exP′ = Expr(:tuple, Ps′...)
     exk = Expr(:tuple, ks...)
     exp = Expr(:tuple, ps...)
-    exs = [:($(Symbol(:P,i,"′")) = expandspace($(Symbol(:P,i)), $(Symbol(:p,i,:₊)), $(Symbol(:k,i,:₊)))) for i in 1:Dim]
+    exs = [:($(Symbol(:P,i,"′")) = expandspace_I($(Symbol(:P,i)), $(Symbol(:p,i,:₊)), $(Symbol(:k,i,:₊)))) for i in 1:Dim]
     Expr(
         :block,
         :($exP = bsplinespaces(M)),
@@ -355,7 +355,7 @@ end
     exP = Expr(:tuple, Ps...)
     exP′ = Expr(:tuple, Ps′...)
     exk = Expr(:tuple, ks...)
-    exs = [:($(Symbol(:P,i,"′")) = expandspace($(Symbol(:P,i)), $(Symbol(:k,i,:₊)))) for i in 1:Dim]
+    exs = [:($(Symbol(:P,i,"′")) = expandspace_I($(Symbol(:P,i)), $(Symbol(:k,i,:₊)))) for i in 1:Dim]
     Expr(
         :block,
         :($exP = bsplinespaces(M)),
