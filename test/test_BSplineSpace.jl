@@ -169,6 +169,12 @@
         # That was because P1 and P4 is not nondegenerate.
         @test isdegenerate_I(P1)
         @test isdegenerate_I(P4)
+
+        # Additional knot vector should be inside the domain
+        k5 = KnotVector(1:8)
+        P5 = BSplineSpace{3}(k5)
+        @test_throws DomainError expandspace_I(P5, KnotVector([9,19]))
+        @test expandspace_R(P5, KnotVector([9,19])) == expandspace_R(P5, Val(0), KnotVector([9,19]))
     end
 
     @testset "sqsubset and lowered B-spline space" begin
