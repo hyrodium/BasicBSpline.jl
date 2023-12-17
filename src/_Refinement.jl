@@ -1,6 +1,5 @@
 # Refinement
 
-# TODO: general dimension
 # TODO: Update docstrings
 
 @doc raw"""
@@ -68,133 +67,302 @@ end
 
 const _i_ranges = _i_ranges_R
 
-# These `_ref_ctrl_elm` methods with specific `Dim` are just for type inference.
-# Should be replaced with generated function?
-function _ref_ctrl_elm(a::Array{C, 1}, A::NTuple{1, SparseMatrixCSC{S, Int32}}, R::NTuple{1, Vector{UnitRange{Int}}}, J::CartesianIndex{1}) where {S, C}
-    A1, = A
-    T = Base.promote_op(*, S, C)
-    ci = CartesianIndices(getindex.(R, J.I))
-    if isempty(ci)
-        # Should be type-stable
-        return zero(T)
-    else
-        return sum(A1[I[1], J[1]] * a[I] for I in ci)
+function __control_points(value::T, index::Integer, dims::NTuple{Dim, Integer}) where {T, Dim}
+    a = Array{T,Dim}(undef, dims)
+    i = prod(index)
+    for i in 1:(i-1)
+        @inbounds a[i] = zero(value)
     end
-end
-function _ref_ctrl_elm(a::Array{C, 2}, A::NTuple{2, SparseMatrixCSC{S, Int32}}, R::NTuple{2, Vector{UnitRange{Int}}}, J::CartesianIndex{2}) where {S, C}
-    A1, A2 = A
-    T = Base.promote_op(*, S, C)
-    ci = CartesianIndices(getindex.(R, J.I))
-    if isempty(ci)
-        # Should be type-stable
-        return zero(T)
-    else
-        return sum(A1[I[1], J[1]] * A2[I[2], J[2]] * a[I] for I in ci)
-    end
-end
-function _ref_ctrl_elm(a::Array{C, 3}, A::NTuple{3, SparseMatrixCSC{S, Int32}}, R::NTuple{3, Vector{UnitRange{Int}}}, J::CartesianIndex{3}) where {S, C}
-    A1, A2, A3 = A
-    T = Base.promote_op(*, S, C)
-    ci = CartesianIndices(getindex.(R, J.I))
-    if isempty(ci)
-        # Should be type-stable
-        return zero(T)
-    else
-        return sum(A1[I[1], J[1]] * A2[I[2], J[2]] * A3[I[3], J[3]] * a[I] for I in ci)
-    end
+    @inbounds a[i] = value
+    return a
 end
 
-function _ref_ctrl_elm(a::Array{C, Dim}, A::NTuple{Dim, SparseMatrixCSC{S, Int32}}, R::NTuple{Dim, Vector{UnitRange{Int}}}, J::CartesianIndex{Dim}) where {C, S, Dim}
-    T = Base.promote_op(*, S, C)
-    ci = CartesianIndices(getindex.(R, J.I))
-    if isempty(ci)
-        # Should be type-stable
-        return zero(T)
-    else
-        return sum(*(getindex.(A, I.I, J.I)...) * a[I] for I in ci)
-    end
+function _isempty(R::NTuple{1, Vector{UnitRange{Int}}}, J::CartesianIndex{1})
+    return isempty(R[1][J[1]])
+end
+function _isempty(R::NTuple{2, Vector{UnitRange{Int}}}, J::CartesianIndex{2})
+    return isempty(R[1][J[1]]) || isempty(R[2][J[2]])
+end
+function _isempty(R::NTuple{3, Vector{UnitRange{Int}}}, J::CartesianIndex{3})
+    return isempty(R[1][J[1]]) || isempty(R[2][J[2]]) || isempty(R[3][J[3]])
+end
+function _isempty(R::NTuple{Dim, Vector{UnitRange{Int}}}, J::CartesianIndex{Dim}) where Dim
+    return isempty(R[1][J[1]]) || _isempty(R[2:end], CartesianIndex(J.I[2:end]))
 end
 
-function refinement_R(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace{p,T} where p}) where {Dim, T}
-    A = changebasis_R.(bsplinespaces(M), P′)
-    R = _i_ranges_R.(A, P′)
-    a = controlpoints(M)
-    a′ = [_ref_ctrl_elm(a,A,R,J) for J in CartesianIndices(UnitRange.(1, dim.(P′)))]
+function refinement_R(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where p′}) where {Dim, Deg, C, T, T′}
+    U = StaticArrays.arithmetic_closure(promote_type(T,T′))
+    A::NTuple{Dim, SparseMatrixCSC{U, Int32}} = changebasis_R.(bsplinespaces(M), P′)
+    R::NTuple{Dim, Vector{UnitRange{Int64}}} = _i_ranges_R.(A, P′)
+    a::Array{C, Dim} = controlpoints(M)
+    J::CartesianIndex{Dim} = CartesianIndex(findfirst.(!isempty, R))
+    D::CartesianIndices{Dim, NTuple{Dim, UnitRange{Int64}}} = CartesianIndices(getindex.(R, J.I))
+    value = sum(*(getindex.(A, I.I, J.I)...) * a[I] for I in D)
+    j = prod(J.I)
+    a′ = __control_points(value, j, dim.(P′))
+    for J in view(CartesianIndices(UnitRange.(1, dim.(P′))), (j+1):prod(dim.(P′)))
+        if _isempty(R, J)
+            @inbounds a′[J] = zero(value)
+        else
+            D = CartesianIndices(getindex.(R, J.I))
+            @inbounds a′[J] = sum(*(getindex.(A, I.I, J.I)...) * a[I] for I in D)
+        end
+    end
+    return BSplineManifold(a′, P′)
+end
+function refinement_I(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where p′}) where {Dim, Deg, C, T, T′}
+    U = StaticArrays.arithmetic_closure(promote_type(T,T′))
+    A::NTuple{Dim, SparseMatrixCSC{U, Int32}} = changebasis_I.(bsplinespaces(M), P′)
+    R::NTuple{Dim, Vector{UnitRange{Int64}}} = _i_ranges_I.(A, P′)
+    a::Array{C, Dim} = controlpoints(M)
+    J::CartesianIndex{Dim} = CartesianIndex(findfirst.(!isempty, R))
+    D::CartesianIndices{Dim, NTuple{Dim, UnitRange{Int64}}} = CartesianIndices(getindex.(R, J.I))
+    value = sum(*(getindex.(A, I.I, J.I)...) * a[I] for I in D)
+    j = prod(J.I)
+    a′ = __control_points(value, j, dim.(P′))
+    for J in view(CartesianIndices(UnitRange.(1, dim.(P′))), (j+1):prod(dim.(P′)))
+        if _isempty(R, J)
+            @inbounds a′[J] = zero(value)
+        else
+            D = CartesianIndices(getindex.(R, J.I))
+            @inbounds a′[J] = sum(*(getindex.(A, I.I, J.I)...) * a[I] for I in D)
+        end
+    end
+    return BSplineManifold(a′, P′)
+end
+function refinement(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where p′}) where {Dim, Deg, C, T, T′}
+    U = StaticArrays.arithmetic_closure(promote_type(T,T′))
+    A::NTuple{Dim, SparseMatrixCSC{U, Int32}} = changebasis.(bsplinespaces(M), P′)
+    R::NTuple{Dim, Vector{UnitRange{Int64}}} = _i_ranges.(A, P′)
+    a::Array{C, Dim} = controlpoints(M)
+    J::CartesianIndex{Dim} = CartesianIndex(findfirst.(!isempty, R))
+    D::CartesianIndices{Dim, NTuple{Dim, UnitRange{Int64}}} = CartesianIndices(getindex.(R, J.I))
+    value = sum(*(getindex.(A, I.I, J.I)...) * a[I] for I in D)
+    j = prod(J.I)
+    a′ = __control_points(value, j, dim.(P′))
+    for J in view(CartesianIndices(UnitRange.(1, dim.(P′))), (j+1):prod(dim.(P′)))
+        if _isempty(R, J)
+            @inbounds a′[J] = zero(value)
+        else
+            D = CartesianIndices(getindex.(R, J.I))
+            @inbounds a′[J] = sum(*(getindex.(A, I.I, J.I)...) * a[I] for I in D)
+        end
+    end
     return BSplineManifold(a′, P′)
 end
 
-function refinement_I(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace{p,T} where p}) where {Dim, T}
-    A = changebasis_I.(bsplinespaces(M), P′)
-    R = _i_ranges_I.(A, P′)
-    a = controlpoints(M)
-    a′ = [_ref_ctrl_elm(a,A,R,J) for J in CartesianIndices(UnitRange.(1, dim.(P′)))]
-    return BSplineManifold(a′, P′)
+function refinement_R(M::RationalBSplineManifold{Dim, Deg, C, W, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where p′}) where {Dim, Deg, C, W, T, T′}
+    U = StaticArrays.arithmetic_closure(promote_type(T,T′))
+    A::NTuple{Dim, SparseMatrixCSC{U, Int32}} = changebasis_R.(bsplinespaces(M), P′)
+    R::NTuple{Dim, Vector{UnitRange{Int64}}} = _i_ranges_R.(A, P′)
+    a::Array{C, Dim} = controlpoints(M)
+    w::Array{W, Dim} = weights(M)
+    J::CartesianIndex{Dim} = CartesianIndex(findfirst.(!isempty, R))
+    D::CartesianIndices{Dim, NTuple{Dim, UnitRange{Int64}}} = CartesianIndices(getindex.(R, J.I))
+    value_w = sum(*(getindex.(A, I.I, J.I)...) * w[I] for I in D)
+    value_a = sum(*(getindex.(A, I.I, J.I)...) * w[I] * a[I] for I in D)
+    j = prod(J.I)
+    w′ = __control_points(value_w, j, dim.(P′))
+    a′ = __control_points(value_a, j, dim.(P′))
+    for J in view(CartesianIndices(UnitRange.(1, dim.(P′))), (j+1):prod(dim.(P′)))
+        if _isempty(R, J)
+            @inbounds w′[J] = zero(value_w)
+            @inbounds a′[J] = zero(value_a)
+        else
+            D = CartesianIndices(getindex.(R, J.I))
+            @inbounds w′[J] = sum(*(getindex.(A, I.I, J.I)...) * w[I] for I in D)
+            @inbounds a′[J] = sum(*(getindex.(A, I.I, J.I)...) * w[I] * a[I] for I in D)
+        end
+    end
+    nans = .!(iszero.(a′) .& iszero.(w′))
+    a′ ./= w′
+    a′ .*= nans
+    return RationalBSplineManifold(a′, w′, P′)
+end
+function refinement_I(M::RationalBSplineManifold{Dim, Deg, C, W, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where p′}) where {Dim, Deg, C, W, T, T′}
+    U = StaticArrays.arithmetic_closure(promote_type(T,T′))
+    A::NTuple{Dim, SparseMatrixCSC{U, Int32}} = changebasis_I.(bsplinespaces(M), P′)
+    R::NTuple{Dim, Vector{UnitRange{Int64}}} = _i_ranges_I.(A, P′)
+    a::Array{C, Dim} = controlpoints(M)
+    w::Array{W, Dim} = weights(M)
+    J::CartesianIndex{Dim} = CartesianIndex(findfirst.(!isempty, R))
+    D::CartesianIndices{Dim, NTuple{Dim, UnitRange{Int64}}} = CartesianIndices(getindex.(R, J.I))
+    value_w = sum(*(getindex.(A, I.I, J.I)...) * w[I] for I in D)
+    value_a = sum(*(getindex.(A, I.I, J.I)...) * w[I] * a[I] for I in D)
+    j = prod(J.I)
+    w′ = __control_points(value_w, j, dim.(P′))
+    a′ = __control_points(value_a, j, dim.(P′))
+    for J in view(CartesianIndices(UnitRange.(1, dim.(P′))), (j+1):prod(dim.(P′)))
+        if _isempty(R, J)
+            @inbounds w′[J] = zero(value_w)
+            @inbounds a′[J] = zero(value_a)
+        else
+            D = CartesianIndices(getindex.(R, J.I))
+            @inbounds w′[J] = sum(*(getindex.(A, I.I, J.I)...) * w[I] for I in D)
+            @inbounds a′[J] = sum(*(getindex.(A, I.I, J.I)...) * w[I] * a[I] for I in D)
+        end
+    end
+    nans = .!(iszero.(a′) .& iszero.(w′))
+    a′ ./= w′
+    a′ .*= nans
+    return RationalBSplineManifold(a′, w′, P′)
+end
+function refinement(M::RationalBSplineManifold{Dim, Deg, C, W, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where p′}) where {Dim, Deg, C, W, T, T′}
+    U = StaticArrays.arithmetic_closure(promote_type(T,T′))
+    A::NTuple{Dim, SparseMatrixCSC{U, Int32}} = changebasis.(bsplinespaces(M), P′)
+    R::NTuple{Dim, Vector{UnitRange{Int64}}} = _i_ranges.(A, P′)
+    a::Array{C, Dim} = controlpoints(M)
+    w::Array{W, Dim} = weights(M)
+    J::CartesianIndex{Dim} = CartesianIndex(findfirst.(!isempty, R))
+    D::CartesianIndices{Dim, NTuple{Dim, UnitRange{Int64}}} = CartesianIndices(getindex.(R, J.I))
+    value_w = sum(*(getindex.(A, I.I, J.I)...) * w[I] for I in D)
+    value_a = sum(*(getindex.(A, I.I, J.I)...) * w[I] * a[I] for I in D)
+    j = prod(J.I)
+    w′ = __control_points(value_w, j, dim.(P′))
+    a′ = __control_points(value_a, j, dim.(P′))
+    for J in view(CartesianIndices(UnitRange.(1, dim.(P′))), (j+1):prod(dim.(P′)))
+        if _isempty(R, J)
+            @inbounds w′[J] = zero(value_w)
+            @inbounds a′[J] = zero(value_a)
+        else
+            D = CartesianIndices(getindex.(R, J.I))
+            @inbounds w′[J] = sum(*(getindex.(A, I.I, J.I)...) * w[I] for I in D)
+            @inbounds a′[J] = sum(*(getindex.(A, I.I, J.I)...) * w[I] * a[I] for I in D)
+        end
+    end
+    nans = .!(iszero.(a′) .& iszero.(w′))
+    a′ ./= w′
+    a′ .*= nans
+    return RationalBSplineManifold(a′, w′, P′)
 end
 
-function refinement(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace{p,T} where p}) where {Dim, T}
-    A = changebasis.(bsplinespaces(M), P′)
-    R = _i_ranges.(A, P′)
-    a = controlpoints(M)
-    a′ = [_ref_ctrl_elm(a,A,R,J) for J in CartesianIndices(UnitRange.(1, dim.(P′)))]
-    return BSplineManifold(a′, P′)
+function refinement_R(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where {p′, T′}}) where {Dim, Deg, C, T}
+    _P′ = _promote_knottype(P′)
+    return refinement_R(M, _P′)
 end
-
-function refinement(M::BSplineManifold{Dim}, P′::NTuple{Dim, BSplineSpace{p,T} where {p, T}}) where Dim
+function refinement_R(M::BSplineManifold{Dim}, P′::Vararg{BSplineSpace, Dim}) where Dim
+    return refinement_R(M, P′)
+end
+function refinement_R(M::RationalBSplineManifold{Dim, Deg, C, W, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where {p′, T′}}) where {Dim, Deg, C, W, T}
+    _P′ = _promote_knottype(P′)
+    return refinement_R(M, _P′)
+end
+function refinement_R(M::RationalBSplineManifold{Dim}, P′::Vararg{BSplineSpace, Dim}) where Dim
+    return refinement_R(M, P′)
+end
+function refinement_I(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where {p′, T′}}) where {Dim, Deg, C, T}
+    _P′ = _promote_knottype(P′)
+    return refinement_I(M, _P′)
+end
+function refinement_I(M::BSplineManifold{Dim}, P′::Vararg{BSplineSpace, Dim}) where Dim
+    return refinement_I(M, P′)
+end
+function refinement_I(M::RationalBSplineManifold{Dim, Deg, C, W, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where {p′, T′}}) where {Dim, Deg, C, W, T}
+    _P′ = _promote_knottype(P′)
+    return refinement_I(M, _P′)
+end
+function refinement_I(M::RationalBSplineManifold{Dim}, P′::Vararg{BSplineSpace, Dim}) where Dim
+    return refinement_I(M, P′)
+end
+function refinement(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where {p′, T′}}) where {Dim, Deg, C, T}
     _P′ = _promote_knottype(P′)
     return refinement(M, _P′)
 end
-
-function refinement(M::RationalBSplineManifold{1}, Ps′::NTuple{1, BSplineSpace})
-    P1, = bsplinespaces(M)
-    P1′, = Ps′
-    n1 = dim(P1)
-    n1′ = dim(P1′)
-    A1 = changebasis(P1, P1′)
-    a = controlpoints(M)
-    w = weights(M)
-
-    w′ = [sum(A1[I₁,J₁] * w[I₁] for I₁ in 1:n1) for J₁ in 1:n1′]
-    a′ = [sum(A1[I₁,J₁] * a[I₁] * w[I₁] for I₁ in 1:n1) for J₁ in 1:n1′] ./ w′
-    return RationalBSplineManifold(a′, w′, Ps′)
+function refinement(M::BSplineManifold{Dim}, P′::Vararg{BSplineSpace, Dim}) where Dim
+    return refinement(M, P′)
 end
-function refinement(M::RationalBSplineManifold{2}, Ps′::NTuple{2, BSplineSpace})
-    P1, P2 = bsplinespaces(M)
-    P1′, P2′ = Ps′
-    n1 = dim(P1)
-    n2 = dim(P2)
-    n1′ = dim(P1′)
-    n2′ = dim(P2′)
-    A1 = changebasis(P1, P1′)
-    A2 = changebasis(P2, P2′)
-    a = controlpoints(M)
-    w = weights(M)
-
-    w′ = [sum(A1[I₁,J₁] * A2[I₂,J₂] * w[I₁,I₂] for I₁ in 1:n1, I₂ in 1:n2) for J₁ in 1:n1′, J₂ in 1:n2′]
-    a′ = [sum(A1[I₁,J₁] * A2[I₂,J₂] * a[I₁,I₂] * w[I₁,I₂] for I₁ in 1:n1, I₂ in 1:n2) for J₁ in 1:n1′, J₂ in 1:n2′] ./ w′
-    return RationalBSplineManifold(a′, w′, Ps′)
+function refinement(M::RationalBSplineManifold{Dim, Deg, C, W, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where {p′, T′}}) where {Dim, Deg, C, W, T}
+    _P′ = _promote_knottype(P′)
+    return refinement(M, _P′)
 end
-function refinement(M::RationalBSplineManifold{3}, Ps′::NTuple{3, BSplineSpace})
-    P1, P2, P3 = bsplinespaces(M)
-    P1′, P2′, P3′ = Ps′
-    n1 = dim(P1)
-    n2 = dim(P2)
-    n3 = dim(P3)
-    n1′ = dim(P1′)
-    n2′ = dim(P2′)
-    n3′ = dim(P3′)
-    A1 = changebasis(P1, P1′)
-    A2 = changebasis(P2, P2′)
-    A3 = changebasis(P3, P3′)
-    a = controlpoints(M)
-    w = weights(M)
-
-    w′ = [sum(A1[I₁,J₁] * A2[I₂,J₂] * A3[I₃,J₃] * w[I₁,I₂,I₃] for I₁ in 1:n1, I₂ in 1:n2, I₃ in 1:n3) for J₁ in 1:n1′, J₂ in 1:n2′, J₃ in 1:n3′]
-    a′ = [sum(A1[I₁,J₁] * A2[I₂,J₂] * A3[I₃,J₃] * a[I₁,I₂,I₃] * w[I₁,I₂,I₃] for I₁ in 1:n1, I₂ in 1:n2, I₃ in 1:n3) for J₁ in 1:n1′, J₂ in 1:n2′, J₃ in 1:n3′] ./ w′
-    return RationalBSplineManifold(a′, w′, Ps′)
+function refinement(M::RationalBSplineManifold{Dim}, P′::Vararg{BSplineSpace, Dim}) where Dim
+    return refinement(M, P′)
 end
 
-function refinement(M::AbstractManifold{Dim}, Ps′::Vararg{BSplineSpace, Dim}) where Dim
-    return refinement(M, Ps′)
+@doc raw"""
+Refinement of B-spline manifold with additional degree and knotvector.
+"""
+@generated function refinement_R(M::AbstractManifold{Dim},
+                               p₊::NTuple{Dim, Val},
+                               k₊::NTuple{Dim, AbstractKnotVector}=ntuple(i->EmptyKnotVector(), Val(Dim))) where Dim
+    Ps = [Symbol(:P,i) for i in 1:Dim]
+    Ps′ = [Symbol(:P,i,"′") for i in 1:Dim]
+    ks = [Symbol(:k,i,:₊) for i in 1:Dim]
+    ps = [Symbol(:p,i,:₊) for i in 1:Dim]
+    exP = Expr(:tuple, Ps...)
+    exP′ = Expr(:tuple, Ps′...)
+    exk = Expr(:tuple, ks...)
+    exp = Expr(:tuple, ps...)
+    exs = [:($(Symbol(:P,i,"′")) = expandspace_R($(Symbol(:P,i)), $(Symbol(:p,i,:₊)), $(Symbol(:k,i,:₊)))) for i in 1:Dim]
+    Expr(
+        :block,
+        :($exP = bsplinespaces(M)),
+        :($exp = p₊),
+        :($exk = k₊),
+        exs...,
+        :(return refinement_R(M, $(exP′)))
+    )
+end
+
+@generated function refinement_R(M::AbstractManifold{Dim},
+                               k₊::NTuple{Dim, AbstractKnotVector}=ntuple(i->EmptyKnotVector(), Val(Dim))) where Dim
+    Ps = [Symbol(:P,i) for i in 1:Dim]
+    Ps′ = [Symbol(:P,i,"′") for i in 1:Dim]
+    ks = [Symbol(:k,i,:₊) for i in 1:Dim]
+    exP = Expr(:tuple, Ps...)
+    exP′ = Expr(:tuple, Ps′...)
+    exk = Expr(:tuple, ks...)
+    exs = [:($(Symbol(:P,i,"′")) = expandspace_R($(Symbol(:P,i)), $(Symbol(:k,i,:₊)))) for i in 1:Dim]
+    Expr(
+        :block,
+        :($exP = bsplinespaces(M)),
+        :($exk = k₊),
+        exs...,
+        :(return refinement_R(M, $(exP′)))
+    )
+end
+
+@doc raw"""
+Refinement of B-spline manifold with additional degree and knotvector.
+"""
+@generated function refinement_I(M::AbstractManifold{Dim},
+                               p₊::NTuple{Dim, Val},
+                               k₊::NTuple{Dim, AbstractKnotVector}=ntuple(i->EmptyKnotVector(), Val(Dim))) where Dim
+    Ps = [Symbol(:P,i) for i in 1:Dim]
+    Ps′ = [Symbol(:P,i,"′") for i in 1:Dim]
+    ks = [Symbol(:k,i,:₊) for i in 1:Dim]
+    ps = [Symbol(:p,i,:₊) for i in 1:Dim]
+    exP = Expr(:tuple, Ps...)
+    exP′ = Expr(:tuple, Ps′...)
+    exk = Expr(:tuple, ks...)
+    exp = Expr(:tuple, ps...)
+    exs = [:($(Symbol(:P,i,"′")) = expandspace_I($(Symbol(:P,i)), $(Symbol(:p,i,:₊)), $(Symbol(:k,i,:₊)))) for i in 1:Dim]
+    Expr(
+        :block,
+        :($exP = bsplinespaces(M)),
+        :($exp = p₊),
+        :($exk = k₊),
+        exs...,
+        :(return refinement_I(M, $(exP′)))
+    )
+end
+
+@generated function refinement_I(M::AbstractManifold{Dim},
+                               k₊::NTuple{Dim, AbstractKnotVector}=ntuple(i->EmptyKnotVector(), Val(Dim))) where Dim
+    Ps = [Symbol(:P,i) for i in 1:Dim]
+    Ps′ = [Symbol(:P,i,"′") for i in 1:Dim]
+    ks = [Symbol(:k,i,:₊) for i in 1:Dim]
+    exP = Expr(:tuple, Ps...)
+    exP′ = Expr(:tuple, Ps′...)
+    exk = Expr(:tuple, ks...)
+    exs = [:($(Symbol(:P,i,"′")) = expandspace_I($(Symbol(:P,i)), $(Symbol(:k,i,:₊)))) for i in 1:Dim]
+    Expr(
+        :block,
+        :($exP = bsplinespaces(M)),
+        :($exk = k₊),
+        exs...,
+        :(return refinement_I(M, $(exP′)))
+    )
 end
 
 @doc raw"""
@@ -241,5 +409,12 @@ end
 end
 
 # resolve ambiguities
+refinement_R(M::AbstractManifold{0}, ::Tuple{}) = M
+refinement_R(M::BSplineManifold{0, Deg, C, T, S} where {Deg, C, T, S<:Tuple{}}, ::Tuple{}) = M
+refinement_R(M::RationalBSplineManifold{0, Deg, C, W, T, S} where {Deg, C, W, T, S<:Tuple{}}, ::Tuple{}) = M
+refinement_I(M::AbstractManifold{0}, ::Tuple{}) = M
+refinement_I(M::BSplineManifold{0, Deg, C, T, S} where {Deg, C, T, S<:Tuple{}}, ::Tuple{}) = M
+refinement_I(M::RationalBSplineManifold{0, Deg, C, W, T, S} where {Deg, C, W, T, S<:Tuple{}}, ::Tuple{}) = M
 refinement(M::AbstractManifold{0}, ::Tuple{}) = M
 refinement(M::BSplineManifold{0, Deg, C, T, S} where {Deg, C, T, S<:Tuple{}}, ::Tuple{}) = M
+refinement(M::RationalBSplineManifold{0, Deg, C, W, T, S} where {Deg, C, W, T, S<:Tuple{}}, ::Tuple{}) = M

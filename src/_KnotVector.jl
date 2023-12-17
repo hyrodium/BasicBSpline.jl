@@ -91,6 +91,7 @@ EmptyKnotVector() = EmptyKnotVector{Bool}()
 KnotVector{T}(v::AbstractVector) where T = unsafe_knotvector(T,sort(v))
 KnotVector(v::AbstractVector{T}) where T = unsafe_knotvector(T,sort(v))
 AbstractKnotVector{S}(k::KnotVector{T}) where {S, T} = unsafe_knotvector(promote_type(S,T), _vec(k))
+AbstractKnotVector{T}(k::AbstractKnotVector{T}) where {T} = k
 
 UniformKnotVector(v::AbstractRange{T}) where T = unsafe_uniformknotvector(T,sort(v))
 UniformKnotVector(k::UniformKnotVector) = k
