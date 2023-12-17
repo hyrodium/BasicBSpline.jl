@@ -70,10 +70,9 @@
             @test_throws DomainError refinement_I(M1, (Val(0),), (KnotVector([1.2,5.5,7.2,8.5]),))
             @test_throws DomainError refinement_I(M1, P1′)
             # TODO: fix this with https://github.com/hyrodium/BasicBSpline.jl/issues/358
-            # M1a = refinement(refinement(M1, (Val(1),)), (KnotVector([1.2,5.5,7.2,8.5]),))
-            # M1b = refinement(M1, (Val(1),), (KnotVector([1.2,5.5,7.2,8.5]),))
-            # M1c = refinement(M1, P1′)
-            # @test controlpoints(M1a) ≈ controlpoints(M1b) == controlpoints(M1c)
+            @test_throws DomainError refinement(refinement(M1, (Val(1),)), (KnotVector([1.2,5.5,7.2,8.5]),))
+            @test_throws DomainError refinement(M1, (Val(1),), (KnotVector([1.2,5.5,7.2,8.5]),))
+            M1c = refinement(M1, P1′)
 
             # P2 ⊆ P2′ and P2 ⊑ P2′
             M2a_R = refinement_R(refinement_R(M2, (Val(1),)), (KnotVector([2,2,2,2,2]),))
