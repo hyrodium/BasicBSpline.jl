@@ -243,7 +243,7 @@
     @testset "3dim" begin
         a = [Point(i, rand()) for i in 1:n1, j in 1:n2, k in 1:n3]
         p₊ = (Val(1), Val(2), Val(0))
-        k₊ = (KnotVector([4.4,4.7]),KnotVector(Float64[]),KnotVector([42]))
+        k₊ = (KnotVector([4.4,4.7]),KnotVector(Float64[]),KnotVector([1.8]))
 
         @testset "BSplineManifold" begin
             M = BSplineManifold(a, (P1,P2,P3))
