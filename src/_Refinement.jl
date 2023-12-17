@@ -151,10 +151,12 @@ function refinement(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSplin
     return BSplineManifold(a′, P′)
 end
 
-function refinement_R(M::RationalBSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where p′}) where {Dim, Deg, C, T, T′}
+function refinement_R(M::RationalBSplineManifold{Dim, Deg, C, W, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where p′}) where {Dim, Deg, C, W, T, T′}
+    U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     A::NTuple{Dim, SparseMatrixCSC{U, Int32}} = changebasis_R.(bsplinespaces(M), P′)
     R::NTuple{Dim, Vector{UnitRange{Int64}}} = _i_ranges_R.(A, P′)
     a::Array{C, Dim} = controlpoints(M)
+    w::Array{W, Dim} = weights(M)
     J::CartesianIndex{Dim} = CartesianIndex(findfirst.(!isempty, R))
     D::CartesianIndices{Dim, NTuple{Dim, UnitRange{Int64}}} = CartesianIndices(getindex.(R, J.I))
     value_w = sum(*(getindex.(A, I.I, J.I)...) * w[I] for I in D)
@@ -172,13 +174,17 @@ function refinement_R(M::RationalBSplineManifold{Dim, Deg, C, T}, P′::NTuple{D
             @inbounds a′[J] = sum(*(getindex.(A, I.I, J.I)...) * w[I] * a[I] for I in D)
         end
     end
+    nans = .!(iszero.(a′) .& iszero.(w′))
     a′ ./= w′
+    a′ .*= nans
     return RationalBSplineManifold(a′, w′, P′)
 end
-function refinement_I(M::RationalBSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where p′}) where {Dim, Deg, C, T, T′}
+function refinement_I(M::RationalBSplineManifold{Dim, Deg, C, W, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where p′}) where {Dim, Deg, C, W, T, T′}
+    U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     A::NTuple{Dim, SparseMatrixCSC{U, Int32}} = changebasis_I.(bsplinespaces(M), P′)
     R::NTuple{Dim, Vector{UnitRange{Int64}}} = _i_ranges_I.(A, P′)
     a::Array{C, Dim} = controlpoints(M)
+    w::Array{W, Dim} = weights(M)
     J::CartesianIndex{Dim} = CartesianIndex(findfirst.(!isempty, R))
     D::CartesianIndices{Dim, NTuple{Dim, UnitRange{Int64}}} = CartesianIndices(getindex.(R, J.I))
     value_w = sum(*(getindex.(A, I.I, J.I)...) * w[I] for I in D)
@@ -196,7 +202,9 @@ function refinement_I(M::RationalBSplineManifold{Dim, Deg, C, T}, P′::NTuple{D
             @inbounds a′[J] = sum(*(getindex.(A, I.I, J.I)...) * w[I] * a[I] for I in D)
         end
     end
+    nans = .!(iszero.(a′) .& iszero.(w′))
     a′ ./= w′
+    a′ .*= nans
     return RationalBSplineManifold(a′, w′, P′)
 end
 function refinement(M::RationalBSplineManifold{Dim, Deg, C, W, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where p′}) where {Dim, Deg, C, W, T, T′}
@@ -222,7 +230,9 @@ function refinement(M::RationalBSplineManifold{Dim, Deg, C, W, T}, P′::NTuple{
             @inbounds a′[J] = sum(*(getindex.(A, I.I, J.I)...) * w[I] * a[I] for I in D)
         end
     end
+    nans = .!(iszero.(a′) .& iszero.(w′))
     a′ ./= w′
+    a′ .*= nans
     return RationalBSplineManifold(a′, w′, P′)
 end
 
