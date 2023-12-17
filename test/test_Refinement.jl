@@ -2,7 +2,7 @@
     p1,p2,p3 = 3,2,4
 
     k1 = KnotVector(1:8)
-    k2 = KnotVector([1,3]) + p2*KnotVector([1,3])
+    k2 = KnotVector([1,4]) + p2*KnotVector([1,4])
     k3 = KnotVector([0,2]) + p3*KnotVector([1,2])
 
     P1 = BSplineSpace{p1}(k1)
@@ -24,6 +24,8 @@
     @test P2 ⊑ P2′
     @test P3 ⊑ P3′
 
+    @test P3 ≃ P3′
+
     @testset "_I and _R" begin
         @testset "1dim" begin
             a1 = rand(SVector{3, Float64}, n1)
@@ -38,24 +40,68 @@
             R1 = RationalBSplineManifold(a1, w1, P1)
             R2 = RationalBSplineManifold(a2, w2, P2)
             R3 = RationalBSplineManifold(a3, w3, P3)
+
             @test refinement_R(M1, P1′) == refinement(M1, P1′)
-            @test refinement_R(M2, P2′) == refinement(M2, P2′)
-            @test_throws DomainError refinement_R(M3, P3′)
-            @test_throws DomainError refinement_I(M1, P1′)
-            @test refinement_I(M2, P2′) == refinement(M2, P2′)
-            @test refinement_I(M3, P3′) == refinement(M3, P3′)
-            @test refinement_R(M1) == refinement_I(M1) == refinement(M1)
-            @test refinement_R(M2) == refinement_I(M2) == refinement(M2)
-            @test refinement_R(M3) == refinement_I(M3) == refinement(M3)
             @test refinement_R(R1, P1′) == refinement(R1, P1′)
+            @test refinement_R(M2, P2′) == refinement(M2, P2′)
             @test refinement_R(R2, P2′) == refinement(R2, P2′)
+            @test_throws DomainError refinement_R(M3, P3′)
             @test_throws DomainError refinement_R(R3, P3′)
+            @test_throws DomainError refinement_I(M1, P1′)
             @test_throws DomainError refinement_I(R1, P1′)
+            @test refinement_I(M2, P2′) == refinement(M2, P2′)
             @test refinement_I(R2, P2′) == refinement(R2, P2′)
+            @test refinement_I(M3, P3′) == refinement(M3, P3′)
             @test refinement_I(R3, P3′) == refinement(R3, P3′)
+
+            @test refinement_R(M1) == refinement_I(M1) == refinement(M1)
             @test refinement_R(R1) == refinement_I(R1) == refinement(R1)
+            @test refinement_R(M2) == refinement_I(M2) == refinement(M2)
             @test refinement_R(R2) == refinement_I(R2) == refinement(R2)
+            @test refinement_R(M3) == refinement_I(M3) == refinement(M3)
             @test refinement_R(R3) == refinement_I(R3) == refinement(R3)
+
+            # P1 ⊆ P1′ but not P1 ⊑ P1′
+            M1a_R = refinement_R(refinement_R(M1, (Val(0),)), (KnotVector([1.2,5.5,7.2,8.5]),))
+            M1b_R = refinement_R(M1, (Val(0),), (KnotVector([1.2,5.5,7.2,8.5]),))
+            M1c_R = refinement_R(M1, P1′)
+            @test controlpoints(M1a_R) ≈ controlpoints(M1b_R) == controlpoints(M1c_R)
+            @test_throws DomainError refinement_I(refinement_I(M1, (Val(0),)), (KnotVector([1.2,5.5,7.2,8.5]),))
+            @test_throws DomainError refinement_I(M1, (Val(0),), (KnotVector([1.2,5.5,7.2,8.5]),))
+            @test_throws DomainError refinement_I(M1, P1′)
+            # TODO: fix this with https://github.com/hyrodium/BasicBSpline.jl/issues/358
+            # M1a = refinement(refinement(M1, (Val(1),)), (KnotVector([1.2,5.5,7.2,8.5]),))
+            # M1b = refinement(M1, (Val(1),), (KnotVector([1.2,5.5,7.2,8.5]),))
+            # M1c = refinement(M1, P1′)
+            # @test controlpoints(M1a) ≈ controlpoints(M1b) == controlpoints(M1c)
+
+            # P2 ⊆ P2′ and P2 ⊑ P2′
+            M2a_R = refinement_R(refinement_R(M2, (Val(1),)), (KnotVector([2,2,2,2,2]),))
+            M2b_R = refinement_R(M2, (Val(1),), (KnotVector([2,2,2,2,2]),))
+            M2c_R = refinement_R(M2, P2′)
+            @test controlpoints(M2a_R) ≈ controlpoints(M2b_R) ≠ controlpoints(M2c_R)
+            M2a_I = refinement_I(refinement_I(M2, (Val(1),)), (KnotVector([2,2,2,2,2]),))
+            M2b_I = refinement_I(M2, (Val(1),), (KnotVector([2,2,2,2,2]),))
+            M2c_I = refinement_I(M2, P2′)
+            @test controlpoints(M2a_I) ≈ controlpoints(M2b_I) == controlpoints(M2c_I)
+            M2a = refinement(refinement(M2, (Val(1),)), (KnotVector([2,2,2,2,2]),))
+            M2b = refinement(M2, (Val(1),), (KnotVector([2,2,2,2,2]),))
+            M2c = refinement(M2, P2′)
+            @test controlpoints(M2a) ≈ controlpoints(M2b) == controlpoints(M2c)
+
+            # P3 ⊑ P3′ but not P3 ⊆ P3′
+            M3a_R = refinement_R(refinement_R(M3, (Val(0),)), (EmptyKnotVector(),))
+            M3b_R = refinement_R(M3, (Val(0),), (EmptyKnotVector(),))
+            @test_throws DomainError refinement_R(M3, P3′)
+            @test controlpoints(M3a_R) ≈ controlpoints(M3b_R)
+            M3a_I = refinement_I(refinement_I(M3, (Val(0),)), (EmptyKnotVector(),))
+            M3b_I = refinement_I(M3, (Val(0),), (EmptyKnotVector(),))
+            M3c_I = refinement_I(M3, P3′)
+            @test controlpoints(M3a_I) ≈ controlpoints(M3b_I) ≉ controlpoints(M3c_I)
+            M3a = refinement(refinement(M3, (Val(0),)), (EmptyKnotVector(),))
+            M3b = refinement(M3, (Val(0),), (EmptyKnotVector(),))
+            M3c = refinement(M3, P3′)
+            @test controlpoints(M3a) ≈ controlpoints(M3b) ≉ controlpoints(M3c)
         end
 
         @testset "2dim" begin
@@ -67,14 +113,20 @@
             M23 = BSplineManifold(a23, P2, P3)
             R12 = RationalBSplineManifold(a12, w12, P1, P2)
             R23 = RationalBSplineManifold(a23, w23, P2, P3)
+
             @test refinement_R(M12, P1′, P2′) == refinement(M12, P1′, P2′)
-            @test_throws DomainError refinement_R(M23, P2′, P3′) == refinement(M23, P2′, P3′)
-            @test_throws DomainError refinement_I(M12, P1′, P2′) == refinement(M12, P1′, P2′)
-            @test refinement_I(M23, P2′, P3′) == refinement(M23, P2′, P3′)
             @test refinement_R(R12, P1′, P2′) == refinement(R12, P1′, P2′)
+            @test_throws DomainError refinement_R(M23, P2′, P3′) == refinement(M23, P2′, P3′)
             @test_throws DomainError refinement_R(R23, P2′, P3′) == refinement(R23, P2′, P3′)
+            @test_throws DomainError refinement_I(M12, P1′, P2′) == refinement(M12, P1′, P2′)
             @test_throws DomainError refinement_I(R12, P1′, P2′) == refinement(R12, P1′, P2′)
+            @test refinement_I(M23, P2′, P3′) == refinement(M23, P2′, P3′)
             @test refinement_I(R23, P2′, P3′) == refinement(R23, P2′, P3′)
+
+            @test refinement_R(M12) == refinement_I(M12) == refinement(M12)
+            @test refinement_R(R12) == refinement_I(R12) == refinement(R12)
+            @test refinement_R(M23) == refinement_I(M23) == refinement(M23)
+            @test refinement_R(R23) == refinement_I(R23) == refinement(R23)
         end
 
         @testset "4dim" begin
@@ -86,14 +138,20 @@
             M2233 = BSplineManifold(a2233, P2, P2, P3, P3)
             R1122 = RationalBSplineManifold(a1122, w1122, P1, P1, P2, P2)
             R2233 = RationalBSplineManifold(a2233, w2233, P2, P2, P3, P3)
+
             @test refinement_R(M1122, P1′, P1′, P2′, P2′) == refinement(M1122, P1′, P1′, P2′, P2′)
-            @test_throws DomainError refinement_R(M2233, P2′, P2′, P3′, P3′) == refinement(M2233, P2′, P2′, P3′, P3′)
-            @test_throws DomainError refinement_I(M1122, P1′, P1′, P2′, P2′) == refinement(M12, P1′, P1′, P2′, P2′)
-            @test refinement_I(M2233, P2′, P2′, P3′, P3′) == refinement(M2233, P2′, P2′, P3′, P3′)
             @test refinement_R(R1122, P1′, P1′, P2′, P2′) == refinement(R1122, P1′, P1′, P2′, P2′)
+            @test_throws DomainError refinement_R(M2233, P2′, P2′, P3′, P3′) == refinement(M2233, P2′, P2′, P3′, P3′)
             @test_throws DomainError refinement_R(R2233, P2′, P2′, P3′, P3′) == refinement(R2233, P2′, P2′, P3′, P3′)
+            @test_throws DomainError refinement_I(M1122, P1′, P1′, P2′, P2′) == refinement(M12, P1′, P1′, P2′, P2′)
             @test_throws DomainError refinement_I(R1122, P1′, P1′, P2′, P2′) == refinement(R12, P1′, P1′, P2′, P2′)
+            @test refinement_I(M2233, P2′, P2′, P3′, P3′) == refinement(M2233, P2′, P2′, P3′, P3′)
             @test refinement_I(R2233, P2′, P2′, P3′, P3′) == refinement(R2233, P2′, P2′, P3′, P3′)
+
+            @test refinement_R(M1122) == refinement_I(M1122) == refinement(M1122)
+            @test refinement_R(R1122) == refinement_I(R1122) == refinement(R1122)
+            @test refinement_R(M2233) == refinement_I(M2233) == refinement(M2233)
+            @test refinement_R(R2233) == refinement_I(R2233) == refinement(R2233)
         end
     end
 
