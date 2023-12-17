@@ -10,7 +10,7 @@
     P3 = BSplineSpace{p3}(k3)
 
     P1′ = BSplineSpace{3}(k1+KnotVector([1.2,5.5,7.2,8.5]))
-    P2′ = expandspace(P2, Val(1), KnotVector([1.8]))
+    P2′ = expandspace(P2, Val(1), KnotVector([2,2,2,2,2]))
     P3′ = BSplineSpace{4}(UniformKnotVector(-3.0:6.0))
 
     n1,n2,n3 = dim(P1),dim(P2),dim(P3)
@@ -52,6 +52,17 @@
             @test_throws DomainError refinement_R(S23, P2′, P3′) == refinement(S23, P2′, P3′)
             @test_throws DomainError refinement_I(S12, P1′, P2′) == refinement(S12, P1′, P2′)
             @test refinement_I(S23, P2′, P3′) == refinement(S23, P2′, P3′)
+        end
+
+        @testset "4dim" begin
+            a1122 = rand(SVector{3, Float64}, n1, n1, n2, n2)
+            a2233 = rand(SVector{3, Float64}, n2, n2, n3, n3)
+            S1122 = BSplineManifold(a1122, P1, P1, P2, P2)
+            S2233 = BSplineManifold(a2233, P2, P2, P3, P3)
+            @test refinement_R(S1122, P1′, P1′, P2′, P2′) == refinement(S1122, P1′, P1′, P2′, P2′)
+            @test_throws DomainError refinement_R(S2233, P2′, P2′, P3′, P3′) == refinement(S2233, P2′, P2′, P3′, P3′)
+            @test_throws DomainError refinement_I(S1122, P1′, P1′, P2′, P2′) == refinement(S12, P1′, P1′, P2′, P2′)
+            @test refinement_I(S2233, P2′, P2′, P3′, P3′) == refinement(S2233, P2′, P2′, P3′, P3′)
         end
     end
 
