@@ -130,6 +130,23 @@ function unbounded_mapping end
     )
 end
 
+@generated function (M::BSplineManifold{Dim})(t::Vararg{Real, Dim}) where Dim
+    Ps = [Symbol(:P,i) for i in 1:Dim]
+    P = Expr(:tuple, Ps...)
+    ts = [Symbol(:t,i) for i in 1:Dim]
+    T = Expr(:tuple, ts...)
+    exs = [:($(Symbol(:t,i)) in domain($(Symbol(:P,i))) || throw(DomainError($(Symbol(:t,i)), "The input "*string($(Symbol(:t,i)))*" is out of range."))) for i in 1:Dim]
+    ret = Expr(:call,:unbounded_mapping,:M,[Symbol(:t,i) for i in 1:Dim]...)
+    Expr(
+        :block,
+        :($(Expr(:meta, :inline))),
+        :($T = t),
+        :($P = bsplinespaces(M)),
+        exs...,
+        :(return $(ret))
+    )
+end
+
 @generated function (M::AbstractManifold{Dim})(t::Vararg{Real, Dim}) where Dim
     Ps = [Symbol(:P,i) for i in 1:Dim]
     P = Expr(:tuple, Ps...)
@@ -248,4 +265,39 @@ end
     return BSplineManifold(b,(P1,))
 end
 
-# TODO add mappings higher dimensionnal B-spline manifold with @generated macro
+
+@inline _remove_colon(::Colon) = ()
+@inline _remove_colon(x::Any) = x
+@inline _remove_colon(x::Any, rest...) = (x, _remove_colon(rest...)...)
+@inline _remove_colon(::Colon, rest...) = _remove_colon(rest...)
+@inline _replace_noncolon(new::Tuple, vals, ::Colon, sample...) = _replace_noncolon((new...,:),vals,sample...)
+@inline _replace_noncolon(new::Tuple, vals, ::Any, sample...) = _replace_noncolon((new...,vals[1]),vals[2:end],sample...)
+@inline _replace_noncolon(new::Tuple, ::Tuple{}, ::Colon) = (new...,:)
+@inline _replace_noncolon(new::Tuple, vals::Tuple{Any}, ::Any) = (new...,vals[1])
+@inline _get_on_real(x,::Real) = x
+@inline _get_on_real(::Any,::Colon) = (:)
+@inline _get_on_colon(x,::Colon) = x
+@inline _get_on_colon(::Any,::Real) = (:)
+@inline _intervalindex(P::BasicBSpline.AbstractFunctionSpace, t::Real) = intervalindex(P,t)
+@inline _intervalindex(::Colon, ::Colon) = (:)
+
+function (M::BSplineManifold{Dim,Deg})(t::Union{Real, Colon}...) where {Dim, Deg}
+    P = bsplinespaces(M)
+    a = controlpoints(M)
+    t_real = _remove_colon(t...)
+    P_real = _remove_colon(_get_on_real.(P, t)...)
+    P_colon = _remove_colon(_get_on_colon.(P, t)...)
+    j_real = intervalindex.(P_real, t_real)
+    B = bsplinebasisall.(P_real, j_real, t_real)
+    Deg_real = _remove_colon(_get_on_real.(Deg, t)...)
+    ci = CartesianIndices(UnitRange.(0, Deg_real))
+    next = _replace_noncolon((), j_real, t...)
+    a′ = view(a, next...) .* *(getindex.(B, 1)...)
+    l = length(ci)
+    for i in view(ci,2:l)
+        next = _replace_noncolon((), j_real .+ i.I, t...)
+        b = *(getindex.(B, i.I .+ 1)...)
+        a′ .+= view(a, next...) .* b
+    end
+    return BSplineManifold(a′, P_colon)
+end
