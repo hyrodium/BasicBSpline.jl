@@ -270,10 +270,11 @@ end
 @inline _remove_colon(x::Any) = x
 @inline _remove_colon(x::Any, rest...) = (x, _remove_colon(rest...)...)
 @inline _remove_colon(::Colon, rest...) = _remove_colon(rest...)
-@inline _replace_noncolon(new::Tuple, vals, ::Colon, sample...) = _replace_noncolon((new...,:),vals,sample...)
-@inline _replace_noncolon(new::Tuple, vals, ::Any, sample...) = _replace_noncolon((new...,vals[1]),vals[2:end],sample...)
-@inline _replace_noncolon(new::Tuple, ::Tuple{}, ::Colon) = (new...,:)
+@inline _replace_noncolon(new::Tuple, vals::Tuple, ::Colon, sample...) = _replace_noncolon((new...,:),vals,sample...)
+@inline _replace_noncolon(new::Tuple, vals::Tuple, ::Any, sample...) = _replace_noncolon((new...,vals[1]),vals[2:end],sample...)
+@inline _replace_noncolon(new::Tuple, vals::Tuple{}, ::Colon) = (new...,:)
 @inline _replace_noncolon(new::Tuple, vals::Tuple{Any}, ::Any) = (new...,vals[1])
+@inline _replace_noncolon(new::Tuple, vals::Tuple{Any}, ::Colon) = error("invalid inputs")
 @inline _get_on_real(x,::Real) = x
 @inline _get_on_real(::Any,::Colon) = (:)
 @inline _get_on_colon(x,::Colon) = x
