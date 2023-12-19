@@ -281,6 +281,7 @@ end
 @inline _intervalindex(P::BasicBSpline.AbstractFunctionSpace, t::Real) = intervalindex(P,t)
 @inline _intervalindex(::Colon, ::Colon) = (:)
 
+# TODO: The performance of this method can be improved.
 function (M::BSplineManifold{Dim,Deg})(t::Union{Real, Colon}...) where {Dim, Deg}
     P = bsplinespaces(M)
     a = controlpoints(M)
