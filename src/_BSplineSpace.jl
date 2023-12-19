@@ -60,6 +60,8 @@ end
 
 # Broadcast like a scalar
 Base.Broadcast.broadcastable(P::BSplineSpace) = Ref(P)
+Base.iterate(P::AbstractFunctionSpace) = (P, nothing)
+Base.iterate(::AbstractFunctionSpace, ::Any) = nothing
 
 # Equality
 @inline Base.:(==)(P1::BSplineSpace{p}, P2::BSplineSpace{p}) where p = knotvector(P1) == knotvector(P2)
