@@ -33,7 +33,7 @@ julia> M(0.4)
 
 julia> M(1.2)
 ERROR: DomainError with 1.2:
-The input 1.2 is out of range.
+The input 1.2 is out of domain 0 .. 1.
 [...]
 ```
 """
@@ -100,7 +100,7 @@ julia> unbounded_mapping(M, 1.2)
 
 julia> M(1.2)
 ERROR: DomainError with 1.2:
-The input 1.2 is out of range.
+The input 1.2 is out of domain 0 .. 1.
 [...]
 ```
 """
