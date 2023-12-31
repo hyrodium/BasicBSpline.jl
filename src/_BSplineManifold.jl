@@ -166,19 +166,8 @@ end
 
 
 ## currying
-# 1dim
-@inline function (M::BSplineManifold{1})(::Colon)
-    a = copy(controlpoints(M))
-    Ps = bsplinespaces(M)
-    return BSplineManifold(a,Ps)
-end
 
 # 2dim
-@inline function (M::BSplineManifold{2})(::Colon,::Colon)
-    a = copy(controlpoints(M))
-    Ps = bsplinespaces(M)
-    return BSplineManifold(a,Ps)
-end
 @inline function (M::BSplineManifold{2,p})(t1::Real,::Colon) where p
     p1, p2 = p
     P1, P2 = bsplinespaces(M)
@@ -199,11 +188,6 @@ end
 end
 
 # 3dim
-@inline function (M::BSplineManifold{3})(::Colon,::Colon,::Colon)
-    a = copy(controlpoints(M))
-    Ps = bsplinespaces(M)
-    return BSplineManifold(a,Ps)
-end
 @inline function (M::BSplineManifold{3,p})(t1::Real,::Colon,::Colon) where p
     p1, p2, p3 = p
     P1, P2, P3 = bsplinespaces(M)
@@ -267,7 +251,7 @@ end
 
 
 @inline _remove_colon(::Colon) = ()
-@inline _remove_colon(x::Any) = x
+@inline _remove_colon(x::Any) = (x,)
 @inline _remove_colon(x::Any, rest...) = (x, _remove_colon(rest...)...)
 @inline _remove_colon(::Colon, rest...) = _remove_colon(rest...)
 @inline _replace_noncolon(new::Tuple, vals::Tuple, ::Colon, sample...) = _replace_noncolon((new...,:),vals,sample...)
@@ -302,4 +286,15 @@ function (M::BSplineManifold{Dim,Deg})(t::Union{Real, Colon}...) where {Dim, Deg
         a′ .+= view(a, next...) .* b
     end
     return BSplineManifold(a′, P_colon)
+end
+
+@inline function (M::BSplineManifold{Dim})(::Vararg{Colon, Dim}) where Dim
+    a = copy(controlpoints(M))
+    Ps = bsplinespaces(M)
+    return BSplineManifold(a,Ps)
+end
+
+@inline function (M::BSplineManifold{0})()
+    a = controlpoints(M)
+    return a[]
 end
