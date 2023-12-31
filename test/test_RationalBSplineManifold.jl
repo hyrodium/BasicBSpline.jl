@@ -16,10 +16,13 @@
         # 0-dim
         a = fill(1.2)
         w = fill(4.2)
-        @test RationalBSplineManifold{0,(),Float64,Float64,Int,Tuple{}}(a, w, ()) == RationalBSplineManifold{0,(),Float64,Float64,Int,Tuple{}}(a, w, ())
-        @test RationalBSplineManifold{0,(),Float64,Float64,Int,Tuple{}}(a, w, ()) == RationalBSplineManifold{0,(),Float64,Float64,Int,Tuple{}}(copy(a), copy(w), ())
-        @test hash(RationalBSplineManifold{0,(),Float64,Float64,Int,Tuple{}}(a, w, ())) == hash(RationalBSplineManifold{0,(),Float64,Float64,Int,Tuple{}}(a, w, ()))
-        @test hash(RationalBSplineManifold{0,(),Float64,Float64,Int,Tuple{}}(a, w, ())) == hash(RationalBSplineManifold{0,(),Float64,Float64,Int,Tuple{}}(copy(a), copy(w), ()))
+        M = RationalBSplineManifold{0,(),Float64,Float64,Int,Tuple{}}(a, w, ())
+        N = RationalBSplineManifold{0,(),Float64,Float64,Int,Tuple{}}(copy(a), copy(w), ())
+        @test M == M
+        @test M == N
+        @test hash(M) == hash(M)
+        @test hash(M) == hash(N)
+        @test M() == 1.2
 
         # 4-dim
         a = rand(dim(P1), dim(P2), dim(P3), dim(P3))
