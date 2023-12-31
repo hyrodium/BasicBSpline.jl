@@ -135,7 +135,7 @@ end
     P = Expr(:tuple, Ps...)
     ts = [Symbol(:t,i) for i in 1:Dim]
     T = Expr(:tuple, ts...)
-    exs = [:($(Symbol(:t,i)) in domain($(Symbol(:P,i))) || throw(DomainError($(Symbol(:t,i)), "The input "*string($(Symbol(:t,i)))*" is out of range."))) for i in 1:Dim]
+    exs = [:($(Symbol(:t,i)) in domain($(Symbol(:P,i))) || throw(DomainError($(Symbol(:t,i)), "The input "*string($(Symbol(:t,i)))*" is out of domain $(domain($(Symbol(:P,i))))."))) for i in 1:Dim]
     ret = Expr(:call,:unbounded_mapping,:M,[Symbol(:t,i) for i in 1:Dim]...)
     Expr(
         :block,
@@ -146,24 +146,6 @@ end
         :(return $(ret))
     )
 end
-
-@generated function (M::AbstractManifold{Dim})(t::Vararg{Real, Dim}) where Dim
-    Ps = [Symbol(:P,i) for i in 1:Dim]
-    P = Expr(:tuple, Ps...)
-    ts = [Symbol(:t,i) for i in 1:Dim]
-    T = Expr(:tuple, ts...)
-    exs = [:($(Symbol(:t,i)) in domain($(Symbol(:P,i))) || throw(DomainError($(Symbol(:t,i)), "The input "*string($(Symbol(:t,i)))*" is out of range."))) for i in 1:Dim]
-    ret = Expr(:call,:unbounded_mapping,:M,[Symbol(:t,i) for i in 1:Dim]...)
-    Expr(
-        :block,
-        :($(Expr(:meta, :inline))),
-        :($T = t),
-        :($P = bsplinespaces(M)),
-        exs...,
-        :(return $(ret))
-    )
-end
-
 
 ## currying
 
