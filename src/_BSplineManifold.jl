@@ -33,7 +33,7 @@ julia> M(0.4)
 
 julia> M(1.2)
 ERROR: DomainError with 1.2:
-The input 1.2 is out of range.
+The input 1.2 is out of domain 0 .. 1.
 [...]
 ```
 """
@@ -100,7 +100,7 @@ julia> unbounded_mapping(M, 1.2)
 
 julia> M(1.2)
 ERROR: DomainError with 1.2:
-The input 1.2 is out of range.
+The input 1.2 is out of domain 0 .. 1.
 [...]
 ```
 """
@@ -130,12 +130,12 @@ function unbounded_mapping end
     )
 end
 
-@generated function (M::AbstractManifold{Dim})(t::Vararg{Real, Dim}) where Dim
+@generated function (M::BSplineManifold{Dim})(t::Vararg{Real, Dim}) where Dim
     Ps = [Symbol(:P,i) for i in 1:Dim]
     P = Expr(:tuple, Ps...)
     ts = [Symbol(:t,i) for i in 1:Dim]
     T = Expr(:tuple, ts...)
-    exs = [:($(Symbol(:t,i)) in domain($(Symbol(:P,i))) || throw(DomainError($(Symbol(:t,i)), "The input "*string($(Symbol(:t,i)))*" is out of range."))) for i in 1:Dim]
+    exs = [:($(Symbol(:t,i)) in domain($(Symbol(:P,i))) || throw(DomainError($(Symbol(:t,i)), "The input "*string($(Symbol(:t,i)))*" is out of domain $(domain($(Symbol(:P,i))))."))) for i in 1:Dim]
     ret = Expr(:call,:unbounded_mapping,:M,[Symbol(:t,i) for i in 1:Dim]...)
     Expr(
         :block,
@@ -147,21 +147,9 @@ end
     )
 end
 
-
 ## currying
-# 1dim
-@inline function (M::BSplineManifold{1})(::Colon)
-    a = copy(controlpoints(M))
-    Ps = bsplinespaces(M)
-    return BSplineManifold(a,Ps)
-end
 
 # 2dim
-@inline function (M::BSplineManifold{2})(::Colon,::Colon)
-    a = copy(controlpoints(M))
-    Ps = bsplinespaces(M)
-    return BSplineManifold(a,Ps)
-end
 @inline function (M::BSplineManifold{2,p})(t1::Real,::Colon) where p
     p1, p2 = p
     P1, P2 = bsplinespaces(M)
@@ -182,11 +170,6 @@ end
 end
 
 # 3dim
-@inline function (M::BSplineManifold{3})(::Colon,::Colon,::Colon)
-    a = copy(controlpoints(M))
-    Ps = bsplinespaces(M)
-    return BSplineManifold(a,Ps)
-end
 @inline function (M::BSplineManifold{3,p})(t1::Real,::Colon,::Colon) where p
     p1, p2, p3 = p
     P1, P2, P3 = bsplinespaces(M)
@@ -248,4 +231,35 @@ end
     return BSplineManifold(b,(P1,))
 end
 
-# TODO add mappings higher dimensionnal B-spline manifold with @generated macro
+# TODO: The performance of this method can be improved.
+function (M::BSplineManifold{Dim,Deg})(t::Union{Real, Colon}...) where {Dim, Deg}
+    P = bsplinespaces(M)
+    a = controlpoints(M)
+    t_real = _remove_colon(t...)
+    P_real = _remove_colon(_get_on_real.(P, t)...)
+    P_colon = _remove_colon(_get_on_colon.(P, t)...)
+    j_real = intervalindex.(P_real, t_real)
+    B = bsplinebasisall.(P_real, j_real, t_real)
+    Deg_real = _remove_colon(_get_on_real.(Deg, t)...)
+    ci = CartesianIndices(UnitRange.(0, Deg_real))
+    next = _replace_noncolon((), j_real, t...)
+    a′ = view(a, next...) .* *(getindex.(B, 1)...)
+    l = length(ci)
+    for i in view(ci,2:l)
+        next = _replace_noncolon((), j_real .+ i.I, t...)
+        b = *(getindex.(B, i.I .+ 1)...)
+        a′ .+= view(a, next...) .* b
+    end
+    return BSplineManifold(a′, P_colon)
+end
+
+@inline function (M::BSplineManifold{Dim})(::Vararg{Colon, Dim}) where Dim
+    a = copy(controlpoints(M))
+    Ps = bsplinespaces(M)
+    return BSplineManifold(a,Ps)
+end
+
+@inline function (M::BSplineManifold{0})()
+    a = controlpoints(M)
+    return a[]
+end

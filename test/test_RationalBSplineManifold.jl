@@ -16,10 +16,13 @@
         # 0-dim
         a = fill(1.2)
         w = fill(4.2)
-        @test RationalBSplineManifold{0,(),Float64,Float64,Int,Tuple{}}(a, w, ()) == RationalBSplineManifold{0,(),Float64,Float64,Int,Tuple{}}(a, w, ())
-        @test RationalBSplineManifold{0,(),Float64,Float64,Int,Tuple{}}(a, w, ()) == RationalBSplineManifold{0,(),Float64,Float64,Int,Tuple{}}(copy(a), copy(w), ())
-        @test hash(RationalBSplineManifold{0,(),Float64,Float64,Int,Tuple{}}(a, w, ())) == hash(RationalBSplineManifold{0,(),Float64,Float64,Int,Tuple{}}(a, w, ()))
-        @test hash(RationalBSplineManifold{0,(),Float64,Float64,Int,Tuple{}}(a, w, ())) == hash(RationalBSplineManifold{0,(),Float64,Float64,Int,Tuple{}}(copy(a), copy(w), ()))
+        M = RationalBSplineManifold{0,(),Float64,Float64,Int,Tuple{}}(a, w, ())
+        N = RationalBSplineManifold{0,(),Float64,Float64,Int,Tuple{}}(copy(a), copy(w), ())
+        @test M == M
+        @test M == N
+        @test hash(M) == hash(M)
+        @test hash(M) == hash(N)
+        @test M() == 1.2
 
         # 4-dim
         a = rand(dim(P1), dim(P2), dim(P3), dim(P3))
@@ -73,8 +76,8 @@
                 @test R(:) == R
                 @test Base.mightalias(controlpoints(R), controlpoints(R))
                 @test !Base.mightalias(controlpoints(R), controlpoints(R(:)))
-                for _ in 1:10
-                    t1 = rand()
+                ts = [(rand.(domain.(bsplinespaces(R)))) for _ in 1:10]
+                for (t1,) in ts
                     @test R(t1) ≈ A(t1)/W(t1)
                 end
             end
@@ -87,9 +90,8 @@
                 @test R(:,:) == R
                 @test Base.mightalias(controlpoints(R), controlpoints(R))
                 @test !Base.mightalias(controlpoints(R), controlpoints(R(:,:)))
-                for _ in 1:10
-                    t1 = rand()
-                    t2 = rand()
+                ts = [(rand.(domain.(bsplinespaces(R)))) for _ in 1:10]
+                for (t1, t2) in ts
                     @test R(t1,t2) ≈ A(t1,t2)/W(t1,t2)
                     @test R(t1,t2) ≈ R(t1,:)(t2)
                     @test R(t1,t2) ≈ R(:,t2)(t1)
@@ -104,10 +106,8 @@
                 @test R(:,:,:) == R
                 @test Base.mightalias(controlpoints(R), controlpoints(R))
                 @test !Base.mightalias(controlpoints(R), controlpoints(R(:,:,:)))
-                for _ in 1:10
-                    t1 = rand()
-                    t2 = rand()
-                    t3 = rand()
+                ts = [(rand.(domain.(bsplinespaces(R)))) for _ in 1:10]
+                for (t1, t2, t3) in ts
                     @test R(t1,t2,t3) ≈ A(t1,t2,t3)/W(t1,t2,t3)
                     @test R(t1,t2,t3) ≈ R(t1,:,:)(t2,t3)
                     @test R(t1,t2,t3) ≈ R(:,t2,:)(t1,t3)
@@ -115,6 +115,47 @@
                     @test R(t1,t2,t3) ≈ R(t1,t2,:)(t3)
                     @test R(t1,t2,t3) ≈ R(t1,:,t3)(t2)
                     @test R(t1,t2,t3) ≈ R(:,t2,t3)(t1)
+                end
+            end
+            @testset "4dim" begin
+                @testset "BSplineManifold-4dim" begin
+                    P1 = BSplineSpace{3}(knotvector"43211112112112")
+                    P2 = BSplineSpace{4}(knotvector"3211  1 112112115")
+                    P3 = BSplineSpace{5}(knotvector" 411  1 112112 11133")
+                    P4 = BSplineSpace{4}(knotvector"4 1112113 11 13 3")
+                    n1 = dim(P1)
+                    n2 = dim(P2)
+                    n3 = dim(P3)
+                    n4 = dim(P4)
+                    a = rand(n1, n2, n3, n4)
+                    w = rand(n1, n2, n3, n4) .+ 1
+                    R = RationalBSplineManifold(a, w, (P1, P2, P3, P4))
+                    @test dim(R) == 4
+
+                    ts = [(rand.(domain.((P1, P2, P3, P4)))) for _ in 1:10]
+                    for (t1, t2, t3, t4) in ts
+                        @test R(t1,t2,t3,t4) ≈ R(t1,:,:,:)(   t2,t3,t4)
+                        @test R(t1,t2,t3,t4) ≈ R(:,t2,:,:)(t1,   t3,t4)
+                        @test R(t1,t2,t3,t4) ≈ R(:,:,t3,:)(t1,t2,   t4)
+                        @test R(t1,t2,t3,t4) ≈ R(:,:,:,t4)(t1,t2,t3   )
+
+                        @test R(t1,t2,t3,t4) ≈ R(t1,t2,:,:)(t3,t4)
+                        @test R(t1,t2,t3,t4) ≈ R(t1,:,t3,:)(t2,t4)
+                        @test R(t1,t2,t3,t4) ≈ R(t1,:,:,t4)(t2,t3)
+                        @test R(t1,t2,t3,t4) ≈ R(:,t2,t3,:)(t1,t4)
+                        @test R(t1,t2,t3,t4) ≈ R(:,t2,:,t4)(t1,t3)
+                        @test R(t1,t2,t3,t4) ≈ R(:,:,t3,t4)(t1,t2)
+
+                        @test R(t1,t2,t3,t4) ≈ R(:,t2,t3,t4)(t1)
+                        @test R(t1,t2,t3,t4) ≈ R(t1,:,t3,t4)(t2)
+                        @test R(t1,t2,t3,t4) ≈ R(t1,t2,:,t4)(t3)
+                        @test R(t1,t2,t3,t4) ≈ R(t1,t2,t3,:)(t4)
+                    end
+                    @test_throws DomainError R(-5,-8,-120,1)
+
+                    @test R(:,:,:,:) == R
+                    @test Base.mightalias(controlpoints(R), controlpoints(R))
+                    @test !Base.mightalias(controlpoints(R), controlpoints(R(:,:,:,:)))
                 end
             end
         end
@@ -127,8 +168,8 @@
                 M = BSplineManifold(a,P1)
                 M1 = RationalBSplineManifold(a,w1,P1)
                 M2 = RationalBSplineManifold(a,w2,P1)
-                for _ in 1:100
-                    t1 = rand()
+                ts = [(rand.(domain.(bsplinespaces(M)))) for _ in 1:10]
+                for (t1,) in ts
                     @test M(t1) ≈ M1(t1) atol=1e-14
                     @test M(t1) ≈ M2(t1) atol=1e-14
                 end
@@ -140,9 +181,8 @@
                 M = BSplineManifold(a,P1,P2)
                 M1 = RationalBSplineManifold(a,w1,P1,P2)
                 M2 = RationalBSplineManifold(a,w2,P1,P2)
-                for _ in 1:100
-                    t1 = rand()
-                    t2 = rand()
+                ts = [(rand.(domain.(bsplinespaces(M)))) for _ in 1:10]
+                for (t1, t2) in ts
                     @test M(t1,t2) ≈ M1(t1,t2) atol=1e-14
                     @test M(t1,t2) ≈ M2(t1,t2) atol=1e-14
                 end
@@ -154,10 +194,8 @@
                 M = BSplineManifold(a,P1,P2,P3)
                 M1 = RationalBSplineManifold(a,w1,P1,P2,P3)
                 M2 = RationalBSplineManifold(a,w2,P1,P2,P3)
-                for _ in 1:100
-                    t1 = rand()
-                    t2 = rand()
-                    t3 = rand()
+                ts = [(rand.(domain.(bsplinespaces(M)))) for _ in 1:10]
+                for (t1, t2, t3) in ts
                     @test M(t1,t2,t3) ≈ M1(t1,t2,t3) atol=1e-14
                     @test M(t1,t2,t3) ≈ M2(t1,t2,t3) atol=1e-14
                 end

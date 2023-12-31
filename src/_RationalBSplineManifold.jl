@@ -107,14 +107,24 @@ bsplinespaces(M::RationalBSplineManifold) = M.bsplinespaces
     )
 end
 
-## currying
-# 1dim
-@inline function (M::RationalBSplineManifold{1})(::Colon)
-    a = copy(controlpoints(M))
-    w = copy(weights(M))
-    Ps = bsplinespaces(M)
-    return RationalBSplineManifold(a,w,Ps)
+@generated function (M::RationalBSplineManifold{Dim})(t::Vararg{Real, Dim}) where Dim
+    Ps = [Symbol(:P,i) for i in 1:Dim]
+    P = Expr(:tuple, Ps...)
+    ts = [Symbol(:t,i) for i in 1:Dim]
+    T = Expr(:tuple, ts...)
+    exs = [:($(Symbol(:t,i)) in domain($(Symbol(:P,i))) || throw(DomainError($(Symbol(:t,i)), "The input "*string($(Symbol(:t,i)))*" is out of domain $(domain($(Symbol(:P,i))))."))) for i in 1:Dim]
+    ret = Expr(:call,:unbounded_mapping,:M,[Symbol(:t,i) for i in 1:Dim]...)
+    Expr(
+        :block,
+        :($(Expr(:meta, :inline))),
+        :($T = t),
+        :($P = bsplinespaces(M)),
+        exs...,
+        :(return $(ret))
+    )
 end
+
+## currying
 
 # 2dim
 @inline function (M::RationalBSplineManifold{2})(::Colon,::Colon)
@@ -147,12 +157,6 @@ end
 end
 
 # 3dim
-@inline function (M::RationalBSplineManifold{3})(::Colon,::Colon,::Colon)
-    a = copy(controlpoints(M))
-    w = copy(weights(M))
-    Ps = bsplinespaces(M)
-    return RationalBSplineManifold(a,w,Ps)
-end
 @inline function (M::RationalBSplineManifold{3,p})(t1::Real,::Colon,::Colon) where p
     p1, p2, p3 = p
     P1, P2, P3 = bsplinespaces(M)
@@ -224,4 +228,41 @@ end
     w′ = sum(w[:,j2+i2,j3+i3]*B2[1+i2]*B3[1+i3] for i2 in 0:p2, i3 in 0:p3)
     a′ = sum(a[:,j2+i2,j3+i3].*w[:,j2+i2,j3+i3].*B2[1+i2].*B3[1+i3] for i2 in 0:p2, i3 in 0:p3) ./ w′
     return RationalBSplineManifold(a′,w′,(P1,))
+end
+
+# TODO: The performance of this method can be improved.
+function (M::RationalBSplineManifold{Dim,Deg})(t::Union{Real, Colon}...) where {Dim, Deg}
+    P = bsplinespaces(M)
+    a = controlpoints(M)
+    w = weights(M)
+    t_real = _remove_colon(t...)
+    P_real = _remove_colon(_get_on_real.(P, t)...)
+    P_colon = _remove_colon(_get_on_colon.(P, t)...)
+    j_real = intervalindex.(P_real, t_real)
+    B = bsplinebasisall.(P_real, j_real, t_real)
+    Deg_real = _remove_colon(_get_on_real.(Deg, t)...)
+    ci = CartesianIndices(UnitRange.(0, Deg_real))
+    next = _replace_noncolon((), j_real, t...)
+    w′ = view(w, next...) .* *(getindex.(B, 1)...)
+    a′ = view(a, next...) .* view(w, next...) .* *(getindex.(B, 1)...)
+    l = length(ci)
+    for i in view(ci,2:l)
+        next = _replace_noncolon((), j_real .+ i.I, t...)
+        b = *(getindex.(B, i.I .+ 1)...)
+        w′ .+= view(w, next...) .* b
+        a′ .+= view(a, next...) .* view(w, next...) .* b
+    end
+    return RationalBSplineManifold(a′ ./ w′, w′, P_colon)
+end
+
+@inline function (M::RationalBSplineManifold{Dim})(::Vararg{Colon, Dim}) where Dim
+    a = copy(controlpoints(M))
+    w = copy(weights(M))
+    Ps = bsplinespaces(M)
+    return RationalBSplineManifold(a,w,Ps)
+end
+
+@inline function (M::RationalBSplineManifold{0})()
+    a = controlpoints(M)
+    return a[]
 end

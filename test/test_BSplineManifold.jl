@@ -34,10 +34,13 @@
 
         # 0-dim
         a = fill(1.2)
-        @test BSplineManifold{0,(),Float64,Int,Tuple{}}(a,()) == BSplineManifold{0,(),Float64,Int,Tuple{}}(a,())
-        @test BSplineManifold{0,(),Float64,Int,Tuple{}}(a,()) == BSplineManifold{0,(),Float64,Int,Tuple{}}(copy(a),())
-        @test hash(BSplineManifold{0,(),Float64,Int,Tuple{}}(a,())) == hash(BSplineManifold{0,(),Float64,Int,Tuple{}}(a,()))
-        @test hash(BSplineManifold{0,(),Float64,Int,Tuple{}}(a,())) == hash(BSplineManifold{0,(),Float64,Int,Tuple{}}(copy(a),()))
+        M = BSplineManifold{0,(),Float64,Int,Tuple{}}(a, ())
+        N = BSplineManifold{0,(),Float64,Int,Tuple{}}(copy(a), ())
+        @test M == M
+        @test M == N
+        @test hash(M) == hash(M)
+        @test hash(M) == hash(N)
+        @test M() == 1.2
 
         # 4-dim
         a = rand(dim(P1), dim(P2), dim(P3), dim(P3))
@@ -147,6 +150,47 @@
             @test M(:,:,:) == M
             @test Base.mightalias(controlpoints(M), controlpoints(M))
             @test !Base.mightalias(controlpoints(M), controlpoints(M(:,:,:)))
+        end
+    end
+
+    @testset "4dim" begin
+        @testset "BSplineManifold-4dim" begin
+            P1 = BSplineSpace{3}(knotvector"43211112112112")
+            P2 = BSplineSpace{4}(knotvector"3211  1 112112115")
+            P3 = BSplineSpace{5}(knotvector" 411  1 112112 11133")
+            P4 = BSplineSpace{4}(knotvector"4 1112113 11 13 3")
+            n1 = dim(P1)
+            n2 = dim(P2)
+            n3 = dim(P3)
+            n4 = dim(P4)
+            a = rand(n1, n2, n3, n4)
+            M = BSplineManifold(a, (P1, P2, P3, P4))
+            @test dim(M) == 4
+
+            ts = [(rand.(domain.((P1, P2, P3, P4)))) for _ in 1:10]
+            for (t1, t2, t3, t4) in ts
+                @test M(t1,t2,t3,t4) ≈ M(t1,:,:,:)(   t2,t3,t4)
+                @test M(t1,t2,t3,t4) ≈ M(:,t2,:,:)(t1,   t3,t4)
+                @test M(t1,t2,t3,t4) ≈ M(:,:,t3,:)(t1,t2,   t4)
+                @test M(t1,t2,t3,t4) ≈ M(:,:,:,t4)(t1,t2,t3   )
+
+                @test M(t1,t2,t3,t4) ≈ M(t1,t2,:,:)(t3,t4)
+                @test M(t1,t2,t3,t4) ≈ M(t1,:,t3,:)(t2,t4)
+                @test M(t1,t2,t3,t4) ≈ M(t1,:,:,t4)(t2,t3)
+                @test M(t1,t2,t3,t4) ≈ M(:,t2,t3,:)(t1,t4)
+                @test M(t1,t2,t3,t4) ≈ M(:,t2,:,t4)(t1,t3)
+                @test M(t1,t2,t3,t4) ≈ M(:,:,t3,t4)(t1,t2)
+
+                @test M(t1,t2,t3,t4) ≈ M(:,t2,t3,t4)(t1)
+                @test M(t1,t2,t3,t4) ≈ M(t1,:,t3,t4)(t2)
+                @test M(t1,t2,t3,t4) ≈ M(t1,t2,:,t4)(t3)
+                @test M(t1,t2,t3,t4) ≈ M(t1,t2,t3,:)(t4)
+            end
+            @test_throws DomainError M(-5,-8,-120,1)
+
+            @test M(:,:,:,:) == M
+            @test Base.mightalias(controlpoints(M), controlpoints(M))
+            @test !Base.mightalias(controlpoints(M), controlpoints(M(:,:,:,:)))
         end
     end
 end
