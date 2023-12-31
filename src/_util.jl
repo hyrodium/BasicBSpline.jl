@@ -58,5 +58,3 @@ end
 @inline _get_on_real(::Any,::Colon) = (:)
 @inline _get_on_colon(x,::Colon) = x
 @inline _get_on_colon(::Any,::Real) = (:)
-@inline _intervalindex(P::Any, t::Real) = intervalindex(P,t)
-@inline _intervalindex(::Colon, ::Colon) = (:)
