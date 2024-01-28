@@ -7,7 +7,7 @@
 
 ## Installation
 ```julia
-] add https://github.com/hyrodium/BasicBSplineExporter.jl
+] add BasicBSplineExporter
 ```
 
 ## First example

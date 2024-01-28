@@ -45,7 +45,7 @@ Install this package
 
 To export graphics, use [BasicBSplineExporter.jl](https://github.com/hyrodium/BasicBSplineExporter.jl).
 ```julia
-]add https://github.com/hyrodium/BasicBSplineExporter.jl
+]add BasicBSplineExporter.jl
 ```
 
 ## Example
