@@ -204,9 +204,114 @@ end
     xs, ys, zs
 end
 
-#=
-TODO
-* BSplineSolid
-=#
+@recipe function f(M::_Manifold{3, 3}; controlpoints=(;), division_number=100)
+    attributes = PlotAttributesContolPoints(;controlpoints...)
+    t1_min, t1_max = extrema(domain(bsplinespaces(M)[1]))
+    t2_min, t2_max = extrema(domain(bsplinespaces(M)[2]))
+    t3_min, t3_max = extrema(domain(bsplinespaces(M)[3]))
+    t1s = range(t1_min, t1_max, length=division_number+1)
+    t2s = range(t2_min, t2_max, length=division_number+1)
+    t3s = range(t3_min, t3_max, length=division_number+1)
+    a = BasicBSpline.controlpoints(M)
+    @series begin
+        primary := false
+        marker_z := attributes.marker_z
+        markeralpha := attributes.markeralpha
+        markercolor := attributes.markercolor
+        markershape := attributes.markershape
+        markersize := attributes.markersize
+        markerstrokealpha := attributes.markerstrokealpha
+        markerstrokecolor := attributes.markerstrokecolor
+        markerstrokestyle := attributes.markerstrokestyle
+        markerstrokewidth := attributes.markerstrokewidth
+        seriestype := :scatter
+        vec(getindex.(a,1)), vec(getindex.(a,2)), vec(getindex.(a,3))
+    end
+    @series begin
+        primary := false
+        line_z := attributes.line_z
+        linealpha := attributes.linealpha
+        linecolor := attributes.linecolor
+        linestyle := attributes.linestyle
+        linewidth := attributes.linewidth
+        seriestype := :path
+        n1, n2, n3 = dim.(bsplinespaces(M))
+        X = Float64[]
+        Y = Float64[]
+        Z = Float64[]
+        a1 = a
+        xs = [p[1] for p in a1]
+        ys = [p[2] for p in a1]
+        zs = [p[3] for p in a1]
+        append!(X, vec(cat(xs, fill(NaN,1,n2,n3), dims=1)))
+        append!(Y, vec(cat(ys, fill(NaN,1,n2,n3), dims=1)))
+        append!(Z, vec(cat(zs, fill(NaN,1,n2,n3), dims=1)))
+        a2 = permutedims(a,(2,3,1))
+        xs = [p[1] for p in a2]
+        ys = [p[2] for p in a2]
+        zs = [p[3] for p in a2]
+        append!(X, vec(cat(xs, fill(NaN,1,n3,n1), dims=1)))
+        append!(Y, vec(cat(ys, fill(NaN,1,n3,n1), dims=1)))
+        append!(Z, vec(cat(zs, fill(NaN,1,n3,n1), dims=1)))
+        a3 = permutedims(a,(3,1,2))
+        xs = [p[1] for p in a3]
+        ys = [p[2] for p in a3]
+        zs = [p[3] for p in a3]
+        append!(X, vec(cat(xs, fill(NaN,1,n1,n2), dims=1)))
+        append!(Y, vec(cat(ys, fill(NaN,1,n1,n2), dims=1)))
+        append!(Z, vec(cat(zs, fill(NaN,1,n1,n2), dims=1)))
+
+        X,Y,Z
+    end
+
+    nanvec = fill(NaN, division_number+1)
+
+    ps = M.(t1s, t2s', t3_max)
+    xs = getindex.(ps,1)
+    ys = getindex.(ps,2)
+    zs = getindex.(ps,3)
+    xs = hcat(xs, nanvec)
+    ys = hcat(ys, nanvec)
+    zs = hcat(zs, nanvec)
+    ps = M.(t1s', t2s, t3_min)
+    xs = hcat(xs, getindex.(ps,1))
+    ys = hcat(ys, getindex.(ps,2))
+    zs = hcat(zs, getindex.(ps,3))
+    xs = hcat(xs, nanvec)
+    ys = hcat(ys, nanvec)
+    zs = hcat(zs, nanvec)
+
+    ps = M.(t1_max, t2s, t3s')
+    xs = hcat(xs, getindex.(ps,1))
+    ys = hcat(ys, getindex.(ps,2))
+    zs = hcat(zs, getindex.(ps,3))
+    xs = hcat(xs, nanvec)
+    ys = hcat(ys, nanvec)
+    zs = hcat(zs, nanvec)
+    ps = M.(t1_min, t2s', t3s)
+    xs = hcat(xs, getindex.(ps,1))
+    ys = hcat(ys, getindex.(ps,2))
+    zs = hcat(zs, getindex.(ps,3))
+    xs = hcat(xs, nanvec)
+    ys = hcat(ys, nanvec)
+    zs = hcat(zs, nanvec)
+
+    ps = M.(t1s', t2_max, t3s)
+    xs = hcat(xs, getindex.(ps,1))
+    ys = hcat(ys, getindex.(ps,2))
+    zs = hcat(zs, getindex.(ps,3))
+    xs = hcat(xs, nanvec)
+    ys = hcat(ys, nanvec)
+    zs = hcat(zs, nanvec)
+    ps = M.(t1s, t2_min, t3s')
+    xs = hcat(xs, getindex.(ps,1))
+    ys = hcat(ys, getindex.(ps,2))
+    zs = hcat(zs, getindex.(ps,3))
+
+    seriestype := :surface
+    delete!(plotattributes, :controlpoints)
+    delete!(plotattributes, :division_number)
+    xs, ys, zs
+end
 
 end # module
