@@ -6,13 +6,11 @@ import BasicBSpline.AbstractFunctionSpace
 using StaticArrays
 
 # B-spline space
-@recipe function f(P::AbstractFunctionSpace)
-    # TODO fix number of sampling points
-    N = 100
+@recipe function f(P::AbstractFunctionSpace; division_number=10)
     k = knotvector(P)
     ts = Float64[]
     for i in 1:length(k)-1
-        append!(ts, range(k[i], k[i+1], length=N))
+        append!(ts, range(k[i], k[i+1], length=division_number+1))
     end
     unique!(ts)
     n = dim(P)
@@ -42,12 +40,10 @@ const _Manifold{Dim1, Dim2} = Union{BSplineManifold{Dim1,Deg,<:StaticVector{Dim2
     markerstrokewidth=1
 end
 
-@recipe function f(M::_Manifold{1, 2}; controlpoints=(;))
-    # TODO fix number of sampling points
-    N = 100
+@recipe function f(M::_Manifold{1, 2}; controlpoints=(;), division_number=100)
     attributes = PlotAttributesContolPoints(;controlpoints...)
     t_min, t_max = extrema(domain(bsplinespaces(M)[1]))
-    ts = range(t_min, t_max, length=N)
+    ts = range(t_min, t_max, length=division_number+1)
     @series begin
         primary := false
         line_z := attributes.line_z
@@ -71,12 +67,10 @@ end
     getindex.(p,1), getindex.(p,2)
 end
 
-@recipe function f(M::_Manifold{1, 3}; controlpoints=(;))
-    # TODO fix number of sampling points
-    N = 100
+@recipe function f(M::_Manifold{1, 3}; controlpoints=(;), division_number=100)
     attributes = PlotAttributesContolPoints(;controlpoints...)
     t_min, t_max = extrema(domain(bsplinespaces(M)[1]))
-    ts = range(t_min, t_max, length=N)
+    ts = range(t_min, t_max, length=division_number+1)
     @series begin
         primary := false
         line_z := attributes.line_z
@@ -100,9 +94,7 @@ end
     getindex.(p,1), getindex.(p,2), getindex.(p,3)
 end
 
-@recipe function f(M::_Manifold{2, 2}; controlpoints=(;))
-    # TODO fix number of sampling points
-    N = 100
+@recipe function f(M::_Manifold{2, 2}; controlpoints=(;), division_number=100)
     attributes = PlotAttributesContolPoints(;controlpoints...)
     a = BasicBSpline.controlpoints(M)
     @series begin
@@ -142,21 +134,24 @@ end
     I1, I2 = domain.(bsplinespaces(M))
     a1, b1 = float.(extrema(I1))
     a2, b2 = float.(extrema(I2))
-    ts_boundary = [[(t1, a2) for t1 in view(range(I1, length=N), 1:N-1)]; [(b1, t2) for t2 in view(range(I2, length=N), 1:N-1)]; [(t1, b2) for t1 in view(range(I1, length=N), N:-1:2)]; [(a1, t2) for t2 in view(range(I2, length=N), N:-1:1)]]
+    ts_boundary = [
+        [(t1, a2) for t1 in view(range(I1, length=division_number+1), 1:division_number)];
+        [(b1, t2) for t2 in view(range(I2, length=division_number+1), 1:division_number)];
+        [(t1, b2) for t1 in view(range(I1, length=division_number+1), division_number+1:-1:2)];
+        [(a1, t2) for t2 in view(range(I2, length=division_number+1), division_number+1:-1:1)]
+    ]
     ps_boundary = [M(t...) for t in ts_boundary]
     fill := true
     fillalpha --> 0.5
     getindex.(ps_boundary,1), getindex.(ps_boundary,2)
 end
 
-@recipe function f(M::_Manifold{2, 3}; controlpoints=(;))
-    # TODO fix number of sampling points
-    N = 100
+@recipe function f(M::_Manifold{2, 3}; controlpoints=(;), division_number=100)
     attributes = PlotAttributesContolPoints(;controlpoints...)
     t1_min, t1_max = extrema(domain(bsplinespaces(M)[1]))
     t2_min, t2_max = extrema(domain(bsplinespaces(M)[2]))
-    t1s = range(t1_min, t1_max, length=N)
-    t2s = range(t2_min, t2_max, length=N)
+    t1s = range(t1_min, t1_max, length=division_number+1)
+    t2s = range(t2_min, t2_max, length=division_number+1)
     a = BasicBSpline.controlpoints(M)
     @series begin
         primary := false
