@@ -21,7 +21,7 @@ using StaticArrays
 end
 
 # B-spline space
-@recipe function f(P::AbstractFunctionSpace; division_number=10)
+@recipe function f(P::AbstractFunctionSpace; division_number=20)
     k = knotvector(P)
     ts = Float64[]
     for i in 1:length(k)-1
