@@ -22,8 +22,9 @@ using StaticArrays
     tt, bb
 end
 
-# B-spline curve in 2d
-@recipe function f(M::Union{BSplineManifold{1,Deg,<:StaticVector{2,<:Real}}, RationalBSplineManifold{1,Deg,<:StaticVector{2,<:Real}}}) where Deg
+const _Manifold{Dim1, Dim2} = Union{BSplineManifold{Dim1,Deg,<:StaticVector{Dim2,<:Real}}, RationalBSplineManifold{Dim1,Deg,<:StaticVector{Dim2,<:Real}}} where Deg
+
+@recipe function f(M::_Manifold{1, 2})
     # TODO fix number of sampling points
     N = 100
     t_min, t_max = extrema(domain(bsplinespaces(M)[1]))
@@ -40,8 +41,7 @@ end
     getindex.(p,1), getindex.(p,2)
 end
 
-# B-spline curve in 3d
-@recipe function f(M::Union{BSplineManifold{1,Deg,<:StaticVector{3,<:Real}}, RationalBSplineManifold{1,Deg,<:StaticVector{3,<:Real}}}) where Deg
+@recipe function f(M::_Manifold{1, 3})
     # TODO fix number of sampling points
     N = 100
     t_min, t_max = extrema(domain(bsplinespaces(M)[1]))
@@ -58,8 +58,7 @@ end
     getindex.(p,1), getindex.(p,2), getindex.(p,3)
 end
 
-# B-spline surface
-@recipe function f(M::Union{BSplineManifold{2,Deg,<:StaticVector{3,<:Real}}, RationalBSplineManifold{2,Deg,<:StaticVector{3,<:Real}}}) where Deg
+@recipe function f(M::_Manifold{2, 3})
     # TODO fix number of sampling points
     N = 100
     t1_min, t1_max = extrema(domain(bsplinespaces(M)[1]))
