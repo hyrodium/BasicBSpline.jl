@@ -8,7 +8,20 @@
         k = KnotVector(0:3)+p*KnotVector([0,3])
         P = BSplineSpace{p}(k)
         pl = plot(P)
-        savefig(pl, joinpath(dir_out, "bspline_space.png"))
+        path_img = joinpath(dir_out, "bspline_space.png")
+        @test !isfile(path_img)
+        savefig(pl, path_img)
+        @test isfile(path_img)
+    end
+
+    @testset "B-spline space with knotvector" begin
+        k = knotvector"112111113111111121114"
+        P = BSplineSpace{3}(k)
+        pl = plot(P; label="B-spline basis"); plot!(k; label="knot vector")
+        path_img = joinpath(dir_out, "bspline_space_with_knotvector.png")
+        @test !isfile(path_img)
+        savefig(pl, path_img)
+        @test isfile(path_img)
     end
 
     @testset "Uniform B-spline space" begin
@@ -16,7 +29,10 @@
         k = UniformKnotVector(0:8)
         P = BSplineSpace{p}(k)
         pl = plot(P)
-        savefig(pl, joinpath(dir_out, "bspline_space_uniform.png"))
+        path_img = joinpath(dir_out, "bspline_space_uniform.png")
+        @test !isfile(path_img)
+        savefig(pl, path_img)
+        @test isfile(path_img)
     end
 
     @testset "Derivative B-spline space" begin
@@ -24,7 +40,10 @@
         k = UniformKnotVector(0:8)
         dP = BSplineDerivativeSpace{1}(BSplineSpace{p}(k))
         pl = plot(dP)
-        savefig(pl, joinpath(dir_out, "bspline_space_derivative.png"))
+        path_img = joinpath(dir_out, "bspline_space_derivative.png")
+        @test !isfile(path_img)
+        savefig(pl, path_img)
+        @test isfile(path_img)
     end
 
     @testset "B-spline curve in 2d" begin
@@ -34,7 +53,10 @@
         P = BSplineSpace{p}(k)
         M = BSplineManifold(a, P)
         pl = plot(M)
-        savefig(pl, joinpath(dir_out, "bspline_curve_2d.png"))
+        path_img = joinpath(dir_out, "bspline_curve_2d.png")
+        @test !isfile(path_img)
+        savefig(pl, path_img)
+        @test isfile(path_img)
     end
 
     @testset "B-spline curve in 3d" begin
@@ -44,7 +66,26 @@
         P = BSplineSpace{p}(k)
         M = BSplineManifold(a, P)
         pl = plot(M)
-        savefig(pl, joinpath(dir_out, "bspline_curve_3d.png"))
+        path_img = joinpath(dir_out, "bspline_curve_3d.png")
+        @test !isfile(path_img)
+        savefig(pl, path_img)
+        @test isfile(path_img)
+    end
+
+    @testset "B-spline surface in 2d" begin
+        k1 = KnotVector(1:8)
+        k2 = KnotVector(1:10)
+        P1 = BSplineSpace{2}(k1)
+        P2 = BSplineSpace{2}(k2)
+        n1 = dim(P1)
+        n2 = dim(P2)
+        a = [SVector(i,sin(i+j)) for i in 1:n1, j in 1:n2]
+        M = BSplineManifold(a,(P1,P2))
+        pl = plot(M)
+        path_img = joinpath(dir_out, "bspline_surface_2d.png")
+        @test !isfile(path_img)
+        savefig(pl, path_img)
+        @test isfile(path_img)
     end
 
     @testset "B-spline surface in 3d" begin
@@ -57,7 +98,23 @@
         a = [SVector(i,j,sin(i+j)) for i in 1:n1, j in 1:n2]
         M = BSplineManifold(a,(P1,P2))
         pl = plot(M)
-        savefig(pl, joinpath(dir_out, "bspline_surface_3d.png"))
+        path_img = joinpath(dir_out, "bspline_surface_3d.png")
+        @test !isfile(path_img)
+        savefig(pl, path_img)
+        @test isfile(path_img)
+    end
+
+    @testset "B-spline solid in 3d" begin
+        f(u,v,w) = SVector(Angle2d(w)*SVector(u,v)..., w)
+        P1 = P2 = BSplineSpace{3}(KnotVector([0,0,0,0,1,1,1,1]))
+        P3 = BSplineSpace{3}(KnotVector([0,0,0,0,1,2,3,4,5,6,6,6,6]))
+        a = fittingcontrolpoints(f, P1, P2, P3);
+        M = BSplineManifold(a, P1, P2, P3);
+        pl = plot(M; controlpoints=(;markersize=1))
+        path_img = joinpath(dir_out, "bspline_solid_3d.png")
+        @test !isfile(path_img)
+        savefig(pl, path_img)
+        @test isfile(path_img)
     end
 
     @testset "Rational B-spline curve in 2d" begin
@@ -68,7 +125,10 @@
         P = BSplineSpace{p}(k)
         M = RationalBSplineManifold(a, w, P)
         pl = plot(M)
-        savefig(pl, joinpath(dir_out, "rational_bspline_curve_2d.png"))
+        path_img = joinpath(dir_out, "rational_bspline_curve_2d.png")
+        @test !isfile(path_img)
+        savefig(pl, path_img)
+        @test isfile(path_img)
     end
 
     @testset "Rational B-spline curve in 3d" begin
@@ -79,7 +139,10 @@
         P = BSplineSpace{p}(k)
         M = RationalBSplineManifold(a, w, P)
         pl = plot(M)
-        savefig(pl, joinpath(dir_out, "rational_bspline_curve_3d.png"))
+        path_img = joinpath(dir_out, "rational_bspline_curve_3d.png")
+        @test !isfile(path_img)
+        savefig(pl, path_img)
+        @test isfile(path_img)
     end
 
     @testset "Rational B-spline surface in 3d" begin
@@ -93,6 +156,9 @@
         w = rand(n1,n2)
         M = RationalBSplineManifold(a,w,(P1,P2))
         pl = plot(M)
-        savefig(pl, joinpath(dir_out, "rational_bspline_surface_3d.png"))
+        path_img = joinpath(dir_out, "rational_bspline_surface_3d.png")
+        @test !isfile(path_img)
+        savefig(pl, path_img)
+        @test isfile(path_img)
     end
 end
