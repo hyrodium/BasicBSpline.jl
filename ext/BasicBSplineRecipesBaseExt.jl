@@ -100,6 +100,55 @@ end
     getindex.(p,1), getindex.(p,2), getindex.(p,3)
 end
 
+@recipe function f(M::_Manifold{2, 2}; controlpoints=(;))
+    # TODO fix number of sampling points
+    N = 100
+    attributes = PlotAttributesContolPoints(;controlpoints...)
+    a = BasicBSpline.controlpoints(M)
+    @series begin
+        primary := false
+        marker_z := attributes.marker_z
+        markeralpha := attributes.markeralpha
+        markercolor := attributes.markercolor
+        markershape := attributes.markershape
+        markersize := attributes.markersize
+        markerstrokealpha := attributes.markerstrokealpha
+        markerstrokecolor := attributes.markerstrokecolor
+        markerstrokestyle := attributes.markerstrokestyle
+        markerstrokewidth := attributes.markerstrokewidth
+        seriestype := :scatter
+        getindex.(a,1), getindex.(a,2)
+    end
+    @series begin
+        primary := false
+        line_z := attributes.line_z
+        linealpha := attributes.linealpha
+        linecolor := attributes.linecolor
+        linestyle := attributes.linestyle
+        linewidth := attributes.linewidth
+        seriestype := :path
+        getindex.(a,1), getindex.(a,2)
+    end
+    @series begin
+        primary := false
+        line_z := attributes.line_z
+        linealpha := attributes.linealpha
+        linecolor := attributes.linecolor
+        linestyle := attributes.linestyle
+        linewidth := attributes.linewidth
+        seriestype := :path
+        getindex.(a',1), getindex.(a',2)
+    end
+    I1, I2 = domain.(bsplinespaces(M))
+    a1, b1 = float.(extrema(I1))
+    a2, b2 = float.(extrema(I2))
+    ts_boundary = [[(t1, a2) for t1 in view(range(I1, length=N), 1:N-1)]; [(b1, t2) for t2 in view(range(I2, length=N), 1:N-1)]; [(t1, b2) for t1 in view(range(I1, length=N), N:-1:2)]; [(a1, t2) for t2 in view(range(I2, length=N), N:-1:1)]]
+    ps_boundary = [M(t...) for t in ts_boundary]
+    fill := true
+    fillalpha --> 0.5
+    getindex.(ps_boundary,1), getindex.(ps_boundary,2)
+end
+
 @recipe function f(M::_Manifold{2, 3}; controlpoints=(;))
     # TODO fix number of sampling points
     N = 100
