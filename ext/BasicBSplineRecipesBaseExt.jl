@@ -6,6 +6,21 @@ import BasicBSpline.AbstractFunctionSpace
 using StaticArrays
 
 # B-spline space
+@recipe function f(k::AbstractKnotVector; shift_y=0.02)
+    u = BasicBSpline._vec(k)
+    l = length(u)
+    v = zeros(Float64, l)
+    for i in 2:l
+        if u[i-1] == u[i]
+            v[i] = v[i-1] - shift_y
+        end
+    end
+    seriestype := :scatter
+    delete!(plotattributes, :shift_y)
+    u, v
+end
+
+# B-spline space
 @recipe function f(P::AbstractFunctionSpace; division_number=10)
     k = knotvector(P)
     ts = Float64[]
