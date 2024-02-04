@@ -17,6 +17,7 @@ using StaticArrays
     tt = repeat([ts;NaN],n)
     bs = [bsplinebasis(P,i,t) for t in ts, i in 1:n]
     bb = vec(vcat(bs,zeros(n)'))
+    delete!(plotattributes, :division_number)
     tt, bb
 end
 
@@ -64,6 +65,8 @@ end
         getindex.(a,1), getindex.(a,2)
     end
     p = M.(ts)
+    delete!(plotattributes, :controlpoints)
+    delete!(plotattributes, :division_number)
     getindex.(p,1), getindex.(p,2)
 end
 
@@ -91,6 +94,8 @@ end
         getindex.(a,1), getindex.(a,2), getindex.(a,3)
     end
     p = M.(ts)
+    delete!(plotattributes, :controlpoints)
+    delete!(plotattributes, :division_number)
     getindex.(p,1), getindex.(p,2), getindex.(p,3)
 end
 
@@ -143,6 +148,8 @@ end
     ps_boundary = [M(t...) for t in ts_boundary]
     fill := true
     fillalpha --> 0.5
+    delete!(plotattributes, :controlpoints)
+    delete!(plotattributes, :division_number)
     getindex.(ps_boundary,1), getindex.(ps_boundary,2)
 end
 
@@ -192,6 +199,8 @@ end
     ys = getindex.(ps,2)
     zs = getindex.(ps,3)
     seriestype := :surface
+    delete!(plotattributes, :controlpoints)
+    delete!(plotattributes, :division_number)
     xs, ys, zs
 end
 
