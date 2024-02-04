@@ -111,11 +111,6 @@ end
     a = BasicBSpline.controlpoints(M)
     @series begin
         primary := false
-        line_z := attributes.line_z
-        linealpha := attributes.linealpha
-        linecolor := attributes.linecolor
-        linestyle := attributes.linestyle
-        linewidth := attributes.linewidth
         marker_z := attributes.marker_z
         markeralpha := attributes.markeralpha
         markercolor := attributes.markercolor
@@ -135,15 +130,6 @@ end
         linecolor := attributes.linecolor
         linestyle := attributes.linestyle
         linewidth := attributes.linewidth
-        marker_z := attributes.marker_z
-        markeralpha := attributes.markeralpha
-        markercolor := attributes.markercolor
-        markershape := attributes.markershape
-        markersize := attributes.markersize
-        markerstrokealpha := attributes.markerstrokealpha
-        markerstrokecolor := attributes.markerstrokecolor
-        markerstrokestyle := attributes.markerstrokestyle
-        markerstrokewidth := attributes.markerstrokewidth
         seriestype := :path
         getindex.(a,1), getindex.(a,2), getindex.(a,3)
     end
@@ -154,15 +140,6 @@ end
         linecolor := attributes.linecolor
         linestyle := attributes.linestyle
         linewidth := attributes.linewidth
-        marker_z := attributes.marker_z
-        markeralpha := attributes.markeralpha
-        markercolor := attributes.markercolor
-        markershape := attributes.markershape
-        markersize := attributes.markersize
-        markerstrokealpha := attributes.markerstrokealpha
-        markerstrokecolor := attributes.markerstrokecolor
-        markerstrokestyle := attributes.markerstrokestyle
-        markerstrokewidth := attributes.markerstrokewidth
         seriestype := :path
         getindex.(a',1), getindex.(a',2), getindex.(a',3)
     end
