@@ -23,7 +23,7 @@ end
 
 const _Manifold{Dim1, Dim2} = Union{BSplineManifold{Dim1,Deg,<:StaticVector{Dim2,<:Real}}, RationalBSplineManifold{Dim1,Deg,<:StaticVector{Dim2,<:Real}}} where Deg
 
-@kwdef struct PlotAttributesContolPoints
+Base.@kwdef struct PlotAttributesContolPoints
     # https://docs.juliaplots.org/latest/generated/attributes_series/
     line_z=nothing
     linealpha=nothing
