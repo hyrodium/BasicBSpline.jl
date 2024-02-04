@@ -270,13 +270,22 @@ end
     xs = getindex.(ps,1)
     ys = getindex.(ps,2)
     zs = getindex.(ps,3)
+
+    xs = hcat(xs, xs[:,end]) # Adhoc additional values for fixing boundary
+    ys = hcat(ys, ys[:,end])
+    zs = hcat(zs, zs[:,end])
     xs = hcat(xs, nanvec)
     ys = hcat(ys, nanvec)
     zs = hcat(zs, nanvec)
+
     ps = M.(t1s', t2s, t3_min)
     xs = hcat(xs, getindex.(ps,1))
     ys = hcat(ys, getindex.(ps,2))
     zs = hcat(zs, getindex.(ps,3))
+
+    xs = hcat(xs, xs[:,end])
+    ys = hcat(ys, ys[:,end])
+    zs = hcat(zs, zs[:,end])
     xs = hcat(xs, nanvec)
     ys = hcat(ys, nanvec)
     zs = hcat(zs, nanvec)
@@ -285,13 +294,22 @@ end
     xs = hcat(xs, getindex.(ps,1))
     ys = hcat(ys, getindex.(ps,2))
     zs = hcat(zs, getindex.(ps,3))
+
+    xs = hcat(xs, xs[:,end])
+    ys = hcat(ys, ys[:,end])
+    zs = hcat(zs, zs[:,end])
     xs = hcat(xs, nanvec)
     ys = hcat(ys, nanvec)
     zs = hcat(zs, nanvec)
+
     ps = M.(t1_min, t2s', t3s)
     xs = hcat(xs, getindex.(ps,1))
     ys = hcat(ys, getindex.(ps,2))
     zs = hcat(zs, getindex.(ps,3))
+
+    xs = hcat(xs, xs[:,end])
+    ys = hcat(ys, ys[:,end])
+    zs = hcat(zs, zs[:,end])
     xs = hcat(xs, nanvec)
     ys = hcat(ys, nanvec)
     zs = hcat(zs, nanvec)
@@ -300,9 +318,14 @@ end
     xs = hcat(xs, getindex.(ps,1))
     ys = hcat(ys, getindex.(ps,2))
     zs = hcat(zs, getindex.(ps,3))
+
+    xs = hcat(xs, xs[:,end])
+    ys = hcat(ys, ys[:,end])
+    zs = hcat(zs, zs[:,end])
     xs = hcat(xs, nanvec)
     ys = hcat(ys, nanvec)
     zs = hcat(zs, nanvec)
+
     ps = M.(t1s, t2_min, t3s')
     xs = hcat(xs, getindex.(ps,1))
     ys = hcat(ys, getindex.(ps,2))
