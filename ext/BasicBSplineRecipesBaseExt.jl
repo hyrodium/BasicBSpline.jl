@@ -264,72 +264,37 @@ end
         X,Y,Z
     end
 
-    nanvec = fill(NaN, division_number+1)
+    nanvec = fill(SVector(NaN,NaN,NaN), 1, division_number+1)
 
-    ps = M.(t1s, t2s', t3_max)
+    qs1 = M.(t1s, t2s', t3_max)
+    qs2 = M.(t1s', t2s, t3_min)
+    qs3 = M.(t1_max, t2s, t3s')
+    qs4 = M.(t1_min, t2s', t3s)
+    qs5 = M.(t1s', t2_max, t3s)
+    qs6 = M.(t1s, t2_min, t3s')
+
+    ps = [
+        qs1;
+        qs1[end:end,:];  # Adhoc additional values for fixing boundary
+        nanvec;
+        qs2;
+        qs2[end:end,:];
+        nanvec;
+        qs3;
+        qs3[end:end,:];
+        nanvec;
+        qs4;
+        qs4[end:end,:];
+        nanvec;
+        qs5;
+        qs5[end:end,:];
+        nanvec;
+        qs6
+    ]
+
     xs = getindex.(ps,1)
     ys = getindex.(ps,2)
     zs = getindex.(ps,3)
-
-    xs = hcat(xs, xs[:,end]) # Adhoc additional values for fixing boundary
-    ys = hcat(ys, ys[:,end])
-    zs = hcat(zs, zs[:,end])
-    xs = hcat(xs, nanvec)
-    ys = hcat(ys, nanvec)
-    zs = hcat(zs, nanvec)
-
-    ps = M.(t1s', t2s, t3_min)
-    xs = hcat(xs, getindex.(ps,1))
-    ys = hcat(ys, getindex.(ps,2))
-    zs = hcat(zs, getindex.(ps,3))
-
-    xs = hcat(xs, xs[:,end])
-    ys = hcat(ys, ys[:,end])
-    zs = hcat(zs, zs[:,end])
-    xs = hcat(xs, nanvec)
-    ys = hcat(ys, nanvec)
-    zs = hcat(zs, nanvec)
-
-    ps = M.(t1_max, t2s, t3s')
-    xs = hcat(xs, getindex.(ps,1))
-    ys = hcat(ys, getindex.(ps,2))
-    zs = hcat(zs, getindex.(ps,3))
-
-    xs = hcat(xs, xs[:,end])
-    ys = hcat(ys, ys[:,end])
-    zs = hcat(zs, zs[:,end])
-    xs = hcat(xs, nanvec)
-    ys = hcat(ys, nanvec)
-    zs = hcat(zs, nanvec)
-
-    ps = M.(t1_min, t2s', t3s)
-    xs = hcat(xs, getindex.(ps,1))
-    ys = hcat(ys, getindex.(ps,2))
-    zs = hcat(zs, getindex.(ps,3))
-
-    xs = hcat(xs, xs[:,end])
-    ys = hcat(ys, ys[:,end])
-    zs = hcat(zs, zs[:,end])
-    xs = hcat(xs, nanvec)
-    ys = hcat(ys, nanvec)
-    zs = hcat(zs, nanvec)
-
-    ps = M.(t1s', t2_max, t3s)
-    xs = hcat(xs, getindex.(ps,1))
-    ys = hcat(ys, getindex.(ps,2))
-    zs = hcat(zs, getindex.(ps,3))
-
-    xs = hcat(xs, xs[:,end])
-    ys = hcat(ys, ys[:,end])
-    zs = hcat(zs, zs[:,end])
-    xs = hcat(xs, nanvec)
-    ys = hcat(ys, nanvec)
-    zs = hcat(zs, nanvec)
-
-    ps = M.(t1s, t2_min, t3s')
-    xs = hcat(xs, getindex.(ps,1))
-    ys = hcat(ys, getindex.(ps,2))
-    zs = hcat(zs, getindex.(ps,3))
 
     seriestype := :surface
     delete!(plotattributes, :controlpoints)
