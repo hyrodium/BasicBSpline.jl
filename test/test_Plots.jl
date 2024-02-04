@@ -79,7 +79,7 @@
         P2 = BSplineSpace{2}(k2)
         n1 = dim(P1)
         n2 = dim(P2)
-        a = [SVector(i,sin(i+j)) for i in 1:n1, j in 1:n2]
+        a = [SVector(i-j,sin(i+j)) for i in 1:n1, j in 1:n2]
         M = BSplineManifold(a,(P1,P2))
         pl = plot(M)
         path_img = joinpath(dir_out, "bspline_surface_2d.png")
@@ -105,10 +105,9 @@
     end
 
     @testset "B-spline solid in 3d" begin
-        f(u,v,w) = SVector(Angle2d(w)*SVector(u,v)..., w)
         P1 = P2 = BSplineSpace{3}(KnotVector([0,0,0,0,1,1,1,1]))
         P3 = BSplineSpace{3}(KnotVector([0,0,0,0,1,2,3,4,5,6,6,6,6]))
-        a = fittingcontrolpoints(f, P1, P2, P3);
+        a = [SVector()];
         M = BSplineManifold(a, P1, P2, P3);
         pl = plot(M; controlpoints=(;markersize=1))
         path_img = joinpath(dir_out, "bspline_solid_3d.png")
