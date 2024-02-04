@@ -25,14 +25,24 @@ end
 const _Manifold{Dim1, Dim2} = Union{BSplineManifold{Dim1,Deg,<:StaticVector{Dim2,<:Real}}, RationalBSplineManifold{Dim1,Deg,<:StaticVector{Dim2,<:Real}}} where Deg
 
 @kwdef struct PlotAttributesContolPoints
+    # https://docs.juliaplots.org/latest/generated/attributes_series/
+    line_z=nothing
+    linealpha=nothing
     linecolor=:gray
-    markershape=:circle
+    linestyle=:solid
+    linewidth=:auto
+    marker_z=nothing
+    markeralpha=nothing
     markercolor=:gray
+    markershape=:circle
+    markersize=4
+    markerstrokealpha=nothing
+    markerstrokecolor=:match
+    markerstrokestyle=:solid
+    markerstrokewidth=1
 end
 
-PLOT_ATTRIBUTES_CONTROLPOINTS_DEFAULT = (linecolor=:gray, markershape=:circle, markercolor=:gray)
-
-@recipe function f(M::_Manifold{1, 2}; controlpoints=PLOT_ATTRIBUTES_CONTROLPOINTS_DEFAULT)
+@recipe function f(M::_Manifold{1, 2}; controlpoints=(;))
     # TODO fix number of sampling points
     N = 100
     attributes = PlotAttributesContolPoints(;controlpoints...)
@@ -40,9 +50,20 @@ PLOT_ATTRIBUTES_CONTROLPOINTS_DEFAULT = (linecolor=:gray, markershape=:circle, m
     ts = range(t_min, t_max, length=N)
     @series begin
         primary := false
+        line_z := attributes.line_z
+        linealpha := attributes.linealpha
         linecolor := attributes.linecolor
-        markershape := attributes.markershape
+        linestyle := attributes.linestyle
+        linewidth := attributes.linewidth
+        marker_z := attributes.marker_z
+        markeralpha := attributes.markeralpha
         markercolor := attributes.markercolor
+        markershape := attributes.markershape
+        markersize := attributes.markersize
+        markerstrokealpha := attributes.markerstrokealpha
+        markerstrokecolor := attributes.markerstrokecolor
+        markerstrokestyle := attributes.markerstrokestyle
+        markerstrokewidth := attributes.markerstrokewidth
         a = BasicBSpline.controlpoints(M)
         getindex.(a,1), getindex.(a,2)
     end
@@ -50,7 +71,7 @@ PLOT_ATTRIBUTES_CONTROLPOINTS_DEFAULT = (linecolor=:gray, markershape=:circle, m
     getindex.(p,1), getindex.(p,2)
 end
 
-@recipe function f(M::_Manifold{1, 3}; controlpoints=PLOT_ATTRIBUTES_CONTROLPOINTS_DEFAULT)
+@recipe function f(M::_Manifold{1, 3}; controlpoints=(;))
     # TODO fix number of sampling points
     N = 100
     attributes = PlotAttributesContolPoints(;controlpoints...)
@@ -58,9 +79,20 @@ end
     ts = range(t_min, t_max, length=N)
     @series begin
         primary := false
+        line_z := attributes.line_z
+        linealpha := attributes.linealpha
         linecolor := attributes.linecolor
-        markershape := attributes.markershape
+        linestyle := attributes.linestyle
+        linewidth := attributes.linewidth
+        marker_z := attributes.marker_z
+        markeralpha := attributes.markeralpha
         markercolor := attributes.markercolor
+        markershape := attributes.markershape
+        markersize := attributes.markersize
+        markerstrokealpha := attributes.markerstrokealpha
+        markerstrokecolor := attributes.markerstrokecolor
+        markerstrokestyle := attributes.markerstrokestyle
+        markerstrokewidth := attributes.markerstrokewidth
         a = BasicBSpline.controlpoints(M)
         getindex.(a,1), getindex.(a,2), getindex.(a,3)
     end
@@ -68,7 +100,7 @@ end
     getindex.(p,1), getindex.(p,2), getindex.(p,3)
 end
 
-@recipe function f(M::_Manifold{2, 3}; controlpoints=PLOT_ATTRIBUTES_CONTROLPOINTS_DEFAULT)
+@recipe function f(M::_Manifold{2, 3}; controlpoints=(;))
     # TODO fix number of sampling points
     N = 100
     attributes = PlotAttributesContolPoints(;controlpoints...)
@@ -79,25 +111,58 @@ end
     a = BasicBSpline.controlpoints(M)
     @series begin
         primary := false
+        line_z := attributes.line_z
+        linealpha := attributes.linealpha
         linecolor := attributes.linecolor
-        markershape := attributes.markershape
+        linestyle := attributes.linestyle
+        linewidth := attributes.linewidth
+        marker_z := attributes.marker_z
+        markeralpha := attributes.markeralpha
         markercolor := attributes.markercolor
+        markershape := attributes.markershape
+        markersize := attributes.markersize
+        markerstrokealpha := attributes.markerstrokealpha
+        markerstrokecolor := attributes.markerstrokecolor
+        markerstrokestyle := attributes.markerstrokestyle
+        markerstrokewidth := attributes.markerstrokewidth
         seriestype := :scatter
         getindex.(a,1), getindex.(a,2), getindex.(a,3)
     end
     @series begin
         primary := false
+        line_z := attributes.line_z
+        linealpha := attributes.linealpha
         linecolor := attributes.linecolor
-        markershape := attributes.markershape
+        linestyle := attributes.linestyle
+        linewidth := attributes.linewidth
+        marker_z := attributes.marker_z
+        markeralpha := attributes.markeralpha
         markercolor := attributes.markercolor
+        markershape := attributes.markershape
+        markersize := attributes.markersize
+        markerstrokealpha := attributes.markerstrokealpha
+        markerstrokecolor := attributes.markerstrokecolor
+        markerstrokestyle := attributes.markerstrokestyle
+        markerstrokewidth := attributes.markerstrokewidth
         seriestype := :path
         getindex.(a,1), getindex.(a,2), getindex.(a,3)
     end
     @series begin
         primary := false
+        line_z := attributes.line_z
+        linealpha := attributes.linealpha
         linecolor := attributes.linecolor
-        markershape := attributes.markershape
+        linestyle := attributes.linestyle
+        linewidth := attributes.linewidth
+        marker_z := attributes.marker_z
+        markeralpha := attributes.markeralpha
         markercolor := attributes.markercolor
+        markershape := attributes.markershape
+        markersize := attributes.markersize
+        markerstrokealpha := attributes.markerstrokealpha
+        markerstrokecolor := attributes.markerstrokecolor
+        markerstrokestyle := attributes.markerstrokestyle
+        markerstrokewidth := attributes.markerstrokewidth
         seriestype := :path
         getindex.(a',1), getindex.(a',2), getindex.(a',3)
     end
