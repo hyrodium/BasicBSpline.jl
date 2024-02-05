@@ -4,7 +4,7 @@
 ```@example math_knotvector
 using BasicBSpline
 using InteractiveUtils  # hide
-using Plots; gr();
+using Plots; gr()
 ```
 
 ## Definition
