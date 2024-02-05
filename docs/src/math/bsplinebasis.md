@@ -37,7 +37,7 @@ using Plots; plotly()
 The next figure shows the plot of B-spline basis functions.
 You can manipulate these plots on [desmos graphing calculator](https://www.desmos.com/calculator/ql6jqgdabs)!
 
-![](img/bsplinebasis.png)
+![](../img/bsplinebasis.png)
 
 !!! info "Thm.  Basis of B-spline space"
     The set of functions ``\{B_{(i,p,k)}\}_i`` is a basis of B-spline space ``\mathcal{P}[p,k]``.
