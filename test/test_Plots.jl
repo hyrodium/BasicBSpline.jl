@@ -46,6 +46,32 @@
         @test isfile(path_img)
     end
 
+    @testset "Tensor product of B-spline spaces" begin
+        # Define shape
+        k1 = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
+        k2 = knotvector"31 2  121"
+        P1 = BSplineSpace{3}(k1)
+        P2 = BSplineSpace{2}(k2)
+
+        # Choose indices
+        i1 = 3
+        i2 = 4
+
+        # Visualize basis functions
+        xs = range(0,10,length=100)
+        ys = range(1,9,length=100)
+        surface(xs, ys, bsplinebasis.(P1,i1,xs') .* bsplinebasis.(P2,i2,ys))
+        plot!(P1; plane=:xz, label="P1", color=:red)
+        plot!(P2; plane=:yz, label="P2", color=:green)
+        plot!(k1; plane=:xz, label="k1", color=:red, markersize=2)
+        plot!(k2; plane=:yz, label="k2", color=:green, markersize=2)
+
+        path_img = joinpath(dir_out, "bspline_space_tensor_product.png")
+        @test !isfile(path_img)
+        savefig(pl, path_img)
+        @test isfile(path_img)
+    end
+
     @testset "B-spline curve in 2d" begin
         a = [SVector(0, 0), SVector(1, 1), SVector(2, -1), SVector(3, 0), SVector(4, -2), SVector(5, 1)]
         p = 3
