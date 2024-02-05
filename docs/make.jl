@@ -2,6 +2,7 @@ using Documenter
 using BasicBSpline
 using BasicBSplineExporter
 using BasicBSplineFitting
+using InteractiveUtils
 using Plots
 using Random
 

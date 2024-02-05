@@ -2,6 +2,21 @@
 
 # Public
 ```@docs
+KnotVector
+UniformKnotVector
+SubKnotVector
+EmptyKnotVector
+AbstractKnotVector
+length(k::AbstractKnotVector)
+Base.:+(k1::KnotVector{T}, k2::KnotVector{T}) where T
+*(m::Integer, k::AbstractKnotVector)
+Base.issubset(k::KnotVector, k′::KnotVector)
+unique(k::AbstractKnotVector)
+countknots(k::AbstractKnotVector, t::Real)
+@knotvector_str
+```
+
+```@docs
 BasicBSpline.refinement_R
 BasicBSpline.refinement_I
 ```
