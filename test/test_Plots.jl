@@ -46,8 +46,24 @@
         @test isfile(path_img)
     end
 
+    @testset "B-spline spaces with knotvectors" begin
+        k1 = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
+        P1 = BSplineSpace{3}(k1)
+        P2 = expandspace_R(P1, KnotVector([2.0, 3.0, 5.5]))
+
+        pl = plot(P1, label="P1", color=:red)
+        plot!(P2, label="P2", color=:green)
+        plot!(knotvector(P1), label="k1", gap_y=0.01, color=:red)
+        plot!(knotvector(P2); label="k2", gap_y=0.01, shift_y=-0.03, color=:green)
+
+        path_img = joinpath(dir_out, "bspline_spaces_and_their_knotvectors.png")
+        @test !isfile(path_img)
+        savefig(pl, path_img)
+        @test isfile(path_img)
+    end
+
     @testset "Tensor product of B-spline spaces" begin
-        # Define shape
+        # Define piecewise polynomial spaces
         k1 = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
         k2 = knotvector"31 2  121"
         P1 = BSplineSpace{3}(k1)
@@ -60,7 +76,7 @@
         # Visualize basis functions
         xs = range(0,10,length=100)
         ys = range(1,9,length=100)
-        surface(xs, ys, bsplinebasis.(P1,i1,xs') .* bsplinebasis.(P2,i2,ys))
+        pl = surface(xs, ys, bsplinebasis.(P1,i1,xs') .* bsplinebasis.(P2,i2,ys))
         plot!(P1; plane=:xz, label="P1", color=:red)
         plot!(P2; plane=:yz, label="P2", color=:green)
         plot!(k1; plane=:xz, label="k1", color=:red, markersize=2)
