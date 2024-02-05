@@ -14,6 +14,10 @@ Base.issubset(k::KnotVector, k′::KnotVector)
 unique(k::AbstractKnotVector)
 countknots(k::AbstractKnotVector, t::Real)
 @knotvector_str
+bsplinebasis₊₀
+bsplinebasis₋₀
+bsplinebasis
+BasicBSpline.bsplinebasis₋₀I
 ```
 
 ```@docs

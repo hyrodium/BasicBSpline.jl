@@ -1,17 +1,11 @@
 # B-spline basis function
 
-```@setup math
-using BasicBSpline
-using BasicBSplineExporter
-using StaticArrays
-using Plots; plotly()
-```
+## Setup
 
-```@setup math2
+```@example math_bsplinebasis
 using BasicBSpline
-using BasicBSplineExporter
-using StaticArrays
-using Plots; plotly()
+using Random
+using Plots; gr()
 ```
 
 ## Basic properties of B-spline basis function
@@ -42,21 +36,20 @@ You can manipulate these plots on [desmos graphing calculator](https://www.desmo
 !!! info "Thm.  Basis of B-spline space"
     The set of functions ``\{B_{(i,p,k)}\}_i`` is a basis of B-spline space ``\mathcal{P}[p,k]``.
 
+These B-spline basis functions can be calculated with [`bsplinebasis₊₀`](@ref).
 
-```@repl math
+```@repl math_bsplinebasis
 p = 2
 k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 P = BSplineSpace{p}(k)
 plot([t->bsplinebasis₊₀(P,i,t) for i in 1:dim(P)], 0, 10, ylims=(0,1), label=false)
-savefig("bsplinebasisplot.html") # hide
+savefig("bsplinebasisplot.png") # hide
 nothing # hide
 ```
 
-```@raw html
-<object type="text/html" data="../bsplinebasisplot.html" style="width:100%;height:420px;"></object>
-```
+![](bsplinebasisplot.png)
 
-You can choose the first terms in different ways.
+The first terms can be defined in different ways ([`bsplinebasis₋₀`](@ref)).
 
 ```math
 \begin{aligned}
@@ -69,20 +62,18 @@ You can choose the first terms in different ways.
 \end{aligned}
 ```
 
-```@repl math
+```@repl math_bsplinebasis
 p = 2
 k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 P = BSplineSpace{p}(k)
 plot([t->bsplinebasis₋₀(P,i,t) for i in 1:dim(P)], 0, 10, ylims=(0,1), label=false)
-savefig("bsplinebasisplot2.html") # hide
+savefig("bsplinebasisplot2.png") # hide
 nothing # hide
 ```
 
-```@raw html
-<object type="text/html" data="../bsplinebasisplot2.html" style="width:100%;height:420px;"></object>
-```
+![](bsplinebasisplot2.png)
 
-In these cases, each B-spline basis function ``B_{(i,2,k)}`` is coninuous, so `bsplinebasis₊₀` and `bsplinebasis₋₀` are equal.
+In these cases, each B-spline basis function ``B_{(i,2,k)}`` is coninuous, so [`bsplinebasis₊₀`](@ref) and [`bsplinebasis₋₀`](@ref) are equal.
 
 ## Support of B-spline basis function
 !!! info "Thm.  Support of B-spline basis function"
@@ -107,33 +98,29 @@ bsplinesupport
     \end{aligned}
     ```
 
-```@repl math
+```@repl math_bsplinebasis
 p = 2
 k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 P = BSplineSpace{p}(k)
 plot(t->sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 0, 10, ylims=(0,1.1), label=false)
-savefig("sumofbsplineplot.html") # hide
+savefig("sumofbsplineplot.png") # hide
 nothing # hide
 ```
 
-```@raw html
-<object type="text/html" data="../sumofbsplineplot.html" style="width:100%;height:420px;"></object>
-```
+![](sumofbsplineplot.png)
 
 To satisfy the partition of unity on whole interval ``[1,8]``, sometimes more knots will be inserted to the endpoints of the interval.
 
-```@repl math
+```@repl math_bsplinebasis
 p = 2
 k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]) + p * KnotVector([0,10])
 P = BSplineSpace{p}(k)
 plot(t->sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 0, 10, ylims=(0,1.1), label=false)
-savefig("sumofbsplineplot2.html") # hide
+savefig("sumofbsplineplot2.png") # hide
 nothing # hide
 ```
 
-```@raw html
-<object type="text/html" data="../sumofbsplineplot2.html" style="width:100%;height:420px;"></object>
-```
+![](sumofbsplineplot2.png)
 
 But, the sum ``\sum_{i} B_{(i,p,k)}(t)`` is not equal to ``1`` at ``t=8``.
 Therefore, to satisfy partition of unity on closed interval ``[k_{p+1}, k_{l-p}]``, the definition of first terms of B-spline basis functions are sometimes replaced:
@@ -150,34 +137,76 @@ Therefore, to satisfy partition of unity on closed interval ``[k_{p+1}, k_{l-p}]
 \end{aligned}
 ```
 
-```@repl math
+```@repl math_bsplinebasis
 p = 2
 k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]) + p * KnotVector([0,10])
 P = BSplineSpace{p}(k)
 plot(t->sum(bsplinebasis(P,i,t) for i in 1:dim(P)), 0, 10, ylims=(0,1.1), label=false)
-savefig("sumofbsplineplot3.html") # hide
+savefig("sumofbsplineplot3.png") # hide
 nothing # hide
 ```
 
-```@raw html
-<object type="text/html" data="../sumofbsplineplot3.html" style="width:100%;height:420px;"></object>
+![](sumofbsplineplot3.png)
+
+Here are all of valiations of the B-spline basis function.
+
+* [`bsplinebasis₊₀`](@ref)
+* [`bsplinebasis₋₀`](@ref)
+* [`bsplinebasis`](@ref)
+* [`BasicBSpline.bsplinebasis₋₀I`](@ref)
+
+## Differentiability and knot duplications
+
+The differentiability of the B-spline basis function depends on the duplications on the knot vector.
+
+The following animation shows this property.
+
+```@example math_bsplinebasis
+# Initialize
+gr()
+Random.seed!(42)
+N = 10
+
+# Easing functions
+c=2/√3
+f(t) = ifelse(t>0,exp(-1/t),0.0)
+g(t) = 1-f(c*t)/(f(c*t)+f(c-c*t))
+h(t) = 1-f((1-t)/2)/f(1/2)
+
+# Default knot vector
+v = 10*(1:N-1)/N + randn(N-1)*0.5
+pushfirst!(v,0)
+push!(v,10)
+
+# Generate animation
+anim = @animate for t in 0:0.05:5
+    k = KnotVector(v)
+    k.vector[4] = v[4]
+    k.vector[5] = v[4] + (g(t-0) + ifelse(t>3.9,h(t-3.9),0)) * (v[5]-v[4])
+    k.vector[6] = v[4] + (g(t-1) + ifelse(t>3.6,h(t-3.6),0)) * (v[6]-v[4])
+    k.vector[7] = v[4] + (g(t-2) + ifelse(t>3.3,h(t-3.3),0)) * (v[7]-v[4])
+    P0 = BSplineSpace{0}(k)
+    P1 = BSplineSpace{1}(k)
+    P2 = BSplineSpace{2}(k)
+    P3 = BSplineSpace{3}(k)
+    plot(
+        plot(P0; label="P0", ylims=(0,1), color=palette(:cool,4)[1]),
+        plot(P1; label="P1", ylims=(0,1), color=palette(:cool,4)[2]),
+        plot(P2; label="P2", ylims=(0,1), color=palette(:cool,4)[3]),
+        plot(P3; label="P3", ylims=(0,1), color=palette(:cool,4)[4]),
+        plot(k; label="knot vector", ylims=(-0.1,0.02), color=:white, yticks=nothing);
+        layout=grid(5, 1, heights=[0.23 ,0.23, 0.23, 0.23, 0.08]),
+        size=(501,800)
+    )
+end
+cmd = `ffmpeg -y -framerate 24 -i $(anim.dir)/%06d.png -c:v libx264 -pix_fmt yuv420p differentiability.mp4` # hide
+out = Pipe() # hide
+err = Pipe() # hide
+run(pipeline(ignorestatus(cmd), stdout=out, stderr=err)) # hide
+nothing # hide
 ```
 
-```@docs
-bsplinebasis₊₀
-```
-
-```@docs
-bsplinebasis₋₀
-```
-
-```@docs
-bsplinebasis
-```
-
-```@docs
-BasicBSpline.bsplinebasis₋₀I
-```
+![](differentiability.mp4)
 
 ## B-spline basis functions at specific point
 Sometimes, you may need the non-zero values of B-spline basis functions at specific point.
@@ -203,16 +232,17 @@ bsplinebasisall
 
 The next figures illustlates the relation between `domain(P)`, `intervalindex(P,t)` and `bsplinebasisall(P,i,t)`.
 
-```@example math2
+```@example math_bsplinebasis
+plotly()
 k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 
 for p in 1:3
-    P = BSplineSpace{p}(k)
-    plot(P, legend=:topleft, label="B-spline basis (p=1)")
-    plot!(t->intervalindex(P,t),0,10, label="Interval index")
-    plot!(t->sum(bsplinebasis(P,i,t) for i in 1:dim(P)),0,10, label="Sum of B-spline basis")
+    Q = BSplineSpace{p}(k)
+    plot(Q, legend=:topleft, label="B-spline basis (p=1)")
+    plot!(t->intervalindex(Q,t),0,10, label="Interval index")
+    plot!(t->sum(bsplinebasis(Q,i,t) for i in 1:dim(Q)),0,10, label="Sum of B-spline basis")
     scatter!(k.vector,zero(k.vector), label="knot vector")
-    plot!([t->bsplinebasisall(P,1,t)[i] for i in 1:p+1],0,10, color=:black, label="bsplinebasisall (i=1)", ylim=(-1,8-2p))
+    plot!([t->bsplinebasisall(Q,1,t)[i] for i in 1:p+1],0,10, color=:black, label="bsplinebasisall (i=1)", ylim=(-1,8-2p))
     savefig("bsplinebasisall-$(p).html") # hide
     nothing # hide
 end
@@ -234,7 +264,7 @@ end
 
 Let ``X_1, \dots, X_n`` be i.i.d. random variables with ``X_i \sim U(0,1)``, then the probability density function of ``X_1+\cdots+X_n`` can be obtained via `BasicBSpline.uniform_bsplinebasis_kernel(Val(n-1),t)`.
 
-```@example math
+```@example math_bsplinebasis
 N = 100000
 # polynomial degree 0
 plot1 = histogram([rand() for _ in 1:N], normalize=true, label=false)
