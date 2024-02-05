@@ -6,7 +6,7 @@ import BasicBSpline.AbstractFunctionSpace
 using StaticArrays
 
 # B-spline space
-@recipe function f(k::AbstractKnotVector; shift_y=0.02)
+@recipe function f(k::AbstractKnotVector; shift_y=0.02, plane=:xy)
     u = BasicBSpline._vec(k)
     l = length(u)
     v = zeros(Float64, l)
@@ -17,11 +17,20 @@ using StaticArrays
     end
     seriestype := :scatter
     delete!(plotattributes, :shift_y)
-    u, v
+    delete!(plotattributes, :plane)
+    if plane === :xy
+        u, v
+    elseif plane === :xy
+        v, u
+    elseif plane === :xz
+        u, zero(u), v
+    elseif plane === :yz
+        zero(u), u, v
+    end
 end
 
 # B-spline space
-@recipe function f(P::AbstractFunctionSpace; division_number=20)
+@recipe function f(P::AbstractFunctionSpace; division_number=20, plane=:xy)
     k = knotvector(P)
     ts = Float64[]
     for i in 1:length(k)-1
@@ -33,7 +42,16 @@ end
     bs = [bsplinebasis(P,i,t) for t in ts, i in 1:n]
     bb = vec(vcat(bs,zeros(n)'))
     delete!(plotattributes, :division_number)
-    tt, bb
+    delete!(plotattributes, :plane)
+    if plane === :xy
+        tt, bb
+    elseif plane === :xy
+        bb, tt
+    elseif plane === :xz
+        tt, zero(tt), bb
+    elseif plane === :yz
+        zero(tt), tt, bb
+    end
 end
 
 const _Manifold{Dim1, Dim2} = Union{BSplineManifold{Dim1,Deg,<:StaticVector{Dim2,<:Real}}, RationalBSplineManifold{Dim1,Deg,<:StaticVector{Dim2,<:Real}}} where Deg
