@@ -34,8 +34,11 @@ end
     k = knotvector(P)
     ts = Float64[]
     for i in 1:length(k)-1
-        append!(ts, range(k[i], k[i+1], length=division_number+1))
+        append!(ts, range(nextfloat(float(k[i])), prevfloat(float(k[i+1])), length=division_number+1))
     end
+    pushfirst!(ts, k[begin])
+    push!(ts, k[end])
+    sort!(ts)
     unique!(ts)
     n = dim(P)
     tt = repeat([ts;NaN],n)
