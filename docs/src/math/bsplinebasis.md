@@ -109,7 +109,7 @@ nothing # hide
 
 ![](sumofbsplineplot.png)
 
-To satisfy the partition of unity on whole interval ``[1,8]``, sometimes more knots will be inserted to the endpoints of the interval.
+To satisfy the partition of unity on whole interval ``[0,10]``, sometimes more knots will be inserted to the endpoints of the interval.
 
 ```@repl math_bsplinebasis
 p = 2
@@ -199,7 +199,9 @@ anim = @animate for t in 0:0.05:5
         size=(501,800)
     )
 end
+
 # Run ffmepg to generate mp4 file
+# cmd = `ffmpeg -y -framerate 24 -i $(anim.dir)/%06d.png -c:v libx264 -pix_fmt yuv420p differentiability.mp4`
 cmd = `ffmpeg -y -framerate 24 -i $(anim.dir)/%06d.png -c:v libx264 -pix_fmt yuv420p differentiability.mp4` # hide
 out = Pipe() # hide
 err = Pipe() # hide
@@ -211,7 +213,7 @@ nothing # hide
 
 ## B-spline basis functions at specific point
 Sometimes, you may need the non-zero values of B-spline basis functions at specific point.
-The `bsplinebasisall` function is much more efficient than evaluating B-spline functions one by one with `bsplinebasis` function.
+The [`bsplinebasisall`](@ref) function is much more efficient than evaluating B-spline functions one by one with [`bsplinebasis`](@ref) function.
 
 ```@repl
 using BenchmarkTools, BasicBSpline
@@ -223,14 +225,6 @@ bsplinebasisall(P, 2, t)
 @benchmark bsplinebasisall($P, 2, $t)
 ```
 
-```@docs
-intervalindex
-```
-
-```@docs
-bsplinebasisall
-```
-
 The next figures illustlates the relation between `domain(P)`, `intervalindex(P,t)` and `bsplinebasisall(P,i,t)`.
 
 ```@example math_bsplinebasis
@@ -238,12 +232,13 @@ plotly()
 k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 
 for p in 1:3
-    Q = BSplineSpace{p}(k)
-    plot(Q, legend=:topleft, label="B-spline basis (p=1)")
-    plot!(t->intervalindex(Q,t),0,10, label="Interval index")
-    plot!(t->sum(bsplinebasis(Q,i,t) for i in 1:dim(Q)),0,10, label="Sum of B-spline basis")
+    local P
+    P = BSplineSpace{p}(k)
+    plot(P, legend=:topleft, label="B-spline basis (p=1)")
+    plot!(t->intervalindex(P,t),0,10, label="Interval index")
+    plot!(t->sum(bsplinebasis(P,i,t) for i in 1:dim(P)),0,10, label="Sum of B-spline basis")
     scatter!(k.vector,zero(k.vector), label="knot vector")
-    plot!([t->bsplinebasisall(Q,1,t)[i] for i in 1:p+1],0,10, color=:black, label="bsplinebasisall (i=1)", ylim=(-1,8-2p))
+    plot!([t->bsplinebasisall(P,1,t)[i] for i in 1:p+1],0,10, color=:black, label="bsplinebasisall (i=1)", ylim=(-1,8-2p))
     savefig("bsplinebasisall-$(p).html") # hide
     nothing # hide
 end

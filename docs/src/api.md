@@ -18,6 +18,8 @@ bsplinebasis₊₀
 bsplinebasis₋₀
 bsplinebasis
 BasicBSpline.bsplinebasis₋₀I
+intervalindex
+bsplinebasisall
 ```
 
 ```@docs
