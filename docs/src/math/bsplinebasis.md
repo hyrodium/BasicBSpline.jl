@@ -84,10 +84,6 @@ In these cases, each B-spline basis function ``B_{(i,2,k)}`` is coninuous, so [`
 
 [TODO: fig]
 
-```@docs
-bsplinesupport
-```
-
 ## Partition of unity
 !!! info "Thm.  Partition of unity"
     Let ``B_{(i,p,k)}`` be a B-spline basis function, then the following equation is satisfied.
@@ -155,7 +151,7 @@ Here are all of valiations of the B-spline basis function.
 * [`bsplinebasis`](@ref)
 * [`BasicBSpline.bsplinebasis₋₀I`](@ref)
 
-## Differentiability and knot duplications
+## [Differentiability and knot duplications](@id differentiability-and-knot-duplications)
 
 The differentiability of the B-spline basis function depends on the duplications on the knot vector.
 
@@ -215,6 +211,20 @@ nothing # hide
 Sometimes, you may need the non-zero values of B-spline basis functions at specific point.
 The [`bsplinebasisall`](@ref) function is much more efficient than evaluating B-spline functions one by one with [`bsplinebasis`](@ref) function.
 
+```@example math_bsplinebasis
+P = BSplineSpace{2}(KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]))
+t = 6.3
+plot(P; label="P", ylims=(0,1))
+scatter!(fill(t,3), [bsplinebasis(P,2,t), bsplinebasis(P,3,t), bsplinebasis(P,4,t)]; markershape=:hline, label="bsplinebasis")
+scatter!(fill(t,3), bsplinebasisall(P, 2, t); markershape=:vline, label="bsplinebasisall")
+savefig("bsplinebasis_vs_bsplinebasisall.png") # hide
+nothing # hide
+```
+
+![](bsplinebasis_vs_bsplinebasisall.png)
+
+Benchmark:
+
 ```@repl
 using BenchmarkTools, BasicBSpline
 P = BSplineSpace{2}(KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]))
@@ -237,7 +247,7 @@ for p in 1:3
     plot(P, legend=:topleft, label="B-spline basis (p=1)")
     plot!(t->intervalindex(P,t),0,10, label="Interval index")
     plot!(t->sum(bsplinebasis(P,i,t) for i in 1:dim(P)),0,10, label="Sum of B-spline basis")
-    scatter!(k.vector,zero(k.vector), label="knot vector")
+    plot!(k, label="knot vector")
     plot!([t->bsplinebasisall(P,1,t)[i] for i in 1:p+1],0,10, color=:black, label="bsplinebasisall (i=1)", ylim=(-1,8-2p))
     savefig("bsplinebasisall-$(p).html") # hide
     nothing # hide

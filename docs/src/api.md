@@ -20,6 +20,13 @@ bsplinebasis
 BasicBSpline.bsplinebasis₋₀I
 intervalindex
 bsplinebasisall
+bsplinesupport
+dim
+exactdim_R(P::BSplineSpace)
+exactdim_I(P::BSplineSpace)
+BSplineSpace
+isnondegenerate
+isdegenerate(P::BSplineSpace)
 ```
 
 ```@docs

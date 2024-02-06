@@ -25,6 +25,14 @@ function generate_indexmd_from_readmemd()
     text_index = text_readme
     text_index = replace(text_index, "![](docs/src/img" => "![](img")
     text_index = replace(text_index, r"\$\$((.|\n)*?)\$\$" => s"```math\1```")
+    text_index = replace(text_index, "(https://hyrodium.github.io/BasicBSpline.jl/dev/math/bsplinebasis/#Differentiability-and-knot-duplications)" => "(@ref differentiability-and-knot-duplications)")
+    text_index = replace(text_index, r"https://github.com/hyrodium/BasicBSpline\.jl/assets/.*" => "![](math/differentiability.mp4)")
+    text_index = """
+    ```@meta
+    EditURL = "https://github.com/hyrodium/BasicBSpline.jl/blob/main/README.md"
+    ```
+
+    """ * text_index
 
     # save index.md
     open(path_index, "w") do f
@@ -38,7 +46,7 @@ makedocs(;
     modules = [BasicBSpline, BasicBSplineFitting],
     format = Documenter.HTML(
         ansicolor=true,
-        canonical = "https://hyrodium.github.io/BasicBSpline.jl/stable/",
+        canonical = "https://hyrodium.github.io/BasicBSpline.jl",
         assets = ["assets/favicon.ico", "assets/custom.css"],
         edit_link="main",
         repolink="https://github.com/hyrodium/BasicBSpline.jl"
@@ -54,8 +62,8 @@ makedocs(;
             "Derivative" => "math/derivative.md",
             "Inclusive relationship" => "math/inclusive.md",
             "Refinement" => "math/refinement.md",
-            "Fitting" => "math/fitting.md",
             "Rational B-spline manifold" => "math/rationalbsplinemanifold.md",
+            "Fitting" => "math/fitting.md",
         ],
         # "Differentiation" => [
         #     "BSplineDerivativeSpace" => "bsplinederivativespace.md",
@@ -71,9 +79,9 @@ makedocs(;
         "Interpolations" => "interpolations.md",
         "API" => "api.md",
     ],
-    repo = "https://github.com/hyrodium/BasicBSpline.jl/blob/{commit}{path}#L{line}",
     sitename = "BasicBSpline.jl",
     authors = "hyrodium <hyrodium@gmail.com>",
+    warnonly = true,
 )
 
 deploydocs(
