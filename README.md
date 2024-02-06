@@ -84,9 +84,9 @@ plot(
 
 ![](docs/src/img/cover.png)
 
-You can visualize the differentiability of B-spline basis function. See [Differentiability and knot duplications](https://hyrodium.github.io/BasicBSpline.jl/previews/PR373/math/bsplinebasis/#Differentiability-and-knot-duplications) for details.
+You can visualize the differentiability of B-spline basis function. See [Differentiability and knot duplications](https://hyrodium.github.io/BasicBSpline.jl/dev/math/bsplinebasis/#Differentiability-and-knot-duplications) for details.
 
-<div><video controls src="https://hyrodium.github.io/BasicBSpline.jl/previews/PR373/math/differentiability.mp4" muted="false" loop="true"></video></div>
+https://github.com/hyrodium/BasicBSpline.jl/assets/7488140/034cf6d0-62ea-44e0-a00f-d307e6aad0fe
 
 ### B-spline manifold
 ```julia
