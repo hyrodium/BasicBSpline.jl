@@ -169,22 +169,22 @@ N = 10
 
 # Easing functions
 c=2/√3
-f(t) = ifelse(t>0,exp(-1/t),0.0)
-g(t) = 1-f(c*t)/(f(c*t)+f(c-c*t))
-h(t) = 1-f((1-t)/2)/f(1/2)
+f(t) = ifelse(t>0, exp(-1/t), 0.0)
+g(t) = 1 - f(c*t) / (f(c*t) + f(c-c*t))
+h(t) = clamp(1 - f((1-t)/2) / f(1/2), 0, 1)
 
 # Default knot vector
 v = 10*(1:N-1)/N + randn(N-1)*0.5
-pushfirst!(v,0)
-push!(v,10)
+pushfirst!(v, 0)
+push!(v, 10)
 
 # Generate animation
 anim = @animate for t in 0:0.05:5
-    k = KnotVector(v)
-    k.vector[4] = v[4]
-    k.vector[5] = v[4] + (g(t-0) + ifelse(t>3.9,h(t-3.9),0)) * (v[5]-v[4])
-    k.vector[6] = v[4] + (g(t-1) + ifelse(t>3.6,h(t-3.6),0)) * (v[6]-v[4])
-    k.vector[7] = v[4] + (g(t-2) + ifelse(t>3.3,h(t-3.3),0)) * (v[7]-v[4])
+    w = copy(v)
+    w[5] = v[4] + (g(t-0.0) + h(t-3.9)) * (v[5]-v[4])
+    w[6] = v[4] + (g(t-1.0) + h(t-3.6)) * (v[6]-v[4])
+    w[7] = v[4] + (g(t-2.0) + h(t-3.3)) * (v[7]-v[4])
+    k = KnotVector(w)
     P0 = BSplineSpace{0}(k)
     P1 = BSplineSpace{1}(k)
     P2 = BSplineSpace{2}(k)
@@ -199,6 +199,7 @@ anim = @animate for t in 0:0.05:5
         size=(501,800)
     )
 end
+# Run ffmepg to generate mp4 file
 cmd = `ffmpeg -y -framerate 24 -i $(anim.dir)/%06d.png -c:v libx264 -pix_fmt yuv420p differentiability.mp4` # hide
 out = Pipe() # hide
 err = Pipe() # hide
