@@ -1,10 +1,12 @@
 # B-spline space
 
-```@setup math
+## Setup
+
+```@example math_bsplinespace
 using BasicBSpline
 using BasicBSplineExporter
 using StaticArrays
-using Plots; plotly()
+using Plots; gr()
 ```
 
 ## Defnition
@@ -52,10 +54,6 @@ Note that each element of the space ``\mathcal{P}[p,k]`` is a piecewise polynomi
 
 [TODO: fig]
 
-```@docs
-BSplineSpace
-```
-
 ## Degeneration
 
 !!! tip "Def.  Degeneration"
@@ -66,14 +64,6 @@ BSplineSpace
     \end{aligned}
     ```
 
-```@docs
-isnondegenerate
-```
-
-```@docs
-isdegenerate(P::BSplineSpace)
-```
-
 ## Dimensions
 
 !!! info "Thm.  Dimension of B-spline space"
@@ -82,14 +72,24 @@ isdegenerate(P::BSplineSpace)
     \dim(\mathcal{P}[p,k])=\# k - p -1
     ```
 
-```@docs
-dim
+```@repl math_bsplinespace
+P1 = BSplineSpace{1}(KnotVector([1,2,3,4,5,6,7]))
+P2 = BSplineSpace{1}(KnotVector([1,2,4,4,4,6,7]))
+P3 = BSplineSpace{1}(KnotVector([1,2,3,5,5,5,7]))
+dim(P1), exactdim_R(P1), exactdim_I(P1)
+dim(P2), exactdim_R(P2), exactdim_I(P2)
+dim(P3), exactdim_R(P3), exactdim_I(P3)
 ```
 
-```@docs
-exactdim_R(P::BSplineSpace)
+Visualization:
+
+```@example math_bsplinespace
+pl1 = plot(P1); plot!(pl1, knotvector(P1))
+pl2 = plot(P2); plot!(pl2, knotvector(P2))
+pl3 = plot(P3); plot!(pl3, knotvector(P3))
+plot(pl1, pl2, pl3; layout=(1,3), legend=false)
+savefig("dimension-degeneration.png") # hide
+nothing # hide
 ```
 
-```@docs
-exactdim_I(P::BSplineSpace)
-```
+![](dimension-degeneration.png)
