@@ -34,4 +34,4 @@ save_png("fitting.png", M, unitlength=50, xlims=(-10,10), ylims=(-10,10))
 ![](fitting.png)
 
 [Try on Desmos graphing graphing calculator!](https://www.desmos.com/calculator/2hm3b1fbdf)
-![](img/fitting_desmos.png)
+![](../img/fitting_desmos.png)

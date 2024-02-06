@@ -2,6 +2,7 @@ using Documenter
 using BasicBSpline
 using BasicBSplineExporter
 using BasicBSplineFitting
+using InteractiveUtils
 using Plots
 using Random
 
@@ -18,12 +19,12 @@ function generate_indexmd_from_readmemd()
     path_index = "docs/src/index.md"
 
     # open README.md
-    f = open(path_readme)
-    text_readme = read(f,String)
-    close(f)
+    text_readme = read(path_readme, String)
 
     # generate text for index.md
-    text_index = replace(text_readme,"![](docs/src/img" => "![](img")
+    text_index = text_readme
+    text_index = replace(text_index, "![](docs/src/img" => "![](img")
+    text_index = replace(text_index, r"\$\$((.|\n)*?)\$\$" => s"```math\1```")
 
     # save index.md
     open(path_index, "w") do f
@@ -45,16 +46,16 @@ makedocs(;
     pages = [
         "Home" => "index.md",
         "Mathematical properties of B-spline" => [
-            "Introduction" => "math.md",
-            "Knot vector" => "math-knotvector.md",
-            "B-spline space" => "math-bsplinespace.md",
-            "B-spline basis function" => "math-bsplinebasis.md",
-            "B-spline manifold" => "math-bsplinemanifold.md",
-            "Derivative" => "math-derivative.md",
-            "Inclusive relationship" => "math-inclusive.md",
-            "Refinement" => "math-refinement.md",
-            "Fitting" => "math-fitting.md",
-            "Rational B-spline manifold" => "math-rationalbsplinemanifold.md",
+            "Introduction" => "math/introduction.md",
+            "Knot vector" => "math/knotvector.md",
+            "B-spline space" => "math/bsplinespace.md",
+            "B-spline basis function" => "math/bsplinebasis.md",
+            "B-spline manifold" => "math/bsplinemanifold.md",
+            "Derivative" => "math/derivative.md",
+            "Inclusive relationship" => "math/inclusive.md",
+            "Refinement" => "math/refinement.md",
+            "Fitting" => "math/fitting.md",
+            "Rational B-spline manifold" => "math/rationalbsplinemanifold.md",
         ],
         # "Differentiation" => [
         #     "BSplineDerivativeSpace" => "bsplinederivativespace.md",
@@ -62,14 +63,13 @@ makedocs(;
         #     "ChainRules" => "chainrules.md"
         # ],
         "Visualization" => [
-            "Plots.jl" => "plots.md",
-            "PlotlyJS.jl" => "plotlyjs.md",
-            "BasicBSplineExporter.jl" => "basicbsplineexporter.md",
+            "Plots.jl" => "visualization/plots.md",
+            "PlotlyJS.jl" => "visualization/plotlyjs.md",
+            "BasicBSplineExporter.jl" => "visualization/basicbsplineexporter.md",
         ],
         "Geometric modeling" => "geometricmodeling.md",
         "Interpolations" => "interpolations.md",
         "API" => "api.md",
-        "Contributing" => "contributing.md",
     ],
     repo = "https://github.com/hyrodium/BasicBSpline.jl/blob/{commit}{path}#L{line}",
     sitename = "BasicBSpline.jl",

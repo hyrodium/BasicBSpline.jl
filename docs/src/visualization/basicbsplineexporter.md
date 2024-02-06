@@ -33,8 +33,8 @@ save_png("BasicBSplineExporter_2dim.png", M) # save image
 ## Other examples
 Here are some images rendared with POV-Ray.
 
-![](img/pov_1d3d.png)
-![](img/pov_2d3d.png)
-![](img/pov_3d3d.png)
+![](../img/pov_1d3d.png)
+![](../img/pov_2d3d.png)
+![](../img/pov_3d3d.png)
 
 See [`BasicBSplineExporter.jl/test`](https://github.com/hyrodium/BasicBSplineExporter.jl/tree/main/test) for more examples.

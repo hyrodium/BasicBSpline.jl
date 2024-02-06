@@ -1,8 +1,8 @@
 # B-spline manifold
 
-```@setup math
+## Setup
+```@example math_bsplinemanifold
 using BasicBSpline
-using BasicBSplineExporter
 using StaticArrays
 using Plots; plotly()
 ```
@@ -20,6 +20,39 @@ using Plots; plotly()
     (B_{(i,p^1,k^1)} \otimes B_{(j,p^2,k^2)})(t^1, t^2)
     = B_{(i,p^1,k^1)}(t^1) \cdot B_{(j,p^2,k^2)}(t^2)
     ```
+
+The next plot shows ``B_{(3,p^1,k^1)} \otimes B_{(4,p^2,k^2)}`` basis function.
+
+```@example math_bsplinemanifold
+using BasicBSpline
+using Plots
+plotly()
+
+# Define shape
+k1 = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
+k2 = knotvector"31 2  121"
+P1 = BSplineSpace{3}(k1)
+P2 = BSplineSpace{2}(k2)
+
+# Choose indices
+i1 = 3
+i2 = 4
+
+# Visualize basis functions
+plot(P1; plane=:xz, label="P1", color=:red)
+plot!(P2; plane=:yz, label="P2", color=:green)
+plot!(k1; plane=:xz, label="k1", color=:red, markersize=2)
+plot!(k2; plane=:yz, label="k2", color=:green, markersize=2)
+xs = range(0,10,length=100)
+ys = range(1,9,length=100)
+surface!(xs, ys, bsplinebasis.(P1,i1,xs') .* bsplinebasis.(P2,i2,ys))
+savefig("2dim-tensor-product-bspline.html") # hide
+nothing # hide
+```
+
+```@raw html
+<object type="text/html" data="../2dim-tensor-product-bspline.html" style="width:100%;height:420px;"></object>
+```
 
 Higher dimensional tensor products ``\mathcal{P}[p^1,k^1]\otimes\cdots\otimes\mathcal{P}[p^d,k^d]`` are defined similarly.
 
@@ -51,7 +84,7 @@ unbounded_mapping
 `unbounded_mapping(M,t...)` is a little bit faster than `M(t...)` because it does not check the domain.
 
 ### B-spline curve
-```@example math
+```@example math_bsplinemanifold
 ## 1-dim B-spline manifold
 p = 2 # degree of polynomial
 k = KnotVector(1:12) # knot vector
@@ -68,7 +101,7 @@ nothing # hide
 ```
 
 ### B-spline surface
-```@example math
+```@example math_bsplinemanifold
 ## 2-dim B-spline manifold
 p = 2 # degree of polynomial
 k = KnotVector(1:8) # knot vector
@@ -96,7 +129,7 @@ nothing # hide
 ## Fixing arguments (currying)
 Just like fixing first index such as `A[3,:]::Array{1}` for matrix `A::Array{2}`, fixing first argument `M(4.3,:)` will create `BSplineManifold{1}` for B-spline surface `M::BSplineManifold{2}`.
 
-```@repl math
+```@repl math_bsplinemanifold
 p = 2;
 k = KnotVector(1:8);
 P = BSplineSpace{p}(k);
@@ -107,7 +140,7 @@ M(:,:) isa BSplineManifold{2}
 M(4.3,:) isa BSplineManifold{1}  # Fix first argument
 ```
 
-```@example math
+```@example math_bsplinemanifold
 plot(M)
 plot!(M(4.3,:), linewidth = 5, color=:cyan)
 plot!(M(4.4,:), linewidth = 5, color=:red)

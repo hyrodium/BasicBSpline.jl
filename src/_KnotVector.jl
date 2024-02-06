@@ -2,6 +2,9 @@
 #= Type definitions =#
 ######################
 
+@doc raw"""
+An abstract type for knot vector.
+"""
 abstract type AbstractKnotVector{T<:Real} end
 
 @doc raw"""
