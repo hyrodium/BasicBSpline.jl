@@ -55,6 +55,8 @@ nothing # hide
 
 ## Operations for knot vectors
 
+### Setup and visualization
+
 ```@example math_knotvector
 k1 = knotvector"1 2 1 11 2 31"
 k2 = knotvector"113 1 12 2 32 1  1"
