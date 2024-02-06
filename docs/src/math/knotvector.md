@@ -75,6 +75,8 @@ nothing # hide
 
 ### Length of a knot vector
 
+[`length(k::AbstractKnotVector)`](@ref)
+
 ```@repl math_knotvector
 length(k1)
 length(k2)
@@ -83,6 +85,8 @@ length(k2)
 ### Addition of knot vectors
 
 Although a knot vector is **not** a vector in linear algebra, but we introduce **additional operator** ``+``.
+
+[`Base.:+(k1::KnotVector{T}, k2::KnotVector{T}) where T`](@ref)
 
 ```@repl math_knotvector
 k1 + k2
@@ -94,12 +98,16 @@ We also introduce **product operator** ``\cdot`` for knot vector.
 
 ### Multiplication of knot vectors
 
+[`*(m::Integer, k::AbstractKnotVector)`](@ref)
+
 ```@repl math_knotvector
 2*k1
 2*k2
 ```
 
 ### Generate a knot vector with unique elements
+
+[`unique(k::AbstractKnotVector)`](@ref)
 
 ```@repl math_knotvector
 unique(k1)
@@ -108,6 +116,8 @@ unique(k2)
 
 ### Inclusive relationship between knot vectors
 
+[`Base.issubset(k::KnotVector, k′::KnotVector)`](@ref)
+
 ```@repl math_knotvector
 unique(k1) ⊆ k1 ⊆ k2
 k1 ⊆ k1
@@ -115,6 +125,8 @@ k2 ⊆ k1
 ```
 
 ### Count knots in a knot vector
+
+[`countknots(k::AbstractKnotVector, t::Real)`](@ref)
 
 ```@repl math_knotvector
 countknots(k1, 0.5)
