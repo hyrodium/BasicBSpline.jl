@@ -19,12 +19,12 @@ function generate_indexmd_from_readmemd()
     path_index = "docs/src/index.md"
 
     # open README.md
-    f = open(path_readme)
-    text_readme = read(f,String)
-    close(f)
+    text_readme = read(path_readme, String)
 
     # generate text for index.md
-    text_index = replace(text_readme,"![](docs/src/img" => "![](img")
+    text_index = text_readme
+    text_index = replace(text_index, "![](docs/src/img" => "![](img")
+    text_index = replace(text_index, r"\$\$((.|\n)*?)\$\$" => s"```math\1```")
 
     # save index.md
     open(path_index, "w") do f
