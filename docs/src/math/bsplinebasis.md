@@ -218,8 +218,8 @@ The [`bsplinebasisall`](@ref) function is much more efficient than evaluating B-
 P = BSplineSpace{2}(KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]))
 t = 6.3
 plot(P; label="P", ylims=(0,1))
-scatter!(fill(t,3), [bsplinebasis(P,2,t), bsplinebasis(P,3,t), bsplinebasis(P,4,t)]; markershape=:hline, label="bsplinebasis")
-scatter!(fill(t,3), bsplinebasisall(P, 2, t); markershape=:vline, label="bsplinebasisall")
+scatter!(fill(t,3), [bsplinebasis(P,2,t), bsplinebasis(P,3,t), bsplinebasis(P,4,t)]; markershape=:circle, markersize=10, label="bsplinebasis")
+scatter!(fill(t,3), bsplinebasisall(P, 2, t); markershape=:star7, markersize=10, label="bsplinebasisall")
 savefig("bsplinebasis_vs_bsplinebasisall.png") # hide
 nothing # hide
 ```
