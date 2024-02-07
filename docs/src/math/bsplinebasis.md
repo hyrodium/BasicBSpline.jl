@@ -38,7 +38,7 @@ You can manipulate these plots on [desmos graphing calculator](https://www.desmo
 
 These B-spline basis functions can be calculated with [`bsplinebasis₊₀`](@ref).
 
-```@repl math_bsplinebasis
+```@example math_bsplinebasis
 p = 2
 k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 P = BSplineSpace{p}(k)
@@ -62,7 +62,7 @@ The first terms can be defined in different ways ([`bsplinebasis₋₀`](@ref)).
 \end{aligned}
 ```
 
-```@repl math_bsplinebasis
+```@example math_bsplinebasis
 p = 2
 k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 P = BSplineSpace{p}(k)
