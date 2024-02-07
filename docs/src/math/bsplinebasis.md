@@ -94,11 +94,12 @@ In these cases, each B-spline basis function ``B_{(i,2,k)}`` is coninuous, so [`
     \end{aligned}
     ```
 
-```@repl math_bsplinebasis
+```@example math_bsplinebasis
 p = 2
 k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 P = BSplineSpace{p}(k)
-plot(t->sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 0, 10, ylims=(0,1.1), label=false)
+plot(t->sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 0, 10, ylims=(-0.1, 1.1), label="sum of bspline basis functions")
+plot!(k, label="knot vector", legend=:inside)
 savefig("sumofbsplineplot.png") # hide
 nothing # hide
 ```
@@ -107,11 +108,12 @@ nothing # hide
 
 To satisfy the partition of unity on whole interval ``[0,10]``, sometimes more knots will be inserted to the endpoints of the interval.
 
-```@repl math_bsplinebasis
+```@example math_bsplinebasis
 p = 2
 k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]) + p * KnotVector([0,10])
 P = BSplineSpace{p}(k)
-plot(t->sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 0, 10, ylims=(0,1.1), label=false)
+plot(t->sum(bsplinebasis₊₀(P,i,t) for i in 1:dim(P)), 0, 10, ylims=(-0.1, 1.1), label="sum of bspline basis functions")
+plot!(k, label="knot vector", legend=:inside)
 savefig("sumofbsplineplot2.png") # hide
 nothing # hide
 ```
@@ -133,11 +135,12 @@ Therefore, to satisfy partition of unity on closed interval ``[k_{p+1}, k_{l-p}]
 \end{aligned}
 ```
 
-```@repl math_bsplinebasis
+```@example math_bsplinebasis
 p = 2
 k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]) + p * KnotVector([0,10])
 P = BSplineSpace{p}(k)
-plot(t->sum(bsplinebasis(P,i,t) for i in 1:dim(P)), 0, 10, ylims=(0,1.1), label=false)
+plot(t->sum(bsplinebasis(P,i,t) for i in 1:dim(P)), 0, 10, ylims=(-0.1, 1.1), label="sum of bspline basis functions")
+plot!(k, label="knot vector", legend=:inside)
 savefig("sumofbsplineplot3.png") # hide
 nothing # hide
 ```
@@ -247,7 +250,7 @@ for p in 1:3
     plot(P, legend=:topleft, label="B-spline basis (p=1)")
     plot!(t->intervalindex(P,t),0,10, label="Interval index")
     plot!(t->sum(bsplinebasis(P,i,t) for i in 1:dim(P)),0,10, label="Sum of B-spline basis")
-    plot!(k, label="knot vector")
+    plot!(k, label="knot vector", legend=:inside)
     plot!([t->bsplinebasisall(P,1,t)[i] for i in 1:p+1],0,10, color=:black, label="bsplinebasisall (i=1)", ylim=(-1,8-2p))
     savefig("bsplinebasisall-$(p).html") # hide
     nothing # hide
