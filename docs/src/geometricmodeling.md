@@ -1,13 +1,13 @@
 # Geometric modeling
 
-## Load packages
+## Setup
 
 ```@example geometricmodeling
 using BasicBSpline
 using StaticArrays
 using Plots
 using LinearAlgebra
-plotly()
+gr()
 ```
 
 ## Arc
@@ -20,69 +20,45 @@ a = [SVector(1,0), SVector(1,tan(t/2)), SVector(cos(t),sin(t))]
 w = [1,cos(t/2),1]
 M = RationalBSplineManifold(a,w,P)
 plot(M, xlims=(0,1.1), ylims=(0,1.1), aspectratio=1)
-savefig("geometricmodeling-arc.html") # hide
+savefig("geometricmodeling-arc.png") # hide
 nothing # hide
 ```
 
-```@raw html
-<object type="text/html" data="../geometricmodeling-arc.html" style="width:100%;height:420px;"></object>
-```
+![](geometricmodeling-arc.png)
 
 ## Circle
 ```@example geometricmodeling
 p = 2
 k = KnotVector([0,0,0,1,1,2,2,3,3,4,4,4])
 P = BSplineSpace{p}(k)
-a = [
-    SVector( 1, 0),
-    SVector( 1, 1),
-    SVector( 0, 1),
-    SVector(-1, 1),
-    SVector(-1, 0),
-    SVector(-1,-1),
-    SVector( 0,-1),
-    SVector( 1,-1),
-    SVector( 1, 0)
-]
-w = [1,1/√2,1,1/√2,1,1/√2,1,1/√2,1]
+a = [normalize(SVector(cosd(t), sind(t)), Inf) for t in 0:45:360]
+w = [ifelse(isodd(i), √2, 1) for i in 1:9]
 M = RationalBSplineManifold(a,w,P)
 plot(M, xlims=(-1.2,1.2), ylims=(-1.2,1.2), aspectratio=1)
-savefig("geometricmodeling-circle.html") # hide
+savefig("geometricmodeling-circle.png") # hide
 nothing # hide
 ```
 
-```@raw html
-<object type="text/html" data="../geometricmodeling-circle.html" style="width:100%;height:420px;"></object>
-```
+![](geometricmodeling-circle.png)
 
 ## Torus
 ```@example geometricmodeling
-R = 3
-r = 1
+plotly()
+R1 = 3
+R2 = 1
 
-a0 = [
-    SVector( 1, 0, 0),
-    SVector( 1, 1, 0),
-    SVector( 0, 1, 0),
-    SVector(-1, 1, 0),
-    SVector(-1, 0, 0),
-    SVector(-1,-1, 0),
-    SVector( 0,-1, 0),
-    SVector( 1,-1, 0),
-    SVector( 1, 0, 0)
-]
+A = push.(a, 0)
 
-a1 = (R+r)*a0
-a5 = (R-r)*a0
-a2 = [p+r*SVector(0,0,1) for p in a1]
-a3 = [p+r*SVector(0,0,1) for p in R*a0]
-a4 = [p+r*SVector(0,0,1) for p in a5]
-a6 = [p-r*SVector(0,0,1) for p in a5]
-a7 = [p-r*SVector(0,0,1) for p in R*a0]
-a8 = [p-r*SVector(0,0,1) for p in a1]
-a9 = a1
+a1 = (R1+R2)*A
+a5 = (R1-R2)*A
+a2 = [p+R2*SVector(0,0,1) for p in a1]
+a3 = [p+R2*SVector(0,0,1) for p in R1*A]
+a4 = [p+R2*SVector(0,0,1) for p in a5]
+a6 = [p-R2*SVector(0,0,1) for p in a5]
+a7 = [p-R2*SVector(0,0,1) for p in R1*A]
+a8 = [p-R2*SVector(0,0,1) for p in a1]
 
-a = hcat(a1,a2,a3,a4,a5,a6,a7,a8,a9)
+a = hcat(a1,a2,a3,a4,a5,a6,a7,a8,a1)
 M = RationalBSplineManifold(a,w*w',P,P)
 plot(M)
 savefig("geometricmodeling-torus.html") # hide
@@ -95,6 +71,7 @@ nothing # hide
 
 ## Paraboloid
 ```@example geometricmodeling
+plotly()
 p = 2
 k = KnotVector([-1,-1,-1,1,1,1])
 P = BSplineSpace{p}(k)
@@ -111,6 +88,7 @@ nothing # hide
 
 ## Hyperbolic paraboloid
 ```@example geometricmodeling
+plotly()
 a = [SVector(i,j,2i^2-2j^2) for i in -1:1, j in -1:1]
 M = BSplineManifold(a,P,P)
 plot(M)

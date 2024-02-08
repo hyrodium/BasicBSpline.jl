@@ -4,6 +4,7 @@
 ```@example math_bsplinemanifold
 using BasicBSpline
 using StaticArrays
+using StaticArrays
 using Plots; plotly()
 ```
 
@@ -24,10 +25,6 @@ using Plots; plotly()
 The next plot shows ``B_{(3,p^1,k^1)} \otimes B_{(4,p^2,k^2)}`` basis function.
 
 ```@example math_bsplinemanifold
-using BasicBSpline
-using Plots
-plotly()
-
 # Define shape
 k1 = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 k2 = knotvector"31 2  121"
@@ -60,7 +57,7 @@ Higher dimensional tensor products ``\mathcal{P}[p^1,k^1]\otimes\cdots\otimes\ma
 B-spline manifold is a parametric representation of a shape.
 
 !!! tip "Def.  B-spline manifold"
-    For given ``d``-dimensional B-spline basis functions ``B_{(i^1,p^1,k^1)} \otimes \cdots \otimes B_{(i^d,p^d,k^d)}`` and given points ``\bm{a}_{i^1 \dots i^d} \in V``, B-spline manifold is defined by the following equality:
+    For given ``d``-dimensional B-spline basis functions ``B_{(i^1,p^1,k^1)} \otimes \cdots \otimes B_{(i^d,p^d,k^d)}`` and given points ``\bm{a}_{i^1 \dots i^d} \in V``, B-spline manifold is defined by the following parametrization:
     ```math
     \bm{p}(t^1,\dots,t^d;\bm{a}_{i^1 \dots i^d})
     =\sum_{i^1,\dots,i^d}(B_{(i^1,p^1,k^1)} \otimes \cdots \otimes B_{(i^d,p^d,k^d)})(t^1,\dots,t^d) \bm{a}_{i^1 \dots i^d}
@@ -69,16 +66,22 @@ B-spline manifold is a parametric representation of a shape.
 
 We will also write ``\bm{p}(t^1,\dots,t^d; \bm{a})``, ``\bm{p}(t^1,\dots,t^d)``, ``\bm{p}(t; \bm{a})`` or ``\bm{p}(t)`` for simplicity.
 
-Note that the `BSplineManifold` objects are callable, and the arguments will be checked if it fits in the domain of `BSplineSpace`.
+Note that the [`BSplineManifold`](@ref) objects are callable, and the arguments will be checked if it fits in the domain of [`BSplineSpace`](@ref).
 
-```@docs
-BSplineManifold
+```@example math_bsplinemanifold
+P = BSplineSpace{2}(KnotVector([0,0,0,1,1,1]))
+a = [SVector(1,0), SVector(1,1), SVector(0,1)]  # `length(a) == dim(P)`
+M = BSplineManifold(a, P)
+M(0.4)  # Calculate `sum(a[i]*bsplinebasis(P, i, 0.4) for i in 1:dim(P))`
 ```
 
-If you need extension of `BSplineManifold` or don't need the arguments check, you can call `unbounded_mapping`.
+If you need extension of [`BSplineManifold`](@ref) or don't need the arguments check, you can call [`unbounded_mapping`](@ref).
 
-```@docs
-unbounded_mapping
+```@repl math_bsplinemanifold
+M(0.4)
+unbounded_mapping(M, 0.4)
+M(1.2)
+unbounded_mapping(M, 1.2)
 ```
 
 `unbounded_mapping(M,t...)` is a little bit faster than `M(t...)` because it does not check the domain.

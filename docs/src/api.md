@@ -27,6 +27,8 @@ exactdim_I(P::BSplineSpace)
 BSplineSpace
 isnondegenerate
 isdegenerate(P::BSplineSpace)
+BSplineManifold
+unbounded_mapping
 ```
 
 ```@docs
