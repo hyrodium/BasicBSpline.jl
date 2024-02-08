@@ -79,9 +79,9 @@ If you need extension of [`BSplineManifold`](@ref) or don't need the arguments c
 
 ```@repl math_bsplinemanifold
 M(0.4)
-unbounded_mapping(0.4)
+unbounded_mapping(M, 0.4)
 M(1.2)
-unbounded_mapping(1.2)
+unbounded_mapping(M, 1.2)
 ```
 
 `unbounded_mapping(M,t...)` is a little bit faster than `M(t...)` because it does not check the domain.
