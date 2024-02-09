@@ -59,10 +59,10 @@ makedocs(;
             "B-spline space" => "math/bsplinespace.md",
             "B-spline basis function" => "math/bsplinebasis.md",
             "B-spline manifold" => "math/bsplinemanifold.md",
-            "Derivative" => "math/derivative.md",
+            "Rational B-spline manifold" => "math/rationalbsplinemanifold.md",
             "Inclusive relationship" => "math/inclusive.md",
             "Refinement" => "math/refinement.md",
-            "Rational B-spline manifold" => "math/rationalbsplinemanifold.md",
+            "Derivative" => "math/derivative.md",
             "Fitting" => "math/fitting.md",
         ],
         # "Differentiation" => [
