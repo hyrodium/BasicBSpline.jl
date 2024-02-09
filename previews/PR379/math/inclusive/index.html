@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Inclusive relationship · BasicBSpline.jl</title><meta name="title" content="Inclusive relationship · BasicBSpline.jl"/><meta property="og:title" content="Inclusive relationship · BasicBSpline.jl"/><meta property="twitter:title" content="Inclusive relationship · BasicBSpline.jl"/><meta name="description" content="Documentation for BasicBSpline.jl."/><meta property="og:description" content="Documentation for BasicBSpline.jl."/><meta property="twitter:description" content="Documentation for BasicBSpline.jl."/><meta property="og:url" content="https://hyrodium.github.io/BasicBSpline.jl/math/inclusive/"/><meta property="twitter:url" content="https://hyrodium.github.io/BasicBSpline.jl/math/inclusive/"/><link rel="canonical" href="https://hyrodium.github.io/BasicBSpline.jl/math/inclusive/"/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/><link href="../../assets/custom.css" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img class="docs-light-only" src="../../assets/logo.svg" alt="BasicBSpline.jl logo"/><img class="docs-dark-only" src="../../assets/logo-dark.svg" alt="BasicBSpline.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">BasicBSpline.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><span class="tocitem">Mathematical properties of B-spline</span><ul><li><a class="tocitem" href="../introduction/">Introduction</a></li><li><a class="tocitem" href="../knotvector/">Knot vector</a></li><li><a class="tocitem" href="../bsplinespace/">B-spline space</a></li><li><a class="tocitem" href="../bsplinebasis/">B-spline basis function</a></li><li><a class="tocitem" href="../bsplinemanifold/">B-spline manifold</a></li><li><a class="tocitem" href="../rationalbsplinemanifold/">Rational B-spline manifold</a></li><li class="is-active"><a class="tocitem" href>Inclusive relationship</a></li><li><a class="tocitem" href="../refinement/">Refinement</a></li><li><a class="tocitem" href="../derivative/">Derivative</a></li><li><a class="tocitem" href="../fitting/">Fitting</a></li></ul></li><li><span class="tocitem">Visualization</span><ul><li><a class="tocitem" href="../../visualization/plots/">Plots.jl</a></li><li><a class="tocitem" href="../../visualization/plotlyjs/">PlotlyJS.jl</a></li><li><a class="tocitem" href="../../visualization/basicbsplineexporter/">BasicBSplineExporter.jl</a></li></ul></li><li><a class="tocitem" href="../../geometricmodeling/">Geometric modeling</a></li><li><a class="tocitem" href="../../interpolations/">Interpolations</a></li><li><a class="tocitem" href="../../api/">API</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Mathematical properties of B-spline</a></li><li class="is-active"><a href>Inclusive relationship</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Inclusive relationship</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/hyrodium/BasicBSpline.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/hyrodium/BasicBSpline.jl/blob/main/docs/src/math/inclusive.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Inclusive-relation-between-B-spline-spaces"><a class="docs-heading-anchor" href="#Inclusive-relation-between-B-spline-spaces">Inclusive relation between B-spline spaces</a><a id="Inclusive-relation-between-B-spline-spaces-1"></a><a class="docs-heading-anchor-permalink" href="#Inclusive-relation-between-B-spline-spaces" title="Permalink"></a></h1><div class="admonition is-info"><header class="admonition-header">Thm.  Inclusive relation between B-spline spaces</header><div class="admonition-body"><p>For non-degenerate B-spline spaces, the following relationship holds.</p><p class="math-container">\[\mathcal{P}[p,k]
+\subseteq \mathcal{P}[p&#39;,k&#39;]
+\Leftrightarrow (m=p&#39;-p \ge 0 \ \text{and} \ k+m\widehat{k}\subseteq k&#39;)\]</p></div></div><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="Base.issubset-Union{Tuple{p′}, Tuple{p}, Tuple{BSplineSpace{p, T} where T&lt;:Real, BSplineSpace{p′, T} where T&lt;:Real}} where {p, p′}" href="#Base.issubset-Union{Tuple{p′}, Tuple{p}, Tuple{BSplineSpace{p, T} where T&lt;:Real, BSplineSpace{p′, T} where T&lt;:Real}} where {p, p′}"><code>Base.issubset</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Check inclusive relationship between B-spline spaces.</p><p class="math-container">\[\mathcal{P}[p,k]
+\subseteq\mathcal{P}[p&#39;,k&#39;]\]</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; P1 = BSplineSpace{1}(KnotVector([1,3,5,8]));
+
+
+julia&gt; P2 = BSplineSpace{1}(KnotVector([1,3,5,6,8,9]));
+
+
+julia&gt; P3 = BSplineSpace{2}(KnotVector([1,1,3,3,5,5,8,8]));
+
+
+julia&gt; P1 ⊆ P2
+true
+
+julia&gt; P1 ⊆ P3
+true
+
+julia&gt; P2 ⊆ P3
+false
+
+julia&gt; P2 ⊈ P3
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/ac05e42fb87c913fdbd8811bd08aa9126c42e567/src/_BSplineSpace.jl#L122-L152">source</a></section></article><p>Here are plots of the B-spline basis functions of the spaces <code>P1</code>, <code>P2</code>, <code>P3</code>.</p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; P1 = BSplineSpace{1}(KnotVector([1,3,5,8]))</code><code class="nohighlight hljs ansi" style="display:block;">BSplineSpace{1, Int64, KnotVector{Int64}}(KnotVector([1, 3, 5, 8]))</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P2 = BSplineSpace{1}(KnotVector([1,3,5,6,8,9]))</code><code class="nohighlight hljs ansi" style="display:block;">BSplineSpace{1, Int64, KnotVector{Int64}}(KnotVector([1, 3, 5, 6, 8, 9]))</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; P3 = BSplineSpace{2}(KnotVector([1,1,3,3,5,5,8,8]))</code><code class="nohighlight hljs ansi" style="display:block;">BSplineSpace{2, Int64, KnotVector{Int64}}(KnotVector([1, 1, 3, 3, 5, 5, 8, 8]))</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; plot(
+           plot([t-&gt;bsplinebasis₊₀(P1,i,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
+           plot([t-&gt;bsplinebasis₊₀(P2,i,t) for i in 1:dim(P2)], 1, 9, ylims=(0,1), legend=false),
+           plot([t-&gt;bsplinebasis₊₀(P3,i,t) for i in 1:dim(P3)], 1, 9, ylims=(0,1), legend=false),
+           layout=(3,1),
+           link=:x
+       )</code><code class="nohighlight hljs ansi" style="display:block;">Plot{Plots.PlotlyBackend() n=11}</code><code class="nohighlight hljs ansi" style="display:block;"></code><code class="nohighlight hljs ansi" style="display:block;"></code></pre><object type="text/html" data="../subbsplineplot.html" style="width:100%;height:420px;"></object><p>This means, there exists a <span>$n \times n&#39;$</span> matrix <span>$A$</span> which holds:</p><p class="math-container">\[\begin{aligned}
+B_{(i,p,k)}
+&amp;=\sum_{j}A_{ij} B_{(j,p&#39;,k&#39;)} \\
+n&amp;=\dim(\mathcal{P}[p,k]) \\
+n&#39;&amp;=\dim(\mathcal{P}[p&#39;,k&#39;])
+\end{aligned}\]</p><p>You can calculate the change of basis matrix <span>$A$</span> with <code>changebasis</code>.</p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; A12 = changebasis(P1,P2)</code><code class="nohighlight hljs ansi" style="display:block;">2×4 SparseArrays.SparseMatrixCSC{Float64, Int32} with 3 stored entries:
+ 1.0   ⋅    ⋅         ⋅
+  ⋅   1.0  0.666667   ⋅</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; A13 = changebasis(P1,P3)</code><code class="nohighlight hljs ansi" style="display:block;">2×5 SparseArrays.SparseMatrixCSC{Float64, Int32} with 6 stored entries:
+ 0.5  1.0  0.5   ⋅    ⋅
+  ⋅    ⋅   0.5  1.0  0.5</code></pre><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; plot(
+           plot([t-&gt;bsplinebasis₊₀(P1,i,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
+           plot([t-&gt;sum(A12[i,j]*bsplinebasis₊₀(P2,j,t) for j in 1:dim(P2)) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
+           plot([t-&gt;sum(A13[i,j]*bsplinebasis₊₀(P3,j,t) for j in 1:dim(P3)) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
+           layout=(3,1),
+           link=:x
+       )</code><code class="nohighlight hljs ansi" style="display:block;">Plot{Plots.PlotlyBackend() n=6}</code><code class="nohighlight hljs ansi" style="display:block;"></code><code class="nohighlight hljs ansi" style="display:block;"></code></pre><object type="text/html" data="../subbsplineplot2.html" style="width:100%;height:420px;"></object><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.changebasis_R" href="#BasicBSpline.changebasis_R"><code>BasicBSpline.changebasis_R</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">changebasis_R(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)</code></pre><p>Return a coefficient matrix <span>$A$</span> which satisfy</p><p class="math-container">\[B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p&#39;,k&#39;)}\]</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; P = BSplineSpace{2}(knotvector&quot;3 13&quot;)
+BSplineSpace{2, Int64, KnotVector{Int64}}(KnotVector([1, 1, 1, 3, 4, 4, 4]))
+
+julia&gt; P′ = BSplineSpace{3}(knotvector&quot;4124&quot;)
+BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector([1, 1, 1, 1, 2, 3, 3, 4, 4, 4, 4]))
+
+julia&gt; P ⊆ P′
+true
+
+julia&gt; changebasis_R(P, P′)
+4×7 SparseArrays.SparseMatrixCSC{Float64, Int32} with 13 stored entries:
+ 1.0  0.666667  0.166667   ⋅         ⋅         ⋅         ⋅
+  ⋅   0.333333  0.722222  0.555556  0.111111   ⋅         ⋅
+  ⋅    ⋅        0.111111  0.444444  0.888889  0.666667   ⋅
+  ⋅    ⋅         ⋅         ⋅         ⋅        0.333333  1.0</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/ac05e42fb87c913fdbd8811bd08aa9126c42e567/src/_ChangeBasis.jl#L4-L30">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.changebasis_I" href="#BasicBSpline.changebasis_I"><code>BasicBSpline.changebasis_I</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">changebasis_I(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)</code></pre><p>Return a coefficient matrix <span>$A$</span> which satisfy</p><p class="math-container">\[B_{(i,p,k)} = \sum_{j}A_{i,j}B_{(j,p&#39;,k&#39;)}\]</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; P = BSplineSpace{2}(knotvector&quot;3 13&quot;)
+BSplineSpace{2, Int64, KnotVector{Int64}}(KnotVector([1, 1, 1, 3, 4, 4, 4]))
+
+julia&gt; P′ = BSplineSpace{3}(knotvector&quot;4124&quot;)
+BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector([1, 1, 1, 1, 2, 3, 3, 4, 4, 4, 4]))
+
+julia&gt; P ⊑ P′
+true
+
+julia&gt; changebasis_I(P, P′)
+4×7 SparseArrays.SparseMatrixCSC{Float64, Int32} with 13 stored entries:
+ 1.0  0.666667  0.166667   ⋅         ⋅         ⋅         ⋅
+  ⋅   0.333333  0.722222  0.555556  0.111111   ⋅         ⋅
+  ⋅    ⋅        0.111111  0.444444  0.888889  0.666667   ⋅
+  ⋅    ⋅         ⋅         ⋅         ⋅        0.333333  1.0</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/ac05e42fb87c913fdbd8811bd08aa9126c42e567/src/_ChangeBasis.jl#L367-L393">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.issqsubset" href="#BasicBSpline.issqsubset"><code>BasicBSpline.issqsubset</code></a> — <span class="docstring-category">Function</span></header><section><div><p>Check inclusive relationship between B-spline spaces.</p><p class="math-container">\[\mathcal{P}[p,k]
+\sqsubseteq\mathcal{P}[p&#39;,k&#39;]
+\Leftrightarrow
+\mathcal{P}[p,k]|_{[k_{p+1},k_{l-p}]}
+\subseteq\mathcal{P}[p&#39;,k&#39;]|_{[k&#39;_{p&#39;+1},k&#39;_{l&#39;-p&#39;}]}\]</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/ac05e42fb87c913fdbd8811bd08aa9126c42e567/src/_BSplineSpace.jl#L183-L192">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.expandspace" href="#BasicBSpline.expandspace"><code>BasicBSpline.expandspace</code></a> — <span class="docstring-category">Function</span></header><section><div><p>Expand B-spline space with given additional degree and knotvector. The behavior of <code>expandspace</code> is same as <code>expandspace_I</code>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/ac05e42fb87c913fdbd8811bd08aa9126c42e567/src/_BSplineSpace.jl#L550-L553">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.expandspace_R" href="#BasicBSpline.expandspace_R"><code>BasicBSpline.expandspace_R</code></a> — <span class="docstring-category">Function</span></header><section><div><p>Expand B-spline space with given additional degree and knotvector. This function is compatible with <code>issubset</code> (<code>⊆</code>).</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]);
+
+
+julia&gt; P = BSplineSpace{2}(k);
+
+
+julia&gt; P′ = expandspace_R(P, Val(1), KnotVector([6.0]))
+BSplineSpace{3, Float64, KnotVector{Float64}}(KnotVector([0.0, 0.0, 1.5, 1.5, 2.5, 2.5, 5.5, 5.5, 6.0, 8.0, 8.0, 9.0, 9.0, 9.5, 9.5, 10.0, 10.0]))
+
+julia&gt; P ⊆ P′
+true
+
+julia&gt; P ⊑ P′
+false
+
+julia&gt; domain(P)
+2.5 .. 9.0
+
+julia&gt; domain(P′)
+1.5 .. 9.5</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/ac05e42fb87c913fdbd8811bd08aa9126c42e567/src/_BSplineSpace.jl#L505-L532">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.expandspace_I" href="#BasicBSpline.expandspace_I"><code>BasicBSpline.expandspace_I</code></a> — <span class="docstring-category">Function</span></header><section><div><p>Expand B-spline space with given additional degree and knotvector. This function is compatible with <code>issqsubset</code> (<code>⊑</code>)</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]);
+
+
+julia&gt; P = BSplineSpace{2}(k);
+
+
+julia&gt; P′ = expandspace_I(P, Val(1), KnotVector([6.0]))
+BSplineSpace{3, Float64, KnotVector{Float64}}(KnotVector([0.0, 1.5, 2.5, 2.5, 5.5, 5.5, 6.0, 8.0, 8.0, 9.0, 9.0, 9.5, 10.0]))
+
+julia&gt; P ⊆ P′
+false
+
+julia&gt; P ⊑ P′
+true
+
+julia&gt; domain(P)
+2.5 .. 9.0
+
+julia&gt; domain(P′)
+2.5 .. 9.0</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/ac05e42fb87c913fdbd8811bd08aa9126c42e567/src/_BSplineSpace.jl#L442-L469">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../rationalbsplinemanifold/">« Rational B-spline manifold</a><a class="docs-footer-nextpage" href="../refinement/">Refinement »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.2.1 on <span class="colophon-date" title="Friday 9 February 2024 15:13">Friday 9 February 2024</span>. Using Julia version 1.10.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
