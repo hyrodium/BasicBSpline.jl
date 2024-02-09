@@ -53,7 +53,7 @@ nothing # hide
 
 Higher dimensional tensor products ``\mathcal{P}[p^1,k^1]\otimes\cdots\otimes\mathcal{P}[p^d,k^d]`` are defined similarly.
 
-## B-spline manifold
+## Definition
 B-spline manifold is a parametric representation of a shape.
 
 !!! tip "Def.  B-spline manifold"
@@ -86,7 +86,7 @@ unbounded_mapping(M, 1.2)
 
 `unbounded_mapping(M,t...)` is a little bit faster than `M(t...)` because it does not check the domain.
 
-### B-spline curve
+## B-spline curve
 ```@example math_bsplinemanifold
 ## 1-dim B-spline manifold
 p = 2 # degree of polynomial
@@ -103,7 +103,7 @@ nothing # hide
 <object type="text/html" data="../1dim-manifold.html" style="width:100%;height:420px;"></object>
 ```
 
-### B-spline surface
+## B-spline surface
 ```@example math_bsplinemanifold
 ## 2-dim B-spline manifold
 p = 2 # degree of polynomial
@@ -119,6 +119,58 @@ nothing # hide
 
 ```@raw html
 <object type="text/html" data="../2dim-manifold.html" style="width:100%;height:420px;"></object>
+```
+
+**Paraboloid**
+```@example math_bsplinemanifold
+plotly()
+p = 2
+k = KnotVector([-1,-1,-1,1,1,1])
+P = BSplineSpace{p}(k)
+a = [SVector(i,j,2i^2+2j^2-2) for i in -1:1, j in -1:1]
+M = BSplineManifold(a,P,P)
+plot(M)
+savefig("paraboloid.html") # hide
+nothing # hide
+```
+
+```@raw html
+<object type="text/html" data="../paraboloid.html" style="width:100%;height:420px;"></object>
+```
+
+**Hyperbolic paraboloid**
+```@example math_bsplinemanifold
+plotly()
+a = [SVector(i,j,2i^2-2j^2) for i in -1:1, j in -1:1]
+M = BSplineManifold(a,P,P)
+plot(M)
+savefig("hyperbolicparaboloid.html") # hide
+nothing # hide
+```
+
+```@raw html
+<object type="text/html" data="../hyperbolicparaboloid.html" style="width:100%;height:420px;"></object>
+```
+
+## B-spline solid
+
+```@example math_bsplinemanifold
+k1 = k2 = KnotVector([0,0,1,1])
+k3 = UniformKnotVector(-6:6)
+P1 = BSplineSpace{1}(k1)
+P2 = BSplineSpace{1}(k2)
+P3 = BSplineSpace{3}(k3)
+e₁(t) = SVector(cos(t),sin(t),0)
+e₂(t) = SVector(-sin(t),cos(t),0)
+a = cat([[e₁(t)*i+e₂(t)*j+SVector(0,0,t) for i in 0:1, j in 0:1] for t in -2:0.5:2]..., dims=3)
+M = BSplineManifold(a,(P1,P2,P3))
+plot(M; colorbar=false)
+savefig("bsplinesolid.html") # hide
+nothing # hide
+```
+
+```@raw html
+<object type="text/html" data="../bsplinesolid.html" style="width:100%;height:420px;"></object>
 ```
 
 ## Affine commutativity
