@@ -8,7 +8,7 @@ Basic (mathematical) operations for B-spline functions and related things with J
 [![Coverage](https://codecov.io/gh/hyrodium/BasicBSpline.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/hyrodium/BasicBSpline.jl)
 [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 [![DOI](https://zenodo.org/badge/258791290.svg)](https://zenodo.org/badge/latestdoi/258791290)
-[![BasicBSpline Downloads](https://shields.io/endpoint?url=https://pkgs.genieframework.com/api/v1/badge/BasicBSpline)](https://pkgs.genieframework.com?packages=BasicBSpline).
+[![BasicBSpline Downloads](https://shields.io/endpoint?url=https://pkgs.genieframework.com/api/v1/badge/BasicBSpline)](https://pkgs.genieframework.com?packages=BasicBSpline)
 
 ![](docs/src/img/BasicBSplineLogo.png)
 
