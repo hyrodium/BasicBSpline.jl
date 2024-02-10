@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>API · BasicBSpline.jl</title><meta name="title" content="API · BasicBSpline.jl"/><meta property="og:title" content="API · BasicBSpline.jl"/><meta property="twitter:title" content="API · BasicBSpline.jl"/><meta name="description" content="Documentation for BasicBSpline.jl."/><meta property="og:description" content="Documentation for BasicBSpline.jl."/><meta property="twitter:description" content="Documentation for BasicBSpline.jl."/><meta property="og:url" content="https://hyrodium.github.io/BasicBSpline.jl/api/"/><meta property="twitter:url" content="https://hyrodium.github.io/BasicBSpline.jl/api/"/><link rel="canonical" href="https://hyrodium.github.io/BasicBSpline.jl/api/"/><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../search_index.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script><link href="../assets/favicon.ico" rel="icon" type="image/x-icon"/><link href="../assets/custom.css" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../"><img class="docs-light-only" src="../assets/logo.svg" alt="BasicBSpline.jl logo"/><img class="docs-dark-only" src="../assets/logo-dark.svg" alt="BasicBSpline.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../">BasicBSpline.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../">Home</a></li><li><span class="tocitem">Mathematical properties of B-spline</span><ul><li><a class="tocitem" href="../math/introduction/">Introduction</a></li><li><a class="tocitem" href="../math/knotvector/">Knot vector</a></li><li><a class="tocitem" href="../math/bsplinespace/">B-spline space</a></li><li><a class="tocitem" href="../math/bsplinebasis/">B-spline basis function</a></li><li><a class="tocitem" href="../math/bsplinemanifold/">B-spline manifold</a></li><li><a class="tocitem" href="../math/rationalbsplinemanifold/">Rational B-spline manifold</a></li><li><a class="tocitem" href="../math/inclusive/">Inclusive relationship</a></li><li><a class="tocitem" href="../math/refinement/">Refinement</a></li><li><a class="tocitem" href="../math/derivative/">Derivative</a></li><li><a class="tocitem" href="../math/fitting/">Fitting</a></li></ul></li><li><span class="tocitem">Visualization</span><ul><li><a class="tocitem" href="../visualization/plots/">Plots.jl</a></li><li><a class="tocitem" href="../visualization/plotlyjs/">PlotlyJS.jl</a></li><li><a class="tocitem" href="../visualization/basicbsplineexporter/">BasicBSplineExporter.jl</a></li></ul></li><li><a class="tocitem" href="../geometricmodeling/">Geometric modeling</a></li><li><a class="tocitem" href="../interpolations/">Interpolations</a></li><li class="is-active"><a class="tocitem" href>API</a><ul class="internal"><li class="toplevel"><a class="tocitem" href="#Public"><span>Public</span></a></li><li><a class="tocitem" href="#Private"><span>Private</span></a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>API</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>API</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/hyrodium/BasicBSpline.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/hyrodium/BasicBSpline.jl/blob/main/docs/src/api.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="API"><a class="docs-heading-anchor" href="#API">API</a><a id="API-1"></a><a class="docs-heading-anchor-permalink" href="#API" title="Permalink"></a></h1><h1 id="Public"><a class="docs-heading-anchor" href="#Public">Public</a><a id="Public-1"></a><a class="docs-heading-anchor-permalink" href="#Public" title="Permalink"></a></h1><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.KnotVector" href="#BasicBSpline.KnotVector"><code>BasicBSpline.KnotVector</code></a> — <span class="docstring-category">Type</span></header><section><div><p>Construct knot vector from given array.</p><p class="math-container">\[k=(k_1,\dots,k_l)\]</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; k = KnotVector([1,2,3])
+KnotVector([1, 2, 3])
+
+julia&gt; k = KnotVector(1:3)
+KnotVector([1, 2, 3])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_KnotVector.jl#L28-L42">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.UniformKnotVector" href="#BasicBSpline.UniformKnotVector"><code>BasicBSpline.UniformKnotVector</code></a> — <span class="docstring-category">Type</span></header><section><div><p>Construct uniform knot vector from given range.</p><p class="math-container">\[k=(k_1,\dots,k_l)\]</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; k = UniformKnotVector(1:8)
+UniformKnotVector(1:8)
+
+julia&gt; UniformKnotVector(8:-1:3)
+UniformKnotVector(3:1:8)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_KnotVector.jl#L48-L62">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.SubKnotVector" href="#BasicBSpline.SubKnotVector"><code>BasicBSpline.SubKnotVector</code></a> — <span class="docstring-category">Type</span></header><section><div><p>A type to represetnt sub knot vector.</p><p class="math-container">\[k=(k_1,\dots,k_l)\]</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; k = knotvector&quot;1 11 211&quot;
+KnotVector([1, 3, 4, 6, 6, 7, 8])
+
+julia&gt; view(k, 2:5)
+SubKnotVector([3, 4, 6, 6])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_KnotVector.jl#L68-L82">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.EmptyKnotVector" href="#BasicBSpline.EmptyKnotVector"><code>BasicBSpline.EmptyKnotVector</code></a> — <span class="docstring-category">Type</span></header><section><div><p>Knot vector with zero-element.</p><p class="math-container">\[k=()\]</p><p>This struct is intended for internal use.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; EmptyKnotVector()
+EmptyKnotVector{Bool}()
+
+julia&gt; EmptyKnotVector{Float64}()
+EmptyKnotVector{Float64}()</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_KnotVector.jl#L10-L25">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.AbstractKnotVector" href="#BasicBSpline.AbstractKnotVector"><code>BasicBSpline.AbstractKnotVector</code></a> — <span class="docstring-category">Type</span></header><section><div><p>An abstract type for knot vector.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_KnotVector.jl#L5-L7">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="Base.length-Tuple{AbstractKnotVector}" href="#Base.length-Tuple{AbstractKnotVector}"><code>Base.length</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Length of knot vector</p><p class="math-container">\[\begin{aligned}
+\#{k}
+&amp;=(\text{number of knot elements of} \  k) \\
+\end{aligned}\]</p><p>For example, <span>$\#{(1,2,2,3)}=4$</span>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; k = KnotVector([1,2,2,3]);
+
+
+julia&gt; length(k)
+4</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_KnotVector.jl#L292-L312">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="Base.:+-Union{Tuple{T}, Tuple{KnotVector{T}, KnotVector{T}}} where T" href="#Base.:+-Union{Tuple{T}, Tuple{KnotVector{T}, KnotVector{T}}} where T"><code>Base.:+</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Sum of knot vectors</p><p class="math-container">\[\begin{aligned}
+k^{(1)}+k^{(2)}
+&amp;=(k^{(1)}_1, \dots, k^{(1)}_{l^{(1)}}) + (k^{(2)}_1, \dots, k^{(2)}_{l^{(2)}}) \\
+&amp;=(\text{sort of union of} \  k^{(1)} \ \text{and} \  k^{(2)} \text{)}
+\end{aligned}\]</p><p>For example, <span>$(1,2,3,5)+(4,5,8)=(1,2,3,4,5,5,8)$</span>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; k1 = KnotVector([1,2,3,5]);
+
+
+julia&gt; k2 = KnotVector([4,5,8]);
+
+
+julia&gt; k1 + k2
+KnotVector([1, 2, 3, 4, 5, 5, 8])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_KnotVector.jl#L186-L210">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="Base.:*-Tuple{Integer, AbstractKnotVector}" href="#Base.:*-Tuple{Integer, AbstractKnotVector}"><code>Base.:*</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Product of integer and knot vector</p><p class="math-container">\[\begin{aligned}
+m\cdot k&amp;=\underbrace{k+\cdots+k}_{m}
+\end{aligned}\]</p><p>For example, <span>$2\cdot (1,2,2,5)=(1,1,2,2,2,2,5,5)$</span>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; k = KnotVector([1,2,2,5]);
+
+
+julia&gt; 2 * k
+KnotVector([1, 1, 2, 2, 2, 2, 5, 5])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_KnotVector.jl#L241-L260">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="Base.issubset-Tuple{KnotVector, KnotVector}" href="#Base.issubset-Tuple{KnotVector, KnotVector}"><code>Base.issubset</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Check a inclusive relationship <span>$k\subseteq k&#39;$</span>, for example:</p><p class="math-container">\[\begin{aligned}
+(1,2) &amp;\subseteq (1,2,3) \\
+(1,2,2) &amp;\not\subseteq (1,2,3) \\
+(1,2,3) &amp;\subseteq (1,2,3) \\
+\end{aligned}\]</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; KnotVector([1,2]) ⊆ KnotVector([1,2,3])
+true
+
+julia&gt; KnotVector([1,2,2]) ⊆ KnotVector([1,2,3])
+false
+
+julia&gt; KnotVector([1,2,3]) ⊆ KnotVector([1,2,3])
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_KnotVector.jl#L353-L374">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="Base.unique-Tuple{AbstractKnotVector}" href="#Base.unique-Tuple{AbstractKnotVector}"><code>Base.unique</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Unique elements of knot vector.</p><p class="math-container">\[\begin{aligned}
+\widehat{k}
+&amp;=(\text{unique knot elements of} \  k) \\
+\end{aligned}\]</p><p>For example, <span>$\widehat{(1,2,2,3)}=(1,2,3)$</span>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; k = KnotVector([1,2,2,3]);
+
+
+julia&gt; unique(k)
+KnotVector([1, 2, 3])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_KnotVector.jl#L319-L339">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.countknots-Tuple{AbstractKnotVector, Real}" href="#BasicBSpline.countknots-Tuple{AbstractKnotVector, Real}"><code>BasicBSpline.countknots</code></a> — <span class="docstring-category">Method</span></header><section><div><p>For given knot vector <span>$k$</span>, the following function <span>$\mathfrak{n}_k:\mathbb{R}\to\mathbb{Z}$</span> represents the number of knots that duplicate the knot vector <span>$k$</span>.</p><p class="math-container">\[\mathfrak{n}_k(t) = \#\{i \mid k_i=t \}\]</p><p>For example, if <span>$k=(1,2,2,3)$</span>, then <span>$\mathfrak{n}_k(0.3)=0$</span>, <span>$\mathfrak{n}_k(1)=1$</span>, <span>$\mathfrak{n}_k(2)=2$</span>.</p><pre><code class="language-julia-repl hljs">julia&gt; k = KnotVector([1,2,2,3]);
+
+
+julia&gt; countknots(k,0.3)
+0
+
+julia&gt; countknots(k,1.0)
+1
+
+julia&gt; countknots(k,2.0)
+2</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_KnotVector.jl#L414-L435">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.@knotvector_str" href="#BasicBSpline.@knotvector_str"><code>BasicBSpline.@knotvector_str</code></a> — <span class="docstring-category">Macro</span></header><section><div><pre><code class="language-julia hljs">@knotvector_str -&gt; KnotVector</code></pre><p>Construct a knotvector by specifying the numbers of duplicates of knots.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; knotvector&quot;11111&quot;
+KnotVector([1, 2, 3, 4, 5])
+
+julia&gt; knotvector&quot;123&quot;
+KnotVector([1, 2, 2, 3, 3, 3])
+
+julia&gt; knotvector&quot; 2 2 2&quot;
+KnotVector([2, 2, 4, 4, 6, 6])
+
+julia&gt; knotvector&quot;     1&quot;
+KnotVector([6])</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_KnotVector.jl#L444-L463">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.bsplinebasis₊₀" href="#BasicBSpline.bsplinebasis₊₀"><code>BasicBSpline.bsplinebasis₊₀</code></a> — <span class="docstring-category">Function</span></header><section><div><p><span>$i$</span>-th B-spline basis function. Right-sided limit version.</p><p class="math-container">\[\begin{aligned}
+{B}_{(i,p,k)}(t)
+&amp;=
+\frac{t-k_{i}}{k_{i+p}-k_{i}}{B}_{(i,p-1,k)}(t)
++\frac{k_{i+p+1}-t}{k_{i+p+1}-k_{i+1}}{B}_{(i+1,p-1,k)}(t) \\
+{B}_{(i,0,k)}(t)
+&amp;=
+\begin{cases}
+    &amp;1\quad (k_{i}\le t&lt; k_{i+1})\\
+    &amp;0\quad (\text{otherwise})
+\end{cases}
+\end{aligned}\]</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; P = BSplineSpace{0}(KnotVector(1:6))
+BSplineSpace{0, Int64, KnotVector{Int64}}(KnotVector([1, 2, 3, 4, 5, 6]))
+
+julia&gt; bsplinebasis₊₀.(P,1:5,(1:6)&#39;)
+5×6 Matrix{Float64}:
+ 1.0  0.0  0.0  0.0  0.0  0.0
+ 0.0  1.0  0.0  0.0  0.0  0.0
+ 0.0  0.0  1.0  0.0  0.0  0.0
+ 0.0  0.0  0.0  1.0  0.0  0.0
+ 0.0  0.0  0.0  0.0  1.0  0.0</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_BSplineBasis.jl#L5-L36">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.bsplinebasis₋₀" href="#BasicBSpline.bsplinebasis₋₀"><code>BasicBSpline.bsplinebasis₋₀</code></a> — <span class="docstring-category">Function</span></header><section><div><p><span>$i$</span>-th B-spline basis function. Left-sided limit version.</p><p class="math-container">\[\begin{aligned}
+{B}_{(i,p,k)}(t)
+&amp;=
+\frac{t-k_{i}}{k_{i+p}-k_{i}}{B}_{(i,p-1,k)}(t)
++\frac{k_{i+p+1}-t}{k_{i+p+1}-k_{i+1}}{B}_{(i+1,p-1,k)}(t) \\
+{B}_{(i,0,k)}(t)
+&amp;=
+\begin{cases}
+    &amp;1\quad (k_{i}&lt; t\le k_{i+1})\\
+    &amp;0\quad (\text{otherwise})
+\end{cases}
+\end{aligned}\]</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; P = BSplineSpace{0}(KnotVector(1:6))
+BSplineSpace{0, Int64, KnotVector{Int64}}(KnotVector([1, 2, 3, 4, 5, 6]))
+
+julia&gt; bsplinebasis₋₀.(P,1:5,(1:6)&#39;)
+5×6 Matrix{Float64}:
+ 0.0  1.0  0.0  0.0  0.0  0.0
+ 0.0  0.0  1.0  0.0  0.0  0.0
+ 0.0  0.0  0.0  1.0  0.0  0.0
+ 0.0  0.0  0.0  0.0  1.0  0.0
+ 0.0  0.0  0.0  0.0  0.0  1.0</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_BSplineBasis.jl#L63-L94">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.bsplinebasis" href="#BasicBSpline.bsplinebasis"><code>BasicBSpline.bsplinebasis</code></a> — <span class="docstring-category">Function</span></header><section><div><p><span>$i$</span>-th B-spline basis function. Modified version.</p><p class="math-container">\[\begin{aligned}
+{B}_{(i,p,k)}(t)
+&amp;=
+\frac{t-k_{i}}{k_{i+p}-k_{i}}{B}_{(i,p-1,k)}(t)
++\frac{k_{i+p+1}-t}{k_{i+p+1}-k_{i+1}}{B}_{(i+1,p-1,k)}(t) \\
+{B}_{(i,0,k)}(t)
+&amp;=
+\begin{cases}
+    &amp;1\quad (k_{i} \le t &lt; k_{i+1}) \\
+    &amp;1\quad (k_{i} &lt; t = k_{i+1}=k_{l}) \\
+    &amp;0\quad (\text{otherwise})
+\end{cases}
+\end{aligned}\]</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; P = BSplineSpace{0}(KnotVector(1:6))
+BSplineSpace{0, Int64, KnotVector{Int64}}(KnotVector([1, 2, 3, 4, 5, 6]))
+
+julia&gt; bsplinebasis.(P,1:5,(1:6)&#39;)
+5×6 Matrix{Float64}:
+ 1.0  0.0  0.0  0.0  0.0  0.0
+ 0.0  1.0  0.0  0.0  0.0  0.0
+ 0.0  0.0  1.0  0.0  0.0  0.0
+ 0.0  0.0  0.0  1.0  0.0  0.0
+ 0.0  0.0  0.0  0.0  1.0  1.0</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_BSplineBasis.jl#L121-L153">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.bsplinebasis₋₀I" href="#BasicBSpline.bsplinebasis₋₀I"><code>BasicBSpline.bsplinebasis₋₀I</code></a> — <span class="docstring-category">Function</span></header><section><div><p><span>$i$</span>-th B-spline basis function. Modified version (2).</p><p class="math-container">\[\begin{aligned}
+{B}_{(i,p,k)}(t)
+&amp;=
+\frac{t-k_{i}}{k_{i+p}-k_{i}}{B}_{(i,p-1,k)}(t)
++\frac{k_{i+p+1}-t}{k_{i+p+1}-k_{i+1}}{B}_{(i+1,p-1,k)}(t) \\
+{B}_{(i,0,k)}(t)
+&amp;=
+\begin{cases}
+    &amp;1\quad (k_{1+p} \le k_{i} &lt; t \le k_{i+1}) \\
+    &amp;1\quad (t = k_{1+p} = k_{i} &lt; k_{i+1}) \\
+    &amp;1\quad (k_{i} \le t &lt; k_{i+1} \le k_{1+p}) \\
+    &amp;0\quad (\text{otherwise})
+\end{cases}
+\end{aligned}\]</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; P = BSplineSpace{0}(KnotVector(1:6))
+BSplineSpace{0, Int64, KnotVector{Int64}}(KnotVector([1, 2, 3, 4, 5, 6]))
+
+julia&gt; BasicBSpline.bsplinebasis₋₀I.(P,1:5,(1:6)&#39;)
+5×6 Matrix{Float64}:
+ 1.0  1.0  0.0  0.0  0.0  0.0
+ 0.0  0.0  1.0  0.0  0.0  0.0
+ 0.0  0.0  0.0  1.0  0.0  0.0
+ 0.0  0.0  0.0  0.0  1.0  0.0
+ 0.0  0.0  0.0  0.0  0.0  1.0</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_BSplineBasis.jl#L180-L213">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.intervalindex" href="#BasicBSpline.intervalindex"><code>BasicBSpline.intervalindex</code></a> — <span class="docstring-category">Function</span></header><section><div><p>Return an index of a interval in the domain of B-spline space</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]);
+
+
+julia&gt; P = BSplineSpace{2}(k);
+
+
+julia&gt; domain(P)
+2.5 .. 9.0
+
+julia&gt; intervalindex(P,2.6)
+1
+
+julia&gt; intervalindex(P,5.6)
+2
+
+julia&gt; intervalindex(P,8.5)
+3
+
+julia&gt; intervalindex(P,9.5)
+3</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_BSplineSpace.jl#L408-L434">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.bsplinebasisall" href="#BasicBSpline.bsplinebasisall"><code>BasicBSpline.bsplinebasisall</code></a> — <span class="docstring-category">Function</span></header><section><div><p>B-spline basis functions at point <code>t</code> on <code>i</code>-th interval.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
+KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
+
+julia&gt; p = 2
+2
+
+julia&gt; P = BSplineSpace{p}(k)
+BSplineSpace{2, Float64, KnotVector{Float64}}(KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]))
+
+julia&gt; t = 5.7
+5.7
+
+julia&gt; i = intervalindex(P,t)
+2
+
+julia&gt; bsplinebasisall(P,i,t)
+3-element SVector{3, Float64} with indices SOneTo(3):
+ 0.3847272727272727
+ 0.6107012987012989
+ 0.00457142857142858
+
+julia&gt; bsplinebasis.(P,i:i+p,t)
+3-element Vector{Float64}:
+ 0.38472727272727264
+ 0.6107012987012989
+ 0.00457142857142858</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_BSplineBasis.jl#L263-L295">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.bsplinesupport" href="#BasicBSpline.bsplinesupport"><code>BasicBSpline.bsplinesupport</code></a> — <span class="docstring-category">Function</span></header><section><div><p>Return the support of <span>$i$</span>-th B-spline basis function.</p><p class="math-container">\[\operatorname{supp}(B_{(i,p,k)})=[k_{i},k_{i+p+1}]\]</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
+KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
+
+julia&gt; P = BSplineSpace{2}(k)
+BSplineSpace{2, Float64, KnotVector{Float64}}(KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]))
+
+julia&gt; bsplinesupport(P,1)
+0.0 .. 5.5
+
+julia&gt; bsplinesupport(P,2)
+1.5 .. 8.0</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_BSplineSpace.jl#L357-L377">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.dim" href="#BasicBSpline.dim"><code>BasicBSpline.dim</code></a> — <span class="docstring-category">Function</span></header><section><div><p>Return dimention of a B-spline space.</p><p class="math-container">\[\dim(\mathcal{P}[p,k])
+=\# k - p -1\]</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; dim(BSplineSpace{1}(KnotVector([1,2,3,4,5,6,7])))
+5
+
+julia&gt; dim(BSplineSpace{1}(KnotVector([1,2,4,4,4,6,7])))
+5
+
+julia&gt; dim(BSplineSpace{1}(KnotVector([1,2,3,5,5,5,7])))
+5</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_BSplineSpace.jl#L98-L116">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.exactdim_R-Tuple{BSplineSpace}" href="#BasicBSpline.exactdim_R-Tuple{BSplineSpace}"><code>BasicBSpline.exactdim_R</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Exact dimension of a B-spline space.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; exactdim_R(BSplineSpace{1}(KnotVector([1,2,3,4,5,6,7])))
+5
+
+julia&gt; exactdim_R(BSplineSpace{1}(KnotVector([1,2,4,4,4,6,7])))
+4
+
+julia&gt; exactdim_R(BSplineSpace{1}(KnotVector([1,2,3,5,5,5,7])))
+4</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_BSplineSpace.jl#L307-L321">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.exactdim_I-Tuple{BSplineSpace}" href="#BasicBSpline.exactdim_I-Tuple{BSplineSpace}"><code>BasicBSpline.exactdim_I</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Exact dimension of a B-spline space.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; exactdim_I(BSplineSpace{1}(KnotVector([1,2,3,4,5,6,7])))
+5
+
+julia&gt; exactdim_I(BSplineSpace{1}(KnotVector([1,2,4,4,4,6,7])))
+4
+
+julia&gt; exactdim_I(BSplineSpace{1}(KnotVector([1,2,3,5,5,5,7])))
+3</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_BSplineSpace.jl#L331-L345">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.BSplineSpace" href="#BasicBSpline.BSplineSpace"><code>BasicBSpline.BSplineSpace</code></a> — <span class="docstring-category">Type</span></header><section><div><p>Construct B-spline space from given polynominal degree and knot vector.</p><p class="math-container">\[\mathcal{P}[p,k]\]</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; p = 2
+2
+
+julia&gt; k = KnotVector([1,3,5,6,8,9])
+KnotVector([1, 3, 5, 6, 8, 9])
+
+julia&gt; BSplineSpace{p}(k)
+BSplineSpace{2, Int64, KnotVector{Int64}}(KnotVector([1, 3, 5, 6, 8, 9]))</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_BSplineSpace.jl#L5-L22">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.isnondegenerate" href="#BasicBSpline.isnondegenerate"><code>BasicBSpline.isnondegenerate</code></a> — <span class="docstring-category">Function</span></header><section><div><p>Check if given B-spline space is non-degenerate.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; isnondegenerate(BSplineSpace{2}(KnotVector([1,3,5,6,8,9])))
+true
+
+julia&gt; isnondegenerate(BSplineSpace{1}(KnotVector([1,3,3,3,8,9])))
+false</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_BSplineSpace.jl#L240-L251">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.isdegenerate-Tuple{BSplineSpace}" href="#BasicBSpline.isdegenerate-Tuple{BSplineSpace}"><code>BasicBSpline.isdegenerate</code></a> — <span class="docstring-category">Method</span></header><section><div><p>Check if given B-spline space is degenerate.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; isdegenerate(BSplineSpace{2}(KnotVector([1,3,5,6,8,9])))
+false
+
+julia&gt; isdegenerate(BSplineSpace{1}(KnotVector([1,3,3,3,8,9])))
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_BSplineSpace.jl#L254-L265">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.BSplineManifold" href="#BasicBSpline.BSplineManifold"><code>BasicBSpline.BSplineManifold</code></a> — <span class="docstring-category">Type</span></header><section><div><p>Construct B-spline manifold from given control points and B-spline spaces.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using StaticArrays
+
+julia&gt; P = BSplineSpace{2}(KnotVector([0,0,0,1,1,1]))
+BSplineSpace{2, Int64, KnotVector{Int64}}(KnotVector([0, 0, 0, 1, 1, 1]))
+
+julia&gt; a = [SVector(1,0), SVector(1,1), SVector(0,1)]
+3-element Vector{SVector{2, Int64}}:
+ [1, 0]
+ [1, 1]
+ [0, 1]
+
+julia&gt; M = BSplineManifold(a, P);
+
+
+julia&gt; M(0.4)
+2-element SVector{2, Float64} with indices SOneTo(2):
+ 0.84
+ 0.64
+
+julia&gt; M(1.2)
+ERROR: DomainError with 1.2:
+The input 1.2 is out of domain 0 .. 1.
+[...]</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_BSplineManifold.jl#L10-L39">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.unbounded_mapping" href="#BasicBSpline.unbounded_mapping"><code>BasicBSpline.unbounded_mapping</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">unbounded_mapping(M::BSplineManifold{Dim}, t::Vararg{Real,Dim})</code></pre><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; P = BSplineSpace{1}(KnotVector([0,0,1,1]))
+BSplineSpace{1, Int64, KnotVector{Int64}}(KnotVector([0, 0, 1, 1]))
+
+julia&gt; domain(P)
+0 .. 1
+
+julia&gt; M = BSplineManifold([0,1], P);
+
+
+julia&gt; unbounded_mapping(M, 0.1)
+0.1
+
+julia&gt; M(0.1)
+0.1
+
+julia&gt; unbounded_mapping(M, 1.2)
+1.2
+
+julia&gt; M(1.2)
+ERROR: DomainError with 1.2:
+The input 1.2 is out of domain 0 .. 1.
+[...]</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_BSplineManifold.jl#L77-L106">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.RationalBSplineManifold" href="#BasicBSpline.RationalBSplineManifold"><code>BasicBSpline.RationalBSplineManifold</code></a> — <span class="docstring-category">Type</span></header><section><div><p>Construct Rational B-spline manifold from given control points, weights and B-spline spaces.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using StaticArrays, LinearAlgebra
+
+julia&gt; P = BSplineSpace{2}(KnotVector([0,0,0,1,1,1]))
+BSplineSpace{2, Int64, KnotVector{Int64}}(KnotVector([0, 0, 0, 1, 1, 1]))
+
+julia&gt; w = [1, 1/√2, 1]
+3-element Vector{Float64}:
+ 1.0
+ 0.7071067811865475
+ 1.0
+
+julia&gt; a = [SVector(1,0), SVector(1,1), SVector(0,1)]
+3-element Vector{SVector{2, Int64}}:
+ [1, 0]
+ [1, 1]
+ [0, 1]
+
+julia&gt; M = RationalBSplineManifold(a,w,P);  # 1/4 arc
+
+
+julia&gt; M(0.3)
+2-element SVector{2, Float64} with indices SOneTo(2):
+ 0.8973756499953727
+ 0.4412674277525845
+
+julia&gt; norm(M(0.3))
+1.0</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_RationalBSplineManifold.jl#L2-L35">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.refinement_R" href="#BasicBSpline.refinement_R"><code>BasicBSpline.refinement_R</code></a> — <span class="docstring-category">Function</span></header><section><div><p>Refinement of B-spline manifold with additional degree and knotvector.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_Refinement.jl#L282-L284">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.refinement_I" href="#BasicBSpline.refinement_I"><code>BasicBSpline.refinement_I</code></a> — <span class="docstring-category">Function</span></header><section><div><p>Refinement of B-spline manifold with additional degree and knotvector.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_Refinement.jl#L325-L327">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSplineFitting.innerproduct_R" href="#BasicBSplineFitting.innerproduct_R"><code>BasicBSplineFitting.innerproduct_R</code></a> — <span class="docstring-category">Function</span></header><section><div><p>Calculate a matrix</p><p class="math-container">\[A_{ij}=\int_{\mathbb{R}} B_{(i,p,k)}(t) B_{(j,p,k)}(t) dt\]</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSplineFitting.jl/blob/v0.1.2/src/_Fitting.jl#L35-L40">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSplineFitting.innerproduct_I" href="#BasicBSplineFitting.innerproduct_I"><code>BasicBSplineFitting.innerproduct_I</code></a> — <span class="docstring-category">Function</span></header><section><div><p>Calculate a matrix</p><p class="math-container">\[A_{ij}=\int_{I} B_{(i,p,k)}(t) B_{(j,p,k)}(t) dt\]</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSplineFitting.jl/blob/v0.1.2/src/_Fitting.jl#L3-L8">source</a></section></article><h2 id="Private"><a class="docs-heading-anchor" href="#Private">Private</a><a id="Private-1"></a><a class="docs-heading-anchor-permalink" href="#Private" title="Permalink"></a></h2><p>Note that the following methods are considered private methods, and changes in their behavior are not considered breaking changes.</p><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.r_nomial" href="#BasicBSpline.r_nomial"><code>BasicBSpline.r_nomial</code></a> — <span class="docstring-category">Function</span></header><section><div><p>Calculate <span>$r$</span>-nomial coefficient</p><pre><code class="nohighlight hljs">r_nomial(n, k, r)</code></pre><p class="math-container">\[(1+x+\cdots+x^r)^n = \sum_{k} a_{n,k,r} x^k\]</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_util.jl#L9-L17">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline._vec" href="#BasicBSpline._vec"><code>BasicBSpline._vec</code></a> — <span class="docstring-category">Function</span></header><section><div><p>Convert <code>AbstractKnotVector</code> to <code>AbstractVector</code></p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_KnotVector.jl#L404-L406">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline._lower_R" href="#BasicBSpline._lower_R"><code>BasicBSpline._lower_R</code></a> — <span class="docstring-category">Function</span></header><section><div><p>Internal methods for obtaining a B-spline space with one degree lower.</p><p class="math-container">\[\begin{aligned}
+\mathcal{P}[p,k] &amp;\mapsto \mathcal{P}[p-1,k] \\
+D^r\mathcal{P}[p,k] &amp;\mapsto D^{r-1}\mathcal{P}[p-1,k]
+\end{aligned}\]</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_BSplineSpace.jl#L389-L397">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline._changebasis_R" href="#BasicBSpline._changebasis_R"><code>BasicBSpline._changebasis_R</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">_changebasis_R(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)</code></pre><p>Internal function for <a href="../math/inclusive/#BasicBSpline.changebasis_R"><code>changebasis_R</code></a>.</p><p>Implicit assumption:</p><ul><li><code>P ⊆ P′</code></li></ul></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_ChangeBasis.jl#L36-L43">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline._changebasis_I" href="#BasicBSpline._changebasis_I"><code>BasicBSpline._changebasis_I</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">_changebasis_I(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)</code></pre><p>Internal function for <a href="../math/inclusive/#BasicBSpline.changebasis_I"><code>changebasis_I</code></a>.</p><p>Implicit assumption:</p><ul><li><code>P ⊑ P′</code></li></ul></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_ChangeBasis.jl#L399-L406">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline.__changebasis_I" href="#BasicBSpline.__changebasis_I"><code>BasicBSpline.__changebasis_I</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">__changebasis_I(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)</code></pre><p>Internal function for <a href="../math/inclusive/#BasicBSpline.changebasis_I"><code>changebasis_I</code></a>.</p><p>Implicit assumption:</p><ul><li><code>P ⊑ P′</code></li><li><code>isnondegenerate_I(P′, 1)</code></li><li><code>isnondegenerate_I(P′, dim(P′))</code></li></ul></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_ChangeBasis.jl#L449-L458">source</a></section></article><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="BasicBSpline._changebasis_sim" href="#BasicBSpline._changebasis_sim"><code>BasicBSpline._changebasis_sim</code></a> — <span class="docstring-category">Function</span></header><section><div><p>Return a coefficient matrix <span>$A$</span> which satisfy</p><p class="math-container">\[B_{(i,p_1,k_1)} = \sum_{j}A_{i,j}B_{(j,p_2,k_2)}\]</p><p>Assumption:</p><ul><li><span>$P_1 ≃ P_2$</span></li></ul></div><a class="docs-sourcelink" target="_blank" href="https://github.com/hyrodium/BasicBSpline.jl/blob/eba4361c2f7446814d12a5f1a84fa0fa1b0964b7/src/_ChangeBasis.jl#L294-L302">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../interpolations/">« Interpolations</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.2.1 on <span class="colophon-date" title="Saturday 10 February 2024 05:02">Saturday 10 February 2024</span>. Using Julia version 1.10.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
