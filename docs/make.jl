@@ -71,11 +71,9 @@ makedocs(;
         #     "ChainRules" => "chainrules.md"
         # ],
         "Visualization" => [
-            "Plots.jl" => "visualization/plots.md",
             "PlotlyJS.jl" => "visualization/plotlyjs.md",
             "BasicBSplineExporter.jl" => "visualization/basicbsplineexporter.md",
         ],
-        "Geometric modeling" => "geometricmodeling.md",
         "Interpolations" => "interpolations.md",
         "API" => "api.md",
     ],
