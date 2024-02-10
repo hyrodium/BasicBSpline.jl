@@ -87,7 +87,8 @@ t = 1  # angle in radians
 a = [SVector(1,0), SVector(1,tan(t/2)), SVector(cos(t),sin(t))]
 w = [1,cos(t/2),1]
 M = RationalBSplineManifold(a,w,P)
-plot(M, xlims=(0,1.1), ylims=(0,1.1), aspectratio=1)
+plot([cosd(t) for t in 0:360], [sind(t) for t in 0:360]; xlims=(-1.1,1.1), ylims=(-1.1,1.1), aspectratio=1, label="circle", color=:gray, linestyle=:dash)
+plot!(M; label="Rational B-spline curve")
 savefig("geometricmodeling-arc.png") # hide
 nothing # hide
 ```

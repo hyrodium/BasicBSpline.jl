@@ -274,6 +274,7 @@ end
 Let ``X_1, \dots, X_n`` be i.i.d. random variables with ``X_i \sim U(0,1)``, then the probability density function of ``X_1+\cdots+X_n`` can be obtained via `BasicBSpline.uniform_bsplinebasis_kernel(Val(n-1),t)`.
 
 ```@example math_bsplinebasis
+gr()
 N = 100000
 # polynomial degree 0
 plot1 = histogram([rand() for _ in 1:N], normalize=true, label=false)
@@ -289,10 +290,8 @@ plot4 = histogram([rand()+rand()+rand()+rand() for _ in 1:N], normalize=true, la
 plot!(t->BasicBSpline.uniform_bsplinebasis_kernel(Val(3),t), label=false)
 # plot all
 plot(plot1,plot2,plot3,plot4)
-savefig("histogram-uniform.html") # hide
+savefig("histogram-uniform.png") # hide
 nothing # hide
 ```
 
-```@raw html
-<object type="text/html" data="../histogram-uniform.html" style="width:100%;height:420px;"></object>
-```
+![](histogram-uniform.png)
