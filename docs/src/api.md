@@ -30,6 +30,7 @@ isdegenerate(P::BSplineSpace)
 BSplineManifold
 unbounded_mapping
 RationalBSplineManifold
+fittingcontrolpoints
 ```
 
 ```@docs
