@@ -5,7 +5,7 @@
 ```@example math_bsplinespace
 using BasicBSpline
 using StaticArrays
-using Plots; gr()
+using Plots
 ```
 
 ## Defnition

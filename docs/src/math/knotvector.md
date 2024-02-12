@@ -3,8 +3,8 @@
 ## Setup
 ```@example math_knotvector
 using BasicBSpline
+using Plots
 using InteractiveUtils  # hide
-using Plots; gr()
 ```
 
 ## Definition

@@ -5,7 +5,7 @@
 ```@example math_bsplinebasis
 using BasicBSpline
 using Random
-using Plots; gr()
+using Plots
 ```
 
 ## Basic properties of B-spline basis function
