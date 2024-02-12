@@ -4,9 +4,8 @@
 
 ```@example math_bsplinespace
 using BasicBSpline
-using BasicBSplineExporter
 using StaticArrays
-using Plots; gr()
+using Plots
 ```
 
 ## Defnition
@@ -84,6 +83,7 @@ dim(P3), exactdim_R(P3), exactdim_I(P3)
 Visualization:
 
 ```@example math_bsplinespace
+gr()
 pl1 = plot(P1); plot!(pl1, knotvector(P1))
 pl2 = plot(P2); plot!(pl2, knotvector(P2))
 pl3 = plot(P3); plot!(pl3, knotvector(P3))

@@ -11,6 +11,7 @@ Calculate ``r``-nomial coefficient
 
     r_nomial(n, k, r)
 
+**This function is considered as internal.**
 ```math
 (1+x+\cdots+x^r)^n = \sum_{k} a_{n,k,r} x^k
 ```

@@ -23,10 +23,16 @@ function generate_indexmd_from_readmemd()
 
     # generate text for index.md
     text_index = text_readme
-    text_index = replace(text_index, "![](docs/src/img" => "![](img")
     text_index = replace(text_index, r"\$\$((.|\n)*?)\$\$" => s"```math\1```")
     text_index = replace(text_index, "(https://hyrodium.github.io/BasicBSpline.jl/dev/math/bsplinebasis/#Differentiability-and-knot-duplications)" => "(@ref differentiability-and-knot-duplications)")
     text_index = replace(text_index, r"https://github.com/hyrodium/BasicBSpline\.jl/assets/.*" => "![](math/differentiability.mp4)")
+    text_index = replace(text_index, "```julia\njulia>" => "```julia-repl\njulia>")
+    text_index = replace(text_index, "```julia\n" => "```@example readme\n")
+    text_index = replace(text_index, r"```\n!\[\]\(docs/src/img/(.*?)plotly\.png\)" => s"savefig(\"readme-\1plotly.html\") # hide\nnothing # hide\n```\n```@raw html\n<object type=\"text/html\" data=\"../readme-\1plotly.html\" style=\"width:100%;height:420px;\"></object>\n```")
+    text_index = replace(text_index, r"```\n!\[\]\(docs/src/img/(.*?)\.png\)" => s"savefig(\"readme-\1.png\") # hide\nnothing # hide\n```\n![](readme-\1.png)")
+    text_index = replace(text_index, "![](docs/src/img" => "![](img")
+    text_index = replace(text_index, "![](img/sine-curve.svg)" => "![](sine-curve.svg)")
+    text_index = replace(text_index, "![](img/sine-curve_no-points.svg)" => "![](sine-curve_no-points.svg)")
     text_index = """
     ```@meta
     EditURL = "https://github.com/hyrodium/BasicBSpline.jl/blob/main/README.md"

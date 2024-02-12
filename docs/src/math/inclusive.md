@@ -1,11 +1,14 @@
 # Inclusive relation between B-spline spaces
 
-```@setup math
+## Setup
+
+```@example math_inclusive
 using BasicBSpline
-using BasicBSplineExporter
 using StaticArrays
-using Plots; plotly()
+using Plots
 ```
+
+## Theorem on [`issubset`](@ref)
 
 !!! info "Thm.  Inclusive relation between B-spline spaces"
     For non-degenerate B-spline spaces, the following relationship holds.
@@ -15,32 +18,81 @@ using Plots; plotly()
     \Leftrightarrow (m=p'-p \ge 0 \ \text{and} \ k+m\widehat{k}\subseteq k')
     ```
 
-```@docs
-Base.issubset(P::BSplineSpace{p}, P′::BSplineSpace{p′}) where {p, p′}
-```
+### Examples
 
 Here are plots of the B-spline basis functions of the spaces `P1`, `P2`, `P3`.
 
-```@repl math
-P1 = BSplineSpace{1}(KnotVector([1,3,5,8]))
-P2 = BSplineSpace{1}(KnotVector([1,3,5,6,8,9]))
-P3 = BSplineSpace{2}(KnotVector([1,1,3,3,5,5,8,8]))
+```@example math_inclusive
+P1 = BSplineSpace{1}(KnotVector([1,3,6,6]))
+P2 = BSplineSpace{1}(KnotVector([1,3,5,6,6,8,9]))
+P3 = BSplineSpace{2}(KnotVector([1,1,3,3,6,6,6,8,9]))
+gr()
 plot(
-    plot([t->bsplinebasis₊₀(P1,i,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
-    plot([t->bsplinebasis₊₀(P2,i,t) for i in 1:dim(P2)], 1, 9, ylims=(0,1), legend=false),
-    plot([t->bsplinebasis₊₀(P3,i,t) for i in 1:dim(P3)], 1, 9, ylims=(0,1), legend=false),
+    plot(P1; ylims=(0,1), label="P1"),
+    plot(P2; ylims=(0,1), label="P2"),
+    plot(P3; ylims=(0,1), label="P3"),
     layout=(3,1),
     link=:x
 )
-savefig("subbsplineplot.html") # hide
+savefig("inclusive-issubset.png") # hide
 nothing # hide
 ```
 
-```@raw html
-<object type="text/html" data="../subbsplineplot.html" style="width:100%;height:420px;"></object>
+![](inclusive-issubset.png)
+
+These spaces have the folllowing incusive relationships.
+
+```@repl math_inclusive
+P1 ⊆ P2
+P1 ⊆ P3
+P2 ⊆ P3, P3 ⊆ P2, P2 ⊆ P1, P3 ⊆ P1
 ```
 
-This means, there exists a ``n \times n'`` matrix ``A`` which holds:
+## Definition on [`issqsubset`](@ref)
+
+!!! tip "Def.  Inclusive relation between B-spline spaces"
+    For non-degenerate B-spline spaces, the following relationship holds.
+    ```math
+    \mathcal{P}[p,k]
+    \sqsubseteq\mathcal{P}[p',k']
+    \Leftrightarrow
+    \mathcal{P}[p,k]|_{[k_{p+1},k_{l-p}]}
+    \subseteq\mathcal{P}[p',k']|_{[k'_{p'+1},k'_{l'-p'}]}
+    ```
+
+### Examples
+
+Here are plots of the B-spline basis functions of the spaces `P1`, `P2`, `P3`.
+
+```@example math_inclusive
+P1 = BSplineSpace{1}(KnotVector([1,3,6,6]))  # Save definition as above
+P4 = BSplineSpace{1}(KnotVector([1,3,5,6,8]))
+P5 = BSplineSpace{2}(KnotVector([1,1,3,3,6,6,7,9]))
+gr()
+plot(
+    plot(P1; ylims=(0,1), label="P1"),
+    plot(P4; ylims=(0,1), label="P4"),
+    plot(P5; ylims=(0,1), label="P5"),
+    layout=(3,1),
+    link=:x
+)
+savefig("inclusive-issqsubset.png") # hide
+nothing # hide
+```
+
+![](inclusive-issqsubset.png)
+
+These spaces have the folllowing incusive relationships.
+
+```@repl math_inclusive
+P1 ⊑ P4
+P1 ⊑ P5
+P4 ⊑ P5, P5 ⊑ P4, P4 ⊑ P1, P5 ⊑ P1
+```
+
+## Change basis with a matrix
+
+If ``\mathcal{P}[p,k] \subseteq \mathcal{P}[p',k']`` (or ``\mathcal{P}[p,k] \sqsubseteq \mathcal{P}[p',k']``), there exists a ``n \times n'`` matrix ``A`` which holds:
 
 ```math
 \begin{aligned}
@@ -51,14 +103,14 @@ n'&=\dim(\mathcal{P}[p',k'])
 \end{aligned}
 ```
 
-You can calculate the change of basis matrix ``A`` with `changebasis`.
+You can calculate the change of basis matrix ``A`` with [`changebasis`](@ref).
 
-```@repl math
+```@repl math_inclusive
 A12 = changebasis(P1,P2)
 A13 = changebasis(P1,P3)
 ```
 
-```@repl math
+```@example math_inclusive
 plot(
     plot([t->bsplinebasis₊₀(P1,i,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
     plot([t->sum(A12[i,j]*bsplinebasis₊₀(P2,j,t) for j in 1:dim(P2)) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
@@ -66,34 +118,52 @@ plot(
     layout=(3,1),
     link=:x
 )
-savefig("subbsplineplot2.html") # hide
+savefig("inclusive-issubset-matrix.png") # hide
 nothing # hide
 ```
 
-```@raw html
-<object type="text/html" data="../subbsplineplot2.html" style="width:100%;height:420px;"></object>
+![](inclusive-issubset-matrix.png)
+
+```@repl math_inclusive
+A14 = changebasis(P1,P4)
+A15 = changebasis(P1,P5)
 ```
 
-```@docs
-changebasis_R
+```@example math_inclusive
+plot(
+    plot([t->bsplinebasis₊₀(P1,i,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
+    plot([t->sum(A14[i,j]*bsplinebasis₊₀(P4,j,t) for j in 1:dim(P4)) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
+    plot([t->sum(A15[i,j]*bsplinebasis₊₀(P5,j,t) for j in 1:dim(P5)) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
+    layout=(3,1),
+    link=:x
+)
+savefig("inclusive-issqsubset-matrix.png") # hide
+nothing # hide
 ```
 
-```@docs
-changebasis_I
-```
+![](inclusive-issqsubset-matrix.png)
 
-```@docs
-issqsubset
-```
+* [`changebasis_R`](@ref)
+  * Calculate the matrix based on ``P \subseteq P'``
+* [`changebasis_I`](@ref)
+  * Calculate the matrix based on ``P \sqsubseteq P'``
+* [`changebasis`](@ref)
+  * Return `changebasis_R` if ``P \subseteq P'``, otherwise return `changebasis_I` if ``P \sqsubseteq P'``.
 
-```@docs
-expandspace
-```
+## Expand spaces with additional knots or polynomial degree
 
-```@docs
-expandspace_R
-```
+There are some functions to expand spaces with additional knots or polynomial degree.
 
-```@docs
-expandspace_I
+* [`expandspace_R`](@ref)
+* [`expandspace_I`](@ref)
+* [`expandspace`](@ref)
+
+```@repl math_inclusive
+P = BSplineSpace{2}(knotvector"21 113")
+P_R = expandspace_R(P, Val(1), KnotVector([3.4, 4.2]))
+P_I = expandspace_I(P, Val(1), KnotVector([3.4, 4.2]))
+P ⊆ P_R
+P ⊆ P_I
+P ⊑ P_R
+P ⊑ P_I
 ```

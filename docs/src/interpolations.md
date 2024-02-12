@@ -2,11 +2,13 @@
 
 Currently, BasicBSpline.jl doesn't have APIs for interpolations, but it is not hard to implement some basic interpolation algorithms with this package.
 
-```@setup interpolation
+## Setup
+
+```@example interpolation
 using BasicBSpline
 using IntervalSets
 using Random; Random.seed!(42)
-using Plots; plotly()
+using Plots
 ```
 
 ## Interpolation with cubic B-spline
@@ -40,6 +42,7 @@ fs = [1.3, 1.5, 2, 2.1, 1.9, 1.3]
 f = interpolate(xs,fs)
 
 # Plot
+plotly()
 scatter(xs, fs)
 plot!(t->f(t))
 savefig("interpolation_cubic.html") # hide
