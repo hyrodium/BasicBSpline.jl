@@ -40,7 +40,17 @@ nothing # hide
 <object type="text/html" data="../subbsplineplot.html" style="width:100%;height:420px;"></object>
 ```
 
-This means, there exists a ``n \times n'`` matrix ``A`` which holds:
+These spaces have the folllowing incusive relationships.
+
+```@repl math_inclusive
+P1 ⊆ P2
+P1 ⊆ P3
+P2 ⊆ P3
+```
+
+## Change basis with a matrix
+
+If ``\mathcal{P}[p,k] \subseteq \mathcal{P}[p',k']``, there exists a ``n \times n'`` matrix ``A`` which holds:
 
 ```math
 \begin{aligned}
@@ -51,9 +61,9 @@ n'&=\dim(\mathcal{P}[p',k'])
 \end{aligned}
 ```
 
-You can calculate the change of basis matrix ``A`` with `changebasis`.
+You can calculate the change of basis matrix ``A`` with [`changebasis`](@ref).
 
-```@repl math
+```@repl math_inclusive
 A12 = changebasis(P1,P2)
 A13 = changebasis(P1,P3)
 ```
