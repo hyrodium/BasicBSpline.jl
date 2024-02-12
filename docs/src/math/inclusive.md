@@ -26,7 +26,7 @@ Here are plots of the B-spline basis functions of the spaces `P1`, `P2`, `P3`.
 P1 = BSplineSpace{1}(KnotVector([1,3,6,6]))
 P2 = BSplineSpace{1}(KnotVector([1,3,5,6,6,8,9]))
 P3 = BSplineSpace{2}(KnotVector([1,1,3,3,6,6,6,8,9]))
-plotly()
+gr()
 plot(
     plot(P1; ylims=(0,1), label="P1"),
     plot(P2; ylims=(0,1), label="P2"),
@@ -34,13 +34,11 @@ plot(
     layout=(3,1),
     link=:x
 )
-savefig("inclusive-issubset.html") # hide
+savefig("inclusive-issubset.png") # hide
 nothing # hide
 ```
 
-```@raw html
-<object type="text/html" data="../inclusive-issubset.html" style="width:100%;height:420px;"></object>
-```
+![](inclusive-issubset.png)
 
 These spaces have the folllowing incusive relationships.
 
@@ -68,9 +66,9 @@ Here are plots of the B-spline basis functions of the spaces `P1`, `P2`, `P3`.
 
 ```@example math_inclusive
 P1 = BSplineSpace{1}(KnotVector([1,3,6,6]))  # Save definition as above
-P4 = BSplineSpace{1}(KnotVector([1,3,5,7,8]))
+P4 = BSplineSpace{1}(KnotVector([1,3,5,6,8]))
 P5 = BSplineSpace{2}(KnotVector([1,1,3,3,6,6,7,9]))
-plotly()
+gr()
 plot(
     plot(P1; ylims=(0,1), label="P1"),
     plot(P4; ylims=(0,1), label="P4"),
@@ -78,13 +76,11 @@ plot(
     layout=(3,1),
     link=:x
 )
-savefig("inclusive-issqsubset.html") # hide
+savefig("inclusive-issqsubset.png") # hide
 nothing # hide
 ```
 
-```@raw html
-<object type="text/html" data="../inclusive-issqsubset.html" style="width:100%;height:420px;"></object>
-```
+![](inclusive-issqsubset.png)
 
 These spaces have the folllowing incusive relationships.
 
@@ -122,13 +118,11 @@ plot(
     layout=(3,1),
     link=:x
 )
-savefig("inclusive-issubset-matrix.html") # hide
+savefig("inclusive-issubset-matrix.png") # hide
 nothing # hide
 ```
 
-```@raw html
-<object type="text/html" data="../inclusive-issubset-matrix.html" style="width:100%;height:420px;"></object>
-```
+![](inclusive-issubset-matrix.png)
 
 ```@repl math_inclusive
 A14 = changebasis(P1,P4)
@@ -143,13 +137,18 @@ plot(
     layout=(3,1),
     link=:x
 )
-savefig("inclusive-issqsubset-matrix.html") # hide
+savefig("inclusive-issqsubset-matrix.png") # hide
 nothing # hide
 ```
 
-```@raw html
-<object type="text/html" data="../inclusive-issqsubset-matrix.html" style="width:100%;height:420px;"></object>
-```
+![](inclusive-issqsubset-matrix.png)
+
+* [`changebasis_R`](@ref)
+  * Calculate the matrix based on ``P \subseteq P'``
+* [`changebasis_I`](@ref)
+  * Calculate the matrix based on ``P \sqsubseteq P'``
+* [`changebasis`](@ref)
+  * Return `changebasis_R` if ``P \subseteq P'``, otherwise return `changebasis_I` if ``P \sqsubseteq P'``.
 
 ## Expand spaces with additional knots or polynomial degree
 
