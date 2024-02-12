@@ -46,6 +46,7 @@ Increase the polynomial degree of B-spline manifold without changing the shape.
 ```@repl math_refinement
 p₊ = (Val(1), Val(2)) # additional degrees
 M_p = refinement(M, p₊) # refinement of B-spline manifold
+plot(M_p)
 savefig("refinement_2dim_p.png") # hide
 nothing # hide
 ```
