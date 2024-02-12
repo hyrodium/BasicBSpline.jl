@@ -5,7 +5,7 @@
 using BasicBSpline
 using StaticArrays
 using StaticArrays
-using Plots; plotly()
+using Plots
 ```
 
 ## Multi-dimensional B-spline
@@ -36,6 +36,7 @@ i1 = 3
 i2 = 4
 
 # Visualize basis functions
+plotly()
 plot(P1; plane=:xz, label="P1", color=:red)
 plot!(P2; plane=:yz, label="P2", color=:green)
 plot!(k1; plane=:xz, label="k1", color=:red, markersize=2)

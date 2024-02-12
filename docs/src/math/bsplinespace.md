@@ -4,7 +4,6 @@
 
 ```@example math_bsplinespace
 using BasicBSpline
-using BasicBSplineExporter
 using StaticArrays
 using Plots; gr()
 ```

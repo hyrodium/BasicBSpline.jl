@@ -6,7 +6,7 @@
 using BasicBSpline
 using StaticArrays
 using LinearAlgebra
-using Plots; plotly()
+using Plots
 ```
 
 [Non-uniform rational basis spline (NURBS)](https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline) is also supported in BasicBSpline.jl package.
@@ -52,6 +52,7 @@ M3 = BSplineManifold(a3.*w,(P))
 R3 = RationalBSplineManifold(a3,w,(P,))
 
 # Plot
+plotly()
 pl2 = plot(R2, xlims=(-1,1), ylims=(-1,1); color=:blue, linewidth=3, aspectratio=1, label=false)
 pl3 = plot(R3; color=:blue, linewidth=3, controlpoints=(markersize=2,), label="Rational B-spline curve")
 plot!(pl3, M3; color=:red, linewidth=3, controlpoints=(markersize=2,), label="B-spline curve")

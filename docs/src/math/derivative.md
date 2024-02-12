@@ -2,9 +2,8 @@
 
 ```@setup math
 using BasicBSpline
-using BasicBSplineExporter
 using StaticArrays
-using Plots; plotly()
+using Plots
 ```
 
 !!! info "Thm.  Derivative of B-spline basis function"
@@ -21,6 +20,7 @@ using Plots; plotly()
 ```@example math
 k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 P = BSplineSpace{3}(k)
+plotly()
 plot(
     plot(BSplineDerivativeSpace{0}(P), label="0th derivative", color=:black),
     plot(BSplineDerivativeSpace{1}(P), label="1st derivative", color=:red),

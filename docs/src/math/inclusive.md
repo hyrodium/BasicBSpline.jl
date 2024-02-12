@@ -2,9 +2,8 @@
 
 ```@setup math
 using BasicBSpline
-using BasicBSplineExporter
 using StaticArrays
-using Plots; plotly()
+using Plots
 ```
 
 !!! info "Thm.  Inclusive relation between B-spline spaces"
@@ -25,6 +24,7 @@ Here are plots of the B-spline basis functions of the spaces `P1`, `P2`, `P3`.
 P1 = BSplineSpace{1}(KnotVector([1,3,5,8]))
 P2 = BSplineSpace{1}(KnotVector([1,3,5,6,8,9]))
 P3 = BSplineSpace{2}(KnotVector([1,1,3,3,5,5,8,8]))
+plotly()
 plot(
     plot([t->bsplinebasis₊₀(P1,i,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
     plot([t->bsplinebasis₊₀(P2,i,t) for i in 1:dim(P2)], 1, 9, ylims=(0,1), legend=false),

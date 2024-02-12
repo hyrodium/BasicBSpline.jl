@@ -31,6 +31,7 @@ BSplineManifold
 unbounded_mapping
 RationalBSplineManifold
 fittingcontrolpoints
+refinement
 ```
 
 ```@docs
