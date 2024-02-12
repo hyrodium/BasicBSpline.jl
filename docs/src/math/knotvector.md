@@ -44,8 +44,9 @@ A knot vector can be visualized with `Plots.plot`.
 
 ```@repl math_knotvector
 k1 = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
-plot(k1; label="k1")
 k2 = knotvector"1231123"
+gr()
+plot(k1; label="k1")
 plot!(k2; label="k2", offset=0.5, ylims=(-0.1,1), xticks=0:10)
 savefig("knotvector.png") # hide
 nothing # hide

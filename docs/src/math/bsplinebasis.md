@@ -42,6 +42,7 @@ These B-spline basis functions can be calculated with [`bsplinebasis₊₀`](@re
 p = 2
 k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 P = BSplineSpace{p}(k)
+gr()
 plot([t->bsplinebasis₊₀(P,i,t) for i in 1:dim(P)], 0, 10, ylims=(0,1), label=false)
 savefig("bsplinebasisplot.png") # hide
 nothing # hide
@@ -250,7 +251,7 @@ for p in 1:3
     plot(P, legend=:topleft, label="B-spline basis (p=1)")
     plot!(t->intervalindex(P,t),0,10, label="Interval index")
     plot!(t->sum(bsplinebasis(P,i,t) for i in 1:dim(P)),0,10, label="Sum of B-spline basis")
-    plot!(k, label="knot vector", legend=:inside)
+    plot!(k, label="knot vector")
     plot!([t->bsplinebasisall(P,1,t)[i] for i in 1:p+1],0,10, color=:black, label="bsplinebasisall (i=1)", ylim=(-1,8-2p))
     savefig("bsplinebasisall-$(p).html") # hide
     nothing # hide
