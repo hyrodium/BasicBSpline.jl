@@ -46,7 +46,7 @@ A knot vector can be visualized with `Plots.plot`.
 k1 = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 plot(k1; label="k1")
 k2 = knotvector"1231123"
-plot!(k2; label="k2", shift_y=0.5, ylims=(-0.1,1), xticks=0:10)
+plot!(k2; label="k2", offset=0.5, ylims=(-0.1,1), xticks=0:10)
 savefig("knotvector.png") # hide
 nothing # hide
 ```
@@ -60,13 +60,13 @@ nothing # hide
 ```@example math_knotvector
 k1 = knotvector"1 2 1 11 2 31"
 k2 = knotvector"113 1 12 2 32 1  1"
-plot(k1; shift_y=-0.0, label="k1", xticks=1:18, yticks=nothing, legend=:right)
-plot!(k2; shift_y=-0.2, label="k2")
-plot!(k1+k2; shift_y=-0.4, label="k1+k2")
-plot!(2k1; shift_y=-0.6, label="2k1")
-plot!(unique(k1); shift_y=-0.8, label="unique(k1)")
-plot!(unique(k2); shift_y=-1.0, label="unique(k2)")
-plot!(unique(k1+k2); shift_y=-1.2, label="unique(k1+k2)")
+plot(k1; offset=-0.0, label="k1", xticks=1:18, yticks=nothing, legend=:right)
+plot!(k2; offset=-0.2, label="k2")
+plot!(k1+k2; offset=-0.4, label="k1+k2")
+plot!(2k1; offset=-0.6, label="2k1")
+plot!(unique(k1); offset=-0.8, label="unique(k1)")
+plot!(unique(k2); offset=-1.0, label="unique(k2)")
+plot!(unique(k1+k2); offset=-1.2, label="unique(k1+k2)")
 savefig("knotvector_operations.png") # hide
 nothing # hide
 ```
