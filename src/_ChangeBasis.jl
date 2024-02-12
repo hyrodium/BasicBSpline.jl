@@ -823,6 +823,12 @@ function _changebasis_R(P::BSplineSpace, dP′::BSplineDerivativeSpace{0})
     return _changebasis_R(P, P′)
 end
 
+@doc raw"""
+    changebasis(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
+
+Return `changebasis_R(P, P′)` if ``P ⊆ P′``, otherwise `changebasis_R(P, P′)` if ``P ⊑ P′``.
+Throw an error if ``P ⊈ P′`` and ``P ⋢ P′``.
+"""
 function changebasis(P::AbstractFunctionSpace, P′::AbstractFunctionSpace)
     P ⊆ P′ && return _changebasis_R(P, P′)
     P ⊑ P′ && return _changebasis_I(P, P′)
