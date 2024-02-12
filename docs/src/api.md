@@ -32,6 +32,13 @@ unbounded_mapping
 RationalBSplineManifold
 fittingcontrolpoints
 refinement
+Base.issubset(P::BSplineSpace{p}, P′::BSplineSpace{p′}) where {p, p′}
+changebasis_R
+changebasis_I
+issqsubset
+expandspace
+expandspace_R
+expandspace_I
 ```
 
 ```@docs

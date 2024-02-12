@@ -8,7 +8,7 @@ using StaticArrays
 using Plots
 ```
 
-## Intro
+## Theorem
 
 !!! info "Thm.  Inclusive relation between B-spline spaces"
     For non-degenerate B-spline spaces, the following relationship holds.
@@ -17,10 +17,6 @@ using Plots
     \subseteq \mathcal{P}[p',k']
     \Leftrightarrow (m=p'-p \ge 0 \ \text{and} \ k+m\widehat{k}\subseteq k')
     ```
-
-```@docs
-Base.issubset(P::BSplineSpace{p}, P′::BSplineSpace{p′}) where {p, p′}
-```
 
 Here are plots of the B-spline basis functions of the spaces `P1`, `P2`, `P3`.
 
@@ -76,28 +72,4 @@ nothing # hide
 
 ```@raw html
 <object type="text/html" data="../subbsplineplot2.html" style="width:100%;height:420px;"></object>
-```
-
-```@docs
-changebasis_R
-```
-
-```@docs
-changebasis_I
-```
-
-```@docs
-issqsubset
-```
-
-```@docs
-expandspace
-```
-
-```@docs
-expandspace_R
-```
-
-```@docs
-expandspace_I
 ```
