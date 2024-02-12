@@ -7,7 +7,7 @@ Order   = [:type, :function, :macro]
 ```
 
 ## BasicBSplineFitting.jl
-```@docs
+```@autodocs
 Modules = [BasicBSplineFitting]
 Order   = [:type, :function, :macro]
 ```
