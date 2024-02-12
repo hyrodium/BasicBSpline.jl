@@ -38,16 +38,16 @@ If you have any thoughts, please comment in:
 * [JuliaPackageComparisons](https://juliapackagecomparisons.github.io/pages/bspline/)
 
 ## Installation
-Install this package
+Install this package via Julia REPL's package mode.
 
-```julia
+```
 ]add BasicBSpline
 ```
 
 ## Quick start
 ### B-spline basis function
 
-The value of B-spline basis function $B_{(i,p,k)}$ can be obtained with `bsplinebasis₊₀`. ([example in Desmos](https://www.desmos.com/calculator/ql6jqgdabs))
+The value of B-spline basis function $B_{(i,p,k)}$ can be obtained with `bsplinebasis₊₀`.
 
 $$
 \begin{aligned}
@@ -65,6 +65,19 @@ $$
 $$
 
 ```julia
+julia> using BasicBSpline
+
+julia> P3 = BSplineSpace{3}(KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]))
+BSplineSpace{3, Float64, KnotVector{Float64}}(KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]))
+
+julia> bsplinebasis₊₀(P3, 2, 7.5)
+0.13786213786213783
+```
+
+BasicBSpline.jl has many recipes based on [RecipesBase.jl](https://docs.juliaplots.org/dev/RecipesBase/), and `BSplineSpace` object can be visualized with its basis functions.
+([Try B-spline basis functions in Desmos](https://www.desmos.com/calculator/ql6jqgdabs))
+
+```julia
 using BasicBSpline
 using Plots
 
@@ -73,15 +86,16 @@ P0 = BSplineSpace{0}(k) # 0th degree piecewise polynomial space
 P1 = BSplineSpace{1}(k) # 1st degree piecewise polynomial space
 P2 = BSplineSpace{2}(k) # 2nd degree piecewise polynomial space
 P3 = BSplineSpace{3}(k) # 3rd degree piecewise polynomial space
+
+gr()
 plot(
-    plot([t->bsplinebasis₊₀(P0,i,t) for i in 1:dim(P0)], 0, 10, ylims=(0,1), legend=false),
-    plot([t->bsplinebasis₊₀(P1,i,t) for i in 1:dim(P1)], 0, 10, ylims=(0,1), legend=false),
-    plot([t->bsplinebasis₊₀(P2,i,t) for i in 1:dim(P2)], 0, 10, ylims=(0,1), legend=false),
-    plot([t->bsplinebasis₊₀(P3,i,t) for i in 1:dim(P3)], 0, 10, ylims=(0,1), legend=false),
+    plot(P0; ylims=(0,1), label="P0"),
+    plot(P1; ylims=(0,1), label="P1"),
+    plot(P2; ylims=(0,1), label="P2"),
+    plot(P3; ylims=(0,1), label="P3"),
     layout=(2,2),
 )
 ```
-
 ![](docs/src/img/cover.png)
 
 You can visualize the differentiability of B-spline basis function. See [Differentiability and knot duplications](https://hyrodium.github.io/BasicBSpline.jl/dev/math/bsplinebasis/#Differentiability-and-knot-duplications) for details.
@@ -91,45 +105,78 @@ https://github.com/hyrodium/BasicBSpline.jl/assets/7488140/034cf6d0-62ea-44e0-a0
 ### B-spline manifold
 ```julia
 using BasicBSpline
-using BasicBSplineExporter
 using StaticArrays
+using Plots
 
+## 1-dim B-spline manifold
 p = 2 # degree of polynomial
-k1 = KnotVector(1:8)     # knot vector
-k2 = KnotVector(rand(7))+(p+1)*KnotVector([1])
-P1 = BSplineSpace{p}(k1) # B-spline space
-P2 = BSplineSpace{p}(k2)
-n1 = dim(P1) # dimension of B-spline space
-n2 = dim(P2)
-a = [SVector(2i-6.5+rand(),1.5j-6.5+rand()) for i in 1:dim(P1), j in 1:dim(P2)] # random generated control points
-M = BSplineManifold(a,(P1,P2)) # Define B-spline manifold
-save_png("2dim.png", M) # save image
+k = KnotVector(1:12) # knot vector
+P = BSplineSpace{p}(k) # B-spline space
+a = [SVector(i-5, 3*sin(i^2)) for i in 1:dim(P)] # control points
+M = BSplineManifold(a, P) # Define B-spline manifold
+gr(); plot(M)
 ```
-![](docs/src/img/2dim.png)
+![](docs/src/img/bspline_curve.png)
+
+### Rational B-spline manifold (NURBS)
+
+```julia
+using BasicBSpline
+using LinearAlgebra
+using StaticArrays
+using Plots
+plotly()
+
+R1 = 3  # major radius of torus
+R2 = 1  # minor radius of torus
+
+p = 2
+k = KnotVector([0,0,0,1,1,2,2,3,3,4,4,4])
+P = BSplineSpace{p}(k)
+a = [normalize(SVector(cosd(t), sind(t)), Inf) for t in 0:45:360]
+w = [ifelse(isodd(i), √2, 1) for i in 1:9]
+
+a0 = push.(a, 0)
+a1 = (R1+R2)*a0
+a5 = (R1-R2)*a0
+a2 = [p+R2*SVector(0,0,1) for p in a1]
+a3 = [p+R2*SVector(0,0,1) for p in R1*a0]
+a4 = [p+R2*SVector(0,0,1) for p in a5]
+a6 = [p-R2*SVector(0,0,1) for p in a5]
+a7 = [p-R2*SVector(0,0,1) for p in R1*a0]
+a8 = [p-R2*SVector(0,0,1) for p in a1]
+
+M = RationalBSplineManifold(hcat(a1,a2,a3,a4,a5,a6,a7,a8,a1), w*w', P, P)
+plot(M; controlpoints=(markersize=2,))
+```
+![](docs/src/img/rational_bspline_surface_plotly.png)
 
 ### Refinement
 #### h-refinement
 ```julia
-k₊=(KnotVector([3.3,4.2]),KnotVector([0.3,0.5])) # additional knot vectors
+k₊ = (KnotVector([3.1, 3.2, 3.3]), KnotVector([0.5, 0.8, 0.9])) # additional knot vectors
 M_h = refinement(M, k₊) # refinement of B-spline manifold
-save_png("2dim_h-refinement.png", M_h) # save image
+plot(M_h; controlpoints=(markersize=2,))
 ```
-![](docs/src/img/2dim_h-refinement.png)
+![](docs/src/img/rational_bspline_surface_href_plotly.png)
 
 Note that this shape and the last shape are equivalent.
 
 #### p-refinement
 ```julia
-p₊=(Val(1),Val(2)) # additional degrees
+p₊ = (Val(1), Val(2)) # additional degrees
 M_p = refinement(M, p₊) # refinement of B-spline manifold
-save_png("2dim_p-refinement.png", M_p) # save image
+plot(M_p; controlpoints=(markersize=2,))
 ```
-![](docs/src/img/2dim_p-refinement.png)
+![](docs/src/img/rational_bspline_surface_pref_plotly.png)
 
 Note that this shape and the last shape are equivalent.
 
 ### Fitting B-spline manifold
-[Try on Desmos graphing calculator!](https://www.desmos.com/calculator/2hm3b1fbdf)
+The next example shows the fitting for [the following graph on Desmos graphing calculator](https://www.desmos.com/calculator/2hm3b1fbdf)!
+
+![](docs/src/img/fitting_desmos.png)
+
 ```julia
 using BasicBSplineFitting
 
@@ -144,9 +191,9 @@ f(u1, u2) = SVector(2u1 + sin(u1) + cos(u2) + u2 / 2, 3u2 + sin(u2) + sin(u1) / 
 
 a = fittingcontrolpoints(f, (P1, P2))
 M = BSplineManifold(a, (P1, P2))
-save_png("fitting.png", M, unitlength=50, xlims=(-10,10), ylims=(-10,10))
+gr()
+plot(M; aspectratio=1)
 ```
-![](docs/src/img/fitting_desmos.png)
 ![](docs/src/img/fitting.png)
 
 If the knot vector span is too coarse, the approximation will be coarse.
@@ -162,22 +209,25 @@ f(u1, u2) = SVector(2u1 + sin(u1) + cos(u2) + u2 / 2, 3u2 + sin(u2) + sin(u1) / 
 
 a = fittingcontrolpoints(f, (P1, P2))
 M = BSplineManifold(a, (P1, P2))
-save_png("fitting_coarse.png", M, unitlength=50, xlims=(-10,10), ylims=(-10,10))
+plot(M; aspectratio=1)
 ```
 ![](docs/src/img/fitting_coarse.png)
 
 ### Draw smooth vector graphics
 ```julia
+using BasicBSpline
+using BasicBSplineFitting
+using BasicBSplineExporter
 p = 3
-k = KnotVector(range(-2π,2π,length=8))+p*KnotVector(-2π,2π)
+k = KnotVector(range(-2π,2π,length=8))+p*KnotVector([-2π,2π])
 P = BSplineSpace{p}(k)
 
 f(u) = SVector(u,sin(u))
 
 a = fittingcontrolpoints(f, P)
 M = BSplineManifold(a, P)
-save_svg("sine-curve.svg", M, unitlength=50, xlims=(-2,2), ylims=(-8,8))
-save_svg("sine-curve_no-points.svg", M, unitlength=50, xlims=(-2,2), ylims=(-8,8), points=false)
+save_svg("sine-curve.svg", M, unitlength=50, xlims=(-8,8), ylims=(-2,2))
+save_svg("sine-curve_no-points.svg", M, unitlength=50, xlims=(-8,8), ylims=(-2,2), points=false)
 ```
 ![](docs/src/img/sine-curve.svg)
 ![](docs/src/img/sine-curve_no-points.svg)
