@@ -39,6 +39,11 @@ issqsubset
 expandspace
 expandspace_R
 expandspace_I
+BSplineDerivativeSpace
+BasicBSpline.derivative
+bsplinebasis′₊₀
+bsplinebasis′₋₀
+bsplinebasis′
 ```
 
 ```@docs
