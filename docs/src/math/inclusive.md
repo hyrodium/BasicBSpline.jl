@@ -68,13 +68,13 @@ Here are plots of the B-spline basis functions of the spaces `P1`, `P2`, `P3`.
 
 ```@example math_inclusive
 P1 = BSplineSpace{1}(KnotVector([1,3,6,6]))  # Save definition as above
-P4 = BSplineSpace{1}(KnotVector([1,3,5,6,7]))
+P4 = BSplineSpace{1}(KnotVector([1,3,5,7,8]))
 P5 = BSplineSpace{2}(KnotVector([1,1,3,3,6,6,7,9]))
 plotly()
 plot(
-    plot(P1; ylims=(0,1), legend=false),
-    plot(P4; ylims=(0,1), legend=false),
-    plot(P5; ylims=(0,1), legend=false),
+    plot(P1; ylims=(0,1), label="P1"),
+    plot(P4; ylims=(0,1), label="P4"),
+    plot(P5; ylims=(0,1), label="P5"),
     layout=(3,1),
     link=:x
 )
@@ -128,6 +128,27 @@ nothing # hide
 
 ```@raw html
 <object type="text/html" data="../inclusive-issubset-matrix.html" style="width:100%;height:420px;"></object>
+```
+
+```@repl math_inclusive
+A14 = changebasis(P1,P4)
+A15 = changebasis(P1,P5)
+```
+
+```@example math_inclusive
+plot(
+    plot([t->bsplinebasis₊₀(P1,i,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
+    plot([t->sum(A14[i,j]*bsplinebasis₊₀(P4,j,t) for j in 1:dim(P4)) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
+    plot([t->sum(A15[i,j]*bsplinebasis₊₀(P5,j,t) for j in 1:dim(P5)) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
+    layout=(3,1),
+    link=:x
+)
+savefig("inclusive-issqsubset-matrix.html") # hide
+nothing # hide
+```
+
+```@raw html
+<object type="text/html" data="../inclusive-issqsubset-matrix.html" style="width:100%;height:420px;"></object>
 ```
 
 ## Expand spaces with additional knots or polynomial degree
