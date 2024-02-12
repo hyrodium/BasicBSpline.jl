@@ -54,7 +54,7 @@
         pl = plot(P1, label="P1", color=:red)
         plot!(P2, label="P2", color=:green)
         plot!(knotvector(P1), label="k1", gap_y=0.01, color=:red)
-        plot!(knotvector(P2); label="k2", gap_y=0.01, shift_y=-0.03, color=:green)
+        plot!(knotvector(P2); label="k2", gap_y=0.01, offset=-0.03, color=:green)
 
         path_img = joinpath(dir_out, "bspline_spaces_and_their_knotvectors.png")
         @test !isfile(path_img)
