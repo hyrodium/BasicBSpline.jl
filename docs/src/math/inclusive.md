@@ -1,10 +1,14 @@
 # Inclusive relation between B-spline spaces
 
-```@setup math
+## Setup
+
+```@example math_inclusive
 using BasicBSpline
 using StaticArrays
 using Plots
 ```
+
+## Intro
 
 !!! info "Thm.  Inclusive relation between B-spline spaces"
     For non-degenerate B-spline spaces, the following relationship holds.
@@ -20,7 +24,7 @@ Base.issubset(P::BSplineSpace{p}, P′::BSplineSpace{p′}) where {p, p′}
 
 Here are plots of the B-spline basis functions of the spaces `P1`, `P2`, `P3`.
 
-```@repl math
+```@example math_inclusive
 P1 = BSplineSpace{1}(KnotVector([1,3,5,8]))
 P2 = BSplineSpace{1}(KnotVector([1,3,5,6,8,9]))
 P3 = BSplineSpace{2}(KnotVector([1,1,3,3,5,5,8,8]))
@@ -58,7 +62,7 @@ A12 = changebasis(P1,P2)
 A13 = changebasis(P1,P3)
 ```
 
-```@repl math
+```@example math_inclusive
 plot(
     plot([t->bsplinebasis₊₀(P1,i,t) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),
     plot([t->sum(A12[i,j]*bsplinebasis₊₀(P2,j,t) for j in 1:dim(P2)) for i in 1:dim(P1)], 1, 9, ylims=(0,1), legend=false),

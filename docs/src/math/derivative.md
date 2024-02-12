@@ -1,6 +1,6 @@
 # Derivative of B-spline
 
-```@setup math
+```@example math_derivative
 using BasicBSpline
 using StaticArrays
 using Plots
@@ -17,7 +17,7 @@ using Plots
     ```
     Note that ``\dot{B}_{(i,p,k)}\in\mathcal{P}[p-1,k]``.
 
-```@example math
+```@example math_derivative
 k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 P = BSplineSpace{3}(k)
 plotly()
