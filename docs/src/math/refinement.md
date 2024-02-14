@@ -27,8 +27,8 @@ nothing # hide
 
 ![](refinement_2dim_original.png)
 
-### h-refinement
-Insert additional knots to knot vector without changing the shape.
+### h-refinement (knot insertion)
+Insert additional knots to knot vectors without changing the shape.
 
 ```@repl math_refinement
 k₊ = (KnotVector([3.3,4.2]), KnotVector([3.8,3.2,5.3])) # additional knot vectors
@@ -40,8 +40,8 @@ nothing # hide
 
 ![](refinement_2dim_h.png)
 
-### p-refinement
-Increase the polynomial degree of B-spline manifold without changing the shape.
+### p-refinement (degree elevation)
+Increase the polynomial degrees of B-spline manifold without changing the shape.
 
 ```@repl math_refinement
 p₊ = (Val(1), Val(2)) # additional degrees
