@@ -6,6 +6,7 @@ using InteractiveUtils
 using Plots
 using Random
 
+ENV["GKSwstype"] = "100"
 gr()
 plotly()
 Random.seed!(42)
