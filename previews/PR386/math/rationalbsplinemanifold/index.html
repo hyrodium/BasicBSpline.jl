@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Rational B-spline manifold · BasicBSpline.jl</title><meta name="title" content="Rational B-spline manifold · BasicBSpline.jl"/><meta property="og:title" content="Rational B-spline manifold · BasicBSpline.jl"/><meta property="twitter:title" content="Rational B-spline manifold · BasicBSpline.jl"/><meta name="description" content="Documentation for BasicBSpline.jl."/><meta property="og:description" content="Documentation for BasicBSpline.jl."/><meta property="twitter:description" content="Documentation for BasicBSpline.jl."/><meta property="og:url" content="https://hyrodium.github.io/BasicBSpline.jl/math/rationalbsplinemanifold/"/><meta property="twitter:url" content="https://hyrodium.github.io/BasicBSpline.jl/math/rationalbsplinemanifold/"/><link rel="canonical" href="https://hyrodium.github.io/BasicBSpline.jl/math/rationalbsplinemanifold/"/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/><link href="../../assets/custom.css" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img class="docs-light-only" src="../../assets/logo.svg" alt="BasicBSpline.jl logo"/><img class="docs-dark-only" src="../../assets/logo-dark.svg" alt="BasicBSpline.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">BasicBSpline.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><span class="tocitem">Mathematical properties of B-spline</span><ul><li><a class="tocitem" href="../introduction/">Introduction</a></li><li><a class="tocitem" href="../knotvector/">Knot vector</a></li><li><a class="tocitem" href="../bsplinespace/">B-spline space</a></li><li><a class="tocitem" href="../bsplinebasis/">B-spline basis function</a></li><li><a class="tocitem" href="../bsplinemanifold/">B-spline manifold</a></li><li class="is-active"><a class="tocitem" href>Rational B-spline manifold</a><ul class="internal"><li><a class="tocitem" href="#Setup"><span>Setup</span></a></li><li><a class="tocitem" href="#Definition"><span>Definition</span></a></li><li><a class="tocitem" href="#Visualization-with-projection"><span>Visualization with projection</span></a></li><li><a class="tocitem" href="#Conic-sections"><span>Conic sections</span></a></li></ul></li><li><a class="tocitem" href="../inclusive/">Inclusive relationship</a></li><li><a class="tocitem" href="../refinement/">Refinement</a></li><li><a class="tocitem" href="../derivative/">Derivative</a></li><li><a class="tocitem" href="../fitting/">Fitting</a></li></ul></li><li><span class="tocitem">Visualization</span><ul><li><a class="tocitem" href="../../visualization/plotlyjs/">PlotlyJS.jl</a></li><li><a class="tocitem" href="../../visualization/basicbsplineexporter/">BasicBSplineExporter.jl</a></li></ul></li><li><a class="tocitem" href="../../interpolations/">Interpolations</a></li><li><a class="tocitem" href="../../api/">API</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Mathematical properties of B-spline</a></li><li class="is-active"><a href>Rational B-spline manifold</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Rational B-spline manifold</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/hyrodium/BasicBSpline.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/hyrodium/BasicBSpline.jl/blob/main/docs/src/math/rationalbsplinemanifold.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Rational-B-spline-manifold"><a class="docs-heading-anchor" href="#Rational-B-spline-manifold">Rational B-spline manifold</a><a id="Rational-B-spline-manifold-1"></a><a class="docs-heading-anchor-permalink" href="#Rational-B-spline-manifold" title="Permalink"></a></h1><h2 id="Setup"><a class="docs-heading-anchor" href="#Setup">Setup</a><a id="Setup-1"></a><a class="docs-heading-anchor-permalink" href="#Setup" title="Permalink"></a></h2><pre><code class="language-julia hljs">using BasicBSpline
+using StaticArrays
+using LinearAlgebra
+using Plots</code></pre><p><a href="https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline">Non-uniform rational basis spline (NURBS)</a> is also supported in BasicBSpline.jl package.</p><h2 id="Definition"><a class="docs-heading-anchor" href="#Definition">Definition</a><a id="Definition-1"></a><a class="docs-heading-anchor-permalink" href="#Definition" title="Permalink"></a></h2><p>Rational B-spline manifold is a parametric representation of a shape.</p><div class="admonition is-success"><header class="admonition-header">Def.  Rational B-spline manifold</header><div class="admonition-body"><p>For given <span>$d$</span>-dimensional B-spline basis functions <span>$B_{(i^1,p^1,k^1)} \otimes \cdots \otimes B_{(i^d,p^d,k^d)}$</span>, given points <span>$\bm{a}_{i^1 \dots i^d} \in V$</span> and real numbers <span>$w_{i^1 \dots i^d} &gt; 0$</span>, rational B-spline manifold is defined by the following equality:</p><p class="math-container">\[\bm{p}(t^1,\dots,t^d; \bm{a}_{i^1 \dots i^d}, w_{i^1 \dots i^d})
+=\sum_{i^1,\dots,i^d}
+\frac{(B_{(i^1,p^1,k^1)} \otimes \cdots \otimes B_{(i^d,p^d,k^d)})(t^1,\dots,t^d) w_{i^1 \dots i^d}}
+{\sum\limits_{j^1,\dots,j^d}(B_{(j^1,p^1,k^1)} \otimes \cdots \otimes B_{(j^d,p^d,k^d)})(t^1,\dots,t^d) w_{j^1 \dots j^d}}
+\bm{a}_{i^1 \dots i^d}\]</p><p>Where <span>$\bm{a}_{i^1,\dots,i^d}$</span> are called <strong>control points</strong>, and <span>$w_{i^1 \dots i^d}$</span> are called <strong>weights</strong>.</p></div></div><h2 id="Visualization-with-projection"><a class="docs-heading-anchor" href="#Visualization-with-projection">Visualization with projection</a><a id="Visualization-with-projection-1"></a><a class="docs-heading-anchor-permalink" href="#Visualization-with-projection" title="Permalink"></a></h2><p>A rational B-spline manifold in <span>$\mathbb{R}^d$</span> can be understanded as a projected B-spline manifold in <span>$\mathbb{R}^{d+1}$</span>. The next visuallzation this projection.</p><pre><code class="language-julia hljs"># Define B-spline space
+k = KnotVector([0.0, 1.5, 2.5, 5.0, 5.5, 8.0, 9.0, 9.5, 10.0])
+P = BSplineSpace{3}(k)
+
+# Define geometric parameters
+a2 = [
+    SVector(-0.65, -0.20),
+    SVector(-0.20, +0.65),
+    SVector(-0.05, -0.10),
+    SVector(+0.75, +0.20),
+    SVector(+0.45, -0.65),
+]
+a3 = [SVector(p...,1) for p in a2]
+w = [2.2, 1.3, 1.9, 2.1, 1.5]
+
+# Define (rational) B-spline manifolds
+R2 = RationalBSplineManifold(a2,w,(P,))
+M3 = BSplineManifold(a3.*w,(P))
+R3 = RationalBSplineManifold(a3,w,(P,))
+
+# Plot
+plotly()
+pl2 = plot(R2, xlims=(-1,1), ylims=(-1,1); color=:blue, linewidth=3, aspectratio=1, label=false)
+pl3 = plot(R3; color=:blue, linewidth=3, controlpoints=(markersize=2,), label=&quot;Rational B-spline curve&quot;)
+plot!(pl3, M3; color=:red, linewidth=3, controlpoints=(markersize=2,), label=&quot;B-spline curve&quot;)
+for p in a3.*w
+    plot!(pl3, [0,p[1]], [0,p[2]], [0,p[3]], color=:black, linestyle=:dash, label=false)
+end
+for t in range(domain(P), length=51)
+    p = M3(t)
+    plot!(pl3, [0,p[1]], [0,p[2]], [0,p[3]], color=:red, linestyle=:dash, label=false)
+end
+surface!(pl3, [-1,1], [-1,1], ones(2,2); color=:green, colorbar=false, alpha=0.5)
+plot(pl2, pl3; layout=grid(1,2, widths=[0.35, 0.65]), size=(780,500))</code></pre><object type="text/html" data="../rational_bspline_manifold_projection.html" style="width:100%;height:520px;"></object><h2 id="Conic-sections"><a class="docs-heading-anchor" href="#Conic-sections">Conic sections</a><a id="Conic-sections-1"></a><a class="docs-heading-anchor-permalink" href="#Conic-sections" title="Permalink"></a></h2><p>One of the great aspect of rational B-spline manifolds is exact shape representation of circles. This is achieved as conic sections.</p><h3 id="Arc"><a class="docs-heading-anchor" href="#Arc">Arc</a><a id="Arc-1"></a><a class="docs-heading-anchor-permalink" href="#Arc" title="Permalink"></a></h3><pre><code class="language-julia hljs">gr()
+p = 2
+k = KnotVector([0,0,0,1,1,1])
+P = BSplineSpace{p}(k)
+t = 1  # angle in radians
+a = [SVector(1,0), SVector(1,tan(t/2)), SVector(cos(t),sin(t))]
+w = [1,cos(t/2),1]
+M = RationalBSplineManifold(a,w,P)
+plot([cosd(t) for t in 0:360], [sind(t) for t in 0:360]; xlims=(-1.1,1.1), ylims=(-1.1,1.1), aspectratio=1, label=&quot;circle&quot;, color=:gray, linestyle=:dash)
+plot!(M; label=&quot;Rational B-spline curve&quot;)</code></pre><p><img src="../geometricmodeling-arc.png" alt/></p><h3 id="Circle"><a class="docs-heading-anchor" href="#Circle">Circle</a><a id="Circle-1"></a><a class="docs-heading-anchor-permalink" href="#Circle" title="Permalink"></a></h3><pre><code class="language-julia hljs">gr()
+p = 2
+k = KnotVector([0,0,0,1,1,2,2,3,3,4,4,4])
+P = BSplineSpace{p}(k)
+a = [normalize(SVector(cosd(t), sind(t)), Inf) for t in 0:45:360]
+w = [ifelse(isodd(i), √2, 1) for i in 1:9]
+M = RationalBSplineManifold(a,w,P)
+plot(M, xlims=(-1.2,1.2), ylims=(-1.2,1.2), aspectratio=1)</code></pre><p><img src="../geometricmodeling-circle.png" alt/></p><h3 id="Torus"><a class="docs-heading-anchor" href="#Torus">Torus</a><a id="Torus-1"></a><a class="docs-heading-anchor-permalink" href="#Torus" title="Permalink"></a></h3><pre><code class="language-julia hljs">plotly()
+R1 = 3
+R2 = 1
+
+A = push.(a, 0)
+
+a1 = (R1+R2)*A
+a5 = (R1-R2)*A
+a2 = [p+R2*SVector(0,0,1) for p in a1]
+a3 = [p+R2*SVector(0,0,1) for p in R1*A]
+a4 = [p+R2*SVector(0,0,1) for p in a5]
+a6 = [p-R2*SVector(0,0,1) for p in a5]
+a7 = [p-R2*SVector(0,0,1) for p in R1*A]
+a8 = [p-R2*SVector(0,0,1) for p in a1]
+
+a = hcat(a1,a2,a3,a4,a5,a6,a7,a8,a1)
+M = RationalBSplineManifold(a,w*w&#39;,P,P)
+plot(M)</code></pre><object type="text/html" data="../geometricmodeling-torus.html" style="width:100%;height:420px;"></object></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../bsplinemanifold/">« B-spline manifold</a><a class="docs-footer-nextpage" href="../inclusive/">Inclusive relationship »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.2.1 on <span class="colophon-date" title="Wednesday 14 February 2024 09:15">Wednesday 14 February 2024</span>. Using Julia version 1.10.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
