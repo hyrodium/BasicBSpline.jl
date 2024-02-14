@@ -152,7 +152,9 @@ plot(M; controlpoints=(markersize=2,))
 ![](docs/src/img/rational_bspline_surface_plotly.png)
 
 ### Refinement
-#### h-refinement
+#### h-refinement (knot insertion)
+Insert additional knots to knot vectors without changing the shape.
+
 ```julia
 k₊ = (KnotVector([3.1, 3.2, 3.3]), KnotVector([0.5, 0.8, 0.9])) # additional knot vectors
 M_h = refinement(M, k₊) # refinement of B-spline manifold
@@ -160,17 +162,15 @@ plot(M_h; controlpoints=(markersize=2,))
 ```
 ![](docs/src/img/rational_bspline_surface_href_plotly.png)
 
-Note that this shape and the last shape are equivalent.
+#### p-refinement (degree elevation)
+Increase the polynomial degrees of B-spline manifold without changing the shape.
 
-#### p-refinement
 ```julia
 p₊ = (Val(1), Val(2)) # additional degrees
 M_p = refinement(M, p₊) # refinement of B-spline manifold
 plot(M_p; controlpoints=(markersize=2,))
 ```
 ![](docs/src/img/rational_bspline_surface_pref_plotly.png)
-
-Note that this shape and the last shape are equivalent.
 
 ### Fitting B-spline manifold
 The next example shows the fitting for [the following graph on Desmos graphing calculator](https://www.desmos.com/calculator/2hm3b1fbdf)!
