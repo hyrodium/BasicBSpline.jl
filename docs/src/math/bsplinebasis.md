@@ -83,6 +83,8 @@ In these cases, each B-spline basis function ``B_{(i,2,k)}`` is coninuous, so [`
     \operatorname{supp}(B_{(i,p,k)})=[k_{i},k_{i+p+1}]
     ```
 
+[`bsplinesupport`](@ref) returns this interval set.
+
 ```@example math_bsplinebasis
 p = 2
 k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
@@ -100,6 +102,40 @@ nothing # hide
 ```
 
 ![](bsplinesupport.png)
+
+[`bsplinesupport_R`](@ref) is the same as [`bsplinesupport`](@ref).
+
+```@example math_bsplinebasis
+pl = plot(; yticks=nothing, legend=nothing, size=(600,150))
+for i in 1:dim(P)
+    plot!(pl, bsplinesupport_R(P,i); offset=-i/10, linewidth=3, markersize=5, ylims=(-(dim(P)+1)/10, 1/10))
+end
+plot!(pl, k; color=:black)
+savefig("bsplinesupport_R.png") # hide
+nothing # hide
+```
+
+![](bsplinesupport_R.png)
+
+However, [`bsplinesupport_I`](@ref) is different from [`bsplinesupport`](@ref).
+It returns ``[k_i,k_{i+p}] \cap [k_{1+p},k_{l-p}]`` instead.
+
+```@example math_bsplinebasis
+pl = plot(; yticks=nothing, legend=nothing, size=(600,150))
+for i in 1:dim(P)
+    plot!(pl, bsplinesupport_I(P,i); offset=-i/10, linewidth=3, markersize=5, ylims=(-(dim(P)+1)/10, 1/10))
+end
+plot!(pl, k; color=:black)
+savefig("bsplinesupport_I.png") # hide
+nothing # hide
+```
+
+![](bsplinesupport_I.png)
+
+```@repl math_bsplinebasis
+bsplinesupport(P,1), bsplinesupport_R(P,1), bsplinesupport_I(P,1)
+bsplinesupport(P,4), bsplinesupport_R(P,4), bsplinesupport_I(P,4)
+```
 
 ## Partition of unity
 !!! info "Thm.  Partition of unity"
