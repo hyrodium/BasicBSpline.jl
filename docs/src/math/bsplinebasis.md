@@ -268,7 +268,7 @@ for p in 1:3
     plot!(t->intervalindex(P,t),0,10, label="Interval index")
     plot!(t->sum(bsplinebasis(P,i,t) for i in 1:dim(P)),0,10, label="Sum of B-spline basis")
     plot!(domain(P); label="domain")
-    plot!(k; label="knot vector", offset=-0.1)
+    plot!(k; label="knot vector")
     plot!([t->bsplinebasisall(P,1,t)[i] for i in 1:p+1],0,10, color=:black, label="bsplinebasisall (i=1)", ylim=(-1,8-2p))
     savefig("bsplinebasisall-$(p).html") # hide
     nothing # hide
