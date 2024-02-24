@@ -134,7 +134,7 @@ nothing # hide
 
 ```@repl math_bsplinebasis
 bsplinesupport(P,1), bsplinesupport_R(P,1), bsplinesupport_I(P,1)
-bsplinesupport(P,4), bsplinesupport_R(P,4), bsplinesupport_I(P,4)
+bsplinesupport(P,3), bsplinesupport_R(P,3), bsplinesupport_I(P,3)
 ```
 
 ## Partition of unity
