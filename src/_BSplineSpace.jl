@@ -368,6 +368,57 @@ KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
 julia> P = BSplineSpace{2}(k)
 BSplineSpace{2, Float64, KnotVector{Float64}}(KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]))
 
+julia> bsplinesupport_R(P,1)
+0.0 .. 5.5
+
+julia> bsplinesupport_R(P,2)
+1.5 .. 8.0
+```
+"""
+function bsplinesupport_R(P::BSplineSpace{p}, i::Integer) where p
+    k = knotvector(P)
+    return k[i]..k[i+p+1]
+end
+
+@doc raw"""
+Return the support of ``i``-th B-spline basis function.
+```math
+\operatorname{supp}(B_{(i,p,k)}|_I)=[k_{i},k_{i+p+1}] \cap I \qquad (I = [k_{1+p}, k_{l-p}])
+```
+
+# Examples
+```jldoctest
+julia> k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
+KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
+
+julia> P = BSplineSpace{2}(k)
+BSplineSpace{2, Float64, KnotVector{Float64}}(KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]))
+
+julia> bsplinesupport_I(P,1)
+2.5 .. 5.5
+
+julia> bsplinesupport_I(P,2)
+2.5 .. 8.0
+```
+"""
+function bsplinesupport_I(P::BSplineSpace{p}, i::Integer) where p
+    return bsplinesupport_R(P,i) ∩ domain(P)
+end
+
+@doc raw"""
+Return the support of ``i``-th B-spline basis function.
+```math
+\operatorname{supp}(B_{(i,p,k)})=[k_{i},k_{i+p+1}]
+```
+
+# Examples
+```jldoctest
+julia> k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
+KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
+
+julia> P = BSplineSpace{2}(k)
+BSplineSpace{2, Float64, KnotVector{Float64}}(KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0]))
+
 julia> bsplinesupport(P,1)
 0.0 .. 5.5
 
@@ -375,16 +426,7 @@ julia> bsplinesupport(P,2)
 1.5 .. 8.0
 ```
 """
-bsplinesupport(P::BSplineSpace, i::Integer) = bsplinesupport_R(P,i)
-
-function bsplinesupport_R(P::BSplineSpace{p}, i::Integer) where p
-    k = knotvector(P)
-    return k[i]..k[i+p+1]
-end
-
-function bsplinesupport_I(P::BSplineSpace{p}, i::Integer) where p
-    return bsplinesupport_R(P,i) ∩ domain(P)
-end
+const bsplinesupport = bsplinesupport_R
 
 @doc raw"""
 Internal methods for obtaining a B-spline space with one degree lower.

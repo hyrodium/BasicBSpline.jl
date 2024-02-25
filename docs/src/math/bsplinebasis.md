@@ -83,7 +83,59 @@ In these cases, each B-spline basis function ``B_{(i,2,k)}`` is coninuous, so [`
     \operatorname{supp}(B_{(i,p,k)})=[k_{i},k_{i+p+1}]
     ```
 
-[TODO: fig]
+[`bsplinesupport`](@ref) returns this interval set.
+
+```@example math_bsplinebasis
+p = 2
+k = KnotVector([0.0, 1.5, 2.5, 5.5, 8.0, 9.0, 9.5, 10.0])
+P = BSplineSpace{p}(k)
+
+pl1 = plot([t->bsplinebasis₋₀(P,i,t) for i in 1:dim(P)], 0, 10, ylims=(0,1), label=false)
+pl2 = plot(; yticks=nothing, legend=nothing)
+for i in 1:dim(P)
+    plot!(pl2, bsplinesupport(P,i); offset=-i/10, linewidth=3, markersize=5, ylims=(-(dim(P)+1)/10, 1/10))
+end
+plot!(pl2, k; color=:black)
+plot(pl1, pl2; layout=grid(2, 1, heights=[0.8 ,0.2]), link=:x)
+savefig("bsplinesupport.png") # hide
+nothing # hide
+```
+
+![](bsplinesupport.png)
+
+[`bsplinesupport_R`](@ref) is the same as [`bsplinesupport`](@ref).
+
+```@example math_bsplinebasis
+pl = plot(; yticks=nothing, legend=nothing, size=(600,150))
+for i in 1:dim(P)
+    plot!(pl, bsplinesupport_R(P,i); offset=-i/10, linewidth=3, markersize=5, ylims=(-(dim(P)+1)/10, 1/10))
+end
+plot!(pl, k; color=:black)
+savefig("bsplinesupport_R.png") # hide
+nothing # hide
+```
+
+![](bsplinesupport_R.png)
+
+However, [`bsplinesupport_I`](@ref) is different from [`bsplinesupport`](@ref).
+It returns ``[k_i,k_{i+p}] \cap [k_{1+p},k_{l-p}]`` instead.
+
+```@example math_bsplinebasis
+pl = plot(; yticks=nothing, legend=nothing, size=(600,150))
+for i in 1:dim(P)
+    plot!(pl, bsplinesupport_I(P,i); offset=-i/10, linewidth=3, markersize=5, ylims=(-(dim(P)+1)/10, 1/10))
+end
+plot!(pl, k; color=:black)
+savefig("bsplinesupport_I.png") # hide
+nothing # hide
+```
+
+![](bsplinesupport_I.png)
+
+```@repl math_bsplinebasis
+bsplinesupport(P,1), bsplinesupport_R(P,1), bsplinesupport_I(P,1)
+bsplinesupport(P,3), bsplinesupport_R(P,3), bsplinesupport_I(P,3)
+```
 
 ## Partition of unity
 !!! info "Thm.  Partition of unity"
@@ -251,7 +303,8 @@ for p in 1:3
     plot(P, legend=:topleft, label="B-spline basis (p=1)")
     plot!(t->intervalindex(P,t),0,10, label="Interval index")
     plot!(t->sum(bsplinebasis(P,i,t) for i in 1:dim(P)),0,10, label="Sum of B-spline basis")
-    plot!(k, label="knot vector")
+    plot!(domain(P); label="domain")
+    plot!(k; label="knot vector")
     plot!([t->bsplinebasisall(P,1,t)[i] for i in 1:p+1],0,10, color=:black, label="bsplinebasisall (i=1)", ylim=(-1,8-2p))
     savefig("bsplinebasisall-$(p).html") # hide
     nothing # hide
