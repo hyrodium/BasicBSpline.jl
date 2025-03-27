@@ -33,16 +33,16 @@ julia> norm(M(0.3))
 1.0
 ```
 """
-struct RationalBSplineManifold{Dim,Deg,C,W,T,S<:NTuple{Dim, BSplineSpace}} <: AbstractManifold{Dim}
+struct RationalBSplineManifold{Dim,Deg,C,W<:Real,T,S<:NTuple{Dim, BSplineSpace}} <: AbstractManifold{Dim}
     controlpoints::Array{C,Dim}
     weights::Array{W,Dim}
     bsplinespaces::S
-    function RationalBSplineManifold{Dim,Deg,C,W,T,S}(a::Array{C,Dim},w::Array{W,Dim},P::S) where {S<:NTuple{Dim, BSplineSpace{p,T} where p},C,W} where {Dim, Deg, T}
+    function RationalBSplineManifold{Dim,Deg,C,W,T,S}(a::Array{C,Dim},w::Array{W,Dim},P::S) where {S<:NTuple{Dim, BSplineSpace{p,T} where p},C,W<:Real} where {Dim, Deg, T}
         new{Dim,Deg,C,W,T,S}(a,w,P)
     end
 end
 
-function RationalBSplineManifold(a::Array{C,Dim},w::Array{W,Dim},P::S) where {S<:Tuple{BSplineSpace{p,T} where p, Vararg{BSplineSpace{p,T} where p}}} where {Dim, T, C, W}
+function RationalBSplineManifold(a::Array{C,Dim},w::Array{W,Dim},P::S) where {S<:Tuple{BSplineSpace{p,T} where p, Vararg{BSplineSpace{p,T} where p}}} where {Dim, T, C, W<:Real}
     if size(a) != dim.(P)
         msg = "The size of control points array $(size(a)) and dimensions of B-spline spaces $(dim.(P)) must be equal."
         throw(DimensionMismatch(msg))
@@ -55,7 +55,7 @@ function RationalBSplineManifold(a::Array{C,Dim},w::Array{W,Dim},P::S) where {S<
     return RationalBSplineManifold{Dim,Deg,C,W,T,S}(a, w, P)
 end
 
-function RationalBSplineManifold(a::Array{C,Dim},w::Array{W,Dim},P::S) where {S<:NTuple{Dim, BSplineSpace{p,T} where {p,T}},C,W} where {Dim}
+function RationalBSplineManifold(a::Array{C,Dim},w::Array{W,Dim},P::S) where {S<:NTuple{Dim, BSplineSpace{p,T} where {p,T}},C,W<:Real} where {Dim}
     P′ = _promote_knottype(P)
     return RationalBSplineManifold(a, w, P′)
 end
