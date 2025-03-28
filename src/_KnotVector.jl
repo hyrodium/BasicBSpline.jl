@@ -233,7 +233,7 @@ function Base.:+(k1::KnotVector{T}, k2::KnotVector{T}) where T
             end
         end
     end
-    return BasicBSpline.unsafe_knotvector(T,v)
+    return unsafe_knotvector(T,v)
 end
 Base.:+(k1::AbstractKnotVector{T1}, k2::AbstractKnotVector{T2}) where {T1, T2} = +(promote(k1,k2)...)
 Base.:+(k1::UniformKnotVector{T1},k2::UniformKnotVector{T2}) where {T1,T2} = KnotVector{promote_type(T1,T2)}([k1.vector;k2.vector])
