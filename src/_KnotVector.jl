@@ -465,6 +465,34 @@ macro knotvector_str(s)
     return sum(KnotVector(findall(==('0'+i), s))*i for i in 1:9)
 end
 
+"""
+    knotvector(values, counts) -> KnotVector
+
+Construct a knotvector by specifying the numbers of duplicates of knots.
+
+# Examples
+```jldoctest
+julia> knotvector([1, 2, 3, 4, 5], [1, 1, 1, 1, 1])
+KnotVector([1, 2, 3, 4, 5])
+
+julia> knotvector([1, 2, 3], [1, 2, 3])
+KnotVector([1, 2, 2, 3, 3, 3])
+
+julia> knotvector([2, 4, 6], [2, 2, 2])
+KnotVector([2, 2, 4, 4, 6, 6])
+
+julia> knotvector([6], [1])
+KnotVector([6])
+"""
+function knotvector(values::AbstractVector{T}, counts::AbstractVector{<:Integer}) where {T<:Real}
+    length(values) == length(counts) || throw(DomainError(values, "The number of values and counts must be the same."))
+    v = Vector{T}(undef, sum(counts))
+    for i in eachindex(counts)
+        v[sum(counts[1:i-1])+1:sum(counts[1:i])] .= values[i]
+    end
+    return KnotVector(v)
+end
+
 function Base.hash(k::AbstractKnotVector, h::UInt)
     hash(AbstractKnotVector, hash(_vec(k), h))
 end
