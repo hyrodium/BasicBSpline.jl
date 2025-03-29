@@ -263,3 +263,14 @@ end
     a = controlpoints(M)
     return a[]
 end
+
+function clamp(M::AbstractManifold)
+    Ps = bsplinespaces(M)
+    Ps′ = clamp.(Ps)
+    return refinement_I(M, Ps′)
+end
+
+function isclamped(M::AbstractManifold)
+    Ps = bsplinespaces(M)
+    return all(isclamped, Ps)
+end
