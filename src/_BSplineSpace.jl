@@ -67,6 +67,8 @@ Base.iterate(::AbstractFunctionSpace, ::Any) = nothing
 @inline Base.:(==)(P1::BSplineSpace{p}, P2::BSplineSpace{p}) where p = knotvector(P1) == knotvector(P2)
 @inline Base.:(==)(P1::BSplineSpace{p1}, P2::BSplineSpace{p2}) where {p1, p2} = false
 
+Base.copy(P::BSplineSpace{p}) where p = BSplineSpace{p}(copy(P.knotvector))
+
 bsplinespace(P::BSplineSpace) = P
 
 @inline function degree(::BSplineSpace{p}) where p
