@@ -420,7 +420,9 @@ refinement(M::BSplineManifold{0, Deg, C, T, S} where {Deg, C, T, S<:Tuple{}}, ::
 refinement(M::RationalBSplineManifold{0, Deg, C, W, T, S} where {Deg, C, W, T, S<:Tuple{}}, ::Tuple{}) = M
 
 function expand_domain(M::RationalBSplineManifold{2}, Δt::Real)
-    BasicBSpline.isclamped(M) || M = clamp(M)
+    if BasicBSpline.isclamped(M)
+        M = clamp(M)
+    end
     P1,P2 = bsplinespaces(M)
     P1′,P2′ = expand_domain(P1,Δt), expand_domain(P2,Δt)
     P1′′,P2′′ = P1+P1′,P2+P2′
