@@ -67,6 +67,8 @@ Base.iterate(::AbstractFunctionSpace, ::Any) = nothing
 @inline Base.:(==)(P1::BSplineSpace{p}, P2::BSplineSpace{p}) where p = knotvector(P1) == knotvector(P2)
 @inline Base.:(==)(P1::BSplineSpace{p1}, P2::BSplineSpace{p2}) where {p1, p2} = false
 
+Base.copy(P::BSplineSpace{p}) where p = BSplineSpace{p}(copy(P.knotvector))
+
 bsplinespace(P::BSplineSpace) = P
 
 @inline function degree(::BSplineSpace{p}) where p
@@ -604,4 +606,35 @@ end
 function Base.hash(P::BSplineSpace{p}, h::UInt) where p
     k = knotvector(P)
     hash(BSplineSpace{p}, hash(_vec(k), h))
+end
+
+function clamp!(P::BSplineSpace{p, T, <:KnotVector}) where {p, T}
+    v = _vec(knotvector(P))
+    v[1:p] .= v[p+1]
+    v[end-p+1:end] .= v[end-p]
+    return P
+end
+function clamp(P::BSplineSpace{p, T, <:KnotVector}) where {p, T}
+    return clamp!(copy(P))
+end
+function clamp(P::BSplineSpace{p, T, <:UniformKnotVector}) where {p, T}
+    k = knotvector(P)
+    return clamp(BSplineSpace{p}(KnotVector(k)))
+end
+
+function isclamped(P::BSplineSpace{p}) where p
+    k = knotvector(P)
+    return k[1] == k[p+1] && k[end-p] == k[end]
+end
+
+function Base.:+(P1::BSplineSpace{p}, P2::BSplineSpace{p}) where {p}
+    return BSplineSpace{p}(knotvector(P1) ∪ knotvector(P2))
+end
+
+function expand_domain(P::BSplineSpace{p,T1}, Δt::T2) where {p,T1,T2}
+    U = promote_type(T1, T2)
+    v = Vector{U}(_vec(knotvector(P)))
+    v[1:p+1] .= v[p+1]-Δt
+    v[end-p:end] .= v[end-p]+Δt
+    return BSplineSpace{p}(KnotVector(v))
 end

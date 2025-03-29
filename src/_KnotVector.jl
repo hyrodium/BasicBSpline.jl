@@ -233,7 +233,7 @@ function Base.:+(k1::KnotVector{T}, k2::KnotVector{T}) where T
             end
         end
     end
-    return BasicBSpline.unsafe_knotvector(T,v)
+    return unsafe_knotvector(T,v)
 end
 Base.:+(k1::AbstractKnotVector{T1}, k2::AbstractKnotVector{T2}) where {T1, T2} = +(promote(k1,k2)...)
 Base.:+(k1::UniformKnotVector{T1},k2::UniformKnotVector{T2}) where {T1,T2} = KnotVector{promote_type(T1,T2)}([k1.vector;k2.vector])
@@ -463,6 +463,43 @@ KnotVector([6])
 """
 macro knotvector_str(s)
     return sum(KnotVector(findall(==('0'+i), s))*i for i in 1:9)
+end
+
+"""
+    knotvector(values, counts) -> KnotVector
+
+Construct a knotvector by specifying the numbers of duplicates of knots.
+
+# Examples
+```jldoctest
+julia> knotvector([1, 2, 3, 4, 5], [1, 1, 1, 1, 1])
+KnotVector([1, 2, 3, 4, 5])
+
+julia> knotvector([1, 2, 3], [1, 2, 3])
+KnotVector([1, 2, 2, 3, 3, 3])
+
+julia> knotvector([2, 4, 6], [2, 2, 2])
+KnotVector([2, 2, 4, 4, 6, 6])
+
+julia> knotvector([6], [1])
+KnotVector([6])
+"""
+function knotvector(values::AbstractVector{T}, counts::AbstractVector{<:Integer}) where {T<:Real}
+    length(values) == length(counts) || throw(DomainError(values, "The number of values and counts must be the same."))
+    v = Vector{T}(undef, sum(counts))
+    for i in eachindex(counts)
+        v[sum(counts[1:i-1])+1:sum(counts[1:i])] .= values[i]
+    end
+    return KnotVector(v)
+end
+
+function Base.union(k1::KnotVector, k2::KnotVector)
+    values = _vec(unique(k1+k2))
+    counts = [max(countknots(k1, v), countknots(k2, v)) for v in values]
+    return knotvector(values, counts)
+end
+function Base.union(k1::AbstractKnotVector, k2::AbstractKnotVector)
+    return union(KnotVector(k1), KnotVector(k2))
 end
 
 function Base.hash(k::AbstractKnotVector, h::UInt)

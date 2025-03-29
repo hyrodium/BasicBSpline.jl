@@ -62,6 +62,9 @@ end
 
 RationalBSplineManifold(a::Array{C,Dim},w::Array{T,Dim},Ps::Vararg{BSplineSpace, Dim}) where {C,Dim,T<:Real} = RationalBSplineManifold(a,w,Ps)
 
+RationalBSplineManifold(M::RationalBSplineManifold) = M
+RationalBSplineManifold(M::BSplineManifold) = RationalBSplineManifold(controlpoints(M), fill(1.0, size(controlpoints(M))), bsplinespaces(M))
+
 Base.:(==)(M1::RationalBSplineManifold, M2::RationalBSplineManifold) = (bsplinespaces(M1)==bsplinespaces(M2)) & (controlpoints(M1)==controlpoints(M2)) & (weights(M1)==weights(M2))
 
 function Base.hash(M::RationalBSplineManifold{0}, h::UInt)
