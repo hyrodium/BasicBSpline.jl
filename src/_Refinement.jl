@@ -418,3 +418,19 @@ refinement_I(M::RationalBSplineManifold{0, Deg, C, W, T, S} where {Deg, C, W, T,
 refinement(M::AbstractManifold{0}, ::Tuple{}) = M
 refinement(M::BSplineManifold{0, Deg, C, T, S} where {Deg, C, T, S<:Tuple{}}, ::Tuple{}) = M
 refinement(M::RationalBSplineManifold{0, Deg, C, W, T, S} where {Deg, C, W, T, S<:Tuple{}}, ::Tuple{}) = M
+
+function expand_domain(M::RationalBSplineManifold{2}, Δt::Real)
+    BasicBSpline.isclamped(M) || M = clamp(M)
+    P1,P2 = bsplinespaces(M)
+    P1′,P2′ = expand_domain(P1,Δt), expand_domain(P2,Δt)
+    P1′′,P2′′ = P1+P1′,P2+P2′
+    p1,p2 = degree(P1), degree(P2)
+    n1,n2 = dim(P1), dim(P2)
+    A1 = inv(Matrix(changebasis_I(P1′, P1′′)[:,begin+p1+1:end-p1-1]))
+    A2 = inv(Matrix(changebasis_I(P2′, P2′′)[:,begin+p2+1:end-p2-1]))
+    a = controlpoints(M)
+    w = weights(M)
+    w′ = [sum(A1[i1,j1]*A2[i2,j2]*w[i1,i2] for i1 in 1:n1, i2 in 1:n2) for j1 in 1:n1, j2 in 1:n2]
+    a′ = [sum(A1[i1,j1]*A2[i2,j2]*w[i1,i2]*a[i1,i2] for i1 in 1:n1, i2 in 1:n2) for j1 in 1:n1, j2 in 1:n2] ./ w′
+    return RationalBSplineManifold(a′,w′,(P1′,P2′))
+end

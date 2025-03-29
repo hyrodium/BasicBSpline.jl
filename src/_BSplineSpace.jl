@@ -626,3 +626,15 @@ function isclamped(P::BSplineSpace{p}) where p
     k = knotvector(P)
     return k[1] == k[p+1] && k[end-p] == k[end]
 end
+
+function Base.:+(P1::BSplineSpace{p}, P2::BSplineSpace{p}) where {p}
+    return BSplineSpace{p}(knotvector(P1) ∪ knotvector(P2))
+end
+
+function expand_domain(P::BSplineSpace{p,T1}, Δt::T2) where {p,T1,T2}
+    U = promote_type(T1, T2)
+    v = Vector{U}(_vec(knotvector(P)))
+    v[1:p+1] .= v[p+1]-Δt
+    v[end-p:end] .= v[end-p]+Δt
+    return BSplineSpace{p}(KnotVector(v))
+end
