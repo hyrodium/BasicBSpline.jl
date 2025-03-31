@@ -465,6 +465,10 @@ macro knotvector_str(s)
     return sum(KnotVector(findall(==('0'+i), s))*i for i in 1:9)
 end
 
+knotvector(k::AbstractKnotVector) = k
+knotvector(v::Vector{T}) where {T<:Real} = unsafe_knotvector(T,sort(v))
+knotvector(v::AbstractRange{T}) where {T<:Real} = unsafe_uniformknotvector(T,sort(v))
+
 """
     knotvector(values, counts) -> KnotVector
 
