@@ -412,6 +412,8 @@ _vec(k::UniformKnotVector) = k.vector
 _vec(k::SubKnotVector) = k.vector
 
 @doc raw"""
+    countknots(k::AbstractKnotVector, t::Real) -> Int
+
 For given knot vector ``k``, the following function ``\mathfrak{n}_k:\mathbb{R}\to\mathbb{Z}`` represents the number of knots that duplicate the knot vector ``k``.
 
 ```math
@@ -439,6 +441,36 @@ function countknots(k::AbstractKnotVector, t::Real)
 
     # for large case, this is faster
     return length(searchsorted(_vec(k), t, lt=<))
+end
+
+"""
+    countknots(k::AbstractKnotVector) -> Vector{Int}
+
+Count the duplicats of knots on the unique knot values.
+
+# Examples
+```jldoctest
+julia> k = knotvector"21 3"
+KnotVector([1, 1, 2, 4, 4, 4])
+
+julia> values = collect(unique(k))
+3-element Vector{Int64}:
+ 1
+ 2
+ 4
+
+julia> counts = countknots(k)
+3-element Vector{Int64}:
+ 2
+ 1
+ 3
+
+julia> knotvector(values, counts)  # Equal to `k`
+KnotVector([1, 1, 2, 4, 4, 4])
+```
+"""
+function countknots(k::AbstractKnotVector)
+    return [countknots(k,t) for t in unique(k)]
 end
 
 """
