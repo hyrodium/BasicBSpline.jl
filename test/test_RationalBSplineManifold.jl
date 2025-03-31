@@ -16,13 +16,23 @@
         # 0-dim
         a = fill(1.2)
         w = fill(4.2)
-        M = RationalBSplineManifold{0,(),Float64,Float64,Int,Tuple{}}(a, w, ())
-        N = RationalBSplineManifold{0,(),Float64,Float64,Int,Tuple{}}(copy(a), copy(w), ())
-        @test M == M
-        @test M == N
-        @test hash(M) == hash(M)
-        @test hash(M) == hash(N)
-        @test M() == 1.2
+        M1 = RationalBSplineManifold{0,(),Float64,Float64,Int,Tuple{}}(a, w, ())
+        M2 = RationalBSplineManifold{0,(),Float64,Float64,Int,Tuple{}}(copy(a), copy(w), ())
+        M3 = BSplineManifold{0,(),Float64,Int,Tuple{}}(a, ())
+        M4 = RationalBSplineManifold(M3)
+        @test M1 == M1
+        @test M2 == M2
+        @test M3 == M3
+        @test M4 == M4
+        @test M1 == M2 == RationalBSplineManifold(M1) == RationalBSplineManifold(M2)
+        @test hash(M1) == hash(M2) == hash(RationalBSplineManifold(M1)) == hash(RationalBSplineManifold(M2))
+        @test M3 ≠ M4 ≠ RationalBSplineManifold(M3) ≠ RationalBSplineManifold(M4)
+        @test hash(M3) ≠ hash(M4) ≠ hash(RationalBSplineManifold(M3)) ≠ hash(RationalBSplineManifold(M4))
+        @test M1() == 1.2
+        @test M2() == 1.2
+        @test M3() == 1.2
+        @test M4() == 1.2
+        @test all(isone.(weights(M4)))
 
         # 4-dim
         a = rand(dim(P1), dim(P2), dim(P3), dim(P3))
