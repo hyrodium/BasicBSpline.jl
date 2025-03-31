@@ -32,6 +32,9 @@
         @test knotvector" 2 2 2" == KnotVector([2, 2, 4, 4, 6, 6])
         @test knotvector"020202" == KnotVector([2, 2, 4, 4, 6, 6])
         @test knotvector"     1" == KnotVector([6])
+
+        @test knotvector(k1) == k1 == knotvector([1,2,3])
+        @test knotvector(k2) == k2 == knotvector([1,2,2,3])
     end
 
     @testset "eltype" begin

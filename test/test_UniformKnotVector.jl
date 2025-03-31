@@ -45,6 +45,12 @@
         @test KnotVector(k1) isa KnotVector{Int}
         @test KnotVector(k2) isa KnotVector{Int}
         @test KnotVector(k5) isa KnotVector{Float64}
+        @test knotvector(k1) === k1 === knotvector(1:1:3)
+        @test knotvector(k2) === k2 === knotvector(Base.OneTo(3))
+        @test knotvector(k3) === k3 === knotvector(1:4)
+        @test knotvector(k4) === k4 === knotvector(2:4)
+        @test knotvector(k5) === k5 === knotvector(2.0:4.0)
+        @test knotvector(k6) === k6 === knotvector(2.0:2.0:12.0)
     end
 
     @testset "eltype" begin

@@ -26,8 +26,8 @@
         @test M4 == M4
         @test M1 == M2 == RationalBSplineManifold(M1) == RationalBSplineManifold(M2)
         @test hash(M1) == hash(M2) == hash(RationalBSplineManifold(M1)) == hash(RationalBSplineManifold(M2))
-        @test M3 ≠ M4 ≠ RationalBSplineManifold(M3) ≠ RationalBSplineManifold(M4)
-        @test hash(M3) ≠ hash(M4) == hash(RationalBSplineManifold(M3)) == hash(RationalBSplineManifold(M4))
+        @test M3 ≠ M4 == RationalBSplineManifold(M4)
+        @test hash(M3) ≠ hash(M4) == hash(RationalBSplineManifold(M4))
         @test M1() == 1.2
         @test M2() == 1.2
         @test M3() == 1.2
