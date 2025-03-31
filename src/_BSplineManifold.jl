@@ -61,7 +61,7 @@ end
 
 BSplineManifold(a::Array{C,Dim},Ps::Vararg{BSplineSpace, Dim}) where {C,Dim} = BSplineManifold(a,Ps)
 
-Base.:(==)(M1::AbstractManifold, M2::AbstractManifold) = (bsplinespaces(M1)==bsplinespaces(M2)) & (controlpoints(M1)==controlpoints(M2))
+Base.:(==)(M1::BSplineManifold, M2::BSplineManifold) = (bsplinespaces(M1)==bsplinespaces(M2)) & (controlpoints(M1)==controlpoints(M2))
 
 bsplinespaces(M::BSplineManifold) = M.bsplinespaces
 controlpoints(M::BSplineManifold) = M.controlpoints
