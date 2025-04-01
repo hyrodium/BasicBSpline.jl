@@ -316,6 +316,25 @@ Base.lastindex(k::AbstractKnotVector) = length(k)
 
 Base.step(k::UniformKnotVector) = step(_vec(k))
 
+function _sorted_unique!(v::Vector)
+    isempty(v) && return v
+    y = first(v)
+    count = 1
+    for x in Iterators.drop(v, 1)
+        # Base.unique uses `isequal`, but we need `==`.
+        # https://github.com/JuliaLang/julia/blob/13311f324e850fefddfcdf43d6c93b9365e2cf46/base/set.jl#L426
+        if x != y
+            count += 1
+            y = v[count] = x
+        end
+    end
+    return resize!(v, count)
+end
+
+function _sorted_unique(v::Vector)
+    return _sorted_unique!(copy(v))
+end
+
 @doc raw"""
 Unique elements of knot vector.
 
@@ -339,10 +358,10 @@ KnotVector([1, 2, 3])
 """
 Base.unique(k::AbstractKnotVector)
 Base.unique(k::EmptyKnotVector) = k
-Base.unique(k::KnotVector{T}) where T = unsafe_knotvector(T, unique(k.vector))
-Base.unique!(k::KnotVector) = (unique!(k.vector); k)
-Base.unique(k::UniformKnotVector) = UniformKnotVector(unique(k.vector))
-Base.unique(k::SubKnotVector{T}) where T = unsafe_knotvector(T, unique(_vec(k)))
+Base.unique(k::KnotVector{T}) where T = unsafe_knotvector(T, _sorted_unique(k.vector))
+Base.unique!(k::KnotVector) = (_sorted_unique!(k.vector); k)
+Base.unique(k::UniformKnotVector) = UniformKnotVector(_sorted_unique(k.vector))
+Base.unique(k::SubKnotVector{T}) where T = unsafe_knotvector(T, _sorted_unique(_vec(k)))
 
 Base.iterate(k::AbstractKnotVector) = iterate(_vec(k))
 Base.iterate(k::AbstractKnotVector, i) = iterate(_vec(k), i)
