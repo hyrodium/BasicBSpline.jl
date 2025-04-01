@@ -94,46 +94,22 @@ function refinement_R(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSpl
     U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     A::NTuple{Dim, SparseMatrixCSC{U, Int32}} = changebasis_R.(bsplinespaces(M), P′)
     R::NTuple{Dim, Vector{UnitRange{Int64}}} = _i_ranges_R.(A, P′)
-    a::Array{C, Dim} = controlpoints(M)
-    J::CartesianIndex{Dim} = CartesianIndex(findfirst.(!isempty, R))
-    D::CartesianIndices{Dim, NTuple{Dim, UnitRange{Int64}}} = CartesianIndices(getindex.(R, J.I))
-    value = sum(*(getindex.(A, I.I, J.I)...) * a[I] for I in D)
-    j = prod(J.I)
-    a′ = __control_points(value, j, dim.(P′))
-    for J in view(CartesianIndices(UnitRange.(1, dim.(P′))), (j+1):prod(dim.(P′)))
-        if _isempty(R, J)
-            @inbounds a′[J] = zero(value)
-        else
-            D = CartesianIndices(getindex.(R, J.I))
-            @inbounds a′[J] = sum(*(getindex.(A, I.I, J.I)...) * a[I] for I in D)
-        end
-    end
-    return BSplineManifold(a′, P′)
+    return _refinement(M, P′, A, R)
 end
 function refinement_I(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where p′}) where {Dim, Deg, C, T, T′}
     U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     A::NTuple{Dim, SparseMatrixCSC{U, Int32}} = changebasis_I.(bsplinespaces(M), P′)
     R::NTuple{Dim, Vector{UnitRange{Int64}}} = _i_ranges_I.(A, P′)
-    a::Array{C, Dim} = controlpoints(M)
-    J::CartesianIndex{Dim} = CartesianIndex(findfirst.(!isempty, R))
-    D::CartesianIndices{Dim, NTuple{Dim, UnitRange{Int64}}} = CartesianIndices(getindex.(R, J.I))
-    value = sum(*(getindex.(A, I.I, J.I)...) * a[I] for I in D)
-    j = prod(J.I)
-    a′ = __control_points(value, j, dim.(P′))
-    for J in view(CartesianIndices(UnitRange.(1, dim.(P′))), (j+1):prod(dim.(P′)))
-        if _isempty(R, J)
-            @inbounds a′[J] = zero(value)
-        else
-            D = CartesianIndices(getindex.(R, J.I))
-            @inbounds a′[J] = sum(*(getindex.(A, I.I, J.I)...) * a[I] for I in D)
-        end
-    end
-    return BSplineManifold(a′, P′)
+    return _refinement(M, P′, A, R)
 end
 function refinement(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where p′}) where {Dim, Deg, C, T, T′}
     U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     A::NTuple{Dim, SparseMatrixCSC{U, Int32}} = changebasis.(bsplinespaces(M), P′)
     R::NTuple{Dim, Vector{UnitRange{Int64}}} = _i_ranges.(A, P′)
+    return _refinement(M, P′, A, R)
+end
+
+function _refinement(M::BSplineManifold{Dim, Deg, C, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where p′}, A::NTuple{Dim, SparseMatrixCSC{U, Int32}}, R::NTuple{Dim, Vector{UnitRange{Int64}}}) where {Dim, Deg, C, T, T′, U}
     a::Array{C, Dim} = controlpoints(M)
     J::CartesianIndex{Dim} = CartesianIndex(findfirst.(!isempty, R))
     D::CartesianIndices{Dim, NTuple{Dim, UnitRange{Int64}}} = CartesianIndices(getindex.(R, J.I))
@@ -155,62 +131,22 @@ function refinement_R(M::RationalBSplineManifold{Dim, Deg, C, W, T}, P′::NTupl
     U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     A::NTuple{Dim, SparseMatrixCSC{U, Int32}} = changebasis_R.(bsplinespaces(M), P′)
     R::NTuple{Dim, Vector{UnitRange{Int64}}} = _i_ranges_R.(A, P′)
-    a::Array{C, Dim} = controlpoints(M)
-    w::Array{W, Dim} = weights(M)
-    J::CartesianIndex{Dim} = CartesianIndex(findfirst.(!isempty, R))
-    D::CartesianIndices{Dim, NTuple{Dim, UnitRange{Int64}}} = CartesianIndices(getindex.(R, J.I))
-    value_w = sum(*(getindex.(A, I.I, J.I)...) * w[I] for I in D)
-    value_a = sum(*(getindex.(A, I.I, J.I)...) * w[I] * a[I] for I in D)
-    j = prod(J.I)
-    w′ = __control_points(value_w, j, dim.(P′))
-    a′ = __control_points(value_a, j, dim.(P′))
-    for J in view(CartesianIndices(UnitRange.(1, dim.(P′))), (j+1):prod(dim.(P′)))
-        if _isempty(R, J)
-            @inbounds w′[J] = zero(value_w)
-            @inbounds a′[J] = zero(value_a)
-        else
-            D = CartesianIndices(getindex.(R, J.I))
-            @inbounds w′[J] = sum(*(getindex.(A, I.I, J.I)...) * w[I] for I in D)
-            @inbounds a′[J] = sum(*(getindex.(A, I.I, J.I)...) * w[I] * a[I] for I in D)
-        end
-    end
-    nans = .!(iszero.(a′) .& iszero.(w′))
-    a′ ./= w′
-    a′ .*= nans
-    return RationalBSplineManifold(a′, w′, P′)
+    return _refinement(M, P′, A, R)
 end
 function refinement_I(M::RationalBSplineManifold{Dim, Deg, C, W, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where p′}) where {Dim, Deg, C, W, T, T′}
     U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     A::NTuple{Dim, SparseMatrixCSC{U, Int32}} = changebasis_I.(bsplinespaces(M), P′)
     R::NTuple{Dim, Vector{UnitRange{Int64}}} = _i_ranges_I.(A, P′)
-    a::Array{C, Dim} = controlpoints(M)
-    w::Array{W, Dim} = weights(M)
-    J::CartesianIndex{Dim} = CartesianIndex(findfirst.(!isempty, R))
-    D::CartesianIndices{Dim, NTuple{Dim, UnitRange{Int64}}} = CartesianIndices(getindex.(R, J.I))
-    value_w = sum(*(getindex.(A, I.I, J.I)...) * w[I] for I in D)
-    value_a = sum(*(getindex.(A, I.I, J.I)...) * w[I] * a[I] for I in D)
-    j = prod(J.I)
-    w′ = __control_points(value_w, j, dim.(P′))
-    a′ = __control_points(value_a, j, dim.(P′))
-    for J in view(CartesianIndices(UnitRange.(1, dim.(P′))), (j+1):prod(dim.(P′)))
-        if _isempty(R, J)
-            @inbounds w′[J] = zero(value_w)
-            @inbounds a′[J] = zero(value_a)
-        else
-            D = CartesianIndices(getindex.(R, J.I))
-            @inbounds w′[J] = sum(*(getindex.(A, I.I, J.I)...) * w[I] for I in D)
-            @inbounds a′[J] = sum(*(getindex.(A, I.I, J.I)...) * w[I] * a[I] for I in D)
-        end
-    end
-    nans = .!(iszero.(a′) .& iszero.(w′))
-    a′ ./= w′
-    a′ .*= nans
-    return RationalBSplineManifold(a′, w′, P′)
+    return _refinement(M, P′, A, R)
 end
 function refinement(M::RationalBSplineManifold{Dim, Deg, C, W, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where p′}) where {Dim, Deg, C, W, T, T′}
     U = StaticArrays.arithmetic_closure(promote_type(T,T′))
     A::NTuple{Dim, SparseMatrixCSC{U, Int32}} = changebasis.(bsplinespaces(M), P′)
     R::NTuple{Dim, Vector{UnitRange{Int64}}} = _i_ranges.(A, P′)
+    return _refinement(M, P′, A, R)
+end
+
+function _refinement(M::RationalBSplineManifold{Dim, Deg, C, W, T}, P′::NTuple{Dim, BSplineSpace{p′,T′} where p′}, A::NTuple{Dim, SparseMatrixCSC{U, Int32}}, R::NTuple{Dim, Vector{UnitRange{Int64}}}) where {Dim, Deg, C, W, T, T′, U}
     a::Array{C, Dim} = controlpoints(M)
     w::Array{W, Dim} = weights(M)
     J::CartesianIndex{Dim} = CartesianIndex(findfirst.(!isempty, R))
