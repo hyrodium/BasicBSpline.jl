@@ -579,14 +579,20 @@ function Base.union(k1::KnotVector, k2::KnotVector)
     counts = [max(countknots(k1, v), countknots(k2, v)) for v in values]
     return knotvector(values, counts)
 end
-function Base.union(::EmptyKnotVector, k::AbstractKnotVector)
-    return copy(k)
-end
-function Base.union(k::AbstractKnotVector, ::EmptyKnotVector)
-    return copy(k)
-end
-function Base.union(k1::AbstractKnotVector, k2::AbstractKnotVector)
+function Base.union(k1::AbstractKnotVector{T1}, k2::AbstractKnotVector{T2}) where {T1,T2}
     return union(KnotVector(k1), KnotVector(k2))
+end
+function Base.union(::EmptyKnotVector{T1}, k::AbstractKnotVector{T2}) where {T1,T2}
+    U = promote_type(T1,T2)
+    return AbstractKnotVector{U}(k)
+end
+function Base.union(k::AbstractKnotVector{T1}, ::EmptyKnotVector{T2}) where {T1,T2}
+    U = promote_type(T1,T2)
+    return AbstractKnotVector{U}(k)
+end
+function Base.union(::EmptyKnotVector{T1}, ::EmptyKnotVector{T2}) where {T1,T2}
+    U = promote_type(T1,T2)
+    return EmptyKnotVector{U}()
 end
 
 function Base.hash(k::AbstractKnotVector, h::UInt)
