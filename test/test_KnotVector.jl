@@ -250,6 +250,7 @@
         @test countknots(k, 0.3) == 0
         @test countknots(k, 1.0) == 1
         @test countknots(k, 2.0) == 2
+        @test countknots(k) == [1,2,1]
         @test 1 ∈ k
         @test 1.5 ∉ k
 
@@ -257,5 +258,6 @@
         @test countknots(k,0) == 3
         @test countknots(k,0.0) == 3
         @test countknots(k,-0.0) == 3
+        @test countknots(k) == [1,1,3,1,1]
     end
 end
