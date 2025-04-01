@@ -223,7 +223,7 @@ N = 10
 c=2/√3
 f(t) = ifelse(t>0, exp(-1/t), 0.0)
 g(t) = 1 - f(c*t) / (f(c*t) + f(c-c*t))
-h(t) = clamp(1 - f((1-t)/2) / f(1/2), 0, 1)
+h(t) = Base.clamp(1 - f((1-t)/2) / f(1/2), 0, 1)
 
 # Default knot vector
 v = 10*(1:N-1)/N + randn(N-1)*0.5
