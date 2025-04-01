@@ -1,12 +1,11 @@
 @testset "UniformKnotVector" begin
-    k1 = UniformKnotVector(1:1:3)
-    k2 = UniformKnotVector(Base.OneTo(3))
-    k3 = UniformKnotVector(1:4)
-    k4 = UniformKnotVector(2:4)
-    k5 = UniformKnotVector(2.0:4.0)
-    k6 = UniformKnotVector(2.0:2.0:12.0)
 
     @testset "equality" begin
+        k1 = UniformKnotVector(1:1:3)
+        k2 = UniformKnotVector(Base.OneTo(3))
+        k3 = UniformKnotVector(1:4)
+        k4 = UniformKnotVector(2:4)
+        k5 = UniformKnotVector(2.0:4.0)
         @test k1 == k1
         @test k1 == k2
         @test k2 != k3
@@ -27,6 +26,12 @@
     end
 
     @testset "constructor, conversion" begin
+        k1 = UniformKnotVector(1:1:3)
+        k2 = UniformKnotVector(Base.OneTo(3))
+        k3 = UniformKnotVector(1:4)
+        k4 = UniformKnotVector(2:4)
+        k5 = UniformKnotVector(2.0:4.0)
+        k6 = UniformKnotVector(2.0:2.0:12.0)
         @test k1 isa UniformKnotVector{Int,StepRange{Int,Int}}
         @test k2 isa UniformKnotVector{Int,Base.OneTo{Int}}
         @test k3 isa UniformKnotVector{Int,UnitRange{Int}}
@@ -62,12 +67,21 @@
     end
 
     @testset "length" begin
+        k2 = UniformKnotVector(Base.OneTo(3))
+        k3 = UniformKnotVector(1:4)
+        k4 = UniformKnotVector(2:4)
         @test length(k2) == 3
         @test length(k3) == 4
         @test length(k4) == 3
     end
 
     @testset "step" begin
+        k1 = UniformKnotVector(1:1:3)
+        k2 = UniformKnotVector(Base.OneTo(3))
+        k3 = UniformKnotVector(1:4)
+        k4 = UniformKnotVector(2:4)
+        k5 = UniformKnotVector(2.0:4.0)
+        k6 = UniformKnotVector(2.0:2.0:12.0)
         step(k1) == 1
         step(k2) == 1
         step(k3) == 1
@@ -77,6 +91,11 @@
     end
 
     @testset "iterator, getindex" begin
+        k1 = UniformKnotVector(1:1:3)
+        k2 = UniformKnotVector(Base.OneTo(3))
+        k3 = UniformKnotVector(1:4)
+        k4 = UniformKnotVector(2:4)
+        k5 = UniformKnotVector(2.0:4.0)
         for t in k2
             @test t in k3
         end
@@ -94,12 +113,17 @@
     end
 
     @testset "addition, multiply" begin
+        k2 = UniformKnotVector(Base.OneTo(3))
+        k3 = UniformKnotVector(1:4)
+        k4 = UniformKnotVector(2:4)
         @test k2 + k3 == KnotVector(k2) + KnotVector(k3)
         @test k2 + k4 == KnotVector(k2) + KnotVector(k4)
         @test 2 * k2 == k2 * 2 == k2 + k2
     end
 
     @testset "zeros" begin
+        k1 = UniformKnotVector(1:1:3)
+        k5 = UniformKnotVector(2.0:4.0)
         @test_throws MethodError zero(UniformKnotVector)
         @test_throws MethodError zeros(UniformKnotVector,3)
         @test zero(k1) isa EmptyKnotVector{Int}
@@ -111,12 +135,21 @@
     end
 
     @testset "unique" begin
+        k1 = UniformKnotVector(1:1:3)
+        k2 = UniformKnotVector(Base.OneTo(3))
+        k3 = UniformKnotVector(1:4)
+        k4 = UniformKnotVector(2:4)
+        @test unique(k1) == k1
         @test unique(k2) == k2
         @test unique(k3) == k3
         @test unique(k4) == k4
     end
 
     @testset "inclusive relation" begin
+        k1 = UniformKnotVector(1:1:3)
+        k2 = UniformKnotVector(Base.OneTo(3))
+        k3 = UniformKnotVector(1:4)
+        k4 = UniformKnotVector(2:4)
         @test k1 == k2
         @test k1 ⊆ k2
         @test k2 ⊆ k1
@@ -167,6 +200,7 @@
     end
 
     @testset "other operators" begin
+        k2 = UniformKnotVector(Base.OneTo(3))
         @test countknots(k2, 0.3) == 0
         @test countknots(k2, 1) == 1
         @test countknots(k2, 1.0) == 1
