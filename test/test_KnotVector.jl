@@ -35,6 +35,12 @@
 
         @test knotvector(k1) == k1 == knotvector([1,2,3])
         @test knotvector(k2) == k2 == knotvector([1,2,2,3])
+
+        # values, counts
+        @test knotvector([1, 2, 3, 4, 5], [1, 1, 1, 1, 1]) == KnotVector([1, 2, 3, 4, 5])
+        @test knotvector([1, 2, 3], [1, 2, 3]) == KnotVector([1, 2, 2, 3, 3, 3])
+        @test knotvector([2, 4, 6], [2, 2, 2]) == KnotVector([2, 2, 4, 4, 6, 6])
+        @test knotvector([6], [1]) == KnotVector([6])
     end
 
     @testset "eltype" begin

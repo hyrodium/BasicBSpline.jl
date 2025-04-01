@@ -131,6 +131,27 @@
         @test k2 ⊈ KnotVector(k4)
     end
 
+    @testset "union" begin
+        k1 = knotvector(0:2:8)
+        k2 = knotvector(1:2:9)
+        k3 = knotvector(0:1:9)
+        @test k1 ∪ k2 == k3
+        @test k1 ⊆ k1 ∪ k2
+        @test k2 ⊆ k1 ∪ k2
+
+        @test k1 ∪ k1 == k1
+        @test k2 ∪ k2 == k2
+        @test k3 ∪ k3 == k3
+
+        @test k1 ∪ k2 isa KnotVector{Int}
+        @test k1 ∪ k1 isa KnotVector{Int}
+        @test k2 ∪ k2 isa KnotVector{Int}
+        @test k3 ∪ k3 isa KnotVector{Int}
+
+        @test k1 ∪ EmptyKnotVector() === k1
+        @test EmptyKnotVector() ∪ k1 === k1
+    end
+
     @testset "float" begin
         k = UniformKnotVector(1:3)
         @test float(k) isa UniformKnotVector{Float64}
