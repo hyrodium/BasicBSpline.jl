@@ -32,6 +32,15 @@
         @test knotvector" 2 2 2" == KnotVector([2, 2, 4, 4, 6, 6])
         @test knotvector"020202" == KnotVector([2, 2, 4, 4, 6, 6])
         @test knotvector"     1" == KnotVector([6])
+
+        @test knotvector(k1) == k1 == knotvector([1,2,3])
+        @test knotvector(k2) == k2 == knotvector([1,2,2,3])
+
+        # values, counts
+        @test knotvector([1, 2, 3, 4, 5], [1, 1, 1, 1, 1]) == KnotVector([1, 2, 3, 4, 5])
+        @test knotvector([1, 2, 3], [1, 2, 3]) == KnotVector([1, 2, 2, 3, 3, 3])
+        @test knotvector([2, 4, 6], [2, 2, 2]) == KnotVector([2, 2, 4, 4, 6, 6])
+        @test knotvector([6], [1]) == KnotVector([6])
     end
 
     @testset "eltype" begin
@@ -198,6 +207,19 @@
         @test k6 ⊆ k7 ⊆ k8 ⊆ k5
     end
 
+    @testset "union" begin
+        k1 = knotvector"12 3 1"
+        k2 = knotvector" 1 412"
+        k3 = knotvector"12 412"
+        @test k1 ∪ k2 == k3
+        @test k1 ⊆ k1 ∪ k2
+        @test k2 ⊆ k1 ∪ k2
+
+        @test k1 ∪ k1 == k1
+        @test k2 ∪ k2 == k2
+        @test k3 ∪ k3 == k3
+    end
+
     @testset "string" begin
         k = KnotVector([1,2,2,3])
         @test string(k) == "KnotVector([1, 2, 2, 3])"
@@ -234,6 +256,7 @@
         @test countknots(k, 0.3) == 0
         @test countknots(k, 1.0) == 1
         @test countknots(k, 2.0) == 2
+        @test countknots(k) == [1,2,1]
         @test 1 ∈ k
         @test 1.5 ∉ k
 
@@ -241,5 +264,6 @@
         @test countknots(k,0) == 3
         @test countknots(k,0.0) == 3
         @test countknots(k,-0.0) == 3
+        @test countknots(k) == [1,1,3,1,1]
     end
 end

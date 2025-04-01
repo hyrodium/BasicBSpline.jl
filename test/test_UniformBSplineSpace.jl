@@ -3,8 +3,7 @@
         k1 = UniformKnotVector(1:8)
         P1 = BSplineSpace{2}(KnotVector(k1))
         P1′ = BSplineSpace{2}(k1)
-        # @test P1 === BSplineSpace{2}(P1)
-        # @test P1 === BSplineSpace{2,Int}(P1)
+        @test P1 === BSplineSpace{2}(P1)
         @test P1 === BSplineSpace{2,Int}(P1)
         @test bsplinesupport(P1, 2) == bsplinesupport(P1′, 2) == 2..5
         @test dim(P1) == dim(P1′) == 5

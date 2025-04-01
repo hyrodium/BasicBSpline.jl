@@ -120,17 +120,17 @@ KnotVector{T}(k::AbstractKnotVector) where T = unsafe_knotvector(T,_vec(k))
 
 Base.convert(T::Type{<:AbstractKnotVector}, k::AbstractKnotVector) = T(k)
 function Base.convert(::Type{UniformKnotVector{T,R}},k::UniformKnotVector) where {T,R}
-    UniformKnotVector{T,R}(k)
+    return UniformKnotVector{T,R}(k)
 end
 
 function Base.promote_rule(::Type{KnotVector{T}}, ::Type{KnotVector{S}}) where {T,S}
-    KnotVector{promote_type(T,S)}
+    return KnotVector{promote_type(T,S)}
 end
 function Base.promote_rule(::Type{KnotVector{T}}, ::Type{UniformKnotVector{S,R}}) where {T,S,R}
-    KnotVector{promote_type(T,S)}
+    return KnotVector{promote_type(T,S)}
 end
 function Base.promote_rule(::Type{KnotVector{T1}}, ::Type{SubKnotVector{T2,S2}}) where {T1,T2,S2}
-    KnotVector{promote_type(T1,T2)}
+    return KnotVector{promote_type(T1,T2)}
 end
 
 
@@ -233,7 +233,7 @@ function Base.:+(k1::KnotVector{T}, k2::KnotVector{T}) where T
             end
         end
     end
-    return BasicBSpline.unsafe_knotvector(T,v)
+    return unsafe_knotvector(T,v)
 end
 Base.:+(k1::AbstractKnotVector{T1}, k2::AbstractKnotVector{T2}) where {T1, T2} = +(promote(k1,k2)...)
 Base.:+(k1::UniformKnotVector{T1},k2::UniformKnotVector{T2}) where {T1,T2} = KnotVector{promote_type(T1,T2)}([k1.vector;k2.vector])
@@ -316,6 +316,28 @@ Base.lastindex(k::AbstractKnotVector) = length(k)
 
 Base.step(k::UniformKnotVector) = step(_vec(k))
 
+function _sorted_unique!(v::Vector)
+    isempty(v) && return v
+    y = first(v)
+    count = 1
+    for x in Iterators.drop(v, 1)
+        # Base.unique uses `isequal`, but we need `==`.
+        # https://github.com/JuliaLang/julia/blob/13311f324e850fefddfcdf43d6c93b9365e2cf46/base/set.jl#L426
+        if x != y
+            count += 1
+            y = v[count] = x
+        end
+    end
+    return resize!(v, count)
+end
+
+function _sorted_unique(v::AbstractVector)
+    return _sorted_unique!(copy(v))
+end
+function _sorted_unique(v::AbstractRange)
+    return sort(v)
+end
+
 @doc raw"""
 Unique elements of knot vector.
 
@@ -339,10 +361,10 @@ KnotVector([1, 2, 3])
 """
 Base.unique(k::AbstractKnotVector)
 Base.unique(k::EmptyKnotVector) = k
-Base.unique(k::KnotVector{T}) where T = unsafe_knotvector(T, unique(k.vector))
-Base.unique!(k::KnotVector) = (unique!(k.vector); k)
-Base.unique(k::UniformKnotVector) = UniformKnotVector(unique(k.vector))
-Base.unique(k::SubKnotVector{T}) where T = unsafe_knotvector(T, unique(_vec(k)))
+Base.unique(k::KnotVector{T}) where T = unsafe_knotvector(T, _sorted_unique(k.vector))
+Base.unique!(k::KnotVector) = (_sorted_unique!(k.vector); k)
+Base.unique(k::UniformKnotVector) = UniformKnotVector(_sorted_unique(k.vector))
+Base.unique(k::SubKnotVector{T}) where T = unsafe_knotvector(T, _sorted_unique(_vec(k)))
 
 Base.iterate(k::AbstractKnotVector) = iterate(_vec(k))
 Base.iterate(k::AbstractKnotVector, i) = iterate(_vec(k), i)
@@ -384,17 +406,17 @@ function Base.issubset(k::KnotVector, k′::KnotVector)
 end
 
 function Base.issubset(k::AbstractKnotVector, k′::AbstractKnotVector)
-    issubset(KnotVector(k),KnotVector(k′))
+    return issubset(KnotVector(k),KnotVector(k′))
 end
 
 Base.:⊊(A::AbstractKnotVector, B::AbstractKnotVector) = (A ≠ B) & (A ⊆ B)
 Base.:⊋(A::AbstractKnotVector, B::AbstractKnotVector) = (A ≠ B) & (A ⊇ B)
 
 function Base.float(k::KnotVector{T}) where T
-    KnotVector(float(_vec(k)))
+    return KnotVector(float(_vec(k)))
 end
 function Base.float(k::UniformKnotVector)
-    UniformKnotVector(float(_vec(k)))
+    return UniformKnotVector(float(_vec(k)))
 end
 
 Base.view(k::UniformKnotVector{T},inds) where T = unsafe_uniformknotvector(T, view(_vec(k), inds))
@@ -412,6 +434,8 @@ _vec(k::UniformKnotVector) = k.vector
 _vec(k::SubKnotVector) = k.vector
 
 @doc raw"""
+    countknots(k::AbstractKnotVector, t::Real) -> Int
+
 For given knot vector ``k``, the following function ``\mathfrak{n}_k:\mathbb{R}\to\mathbb{Z}`` represents the number of knots that duplicate the knot vector ``k``.
 
 ```math
@@ -442,6 +466,36 @@ function countknots(k::AbstractKnotVector, t::Real)
 end
 
 """
+    countknots(k::AbstractKnotVector) -> Vector{Int}
+
+Count the duplicats of knots on the unique knot values.
+
+# Examples
+```jldoctest
+julia> k = knotvector"21 3"
+KnotVector([1, 1, 2, 4, 4, 4])
+
+julia> values = collect(unique(k))
+3-element Vector{Int64}:
+ 1
+ 2
+ 4
+
+julia> counts = countknots(k)
+3-element Vector{Int64}:
+ 2
+ 1
+ 3
+
+julia> knotvector(values, counts)  # Equal to `k`
+KnotVector([1, 1, 2, 4, 4, 4])
+```
+"""
+function countknots(k::AbstractKnotVector)
+    return [countknots(k,t) for t in unique(k)]
+end
+
+"""
     @knotvector_str -> KnotVector
 
 Construct a knotvector by specifying the numbers of duplicates of knots.
@@ -465,6 +519,85 @@ macro knotvector_str(s)
     return sum(KnotVector(findall(==('0'+i), s))*i for i in 1:9)
 end
 
+knotvector(k::AbstractKnotVector) = k
+knotvector(v::Vector{T}) where {T<:Real} = unsafe_knotvector(T,sort(v))
+knotvector(v::AbstractRange{T}) where {T<:Real} = unsafe_uniformknotvector(T,sort(v))
+
+"""
+    knotvector(values, counts) -> KnotVector
+
+Construct a knotvector by specifying the numbers of duplicates of knots.
+
+# Examples
+```jldoctest
+julia> knotvector([1, 2, 3, 4, 5], [1, 1, 1, 1, 1])
+KnotVector([1, 2, 3, 4, 5])
+
+julia> knotvector([1, 2, 3], [1, 2, 3])
+KnotVector([1, 2, 2, 3, 3, 3])
+
+julia> knotvector([2, 4, 6], [2, 2, 2])
+KnotVector([2, 2, 4, 4, 6, 6])
+
+julia> knotvector([6], [1])
+KnotVector([6])
+"""
+function knotvector(values::AbstractVector{T}, counts::AbstractVector{<:Integer}) where {T<:Real}
+    length(values) == length(counts) || throw(DomainError(values, "The number of values and counts must be the same."))
+    v = Vector{T}(undef, sum(counts))
+    for i in eachindex(counts)
+        v[sum(counts[1:i-1])+1:sum(counts[1:i])] .= values[i]
+    end
+    return KnotVector(v)
+end
+
+@doc raw"""
+    union(k1::KnotVector, k2::KnotVector) -> KnotVector
+
+Construct a union of two knot vectors, the minimum knotvector that satisfies ``k1 \subseteq k1\cup k2`` and ``k2 \subseteq k1\cup k2``.
+
+# Examples
+```jldoctest
+julia> k1 = knotvector"12 3 1"
+KnotVector([1, 2, 2, 4, 4, 4, 6])
+
+julia> k2 = knotvector" 1 412"
+KnotVector([2, 4, 4, 4, 4, 5, 6, 6])
+
+julia> k3 = knotvector"12 412"
+KnotVector([1, 2, 2, 4, 4, 4, 4, 5, 6, 6])
+
+julia> k1 ∪ k2 == k3
+true
+
+julia> k1 ⊆ k1 ∪ k2
+true
+
+julia> k2 ⊆ k1 ∪ k2
+true
+```
+"""
+function Base.union(k1::KnotVector, k2::KnotVector)
+    values = _vec(unique(k1+k2))
+    counts = [max(countknots(k1, v), countknots(k2, v)) for v in values]
+    return knotvector(values, counts)
+end
+function Base.union(k1::AbstractKnotVector{T1}, k2::AbstractKnotVector{T2}) where {T1,T2}
+    return union(KnotVector(k1), KnotVector(k2))
+end
+function Base.union(::EmptyKnotVector{T1}, k::AbstractKnotVector{T2}) where {T1,T2}
+    U = promote_type(T1,T2)
+    return AbstractKnotVector{U}(k)
+end
+function Base.union(k::AbstractKnotVector{T1}, ::EmptyKnotVector{T2}) where {T1,T2}
+    U = promote_type(T1,T2)
+    return AbstractKnotVector{U}(k)
+end
+function Base.union(::EmptyKnotVector{T1}, ::EmptyKnotVector{T2}) where {T1,T2}
+    U = promote_type(T1,T2)
+    return EmptyKnotVector{U}()
+end
+
 function Base.hash(k::AbstractKnotVector, h::UInt)
-    hash(AbstractKnotVector, hash(_vec(k), h))
+    return hash(AbstractKnotVector, hash(_vec(k), h))
 end

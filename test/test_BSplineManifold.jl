@@ -68,10 +68,16 @@
 
             M′ = refinement(M, P1′)
             M′′ = refinement(M, p₊, k₊)
+            M′′′ = clamp(M)
+            M′′′′ = clamp(M′)
+            M′′′′′ = clamp(M′′)
             ts = [[rand()] for _ in 1:10]
             for t in ts
                 @test M(t...) ≈ M′(t...)
                 @test M(t...) ≈ M′′(t...)
+                @test M(t...) ≈ M′′′(t...)
+                @test M(t...) ≈ M′′′′(t...)
+                @test M(t...) ≈ M′′′′′(t...)
             end
             @test_throws DomainError M(-5)
 
@@ -79,6 +85,15 @@
             @test M(:) == M
             @test Base.mightalias(controlpoints(M), controlpoints(M))
             @test !Base.mightalias(controlpoints(M), controlpoints(M(:)))
+            @test isclamped(M)
+            @test !isclamped(M′)
+            @test isclamped(M′′)
+            @test isclamped(M′′′)
+            @test isclamped(M′′′′)
+            @test isclamped(M′′′′′)
+            @test M == M′′′
+            @test M′ != M′′′′
+            @test M′′ == M′′′′′
         end
     end
 
@@ -115,6 +130,12 @@
             @test M(:,:) == M
             @test Base.mightalias(controlpoints(M), controlpoints(M))
             @test !Base.mightalias(controlpoints(M), controlpoints(M(:,:)))
+            @test isclamped(M)
+            @test isclamped(M′)
+            @test isclamped(M′′)
+            @test M == clamp(M)
+            @test M′ == clamp(M′)
+            @test M′′ == clamp(M′′)
         end
     end
 
@@ -150,6 +171,10 @@
             @test M(:,:,:) == M
             @test Base.mightalias(controlpoints(M), controlpoints(M))
             @test !Base.mightalias(controlpoints(M), controlpoints(M(:,:,:)))
+            @test !isclamped(M)
+            @test !isclamped(M′′)
+            @test M != clamp(M)
+            @test M′′ != clamp(M′′)
         end
     end
 
@@ -174,23 +199,43 @@
                 @test M(t1,t2,t3,t4) ≈ M(:,:,t3,:)(t1,t2,   t4)
                 @test M(t1,t2,t3,t4) ≈ M(:,:,:,t4)(t1,t2,t3   )
 
-                @test M(t1,t2,t3,t4) ≈ M(t1,t2,:,:)(t3,t4)
-                @test M(t1,t2,t3,t4) ≈ M(t1,:,t3,:)(t2,t4)
-                @test M(t1,t2,t3,t4) ≈ M(t1,:,:,t4)(t2,t3)
-                @test M(t1,t2,t3,t4) ≈ M(:,t2,t3,:)(t1,t4)
-                @test M(t1,t2,t3,t4) ≈ M(:,t2,:,t4)(t1,t3)
-                @test M(t1,t2,t3,t4) ≈ M(:,:,t3,t4)(t1,t2)
+                @test M(t1,t2,t3,t4) ≈ M(t1,t2,:,:)(      t3,t4)
+                @test M(t1,t2,t3,t4) ≈ M(t1,:,t3,:)(   t2,   t4)
+                @test M(t1,t2,t3,t4) ≈ M(t1,:,:,t4)(   t2,t3   )
+                @test M(t1,t2,t3,t4) ≈ M(:,t2,t3,:)(t1,      t4)
+                @test M(t1,t2,t3,t4) ≈ M(:,t2,:,t4)(t1,   t3   )
+                @test M(t1,t2,t3,t4) ≈ M(:,:,t3,t4)(t1,t2      )
 
                 @test M(t1,t2,t3,t4) ≈ M(:,t2,t3,t4)(t1)
                 @test M(t1,t2,t3,t4) ≈ M(t1,:,t3,t4)(t2)
                 @test M(t1,t2,t3,t4) ≈ M(t1,t2,:,t4)(t3)
                 @test M(t1,t2,t3,t4) ≈ M(t1,t2,t3,:)(t4)
+
+                @test M(t1,t2,t3,t4) ≈ clamp(M(t1,:,:,:))(   t2,t3,t4)
+                @test M(t1,t2,t3,t4) ≈ clamp(M(:,t2,:,:))(t1,   t3,t4)
+                @test M(t1,t2,t3,t4) ≈ clamp(M(:,:,t3,:))(t1,t2,   t4)
+                @test M(t1,t2,t3,t4) ≈ clamp(M(:,:,:,t4))(t1,t2,t3   )
+
+                @test M(t1,t2,t3,t4) ≈ clamp(M(t1,t2,:,:))(      t3,t4)
+                @test M(t1,t2,t3,t4) ≈ clamp(M(t1,:,t3,:))(   t2,   t4)
+                @test M(t1,t2,t3,t4) ≈ clamp(M(t1,:,:,t4))(   t2,t3   )
+                @test M(t1,t2,t3,t4) ≈ clamp(M(:,t2,t3,:))(t1,      t4)
+                @test M(t1,t2,t3,t4) ≈ clamp(M(:,t2,:,t4))(t1,   t3   )
+                @test M(t1,t2,t3,t4) ≈ clamp(M(:,:,t3,t4))(t1,t2      )
+
+                @test M(t1,t2,t3,t4) ≈ clamp(M(:,t2,t3,t4))(t1)
+                @test M(t1,t2,t3,t4) ≈ clamp(M(t1,:,t3,t4))(t2)
+                @test M(t1,t2,t3,t4) ≈ clamp(M(t1,t2,:,t4))(t3)
+                @test M(t1,t2,t3,t4) ≈ clamp(M(t1,t2,t3,:))(t4)
+
+                @test M(t1,t2,t3,t4) ≈ clamp(M)(t1,t2,t3,t4)
             end
             @test_throws DomainError M(-5,-8,-120,1)
 
             @test M(:,:,:,:) == M
             @test Base.mightalias(controlpoints(M), controlpoints(M))
             @test !Base.mightalias(controlpoints(M), controlpoints(M(:,:,:,:)))
+            @test !isclamped(M)
         end
     end
 end

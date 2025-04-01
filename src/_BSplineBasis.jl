@@ -51,7 +51,7 @@ julia> bsplinebasis₊₀.(P,1:5,(1:6)')
         push!(exs, :($(K_l(p+2-i)) = $(K_r(i,p+2-i))))
         push!(exs, :($(B_l(p+1-i)) = $(B_r(p+1-i))))
     end
-    Expr(:block,
+    return Expr(:block,
         :(v = knotvector(P).vector),
         :($k_l = $k_r),
         :($(B_l(p+1)) = $(A_r(p+1))),
@@ -109,7 +109,7 @@ julia> bsplinebasis₋₀.(P,1:5,(1:6)')
         push!(exs, :($(K_l(p+2-i)) = $(K_r(i,p+2-i))))
         push!(exs, :($(B_l(p+1-i)) = $(B_r(p+1-i))))
     end
-    Expr(:block,
+    return Expr(:block,
         :(v = knotvector(P).vector),
         :($k_l = $k_r),
         :($(B_l(p+1)) = $(A_r(p+1))),
@@ -168,7 +168,7 @@ julia> bsplinebasis.(P,1:5,(1:6)')
         push!(exs, :($(K_l(p+2-i)) = $(K_r(i,p+2-i))))
         push!(exs, :($(B_l(p+1-i)) = $(B_r(p+1-i))))
     end
-    Expr(:block,
+    return Expr(:block,
         :(v = knotvector(P).vector),
         :($k_l = $k_r),
         :($(B_l(p+1)) = $(A_r(p+1))),
@@ -228,7 +228,7 @@ julia> BasicBSpline.bsplinebasis₋₀I.(P,1:5,(1:6)')
         push!(exs, :($(K_l(p+2-i)) = $(K_r(i,p+2-i))))
         push!(exs, :($(B_l(p+1-i)) = $(B_r(p+1-i))))
     end
-    Expr(:block,
+    return Expr(:block,
         :(v = knotvector(P).vector),
         :($k_l = $k_r),
         :($(B_l(p+1)) = $(A_r(p+1))),
@@ -297,7 +297,7 @@ bsplinebasisall
 
 @inline function bsplinebasisall(P::BSplineSpace{0,T},i::Integer,t::S) where {T, S<:Real}
     U = StaticArrays.arithmetic_closure(promote_type(T,S))
-    SVector(one(U),)
+    return SVector(one(U),)
 end
 
 @inline function bsplinebasisall(P::BSplineSpace{1}, i::Integer, t::Real)
@@ -315,7 +315,7 @@ end
     b = Expr(:tuple, bs...)
     B = Expr(:tuple, Bs...)
     exs = [:($(Bs[j+1]) = ($(K1s[j+1])*$(bs[j+1]) + $(K2s[j])*$(bs[j]))) for j in 1:p-1]
-    Expr(:block,
+    return Expr(:block,
         :($(Expr(:meta, :inline))),
         :(k = knotvector(P)),
         :($b = bsplinebasisall(_lower_R(P),i+1,t)),
@@ -349,11 +349,11 @@ end
 
 @inline function uniform_bsplinebasisall_kernel(::Val{0},t::T) where T<:Real
     U = StaticArrays.arithmetic_closure(T)
-    SVector{1,U}(one(t))
+    return SVector{1,U}(one(t))
 end
 @inline function uniform_bsplinebasisall_kernel(::Val{1},t::T) where T<:Real
     U = StaticArrays.arithmetic_closure(T)
-    SVector{2,U}(1-t,t)
+    return SVector{2,U}(1-t,t)
 end
 @generated function uniform_bsplinebasisall_kernel(::Val{p}, t::T) where {p, T<:Real}
     bs = [Symbol(:b,i) for i in 1:p]
@@ -363,7 +363,7 @@ end
     b = Expr(:tuple, bs...)
     B = Expr(:tuple, Bs...)
     exs = [:($(Bs[j+1]) = ($(K1s[j+1])*$(bs[j+1]) + $(K2s[j])*$(bs[j]))) for j in 1:p-1]
-    Expr(
+    return Expr(
         :block,
         :($(Expr(:meta, :inline))),
         :($b = uniform_bsplinebasisall_kernel(Val{$(p-1)}(),t)),

@@ -38,7 +38,7 @@ struct RationalBSplineManifold{Dim,Deg,C,W<:Real,T,S<:NTuple{Dim, BSplineSpace}}
     weights::Array{W,Dim}
     bsplinespaces::S
     function RationalBSplineManifold{Dim,Deg,C,W,T,S}(a::Array{C,Dim},w::Array{W,Dim},P::S) where {S<:NTuple{Dim, BSplineSpace{p,T} where p},C,W<:Real} where {Dim, Deg, T}
-        new{Dim,Deg,C,W,T,S}(a,w,P)
+        return new{Dim,Deg,C,W,T,S}(a,w,P)
     end
 end
 
@@ -62,14 +62,17 @@ end
 
 RationalBSplineManifold(a::Array{C,Dim},w::Array{T,Dim},Ps::Vararg{BSplineSpace, Dim}) where {C,Dim,T<:Real} = RationalBSplineManifold(a,w,Ps)
 
+RationalBSplineManifold(M::RationalBSplineManifold) = M
+RationalBSplineManifold(M::BSplineManifold{Dim,Deg,C,T,S}) where {Dim,Deg,C,T,S}= RationalBSplineManifold{Dim,Deg,C,Float64,T,S}(controlpoints(M), fill(1.0, size(controlpoints(M))), bsplinespaces(M))
+
 Base.:(==)(M1::RationalBSplineManifold, M2::RationalBSplineManifold) = (bsplinespaces(M1)==bsplinespaces(M2)) & (controlpoints(M1)==controlpoints(M2)) & (weights(M1)==weights(M2))
 
 function Base.hash(M::RationalBSplineManifold{0}, h::UInt)
-    hash(RationalBSplineManifold{0}, hash(weights(M), hash(controlpoints(M), h)))
+    return hash(RationalBSplineManifold{0}, hash(weights(M), hash(controlpoints(M), h)))
 end
 
 function Base.hash(M::RationalBSplineManifold, h::UInt)
-    hash(xor(hash.(bsplinespaces(M), h)...), hash(weights(M), hash(controlpoints(M), h)))
+    return hash(xor(hash.(bsplinespaces(M), h)...), hash(weights(M), hash(controlpoints(M), h)))
 end
 
 controlpoints(M::RationalBSplineManifold) = M.controlpoints
@@ -94,7 +97,7 @@ bsplinespaces(M::RationalBSplineManifold) = M.bsplinespaces
     end
     exs[1].head = :(=)
     exs[2].head = :(=)
-    Expr(
+    return Expr(
         :block,
         Expr(:(=), Expr(:tuple, [Symbol(:P, i) for i in 1:Dim]...), :(bsplinespaces(M))),
         Expr(:(=), Expr(:tuple, [Symbol(:t, i) for i in 1:Dim]...), :t),
@@ -114,7 +117,7 @@ end
     T = Expr(:tuple, ts...)
     exs = [:($(Symbol(:t,i)) in domain($(Symbol(:P,i))) || throw(DomainError($(Symbol(:t,i)), "The input "*string($(Symbol(:t,i)))*" is out of domain $(domain($(Symbol(:P,i))))."))) for i in 1:Dim]
     ret = Expr(:call,:unbounded_mapping,:M,[Symbol(:t,i) for i in 1:Dim]...)
-    Expr(
+    return Expr(
         :block,
         :($(Expr(:meta, :inline))),
         :($T = t),

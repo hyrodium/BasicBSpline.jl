@@ -41,7 +41,7 @@ struct BSplineManifold{Dim,Deg,C,T,S<:NTuple{Dim, BSplineSpace{p,T} where p}} <:
     controlpoints::Array{C,Dim}
     bsplinespaces::S
     function BSplineManifold{Dim,Deg,C,T,S}(a::Array{C,Dim},P::S) where {S<:NTuple{Dim, BSplineSpace{p,T} where p},C} where {Dim, Deg, T}
-        new{Dim,Deg,C,T,S}(a,P)
+        return new{Dim,Deg,C,T,S}(a,P)
     end
 end
 
@@ -61,17 +61,17 @@ end
 
 BSplineManifold(a::Array{C,Dim},Ps::Vararg{BSplineSpace, Dim}) where {C,Dim} = BSplineManifold(a,Ps)
 
-Base.:(==)(M1::AbstractManifold, M2::AbstractManifold) = (bsplinespaces(M1)==bsplinespaces(M2)) & (controlpoints(M1)==controlpoints(M2))
+Base.:(==)(M1::BSplineManifold, M2::BSplineManifold) = (bsplinespaces(M1)==bsplinespaces(M2)) & (controlpoints(M1)==controlpoints(M2))
 
 bsplinespaces(M::BSplineManifold) = M.bsplinespaces
 controlpoints(M::BSplineManifold) = M.controlpoints
 
 function Base.hash(M::BSplineManifold{0}, h::UInt)
-    hash(BSplineManifold{0}, hash(controlpoints(M), h))
+    return hash(BSplineManifold{0}, hash(controlpoints(M), h))
 end
 
 function Base.hash(M::BSplineManifold, h::UInt)
-    hash(xor(hash.(bsplinespaces(M), h)...), hash(controlpoints(M), h))
+    return hash(xor(hash.(bsplinespaces(M), h)...), hash(controlpoints(M), h))
 end
 
 @doc raw"""
@@ -118,7 +118,7 @@ function unbounded_mapping end
         push!(exs, ex)
     end
     exs[1].head = :(=)
-    Expr(
+    return Expr(
         :block,
         Expr(:(=), Expr(:tuple, [Symbol(:P, i) for i in 1:Dim]...), :(bsplinespaces(M))),
         Expr(:(=), Expr(:tuple, [Symbol(:t, i) for i in 1:Dim]...), :t),
@@ -137,7 +137,7 @@ end
     T = Expr(:tuple, ts...)
     exs = [:($(Symbol(:t,i)) in domain($(Symbol(:P,i))) || throw(DomainError($(Symbol(:t,i)), "The input "*string($(Symbol(:t,i)))*" is out of domain $(domain($(Symbol(:P,i))))."))) for i in 1:Dim]
     ret = Expr(:call,:unbounded_mapping,:M,[Symbol(:t,i) for i in 1:Dim]...)
-    Expr(
+    return Expr(
         :block,
         :($(Expr(:meta, :inline))),
         :($T = t),
@@ -262,4 +262,15 @@ end
 @inline function (M::BSplineManifold{0})()
     a = controlpoints(M)
     return a[]
+end
+
+function clamp(M::AbstractManifold)
+    Ps = bsplinespaces(M)
+    Ps′ = clamp.(Ps)
+    return refinement_I(M, Ps′)
+end
+
+function isclamped(M::AbstractManifold)
+    Ps = bsplinespaces(M)
+    return all(isclamped, Ps)
 end
