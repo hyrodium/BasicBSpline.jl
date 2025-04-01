@@ -529,6 +529,32 @@ function knotvector(values::AbstractVector{T}, counts::AbstractVector{<:Integer}
     return KnotVector(v)
 end
 
+@doc raw"""
+    union(k1::KnotVector, k2::KnotVector) -> KnotVector
+
+Construct a union of two knot vectors, the minimum knotvector that satisfies ``k1 \subseteq k1\cup k2`` and ``k2 \subseteq k1\cup k2``.
+
+# Examples
+```jldoctest
+julia> k1 = knotvector"12 3 1"
+KnotVector([1, 2, 2, 4, 4, 4, 6])
+
+julia> k2 = knotvector" 1 412"
+KnotVector([2, 4, 4, 4, 4, 5, 6, 6])
+
+julia> k3 = knotvector"12 412"
+KnotVector([1, 2, 2, 4, 4, 4, 4, 5, 6, 6])
+
+julia> k1 ∪ k2 == k3
+true
+
+julia> k1 ⊆ k1 ∪ k2
+true
+
+julia> k2 ⊆ k1 ∪ k2
+true
+```
+"""
 function Base.union(k1::KnotVector, k2::KnotVector)
     values = _vec(unique(k1+k2))
     counts = [max(countknots(k1, v), countknots(k2, v)) for v in values]

@@ -201,6 +201,19 @@
         @test k6 ⊆ k7 ⊆ k8 ⊆ k5
     end
 
+    @testset "union" begin
+        k1 = knotvector"12 3 1"
+        k2 = knotvector" 1 412"
+        k3 = knotvector"12 412"
+        @test k1 ∪ k2 == k3
+        @test k1 ⊆ k1 ∪ k2
+        @test k2 ⊆ k1 ∪ k2
+
+        @test k1 ∪ k1 == k1
+        @test k2 ∪ k2 == k2
+        @test k3 ∪ k3 == k3
+    end
+
     @testset "string" begin
         k = KnotVector([1,2,2,3])
         @test string(k) == "KnotVector([1, 2, 2, 3])"
