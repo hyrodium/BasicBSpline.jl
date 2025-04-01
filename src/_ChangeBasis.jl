@@ -341,7 +341,7 @@ end
 
 @generated function _derivatives_at_left(P::BSplineSpace{p,T}) where {p, T}
     args = [:(pop(bsplinebasisall(BSplineDerivativeSpace{$(r)}(P),1,a))) for r in 0:p-1]
-    quote
+    return quote
         a, _ = extrema(domain(P))
         $(Expr(:call, :hcat, args...))
     end
@@ -353,7 +353,7 @@ end
 
 @generated function _derivatives_at_right(P::BSplineSpace{p,T}) where {p, T}
     args = [:(popfirst(bsplinebasisall(BSplineDerivativeSpace{$(r)}(P),n-p,b))) for r in 0:p-1]
-    quote
+    return quote
         n = dim(P)
         _, b = extrema(domain(P))
         $(Expr(:call, :hcat, args...))
@@ -361,7 +361,7 @@ end
 end
 function _derivatives_at_right(::BSplineSpace{0,T}) where {T}
     U = StaticArrays.arithmetic_closure(T)
-    SMatrix{0,0,U}()
+    return SMatrix{0,0,U}()
 end
 
 @doc raw"""

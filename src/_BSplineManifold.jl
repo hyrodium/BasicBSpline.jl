@@ -41,7 +41,7 @@ struct BSplineManifold{Dim,Deg,C,T,S<:NTuple{Dim, BSplineSpace{p,T} where p}} <:
     controlpoints::Array{C,Dim}
     bsplinespaces::S
     function BSplineManifold{Dim,Deg,C,T,S}(a::Array{C,Dim},P::S) where {S<:NTuple{Dim, BSplineSpace{p,T} where p},C} where {Dim, Deg, T}
-        new{Dim,Deg,C,T,S}(a,P)
+        return new{Dim,Deg,C,T,S}(a,P)
     end
 end
 
@@ -67,11 +67,11 @@ bsplinespaces(M::BSplineManifold) = M.bsplinespaces
 controlpoints(M::BSplineManifold) = M.controlpoints
 
 function Base.hash(M::BSplineManifold{0}, h::UInt)
-    hash(BSplineManifold{0}, hash(controlpoints(M), h))
+    return hash(BSplineManifold{0}, hash(controlpoints(M), h))
 end
 
 function Base.hash(M::BSplineManifold, h::UInt)
-    hash(xor(hash.(bsplinespaces(M), h)...), hash(controlpoints(M), h))
+    return hash(xor(hash.(bsplinespaces(M), h)...), hash(controlpoints(M), h))
 end
 
 @doc raw"""
@@ -118,7 +118,7 @@ function unbounded_mapping end
         push!(exs, ex)
     end
     exs[1].head = :(=)
-    Expr(
+    return Expr(
         :block,
         Expr(:(=), Expr(:tuple, [Symbol(:P, i) for i in 1:Dim]...), :(bsplinespaces(M))),
         Expr(:(=), Expr(:tuple, [Symbol(:t, i) for i in 1:Dim]...), :t),
@@ -137,7 +137,7 @@ end
     T = Expr(:tuple, ts...)
     exs = [:($(Symbol(:t,i)) in domain($(Symbol(:P,i))) || throw(DomainError($(Symbol(:t,i)), "The input "*string($(Symbol(:t,i)))*" is out of domain $(domain($(Symbol(:P,i))))."))) for i in 1:Dim]
     ret = Expr(:call,:unbounded_mapping,:M,[Symbol(:t,i) for i in 1:Dim]...)
-    Expr(
+    return Expr(
         :block,
         :($(Expr(:meta, :inline))),
         :($T = t),

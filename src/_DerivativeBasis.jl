@@ -24,7 +24,7 @@
             push!(exs, :($(K_l(p+2-i)) = $(L_r(i,p+2-i))))
             push!(exs, :($(B_l(p+1-i)) = $(C_r(p+1-i))))
         end
-        Expr(:block,
+        return Expr(:block,
             :(v = knotvector(dP).vector),
             :($k_l = $k_r),
             :($(B_l(p+1)) = $(A_r(p+1))),
@@ -32,7 +32,7 @@
             :(return $(prod(p-r+1:p))*B1)
         )
     else
-        :(return zero($U))
+        return :(return zero($U))
     end
 end
 
@@ -60,7 +60,7 @@ end
             push!(exs, :($(K_l(p+2-i)) = $(L_r(i,p+2-i))))
             push!(exs, :($(B_l(p+1-i)) = $(C_r(p+1-i))))
         end
-        Expr(:block,
+        return Expr(:block,
             :(v = knotvector(dP).vector),
             :($k_l = $k_r),
             :($(B_l(p+1)) = $(A_r(p+1))),
@@ -68,7 +68,7 @@ end
             :(return $(prod(p-r+1:p))*B1)
         )
     else
-        :(return zero($U))
+        return :(return zero($U))
     end
 end
 
@@ -96,7 +96,7 @@ end
             push!(exs, :($(K_l(p+2-i)) = $(L_r(i,p+2-i))))
             push!(exs, :($(B_l(p+1-i)) = $(C_r(p+1-i))))
         end
-        Expr(:block,
+        return Expr(:block,
             :(v = knotvector(dP).vector),
             :($k_l = $k_r),
             :($(B_l(p+1)) = $(A_r(p+1))),
@@ -104,7 +104,7 @@ end
             :(return $(prod(p-r+1:p))*B1)
         )
     else
-        :(return zero($U))
+        return :(return zero($U))
     end
 end
 
@@ -166,7 +166,7 @@ end
     B = Expr(:tuple, Bs...)
     exs = [:($(Bs[j+1]) = ($(K1s[j+1])*$(bs[j+1]) + $(K2s[j])*$(bs[j]))) for j in 1:p-1]
     if r ≤ p
-        Expr(:block,
+        return Expr(:block,
             :($(Expr(:meta, :inline))),
             :(k = knotvector(dP)),
             :($b = bsplinebasisall(_lower_R(dP),i+1,t)),
@@ -177,13 +177,13 @@ end
         )
     else
         Z = Expr(:tuple, [:(zero($U)) for i in 1:p+1]...)
-        :(return SVector($(Z)))
+        return :(return SVector($(Z)))
     end
 end
 
 @inline function bsplinebasisall(dP::BSplineDerivativeSpace{0,<:BSplineSpace{p,T}}, i::Integer, t::Real) where {p, T}
     P = bsplinespace(dP)
-    bsplinebasisall(P,i,t)
+    return bsplinebasisall(P,i,t)
 end
 
 # TODO: add methods for UniformBSplineSpace (and OpenUniformBSplineSpace)

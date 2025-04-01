@@ -120,17 +120,17 @@ KnotVector{T}(k::AbstractKnotVector) where T = unsafe_knotvector(T,_vec(k))
 
 Base.convert(T::Type{<:AbstractKnotVector}, k::AbstractKnotVector) = T(k)
 function Base.convert(::Type{UniformKnotVector{T,R}},k::UniformKnotVector) where {T,R}
-    UniformKnotVector{T,R}(k)
+    return UniformKnotVector{T,R}(k)
 end
 
 function Base.promote_rule(::Type{KnotVector{T}}, ::Type{KnotVector{S}}) where {T,S}
-    KnotVector{promote_type(T,S)}
+    return KnotVector{promote_type(T,S)}
 end
 function Base.promote_rule(::Type{KnotVector{T}}, ::Type{UniformKnotVector{S,R}}) where {T,S,R}
-    KnotVector{promote_type(T,S)}
+    return KnotVector{promote_type(T,S)}
 end
 function Base.promote_rule(::Type{KnotVector{T1}}, ::Type{SubKnotVector{T2,S2}}) where {T1,T2,S2}
-    KnotVector{promote_type(T1,T2)}
+    return KnotVector{promote_type(T1,T2)}
 end
 
 
@@ -384,17 +384,17 @@ function Base.issubset(k::KnotVector, k′::KnotVector)
 end
 
 function Base.issubset(k::AbstractKnotVector, k′::AbstractKnotVector)
-    issubset(KnotVector(k),KnotVector(k′))
+    return issubset(KnotVector(k),KnotVector(k′))
 end
 
 Base.:⊊(A::AbstractKnotVector, B::AbstractKnotVector) = (A ≠ B) & (A ⊆ B)
 Base.:⊋(A::AbstractKnotVector, B::AbstractKnotVector) = (A ≠ B) & (A ⊇ B)
 
 function Base.float(k::KnotVector{T}) where T
-    KnotVector(float(_vec(k)))
+    return KnotVector(float(_vec(k)))
 end
 function Base.float(k::UniformKnotVector)
-    UniformKnotVector(float(_vec(k)))
+    return UniformKnotVector(float(_vec(k)))
 end
 
 Base.view(k::UniformKnotVector{T},inds) where T = unsafe_uniformknotvector(T, view(_vec(k), inds))
@@ -539,5 +539,5 @@ function Base.union(k1::AbstractKnotVector, k2::AbstractKnotVector)
 end
 
 function Base.hash(k::AbstractKnotVector, h::UInt)
-    hash(AbstractKnotVector, hash(_vec(k), h))
+    return hash(AbstractKnotVector, hash(_vec(k), h))
 end

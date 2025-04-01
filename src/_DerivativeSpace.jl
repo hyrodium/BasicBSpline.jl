@@ -23,24 +23,24 @@ julia> degree(P), degree(dP)
 struct BSplineDerivativeSpace{r, S<:BSplineSpace, T} <: AbstractFunctionSpace{T}
     bsplinespace::S
     function BSplineDerivativeSpace{r,S,T}(P::S) where {r, S<:BSplineSpace{p,T}} where {p,T}
-        new{r,S,T}(P)
+        return new{r,S,T}(P)
     end
 end
 
 function BSplineDerivativeSpace{r}(P::S) where {r, S<:BSplineSpace{p,T}} where {p,T}
-    BSplineDerivativeSpace{r,S,T}(P)
+    return BSplineDerivativeSpace{r,S,T}(P)
 end
 function BSplineDerivativeSpace{r,S}(P::S) where {r, S<:BSplineSpace{p,T}} where {p,T}
-    BSplineDerivativeSpace{r,S,T}(P)
+    return BSplineDerivativeSpace{r,S,T}(P)
 end
 function BSplineDerivativeSpace{r,S1}(P::S2) where {r, S1<:BSplineSpace{p,T1}, S2<:BSplineSpace{p,T2}} where {p,T1,T2}
-    BSplineDerivativeSpace{r}(S1(P))
+    return BSplineDerivativeSpace{r}(S1(P))
 end
 function BSplineDerivativeSpace{r,S}(dP::BSplineDerivativeSpace{r,S}) where {r,S}
-    dP
+    return dP
 end
 function BSplineDerivativeSpace{r,S1}(dP::BSplineDerivativeSpace{r,S2}) where {r,S1,S2}
-    BSplineDerivativeSpace{r,S1}(S1(bsplinespace(dP)))
+    return BSplineDerivativeSpace{r,S1}(S1(bsplinespace(dP)))
 end
 
 # Broadcast like a scalar
@@ -128,5 +128,5 @@ end
 function Base.hash(dP::BSplineDerivativeSpace{r,<:BSplineSpace{p}}, h::UInt) where {r,p}
     P = bsplinespace(dP)
     k = knotvector(P)
-    hash(BSplineDerivativeSpace{r,<:BSplineSpace{p}}, hash(_vec(k), h))
+    return hash(BSplineDerivativeSpace{r,<:BSplineSpace{p}}, hash(_vec(k), h))
 end

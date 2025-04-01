@@ -80,7 +80,7 @@ end
 end
 
 @generated function _promote_knottype(P::NTuple{Dim,BSplineSpace}) where Dim
-    Expr(
+    return Expr(
         :block,
         Expr(:(=), Expr(:tuple, [Symbol(:P, i) for i in 1:Dim]...), :P),
         Expr(:(=), Expr(:tuple, [Symbol(:k, i) for i in 1:Dim]...), Expr(:tuple, [:(knotvector($(Symbol(:P, i)))) for i in 1:Dim]...)),
@@ -596,16 +596,16 @@ Expand B-spline space with given additional degree and knotvector.
 The behavior of `expandspace` is same as `expandspace_I`.
 """
 function expandspace(P::BSplineSpace{p,T}, _p₊::Val{p₊}, k₊::AbstractKnotVector=EmptyKnotVector{T}()) where {p,p₊,T}
-    expandspace_I(P,_p₊,k₊)
+    return expandspace_I(P,_p₊,k₊)
 end
 
 function expandspace(P::BSplineSpace{p,T}, k₊::AbstractKnotVector=EmptyKnotVector{T}()) where {p,T}
-    expandspace_I(P,k₊)
+    return expandspace_I(P,k₊)
 end
 
 function Base.hash(P::BSplineSpace{p}, h::UInt) where p
     k = knotvector(P)
-    hash(BSplineSpace{p}, hash(_vec(k), h))
+    return hash(BSplineSpace{p}, hash(_vec(k), h))
 end
 
 function clamp!(P::BSplineSpace{p, T, <:KnotVector}) where {p, T}

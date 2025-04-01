@@ -7,7 +7,7 @@ Refinement of B-spline manifold with given B-spline spaces.
 """
 refinement
 
-function _i_ranges_R(A, P′)
+function _i_ranges_R(A::AbstractSparseMatrix, P′::BSplineSpace)
     n, n′ = size(A)
     i_ranges = fill(1:0, n′)
     i = 1
@@ -37,7 +37,7 @@ function _i_ranges_R(A, P′)
     return i_ranges
 end
 
-function _i_ranges_I(A, P′)
+function _i_ranges_I(A::AbstractSparseMatrix, P′::BSplineSpace)
     n, n′ = size(A)
     i_ranges = fill(1:0, n′)
     i = 1
@@ -294,7 +294,7 @@ Refinement of B-spline manifold with additional degree and knotvector.
     exk = Expr(:tuple, ks...)
     exp = Expr(:tuple, ps...)
     exs = [:($(Symbol(:P,i,"′")) = expandspace_R($(Symbol(:P,i)), $(Symbol(:p,i,:₊)), $(Symbol(:k,i,:₊)))) for i in 1:Dim]
-    Expr(
+    return Expr(
         :block,
         :($exP = bsplinespaces(M)),
         :($exp = p₊),
@@ -313,7 +313,7 @@ end
     exP′ = Expr(:tuple, Ps′...)
     exk = Expr(:tuple, ks...)
     exs = [:($(Symbol(:P,i,"′")) = expandspace_R($(Symbol(:P,i)), $(Symbol(:k,i,:₊)))) for i in 1:Dim]
-    Expr(
+    return Expr(
         :block,
         :($exP = bsplinespaces(M)),
         :($exk = k₊),
@@ -337,7 +337,7 @@ Refinement of B-spline manifold with additional degree and knotvector.
     exk = Expr(:tuple, ks...)
     exp = Expr(:tuple, ps...)
     exs = [:($(Symbol(:P,i,"′")) = expandspace_I($(Symbol(:P,i)), $(Symbol(:p,i,:₊)), $(Symbol(:k,i,:₊)))) for i in 1:Dim]
-    Expr(
+    return Expr(
         :block,
         :($exP = bsplinespaces(M)),
         :($exp = p₊),
@@ -356,7 +356,7 @@ end
     exP′ = Expr(:tuple, Ps′...)
     exk = Expr(:tuple, ks...)
     exs = [:($(Symbol(:P,i,"′")) = expandspace_I($(Symbol(:P,i)), $(Symbol(:k,i,:₊)))) for i in 1:Dim]
-    Expr(
+    return Expr(
         :block,
         :($exP = bsplinespaces(M)),
         :($exk = k₊),
@@ -380,7 +380,7 @@ Refinement of B-spline manifold with additional degree and knotvector.
     exk = Expr(:tuple, ks...)
     exp = Expr(:tuple, ps...)
     exs = [:($(Symbol(:P,i,"′")) = expandspace($(Symbol(:P,i)), $(Symbol(:p,i,:₊)), $(Symbol(:k,i,:₊)))) for i in 1:Dim]
-    Expr(
+    return Expr(
         :block,
         :($exP = bsplinespaces(M)),
         :($exp = p₊),
@@ -399,7 +399,7 @@ end
     exP′ = Expr(:tuple, Ps′...)
     exk = Expr(:tuple, ks...)
     exs = [:($(Symbol(:P,i,"′")) = expandspace($(Symbol(:P,i)), $(Symbol(:k,i,:₊)))) for i in 1:Dim]
-    Expr(
+    return Expr(
         :block,
         :($exP = bsplinespaces(M)),
         :($exk = k₊),
