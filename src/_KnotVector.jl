@@ -331,8 +331,11 @@ function _sorted_unique!(v::Vector)
     return resize!(v, count)
 end
 
-function _sorted_unique(v::Vector)
+function _sorted_unique(v::AbstractVector)
     return _sorted_unique!(copy(v))
+end
+function _sorted_unique(v::AbstractRange)
+    return sort(v)
 end
 
 @doc raw"""
