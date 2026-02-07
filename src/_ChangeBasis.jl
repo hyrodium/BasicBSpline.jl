@@ -512,17 +512,89 @@ function __changebasis_I_old(P1::BSplineSpace{p,T}, P2::BSplineSpace{p′,T′})
     return _A
 end
 
-function _find_j_range_I(P::BSplineSpace{p}, P′::BSplineSpace{p′}, i, j_range, Aᵖ_old) where {p, p′}
-    # TODO: remove `Aᵖ_old` argument
-    # TODO: fix performance https://github.com/hyrodium/BasicBSpline.jl/pull/323#issuecomment-1723216566
-    # TODO: remove threshold such as 1e-14
+function _find_j_range_I_new(P::BSplineSpace{p}, P′::BSplineSpace{p′}, i, j_range) where {p, p′}
     Pi = BSplineSpace{p}(view(knotvector(P), i:i+p+1))
     if Pi ⊆ P′
         return _find_j_range_R(P, P′, i, j_range)
     end
-    j_begin = findfirst(e->abs(e)>1e-14, view(Aᵖ_old, i, :))
-    j_end = findlast(e->abs(e)>1e-14, view(Aᵖ_old, i, :))
+    k = knotvector(P)
+    k′ = knotvector(P′)
+    n′ = dim(P′)
+    _, j_end_prev = extrema(j_range)
+
+    # Determine j_end
+    b = k′[end-p′]  # right endpoint of domain(P′)
+    if k[i+p+1] > b
+        # Right side is strictly beyond the domain boundary → j_end = n′
+        j_end = n′
+    else
+        # R-style multiplicity counting (works when k[i+p+1] ≤ b)
+        j_end = n′  # fallback
+        m = p′ - p
+        t_end = k[i+p+1]
+        for ii in 0:(p+1)
+            if k[i+p+1-ii] == t_end
+                m += 1
+            else
+                break
+            end
+        end
+        for j in (j_end_prev-p′-1):n′
+            if t_end == k′[j+p′+1]
+                m -= 1
+            end
+            if m == 0
+                j_end = j
+                break
+            end
+        end
+    end
+
+    # Determine j_begin
+    a = k′[1+p′]  # left endpoint of domain(P′)
+    if k[i] < a
+        # Left side is strictly before the domain boundary → j_begin = 1
+        j_begin = 1
+    else
+        # R-style multiplicity counting (works when k[i] ≥ a)
+        j_begin = 1  # fallback
+        m = p′ - p
+        t_begin = k[i]
+        for ii in 0:(p+1)
+            if k[i+ii] == t_begin
+                m += 1
+            else
+                break
+            end
+        end
+        for j in reverse(1:(j_end+p′+1))
+            if k′[j] == t_begin
+                m -= 1
+            end
+            if m == 0
+                j_begin = j
+                break
+            end
+        end
+    end
+
     return j_begin:j_end
+end
+
+function _find_j_range_I(P::BSplineSpace{p}, P′::BSplineSpace{p′}, i, j_range, Aᵖ_old) where {p, p′}
+    # TODO: remove `Aᵖ_old` argument
+    # TODO: fix performance https://github.com/hyrodium/BasicBSpline.jl/pull/323#issuecomment-1723216566
+    # TODO: remove threshold such as 1e-14
+    j_range_new = _find_j_range_I_new(P, P′, i, j_range)
+    Pi = BSplineSpace{p}(view(knotvector(P), i:i+p+1))
+    if Pi ⊆ P′
+        return j_range_new
+    end
+    j_begin_old = findfirst(e->abs(e)>1e-14, view(Aᵖ_old, i, :))
+    j_end_old = findlast(e->abs(e)>1e-14, view(Aᵖ_old, i, :))
+    j_range_old = j_begin_old:j_end_old
+    @assert j_range_new == j_range_old "Mismatch in _find_j_range_I for P=$P, P′=$P′, i=$i: new=$j_range_new, old=$j_range_old"
+    return j_range_new
 end
 
 function _ΔAᵖ_I(Aᵖ⁻¹::AbstractMatrix, K::AbstractVector, K′::AbstractVector, i::Integer, j::Integer)
