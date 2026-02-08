@@ -1,4 +1,4 @@
-name: CI
+name: Test
 on:
   pull_request:
     branches:
@@ -16,7 +16,6 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          - '1.6'
           - '1.10'
           - '1'
           - 'nightly'
