@@ -132,34 +132,67 @@
         test_changebasis_I(P1, P1)
         test_changebasis_I(P2, P2)
 
-        P3 = BSplineSpace{p1-1}(knotvector(P1)[2:end-1])
-        P4 = BSplineSpace{p2-1}(knotvector(P2)[2:end-1])
-        @test P3 ⊑ P4
-        @test P3 ⊈ P4
-
-        test_changebasis_I(P3, P4)
+        P1 = BSplineSpace{p1-1}(knotvector(P1)[2:end-1])
+        P2 = BSplineSpace{p2-1}(knotvector(P2)[2:end-1])
+        @test P1 ⊑ P2
+        @test P1 ⊈ P2
+        test_changebasis_I(P1, P2)
 
         # https://github.com/hyrodium/BasicBSpline.jl/issues/325
-        P5 = BSplineSpace{2}(knotvector" 21 3")
-        P6 = BSplineSpace{3}(knotvector"212 4")
-        test_changebasis_I(P5, P6)
+        P1 = BSplineSpace{2}(knotvector" 21 3")
+        P2 = BSplineSpace{3}(knotvector"212 4")
+        test_changebasis_I(P1, P2)
 
-        P7 = BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector([1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 6]))
-        P8 = BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector([1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 7, 7]))
-        test_changebasis_I(P7, P8)
+        P1 = BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector([1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 6]))
+        P2 = BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector([1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 7, 7]))
+        test_changebasis_I(P1, P2)
 
-        _P7 = BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector(-[1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 6]))
-        _P8 = BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector(-[1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 7, 7]))
-        test_changebasis_I(_P7, _P8)
+        P1 = BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector(-[1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 6]))
+        P2 = BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector(-[1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 7, 7]))
+        test_changebasis_I(P1, P2)
 
         # (2,2)-element is stored, but it is zero.
-        Q1 = BSplineSpace{1, Int64, KnotVector{Int64}}(KnotVector([2, 2, 4, 4, 6, 6]))
-        Q2 = BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector([1, 1, 1, 2, 3, 4, 4, 4, 4, 5, 5, 6, 6, 6, 6, 7]))
-        test_changebasis_I(Q1, Q2; check_zero=false)
+        P1 = BSplineSpace{1, Int64, KnotVector{Int64}}(KnotVector([2, 2, 4, 4, 6, 6]))
+        P2 = BSplineSpace{3, Int64, KnotVector{Int64}}(KnotVector([1, 1, 1, 2, 3, 4, 4, 4, 4, 5, 5, 6, 6, 6, 6, 7]))
+        test_changebasis_I(P1, P2; check_zero=false)
 
-        Q3 = BSplineSpace{4, Int64, KnotVector{Int64}}(KnotVector([1, 1, 2, 2, 2, 3, 3, 4, 4, 5, 7]))
-        Q4 = BSplineSpace{5, Int64, KnotVector{Int64}}(KnotVector([1, 1, 1, 1, 1, 2, 3, 3, 3, 3, 4, 4, 4, 5, 6]))
-        test_changebasis_I(Q3, Q4)
+        P1 = BSplineSpace{4, Int64, KnotVector{Int64}}(KnotVector([1, 1, 2, 2, 2, 3, 3, 4, 4, 5, 7]))
+        P2 = BSplineSpace{5, Int64, KnotVector{Int64}}(KnotVector([1, 1, 1, 1, 1, 2, 3, 3, 3, 3, 4, 4, 4, 5, 6]))
+        test_changebasis_I(P1, P2)
+
+        # Diverse degree combinations (P ⊑ P′, P ⊄ P′)
+        P1 = BSplineSpace{2}(KnotVector([0, 0, 1, 2, 3, 3]))
+        P2 = BSplineSpace{3}(KnotVector([-1, -1, 0, 1, 2, 3, 4, 4]))
+        test_changebasis_I(P1, P2)
+
+        # One-sided boundary: left only
+        P1 = BSplineSpace{2}(KnotVector([1, 1, 2, 3, 4, 5]))
+        P2 = BSplineSpace{3}(KnotVector([0, 1, 1, 2, 3, 4, 5, 6]))
+        test_changebasis_I(P1, P2)
+
+        # One-sided boundary: right only
+        P1 = BSplineSpace{2}(KnotVector([1, 2, 3, 4, 5, 5]))
+        P2 = BSplineSpace{3}(KnotVector([0, 1, 2, 3, 4, 5, 5, 6]))
+        test_changebasis_I(P1, P2)
+
+        # Both-sides boundary
+        P1 = BSplineSpace{2}(KnotVector([1, 1, 2, 3, 4, 4]))
+        P2 = BSplineSpace{3}(KnotVector([0, 0, 1, 2, 3, 4, 5, 5]))
+        test_changebasis_I(P1, P2)
+
+        # Higher degree combinations
+        P1 = BSplineSpace{3}(KnotVector([0, 0, 0, 1, 2, 3, 3, 3]))
+        P2 = BSplineSpace{4}(KnotVector([-1, -1, -1, 0, 1, 2, 3, 4, 4, 4]))
+        test_changebasis_I(P1, P2)
+
+        P1 = BSplineSpace{2}(KnotVector([0, 0, 1, 2, 3, 3]))
+        P2 = BSplineSpace{4}(KnotVector([-1, -1, -1, 0, 1, 2, 3, 4, 4, 4]))
+        test_changebasis_I(P1, P2)
+
+        # Edge case
+        P1 = BSplineSpace{2}(KnotVector([-3, -3, -2, 1, 2, 2, 2]))
+        P2 = BSplineSpace{4}(KnotVector([-5, -4, -2, -2, -2, 1, 1, 1, 2, 2, 2, 2, 2]))
+        test_changebasis_I(P1, P2; check_zero=false)
     end
 
     @testset "different changebasis_R and changebasis_I" begin
