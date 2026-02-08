@@ -491,8 +491,8 @@ end
 
 # Old methoods for changebasis_I.
 # Keep these functions for the following edge case.
-# P1 = BSplineSpace{2}(KnotVector([-3, -3, -2, 1, 2, 2, 2, 3, 3, 3, 8, 8, 9, 11, 11, 11]))
-# P2 = BSplineSpace{4}(KnotVector([-5, -4, -2, -2, -2, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 8, 8, 8, 8, 9, 9, 9, 11, 11, 12, 12, 13]))
+# P1 = BSplineSpace{2}(KnotVector([-3, -3, -2, 1, 2, 2, 2]))
+# P2 = BSplineSpace{4}(KnotVector([-5, -4, -2, -2, -2, 1, 1, 1, 2, 2, 2, 2, 2]))
 #
 # function _changebasis_I_old(P::BSplineSpace{p,T}, P′::BSplineSpace{p′,T′}) where {p,p′,T,T′}
 #     k = knotvector(P)
