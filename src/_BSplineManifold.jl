@@ -264,9 +264,9 @@ end
     return a[]
 end
 
-function clamp(M::AbstractManifold)
+function clampknotvector(M::AbstractManifold)
     Ps = bsplinespaces(M)
-    Ps′ = clamp.(Ps)
+    Ps′ = clampknotvector.(Ps)
     return refinement_I(M, Ps′)
 end
 

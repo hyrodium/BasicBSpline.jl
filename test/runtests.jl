@@ -10,7 +10,7 @@ using StaticArrays
 using GeometryBasics
 using Plots
 using Aqua
-using BasicBSpline: clamp, clamp!, isclamped
+using BasicBSpline: clampknotvector, clampknotvector!, isclamped
 
 if VERSION ≥ v"1.9.0"
     # Disable ambiguities tests for ChainRulesCore.frule
