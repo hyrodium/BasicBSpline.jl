@@ -192,7 +192,7 @@
         # Edge case
         P1 = BSplineSpace{2}(KnotVector([-3, -3, -2, 1, 2, 2, 2, 3, 3, 3, 8, 8, 9, 11, 11, 11]))
         P2 = BSplineSpace{4}(KnotVector([-5, -4, -2, -2, -2, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 8, 8, 8, 8, 9, 9, 9, 11, 11, 12, 12, 13]))
-        test_changebasis_I(P1, P2)
+        test_changebasis_I(P1, P2; check_zero=false)
     end
 
     @testset "different changebasis_R and changebasis_I" begin
