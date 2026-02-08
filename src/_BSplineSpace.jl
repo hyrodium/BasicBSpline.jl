@@ -608,18 +608,18 @@ function Base.hash(P::BSplineSpace{p}, h::UInt) where p
     return hash(BSplineSpace{p}, hash(_vec(k), h))
 end
 
-function clamp!(P::BSplineSpace{p, T, <:KnotVector}) where {p, T}
+function clampknotvector!(P::BSplineSpace{p, T, <:KnotVector}) where {p, T}
     v = _vec(knotvector(P))
     v[1:p] .= v[p+1]
     v[end-p+1:end] .= v[end-p]
     return P
 end
-function clamp(P::BSplineSpace{p, T, <:KnotVector}) where {p, T}
-    return clamp!(copy(P))
+function clampknotvector(P::BSplineSpace{p, T, <:KnotVector}) where {p, T}
+    return clampknotvector!(copy(P))
 end
-function clamp(P::BSplineSpace{p, T, <:UniformKnotVector}) where {p, T}
+function clampknotvector(P::BSplineSpace{p, T, <:UniformKnotVector}) where {p, T}
     k = knotvector(P)
-    return clamp(BSplineSpace{p}(KnotVector(k)))
+    return clampknotvector(BSplineSpace{p}(KnotVector(k)))
 end
 
 function isclamped(P::BSplineSpace{p}) where p

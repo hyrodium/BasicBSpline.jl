@@ -357,7 +357,7 @@ refinement(M::RationalBSplineManifold{0, Deg, C, W, T, S} where {Deg, C, W, T, S
 
 function expand_domain(M::RationalBSplineManifold{2}, Δt::Real)
     if BasicBSpline.isclamped(M)
-        M = clamp(M)
+        M = clampknotvector(M)
     end
     P1,P2 = bsplinespaces(M)
     P1′,P2′ = expand_domain(P1,Δt), expand_domain(P2,Δt)

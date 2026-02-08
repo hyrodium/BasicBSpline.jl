@@ -237,18 +237,18 @@
     @testset "clamp" begin
         P1 = BSplineSpace{2}(knotvector"2132111")
         P2 = BSplineSpace{2}(knotvector" 3323")
-        @test clamp(P1) == P2 == clamp(P2)
+        @test clampknotvector(P1) == P2 == clampknotvector(P2)
         @test !isclamped(P1)
         @test isclamped(P2)
         @test P1 ≠ P2
-        clamp!(P1)
+        clampknotvector!(P1)
         @test isclamped(P1)
         @test P1 == P2
 
         P3 = BSplineSpace{3}(knotvector(0:10))
         @test knotvector(P3) isa UniformKnotVector{Int}
-        @test_throws MethodError clamp!(P3)
-        @test knotvector(clamp(P3)) isa KnotVector{Int}
-        @test clamp(P3) == BSplineSpace{3}(knotvector([3,3,3,3,4,5,6,7,7,7,7]))
+        @test_throws MethodError clampknotvector!(P3)
+        @test knotvector(clampknotvector(P3)) isa KnotVector{Int}
+        @test clampknotvector(P3) == BSplineSpace{3}(knotvector([3,3,3,3,4,5,6,7,7,7,7]))
     end
 end
