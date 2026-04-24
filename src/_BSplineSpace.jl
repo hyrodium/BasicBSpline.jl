@@ -3,6 +3,16 @@
 abstract type AbstractFunctionSpace{T} end
 
 @doc raw"""
+An abstract type for B-spline spaces parameterized by polynomial degree `p` and scalar type `T`.
+Subtypes include `BSplineSpace` (spaces on a closed interval) and `PeriodicBSplineSpace` (spaces on the circle ``\mathbb{R}/L\mathbb{Z}``).
+"""
+abstract type AbstractBSplineSpace{p, T} <: AbstractFunctionSpace{T} end
+
+@inline function degree(::AbstractBSplineSpace{p}) where p
+    return p
+end
+
+@doc raw"""
 Construct B-spline space from given polynominal degree and knot vector.
 ```math
 \mathcal{P}[p,k]
@@ -20,7 +30,7 @@ julia> BSplineSpace{p}(k)
 BSplineSpace{2, Int64, KnotVector{Int64}}(KnotVector([1, 3, 5, 6, 8, 9]))
 ```
 """
-struct BSplineSpace{p, T<:Real, K<:AbstractKnotVector{T}} <: AbstractFunctionSpace{T}
+struct BSplineSpace{p, T<:Real, K<:AbstractKnotVector{T}} <: AbstractBSplineSpace{p, T}
     knotvector::K
     global unsafe_bsplinespace(::Val{p}, k::K) where {p, K<:AbstractKnotVector{T}} where {T<:Real} = new{p,T,K}(k)
 end
@@ -70,10 +80,6 @@ Base.iterate(::AbstractFunctionSpace, ::Any) = nothing
 Base.copy(P::BSplineSpace{p}) where p = BSplineSpace{p}(copy(P.knotvector))
 
 bsplinespace(P::BSplineSpace) = P
-
-@inline function degree(::BSplineSpace{p}) where p
-    return p
-end
 
 @inline function knotvector(P::BSplineSpace)
     return P.knotvector

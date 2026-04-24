@@ -8,7 +8,7 @@ using PrecompileTools
 
 # Types
 export AbstractKnotVector, KnotVector, UniformKnotVector, EmptyKnotVector, SubKnotVector
-export BSplineSpace, BSplineDerivativeSpace, UniformBSplineSpace
+export AbstractBSplineSpace, BSplineSpace, PeriodicBSplineSpace, BSplineDerivativeSpace, UniformBSplineSpace
 export BSplineManifold, RationalBSplineManifold
 
 # B-spline basis functions
@@ -43,7 +43,9 @@ export @knotvector_str
 include("_util.jl")
 include("_KnotVector.jl")
 include("_BSplineSpace.jl")
+include("_PeriodicBSplineSpace.jl")
 include("_BSplineBasis.jl")
+include("_PeriodicBSplineBasis.jl")
 include("_DerivativeSpace.jl")
 include("_DerivativeBasis.jl")
 include("_ChangeBasis.jl")
