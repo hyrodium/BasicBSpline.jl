@@ -107,9 +107,7 @@ The input 1.2 is out of domain 0 .. 1.
 function unbounded_mapping end
 
 @generated function unbounded_mapping(M::BSplineManifold{Dim,Deg}, t::Vararg{Real,Dim}) where {Dim,Deg}
-    # Use `UnitRange` to support Julia v1.6 (LTS)
-    # This can be replaced with `range` if we drop support for v1.6
-    iter = CartesianIndices(UnitRange.(1, Deg .+ 1))
+    iter = CartesianIndices(range.(1, Deg .+ 1))
     exs = Expr[]
     for ci in iter
         ex = Expr(:call, [:getindex, :a, [:($(Symbol(:i,d))+$(ci[d]-1)) for d in 1:Dim]...]...)

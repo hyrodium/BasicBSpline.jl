@@ -52,9 +52,4 @@ include("_RationalBSplineManifold.jl")
 include("_Refinement.jl")
 include("_precompile.jl")
 
-if !isdefined(Base, :get_extension)
-    include("../ext/BasicBSplineChainRulesCoreExt.jl")
-    include("../ext/BasicBSplineRecipesBaseExt.jl")
-end
-
 end # module

@@ -80,9 +80,7 @@ weights(M::RationalBSplineManifold) = M.weights
 bsplinespaces(M::RationalBSplineManifold) = M.bsplinespaces
 
 @generated function unbounded_mapping(M::RationalBSplineManifold{Dim,Deg}, t::Vararg{Real,Dim}) where {Dim,Deg}
-    # Use `UnitRange` to support Julia v1.6 (LTS)
-    # This can be replaced with `range` if we drop support for v1.6
-    iter = CartesianIndices(UnitRange.(1, Deg .+ 1))
+    iter = CartesianIndices(range.(1, Deg .+ 1))
     exs = Expr[]
     for ci in iter
         ex_w = Expr(:call, [:getindex, :w, [:($(Symbol(:i,d))+$(ci[d]-1)) for d in 1:Dim]...]...)
